@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "./SidebarContext";
 import {
   LayoutDashboard,
+  Workflow,
   ScanBarcode,
   DollarSign,
   Package,
@@ -17,6 +18,7 @@ import {
 
 const navigation = [
   { name: "Overview", href: "/overview", icon: LayoutDashboard },
+  { name: "Workflow", href: "/workflow", icon: Workflow },
   { name: "SKU Decoder", href: "/sku-decoder", icon: ScanBarcode },
   { name: "Pricing", href: "/pricing", icon: DollarSign },
   { name: "Catalog", href: "/catalog", icon: Package },

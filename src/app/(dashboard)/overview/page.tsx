@@ -131,7 +131,7 @@ export default function OverviewPage() {
           <CardDescription>Click a step to view identified pain points and bottlenecks</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between overflow-x-auto pb-4">
+          <div className="flex items-center justify-between overflow-x-auto pt-6 pb-4">
             {workflowSteps.map((step, i) => {
               const Icon = stepIcons[i];
               const isSelected = selectedStep === step.id;

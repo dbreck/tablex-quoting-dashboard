@@ -1,0 +1,212 @@
+{
+  "generatedAt": "2026-02-05",
+  "totalQuotes": 3595,
+  "turnaroundTimes": {
+    "overall": {
+      "count": 3389,
+      "averageHours": 129.08,
+      "averageDays": 5.38,
+      "medianHours": 24.4,
+      "medianDays": 1.02,
+      "minHours": 0.0,
+      "maxHours": 8714.62,
+      "maxDays": 363.11
+    },
+    "byYear": [
+      {
+        "year": 2023,
+        "averageHours": 91.55,
+        "averageDays": 3.81,
+        "medianHours": 45.18,
+        "medianDays": 1.88,
+        "count": 1187
+      },
+      {
+        "year": 2024,
+        "averageHours": 69.06,
+        "averageDays": 2.88,
+        "medianHours": 21.58,
+        "medianDays": 0.9,
+        "count": 1112
+      },
+      {
+        "year": 2025,
+        "averageHours": 178.87,
+        "averageDays": 7.45,
+        "medianHours": 23.37,
+        "medianDays": 0.97,
+        "count": 1010
+      },
+      {
+        "year": 2026,
+        "averageHours": 891.7,
+        "averageDays": 37.15,
+        "medianHours": 21.35,
+        "medianDays": 0.89,
+        "count": 80
+      }
+    ],
+    "special": {
+      "averageHours": 96.08,
+      "averageDays": 4.0,
+      "medianHours": 22.68,
+      "medianDays": 0.95,
+      "count": 685
+    },
+    "standard": {
+      "averageHours": 137.44,
+      "averageDays": 5.73,
+      "medianHours": 25.23,
+      "medianDays": 1.05,
+      "count": 2704
+    }
+  },
+  "staffDistribution": [
+    {
+      "staff": "SS",
+      "total": 2298,
+      "special": 227,
+      "specialPercent": 9.9,
+      "standard": 2071,
+      "standardPercent": 90.1
+    },
+    {
+      "staff": "MAF",
+      "total": 768,
+      "special": 354,
+      "specialPercent": 46.1,
+      "standard": 414,
+      "standardPercent": 53.9
+    },
+    {
+      "staff": "MM",
+      "total": 236,
+      "special": 53,
+      "specialPercent": 22.5,
+      "standard": 183,
+      "standardPercent": 77.5
+    },
+    {
+      "staff": "SQ",
+      "total": 174,
+      "special": 65,
+      "specialPercent": 37.4,
+      "standard": 109,
+      "standardPercent": 62.6
+    },
+    {
+      "staff": "MM/SQ",
+      "total": 54,
+      "special": 30,
+      "specialPercent": 55.6,
+      "standard": 24,
+      "standardPercent": 44.4
+    }
+  ],
+  "revisions": {
+    "quotesWithRevisions": 475,
+    "totalQuotesWithNumbers": 3571,
+    "revisionRate": 13.3
+  },
+  "yearOverYearGrowth": [
+    {
+      "year": 2023,
+      "quotes": 1250,
+      "growthRate": null
+    },
+    {
+      "year": 2024,
+      "quotes": 1190,
+      "growthRate": -4.8
+    },
+    {
+      "year": 2025,
+      "quotes": 1062,
+      "growthRate": -10.8
+    },
+    {
+      "year": 2026,
+      "quotes": 93,
+      "growthRate": -91.2
+    }
+  ],
+  "cagr2023to2025": -7.8,
+  "peakAnalysis": {
+    "dayOfWeek": [
+      { "day": "Monday", "count": 663, "percent": 18.6 },
+      { "day": "Tuesday", "count": 744, "percent": 20.9 },
+      { "day": "Wednesday", "count": 774, "percent": 21.7 },
+      { "day": "Thursday", "count": 735, "percent": 20.6 },
+      { "day": "Friday", "count": 597, "percent": 16.7 },
+      { "day": "Saturday", "count": 31, "percent": 0.9 },
+      { "day": "Sunday", "count": 22, "percent": 0.6 }
+    ],
+    "month": [
+      { "month": "Jan", "count": 277, "percent": 7.8 },
+      { "month": "Feb", "count": 266, "percent": 7.5 },
+      { "month": "Mar", "count": 341, "percent": 9.6 },
+      { "month": "Apr", "count": 410, "percent": 11.5 },
+      { "month": "May", "count": 356, "percent": 10.0 },
+      { "month": "Jun", "count": 353, "percent": 9.9 },
+      { "month": "Jul", "count": 265, "percent": 7.4 },
+      { "month": "Aug", "count": 264, "percent": 7.4 },
+      { "month": "Sep", "count": 270, "percent": 7.6 },
+      { "month": "Oct", "count": 257, "percent": 7.2 },
+      { "month": "Nov", "count": 249, "percent": 7.0 },
+      { "month": "Dec", "count": 258, "percent": 7.2 }
+    ],
+    "quarterly": [
+      { "quarter": "Q1", "months": "Jan-Mar", "count": 884, "percent": 24.8 },
+      { "quarter": "Q2", "months": "Apr-Jun", "count": 1119, "percent": 31.4 },
+      { "quarter": "Q3", "months": "Jul-Sep", "count": 799, "percent": 22.4 },
+      { "quarter": "Q4", "months": "Oct-Dec", "count": 764, "percent": 21.4 }
+    ]
+  },
+  "dealerConcentration": {
+    "totalUniqueDealers": 1105,
+    "top5": {
+      "dealers": [
+        { "name": "Business Furnishings", "count": 279, "percent": 7.8 },
+        { "name": "Continental Office", "count": 170, "percent": 4.7 },
+        { "name": "NBS", "count": 97, "percent": 2.7 },
+        { "name": "Business Furniture", "count": 80, "percent": 2.2 },
+        { "name": "Frank Cooney", "count": 66, "percent": 1.8 }
+      ],
+      "totalCount": 692,
+      "totalPercent": 19.3
+    },
+    "top10": {
+      "dealers": [
+        { "name": "Business Furnishings", "count": 279, "percent": 7.8 },
+        { "name": "Continental Office", "count": 170, "percent": 4.7 },
+        { "name": "NBS", "count": 97, "percent": 2.7 },
+        { "name": "Business Furniture", "count": 80, "percent": 2.2 },
+        { "name": "Frank Cooney", "count": 66, "percent": 1.8 },
+        { "name": "Webb Contract", "count": 59, "percent": 1.6 },
+        { "name": "RCF Group", "count": 50, "percent": 1.4 },
+        { "name": "Douron", "count": 49, "percent": 1.4 },
+        { "name": "Zimmerman School Equipment", "count": 47, "percent": 1.3 },
+        { "name": "Friends Office", "count": 47, "percent": 1.3 }
+      ],
+      "totalCount": 944,
+      "totalPercent": 26.3
+    }
+  },
+  "dataReEntryAnalysis": {
+    "totalQuotes": 3595,
+    "baseEntries": 10785,
+    "baseEntriesDescription": "3 per quote (Queue + Quote Table + Quote Template)",
+    "orderEntries": 1078,
+    "orderEntriesDescription": "Est. 30% conversion to orders = 1 additional entry per order",
+    "revisionEntries": 475,
+    "revisionEntriesDescription": "1 additional entry per revision in template",
+    "totalManualDataEntryEvents": 12338,
+    "averagePerQuote": 3.43,
+    "estimatedTimeSpent": {
+      "minutesPerEntry": 3,
+      "totalMinutes": 37014,
+      "totalHours": 617,
+      "workWeeks": 15
+    }
+  }
+}
