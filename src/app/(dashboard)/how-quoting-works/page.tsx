@@ -10,6 +10,14 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import profitData from "@/data/profit-analysis.json";
 import { discountTierLabels } from "@/lib/pricing";
 import { freightZones } from "@/data/freight-zones";
@@ -25,6 +33,7 @@ import {
   ChevronRight,
   Info,
   Calculator,
+  FileText,
 } from "lucide-react";
 
 type ProfitRow = (typeof profitData)[number];
@@ -203,10 +212,210 @@ export default function HowQuotingWorksPage() {
 
   return (
     <div>
-      <Header
-        title="How Quoting Works"
-        subtitle="The complete calculation pipeline — from raw material costs to what the dealer pays"
-      />
+      {/* Page header with overview dialog trigger */}
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">How Quoting Works</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            The complete calculation pipeline — from raw material costs to what the dealer pays
+          </p>
+        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all cursor-pointer shrink-0"
+              title="Read the full text overview"
+            >
+              <FileText className="h-4 w-4 text-brand-green" />
+              <span className="hidden sm:inline">Full Overview</span>
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>How TableX Quote Pricing Works</DialogTitle>
+              <DialogDescription>End-to-end walkthrough of the quoting calculation</DialogDescription>
+            </DialogHeader>
+            <div className="px-6 pb-6 space-y-6 text-sm text-slate-700 leading-relaxed">
+              {/* 1. Cost Buildup */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-red-100 text-red-600 text-xs font-bold">1</span>
+                  Cost Buildup (bottom-up)
+                </h3>
+                <p className="mb-3">Each product&apos;s total cost is assembled from manufacturing components:</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+                    <thead>
+                      <tr className="bg-slate-50">
+                        <th className="text-left px-4 py-2.5 font-semibold text-slate-600 border-b border-slate-200">Component</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-slate-600 border-b border-slate-200">Example (SKU 99TC3048QD2032.2-3P)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["Top Cost", "$62.27 — the table surface"],
+                        ["Base Cost", "$182.95 — legs/pedestal"],
+                        ["Routing Cost", "(optional) — CNC edge profiling"],
+                        ["Assembly Cost", "$245.22 — labor to assemble top + base"],
+                        ["Freight In", "$0.00 — inbound material shipping"],
+                        ["Packaging", "$4.00 — box/crate materials"],
+                      ].map(([comp, example]) => (
+                        <tr key={comp} className="border-b border-slate-100">
+                          <td className="px-4 py-2 font-medium text-slate-700">{comp}</td>
+                          <td className="px-4 py-2 text-slate-600">{example}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-slate-50 font-semibold">
+                        <td className="px-4 py-2.5 text-slate-900">= Total Cost</td>
+                        <td className="px-4 py-2.5 text-slate-900">$249.22</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  Assembly cost often includes top + base costs (it&apos;s the sum of labor + materials to put the unit together).
+                </p>
+              </section>
+
+              {/* 2. List Price */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-emerald-100 text-emerald-600 text-xs font-bold">2</span>
+                  List Price via Gross Profit Margin (GPM)
+                </h3>
+                <p className="mb-2">
+                  The list price is set to achieve a target <strong>GPM of ~29-50%</strong> (varies by product). The formula is essentially:
+                </p>
+                <div className="px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 font-mono text-sm text-slate-800 mb-2">
+                  List Price = Total Cost / (1 - GPM)
+                </div>
+                <p>
+                  In the example above: GPM = 50%, so List Price = $249.22 / 0.50 = ~$498, but the actual list is <strong>$995.00</strong> (the published catalog/MSRP price, set by TableX with room for the discount chain).
+                </p>
+              </section>
+
+              {/* 3. Trade Discount */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-blue-100 text-blue-600 text-xs font-bold">3</span>
+                  Trade Discount Chain (the core of quoting)
+                </h3>
+                <p className="mb-3">
+                  Dealers never pay list price. TableX uses a <strong>chained discount</strong> system with 5 tiers based on dealer relationship:
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+                    <thead>
+                      <tr className="bg-slate-50">
+                        <th className="text-left px-4 py-2.5 font-semibold text-slate-600 border-b border-slate-200">Tier</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-slate-600 border-b border-slate-200">Chain</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-slate-600 border-b border-slate-200">Multiplier</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-slate-600 border-b border-slate-200">Example Net</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ["50/20", "50% off, then 20% off", "\u00d7 0.40", "$398.00"],
+                        ["50/20/5", "+ additional 5%", "\u00d7 0.38", "$378.10"],
+                        ["50/20/10", "+ additional 10%", "\u00d7 0.36", "$358.20"],
+                        ["50/20/15", "+ additional 15%", "\u00d7 0.34", "$338.30"],
+                        ["50/20/20", "+ additional 20%", "\u00d7 0.32", "$318.40"],
+                      ].map(([tier, chain, mult, net]) => (
+                        <tr key={tier} className="border-b border-slate-100">
+                          <td className="px-4 py-2 font-semibold text-slate-800">{tier}</td>
+                          <td className="px-4 py-2 text-slate-600">{chain}</td>
+                          <td className="px-4 py-2 font-mono text-slate-700">{mult}</td>
+                          <td className="px-4 py-2 font-semibold text-slate-900">{net}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-3 space-y-1">
+                  <p>So for the $995 list price product:</p>
+                  <ul className="list-disc list-inside space-y-0.5 text-slate-600 ml-2">
+                    <li><strong>50/20 dealer</strong> pays $995 &times; 0.40 = <strong>$398.00</strong></li>
+                    <li><strong>50/20/20 dealer</strong> (best tier) pays $995 &times; 0.32 = <strong>$318.40</strong></li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* 4. Commission */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-purple-100 text-purple-600 text-xs font-bold">4</span>
+                  Commission
+                </h3>
+                <p className="mb-2">
+                  A <strong>commission rate</strong> (typically ~8%) is applied to the net price after discounts:
+                </p>
+                <div className="px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 font-mono text-sm text-slate-800">
+                  Commission = Net Price &times; 8% = $398 &times; 0.08 = $31.84
+                </div>
+              </section>
+
+              {/* 5. Net Profit */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-emerald-100 text-emerald-600 text-xs font-bold">5</span>
+                  Net Profit
+                </h3>
+                <div className="px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 font-mono text-sm text-slate-800 space-y-0.5">
+                  <p>Net Profit = Net Price &minus; Commission &minus; Total Cost</p>
+                  <p className="text-slate-500">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= $398.00 &minus; $31.84 &minus; $249.22</p>
+                  <p className="text-emerald-700 font-semibold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= $116.94</p>
+                </div>
+              </section>
+
+              {/* 6. Freight Out */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-amber-100 text-amber-600 text-xs font-bold">6</span>
+                  Freight Out (added to quote separately)
+                </h3>
+                <p className="mb-2">
+                  Freight is <strong>not baked into the product price</strong> — it&apos;s a separate line item based on:
+                </p>
+                <ul className="list-disc list-inside space-y-0.5 text-slate-600 ml-2 mb-3">
+                  <li><strong>Delivery state</strong> (5 zones radiating from TableX&apos;s location, likely OH/IN area)</li>
+                  <li><strong>Order total</strong> (larger orders get free freight)</li>
+                </ul>
+                <p className="mb-1">
+                  For example, a $4,000 order shipping to Florida (Zone 3) adds $300, but a $7,500+ order to the same state ships free.
+                </p>
+                <p className="text-slate-500">
+                  Zone 5 (CA, OR, WA, etc.) is always &quot;must be quoted&quot; — no standard freight pricing.
+                </p>
+              </section>
+
+              {/* Summary Flow */}
+              <section>
+                <h3 className="text-base font-bold text-slate-900 mb-3">Summary Flow</h3>
+                <div className="px-4 py-4 rounded-xl bg-slate-900 text-slate-300 font-mono text-xs leading-relaxed overflow-x-auto whitespace-pre">
+{`Raw Components \u2192 Total Cost \u2192 \u00f7 (1-GPM) \u2192 List Price
+                                              \u2193
+                            \u00d7 Discount Tier Multiplier \u2192 Net Price
+                                                            \u2193
+                                                  - Commission (8%)
+                                                  - Total Cost
+                                                  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+                                                  = Net Profit
+
+                            + Freight (by zone & order size) \u2192 Final Quote`}
+                </div>
+              </section>
+
+              {/* Closing */}
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-brand-green/5 border border-brand-green/20">
+                <Info className="h-4 w-4 text-brand-green mt-0.5 shrink-0" />
+                <p className="text-xs text-slate-600">
+                  The whole process is currently done manually across 5 disconnected spreadsheets — which is the core problem <strong>QuoteX</strong> is designed to solve.
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       {/* Product Selector */}
       <Card className="mb-8">
