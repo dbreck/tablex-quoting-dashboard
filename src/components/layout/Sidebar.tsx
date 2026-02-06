@@ -21,7 +21,7 @@ import {
   FilePlus,
   FilePlus2,
   FileStack,
-  Users,
+  Building2,
 } from "lucide-react";
 
 const analyticsNav = [
@@ -40,7 +40,7 @@ const quoteBuilderNav = [
   { name: "Dashboard", href: "/quote/dashboard", icon: LayoutDashboard },
   { name: "New Quote", href: "/quote/new", icon: FilePlus },
   { name: "Quotes", href: "/quote/list", icon: FileStack },
-  { name: "Customers", href: "/quote/customers", icon: Users },
+  { name: "CRM", href: "/quote/crm", icon: Building2 },
 ];
 
 export function Sidebar() {

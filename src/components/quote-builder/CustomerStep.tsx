@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuoteStore } from "@/store/quote-store";
+import { useCrmStore } from "@/store/crm-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,13 +18,24 @@ import {
   type DiscountTier,
   type QuoteCustomer,
 } from "@/types/quote-builder";
-import { User, Building2, Mail, Phone, UserPlus } from "lucide-react";
+import { User, Building2, Mail, Phone, UserPlus, Plus } from "lucide-react";
 
 export function CustomerStep() {
   const { draftQuote, setDraftQuote, customers } = useQuoteStore();
+  const { organizations, contacts, seedDealers } = useCrmStore();
   const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [selectedOrgId, setSelectedOrgId] = useState<string>("");
+  const [selectedContactId, setSelectedContactId] = useState<string>("");
+
+  useEffect(() => {
+    seedDealers();
+  }, [seedDealers]);
 
   const customer = draftQuote?.customer ?? {};
+
+  const orgContacts = selectedOrgId
+    ? contacts.filter((c) => c.organizationId === selectedOrgId)
+    : [];
 
   function updateField(field: keyof QuoteCustomer, value: string) {
     if (!draftQuote) return;
@@ -36,10 +48,47 @@ export function CustomerStep() {
     }
   }
 
+  function selectOrganization(orgId: string) {
+    if (!draftQuote) return;
+    const org = organizations.find((o) => o.id === orgId);
+    if (!org) return;
+    setSelectedOrgId(orgId);
+    setSelectedContactId("");
+    setDraftQuote({
+      ...draftQuote,
+      customer: {
+        ...draftQuote.customer,
+        company: org.name,
+        defaultTier: org.defaultTier,
+      },
+      discountTier: org.defaultTier,
+    });
+    setErrors({});
+  }
+
+  function selectContact(contactId: string) {
+    if (!draftQuote) return;
+    const contact = contacts.find((c) => c.id === contactId);
+    if (!contact) return;
+    setSelectedContactId(contactId);
+    setDraftQuote({
+      ...draftQuote,
+      customer: {
+        ...draftQuote.customer,
+        name: `${contact.firstName} ${contact.lastName}`,
+        email: contact.email || "",
+        phone: contact.phone || "",
+      },
+    });
+    setErrors({});
+  }
+
   function selectExistingCustomer(customerId: string) {
     if (!draftQuote) return;
     const existing = customers.find((c) => c.id === customerId);
     if (!existing) return;
+    setSelectedOrgId("");
+    setSelectedContactId("");
     setDraftQuote({
       ...draftQuote,
       customer: { ...existing },
@@ -62,29 +111,82 @@ export function CustomerStep() {
     setDraftQuote({ ...draftQuote, projectName: value });
   }
 
-  const validate = () => {
-    const newErrors: Record<string, boolean> = {};
-    if (!customer.name?.trim()) newErrors.name = true;
-    if (!customer.company?.trim()) newErrors.company = true;
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   return (
     <div className="space-y-6">
-      {/* Select Existing Customer */}
+      {/* Select from CRM Organizations */}
+      {organizations.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Select Organization
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Select value={selectedOrgId} onValueChange={selectOrganization}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose an organization..." />
+              </SelectTrigger>
+              <SelectContent>
+                {organizations.map((org) => (
+                  <SelectItem key={org.id} value={org.id}>
+                    {org.name}
+                    {org.type === "dealer" ? " (Dealer)" : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Contact selector (shown after org selected) */}
+            {selectedOrgId && orgContacts.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
+                  <UserPlus className="h-3.5 w-3.5" />
+                  Select Contact
+                </label>
+                <Select
+                  value={selectedContactId}
+                  onValueChange={selectContact}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a contact..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {orgContacts.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.firstName} {c.lastName}
+                        {c.role ? ` — ${c.role}` : ""}
+                        {c.isPrimary ? " (Primary)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {selectedOrgId && orgContacts.length === 0 && (
+              <p className="text-xs text-slate-400">
+                No contacts for this organization. Fill in details manually
+                below.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Or select from existing flat customers */}
       {customers.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <UserPlus className="h-4 w-4" />
-              Select Existing Customer
+              Or Select Existing Customer
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Select onValueChange={selectExistingCustomer}>
               <SelectTrigger>
-                <SelectValue placeholder="Choose a customer..." />
+                <SelectValue placeholder="Choose a saved customer..." />
               </SelectTrigger>
               <SelectContent>
                 {customers.map((c) => (

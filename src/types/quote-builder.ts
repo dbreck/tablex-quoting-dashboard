@@ -78,3 +78,49 @@ export interface DraftQuote {
   lineItems: LineItem[];
   currentStep: number;
 }
+
+// CRM Types
+
+export type OrganizationType = 'dealer' | 'end_customer';
+
+export interface Organization {
+  id: string;
+  name: string;
+  type: OrganizationType;
+  defaultTier: DiscountTier;
+  phone?: string;
+  email?: string;
+  address?: string;
+  website?: string;
+  notes?: string;
+  isSeeded: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Contact {
+  id: string;
+  organizationId: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  title?: string;
+  isPrimary: boolean;
+  notes?: string;
+  createdAt: string;
+}
+
+export type ActivityType = 'note' | 'quote_created' | 'quote_sent' | 'call' | 'email' | 'meeting';
+
+export interface Activity {
+  id: string;
+  organizationId?: string;
+  contactId?: string;
+  quoteId?: string;
+  type: ActivityType;
+  content: string;
+  createdAt: string;
+  createdBy?: string;
+}

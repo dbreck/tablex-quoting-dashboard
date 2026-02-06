@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Quote, QuoteCustomer, DraftQuote, LineItem } from "@/types/quote-builder";
+import { useCrmStore } from "./crm-store";
 
 function generateId(): string {
   return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
@@ -45,6 +46,21 @@ export const useQuoteStore = create<QuoteStore>()(
           updatedAt: now,
         };
         set((state) => ({ quotes: [...state.quotes, quote] }));
+        // Auto-log activity in CRM
+        try {
+          const crmStore = useCrmStore.getState();
+          const org = crmStore.organizations.find(
+            (o) => o.name === quoteData.customer.company
+          );
+          crmStore.addActivity({
+            type: "quote_created",
+            content: `Quote ${quote.quoteNumber} created for ${quoteData.customer.name}`,
+            organizationId: org?.id,
+            quoteId: id,
+          });
+        } catch {
+          // CRM store may not be initialized yet
+        }
         return id;
       },
       updateQuote: (id, updates) =>
