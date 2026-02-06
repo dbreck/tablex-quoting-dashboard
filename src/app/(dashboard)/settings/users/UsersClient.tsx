@@ -62,6 +62,7 @@ export default function UsersClient() {
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
+  const [inviteRole, setInviteRole] = useState<"admin" | "contributor">("contributor");
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState<{
     type: "success" | "error";
@@ -111,7 +112,7 @@ export default function UsersClient() {
     const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: inviteEmail, full_name: inviteName }),
+      body: JSON.stringify({ email: inviteEmail, full_name: inviteName, role: inviteRole }),
     });
 
     const data = await res.json();
@@ -120,6 +121,7 @@ export default function UsersClient() {
       setInviteMessage({ type: "success", text: data.message || "Invitation sent successfully" });
       setInviteEmail("");
       setInviteName("");
+      setInviteRole("contributor");
       loadUsers();
     } else {
       setInviteMessage({ type: "error", text: data.error || "Failed to send invitation" });
@@ -205,9 +207,9 @@ export default function UsersClient() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-brand-green" />
-            Invite User
+            Add User
           </CardTitle>
-          <CardDescription>Send an invitation to a new user</CardDescription>
+          <CardDescription>Create a new dashboard user</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleInvite} className="flex flex-col sm:flex-row gap-3">
@@ -226,14 +228,23 @@ export default function UsersClient() {
               onChange={(e) => setInviteName(e.target.value)}
               className="flex-1"
             />
+            <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as "admin" | "contributor")}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="contributor">Contributor</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
             <Button type="submit" disabled={inviting || !inviteEmail}>
               {inviting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Sending...
+                  Adding...
                 </>
               ) : (
-                "Send Invite"
+                "Add User"
               )}
             </Button>
           </form>

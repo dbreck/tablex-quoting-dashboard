@@ -92,9 +92,10 @@ export async function POST(request: Request) {
 
   // Parse and validate body
   const body = await request.json();
-  const { email, full_name } = body as {
+  const { email, full_name, role } = body as {
     email?: string;
     full_name?: string;
+    role?: "admin" | "contributor";
   };
 
   if (!email) {
@@ -116,11 +117,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: createError.message }, { status: 400 });
   }
 
-  // Update profile with full_name if provided
-  if (full_name) {
+  // Update profile with full_name and role if provided
+  const profileUpdate: Record<string, string> = {};
+  if (full_name) profileUpdate.full_name = full_name;
+  if (role && (role === "admin" || role === "contributor")) profileUpdate.role = role;
+
+  if (Object.keys(profileUpdate).length > 0) {
     await adminClient
       .from("profiles")
-      .update({ full_name })
+      .update(profileUpdate)
       .eq("id", newUserData.user.id);
   }
 
