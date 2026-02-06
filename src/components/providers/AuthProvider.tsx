@@ -23,6 +23,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isLoading: true,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
 
 export function useAuth() {
@@ -84,6 +86,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }
 
+  async function refreshProfile() {
+    if (user) {
+      await fetchProfile(user.id);
+    }
+  }
+
   async function signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -100,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: profile?.role === "admin",
         isLoading,
         signOut,
+        refreshProfile,
       }}
     >
       {children}

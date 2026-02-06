@@ -24,9 +24,10 @@ import {
   FilePlus2,
   FileStack,
   Building2,
-  LogOut,
+  Settings,
   User,
 } from "lucide-react";
+import { UserMenu } from "./UserMenu";
 
 const analyticsNav = [
   { name: "Overview", href: "/overview", icon: LayoutDashboard },
@@ -50,7 +51,7 @@ const quoteBuilderNav = [
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen, sidebarMode, setSidebarMode } = useSidebar();
-  const { profile, isAdmin, signOut } = useAuth();
+  const { profile, isAdmin } = useAuth();
 
   // Auto-detect mode from route
   useEffect(() => {
@@ -181,6 +182,22 @@ export function Sidebar() {
 
       {/* User Menu + Collapse Toggle */}
       <div className={cn("border-t border-white/10", sidebarOpen ? "px-3 py-3" : "px-2 py-3")}>
+        {/* Admin Settings Link */}
+        {isAdmin && (
+          <Link
+            href="/settings/users"
+            className={cn(
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors mb-2",
+              pathname.startsWith("/settings") && "bg-white/10 text-white",
+              !sidebarOpen && "justify-center px-0"
+            )}
+            title={!sidebarOpen ? "Settings" : undefined}
+          >
+            <Settings className={cn("h-5 w-5 shrink-0", pathname.startsWith("/settings") && "text-brand-green")} />
+            {sidebarOpen && <span>Settings</span>}
+          </Link>
+        )}
+
         {/* User info */}
         {profile && (
           <div className={cn(
@@ -203,22 +220,10 @@ export function Sidebar() {
                     {profile.role}
                   </Badge>
                 </div>
-                <button
-                  onClick={signOut}
-                  className="text-white/40 hover:text-white transition-colors"
-                  title="Sign out"
-                >
-                  <LogOut className="h-4 w-4" />
-                </button>
+                <UserMenu sidebarOpen={true} />
               </div>
             ) : (
-              <button
-                onClick={signOut}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-all"
-                title={`${profile.full_name || profile.email} (${profile.role}) — Sign out`}
-              >
-                <User className="h-4.5 w-4.5" />
-              </button>
+              <UserMenu sidebarOpen={false} />
             )}
           </div>
         )}
