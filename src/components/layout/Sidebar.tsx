@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
+  Target,
   FilePlus,
   FilePlus2,
   FileStack,
@@ -39,6 +40,7 @@ const analyticsNav = [
   { name: "Queue", href: "/queue", icon: ClipboardList },
   { name: "Freight", href: "/freight", icon: Truck },
   { name: "How Quoting Works", href: "/how-quoting-works", icon: BookOpen },
+  { name: "CPQ Gap Analysis", href: "/cpq-gap-analysis", icon: Target },
 ];
 
 const quoteBuilderNav = [
