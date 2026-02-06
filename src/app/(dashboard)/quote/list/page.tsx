@@ -106,7 +106,7 @@ const columns = [
 
 export default function QuoteListPage() {
   const [mounted, setMounted] = useState(false);
-  const { quotes } = useQuoteStore();
+  const { quotes, loadFromSupabase } = useQuoteStore();
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
@@ -114,7 +114,8 @@ export default function QuoteListPage() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    loadFromSupabase();
+  }, [loadFromSupabase]);
 
   const filteredQuotes = useMemo(() => {
     if (!search) return quotes;

@@ -19,6 +19,7 @@ interface OrgDetailContactsProps {
   onAdd: () => void;
   onEdit: (contact: Contact) => void;
   onDelete: (contactId: string) => void;
+  canDelete?: boolean;
 }
 
 export function OrgDetailContacts({
@@ -26,6 +27,7 @@ export function OrgDetailContacts({
   onAdd,
   onEdit,
   onDelete,
+  canDelete = true,
 }: OrgDetailContactsProps) {
   return (
     <Card>
@@ -88,14 +90,16 @@ export function OrgDetailContacts({
                   >
                     <Pencil className="h-3.5 w-3.5" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => onDelete(contact.id)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  {canDelete && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => onDelete(contact.id)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}

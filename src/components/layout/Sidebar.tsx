@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./SidebarContext";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
   Workflow,
@@ -22,6 +24,8 @@ import {
   FilePlus2,
   FileStack,
   Building2,
+  LogOut,
+  User,
 } from "lucide-react";
 
 const analyticsNav = [
@@ -46,6 +50,7 @@ const quoteBuilderNav = [
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen, sidebarMode, setSidebarMode } = useSidebar();
+  const { profile, isAdmin, signOut } = useAuth();
 
   // Auto-detect mode from route
   useEffect(() => {
@@ -59,10 +64,20 @@ export function Sidebar() {
   const navigation = sidebarMode === "analytics" ? analyticsNav : quoteBuilderNav;
   const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quote Builder";
 
+  // Get user initials
+  const initials = profile?.full_name
+    ? profile.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : profile?.email?.[0]?.toUpperCase() ?? "?";
+
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-brand-navy transition-all duration-300 ease-in-out",
+        "fixed left-0 top-0 z-40 h-screen bg-brand-navy transition-all duration-300 ease-in-out flex flex-col",
         sidebarOpen ? "w-64" : "w-20"
       )}
     >
@@ -164,8 +179,51 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Collapse Toggle */}
-      <div className={cn("absolute bottom-4 left-0 right-0", sidebarOpen ? "px-3" : "px-2")}>
+      {/* User Menu + Collapse Toggle */}
+      <div className={cn("border-t border-white/10", sidebarOpen ? "px-3 py-3" : "px-2 py-3")}>
+        {/* User info */}
+        {profile && (
+          <div className={cn(
+            "mb-2 rounded-xl p-2.5",
+            sidebarOpen ? "bg-white/5" : "flex justify-center"
+          )}>
+            {sidebarOpen ? (
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-green/20 text-brand-green text-xs font-bold shrink-0">
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">
+                    {profile.full_name || profile.email}
+                  </p>
+                  <Badge
+                    variant={isAdmin ? "default" : "secondary"}
+                    className="text-[9px] mt-0.5"
+                  >
+                    {profile.role}
+                  </Badge>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="text-white/40 hover:text-white transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={signOut}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-all"
+                title={`${profile.full_name || profile.email} (${profile.role}) — Sign out`}
+              >
+                <User className="h-4.5 w-4.5" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Collapse toggle */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className={cn(

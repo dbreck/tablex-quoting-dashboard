@@ -21,15 +21,15 @@ import {
 import { User, Building2, Mail, Phone, UserPlus, Plus } from "lucide-react";
 
 export function CustomerStep() {
-  const { draftQuote, setDraftQuote, customers } = useQuoteStore();
-  const { organizations, contacts, seedDealers } = useCrmStore();
+  const { draftQuote, setDraftQuote } = useQuoteStore();
+  const { organizations, contacts, loadFromSupabase: loadCrm } = useCrmStore();
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [selectedOrgId, setSelectedOrgId] = useState<string>("");
   const [selectedContactId, setSelectedContactId] = useState<string>("");
 
   useEffect(() => {
-    seedDealers();
-  }, [seedDealers]);
+    loadCrm();
+  }, [loadCrm]);
 
   const customer = draftQuote?.customer ?? {};
 
@@ -79,20 +79,6 @@ export function CustomerStep() {
         email: contact.email || "",
         phone: contact.phone || "",
       },
-    });
-    setErrors({});
-  }
-
-  function selectExistingCustomer(customerId: string) {
-    if (!draftQuote) return;
-    const existing = customers.find((c) => c.id === customerId);
-    if (!existing) return;
-    setSelectedOrgId("");
-    setSelectedContactId("");
-    setDraftQuote({
-      ...draftQuote,
-      customer: { ...existing },
-      discountTier: existing.defaultTier,
     });
     setErrors({});
   }
@@ -170,32 +156,6 @@ export function CustomerStep() {
                 below.
               </p>
             )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Or select from existing flat customers */}
-      {customers.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <UserPlus className="h-4 w-4" />
-              Or Select Existing Customer
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select onValueChange={selectExistingCustomer}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a saved customer..." />
-              </SelectTrigger>
-              <SelectContent>
-                {customers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name} - {c.company}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </CardContent>
         </Card>
       )}

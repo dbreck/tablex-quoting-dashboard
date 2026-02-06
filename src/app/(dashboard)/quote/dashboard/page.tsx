@@ -26,11 +26,12 @@ const statusBadge: Record<string, "secondary" | "info" | "success" | "error"> = 
 
 export default function QuoteDashboardPage() {
   const [mounted, setMounted] = useState(false);
-  const { quotes } = useQuoteStore();
+  const { quotes, loadFromSupabase } = useQuoteStore();
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    loadFromSupabase();
+  }, [loadFromSupabase]);
 
   if (!mounted) {
     return (

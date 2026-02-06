@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tabs";
 import { useCrmStore } from "@/store/crm-store";
 import { useQuoteStore } from "@/store/quote-store";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { OrganizationCard } from "@/components/crm/OrganizationCard";
 import { OrganizationForm } from "@/components/crm/OrganizationForm";
 import { ContactTable } from "@/components/crm/ContactTable";
@@ -33,11 +34,12 @@ import {
 
 export default function CrmPage() {
   const [mounted, setMounted] = useState(false);
+  const { isAdmin } = useAuth();
   const {
     organizations,
     contacts,
     activities,
-    seedDealers,
+    loadFromSupabase: loadCrm,
     addOrganization,
     updateOrganization,
     deleteOrganization,
@@ -46,7 +48,7 @@ export default function CrmPage() {
     deleteContact,
     addActivity,
   } = useCrmStore();
-  const { quotes } = useQuoteStore();
+  const { quotes, loadFromSupabase: loadQuotes } = useQuoteStore();
 
   const [orgSearch, setOrgSearch] = useState("");
   const [orgDialogOpen, setOrgDialogOpen] = useState(false);
@@ -56,8 +58,9 @@ export default function CrmPage() {
 
   useEffect(() => {
     setMounted(true);
-    seedDealers();
-  }, [seedDealers]);
+    loadCrm();
+    loadQuotes();
+  }, [loadCrm, loadQuotes]);
 
   function getContactCount(orgId: string): number {
     return contacts.filter((c) => c.organizationId === orgId).length;
@@ -254,6 +257,7 @@ export default function CrmPage() {
               setContactDialogOpen(true);
             }}
             onDelete={deleteContact}
+            canDelete={isAdmin}
           />
         </TabsContent>
 

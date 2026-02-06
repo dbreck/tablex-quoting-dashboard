@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuoteStore } from "@/store/quote-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TIER_PRICE_KEYS } from "@/types/quote-builder";
 import { formatCurrency } from "@/lib/utils";
-import catalogData from "@/data/product-catalog.json";
+import { createClient } from "@/lib/supabase/client";
 import { Search, Plus, ShoppingCart, X, ChevronLeft, ChevronRight } from "lucide-react";
 
-type CatalogRow = (typeof catalogData)[number];
+interface CatalogRow {
+  sku: string;
+  series: string;
+  shape_name: string;
+  size: string;
+  list_price: number;
+  price_50_20: number;
+  price_50_20_5: number;
+  price_50_20_10: number;
+  price_50_20_15: number;
+  price_50_20_20: number;
+}
+
+const PAGE_SIZE = 20;
 
 export function ProductSelector() {
   const { draftQuote, addLineItem } = useQuoteStore();
@@ -21,43 +34,67 @@ export function ProductSelector() {
   const [selectedProduct, setSelectedProduct] = useState<CatalogRow | null>(null);
   const [addQty, setAddQty] = useState(1);
   const [page, setPage] = useState(0);
-  const pageSize = 20;
+
+  const [products, setProducts] = useState<CatalogRow[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [uniqueSeries, setUniqueSeries] = useState<string[]>([]);
+  const [uniqueShapes, setUniqueShapes] = useState<string[]>([]);
 
   const tier = draftQuote?.discountTier ?? "50_20";
   const tierKey = TIER_PRICE_KEYS[tier] as keyof CatalogRow;
   const itemCount = draftQuote?.lineItems.length ?? 0;
 
-  const uniqueSeries = useMemo(
-    () => [...new Set(catalogData.map((r) => r.series))].filter(Boolean).sort(),
-    []
-  );
-  const uniqueShapes = useMemo(
-    () => [...new Set(catalogData.map((r) => r.shapeName))].filter(Boolean).sort(),
-    []
-  );
+  // Fetch filter options on mount
+  useEffect(() => {
+    const supabase = createClient();
+    async function loadFilters() {
+      const [seriesRes, shapesRes] = await Promise.all([
+        supabase.from("product_catalog").select("series").order("series"),
+        supabase.from("product_catalog").select("shape_name").order("shape_name"),
+      ]);
+      const seriesSet = [...new Set((seriesRes.data || []).map((r) => r.series))].filter(Boolean).sort();
+      const shapesSet = [...new Set((shapesRes.data || []).map((r) => r.shape_name))].filter(Boolean).sort();
+      setUniqueSeries(seriesSet);
+      setUniqueShapes(shapesSet);
+    }
+    loadFilters();
+  }, []);
 
-  const filteredData = useMemo(() => {
-    let data = catalogData as CatalogRow[];
+  // Fetch products with search, filters, pagination
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    const supabase = createClient();
+
+    let query = supabase
+      .from("product_catalog")
+      .select("sku, series, shape_name, size, list_price, price_50_20, price_50_20_5, price_50_20_10, price_50_20_15, price_50_20_20", { count: "exact" });
+
     if (search) {
-      const q = search.toLowerCase();
-      data = data.filter(
-        (r) =>
-          r.sku.toLowerCase().includes(q) ||
-          r.series.toLowerCase().includes(q) ||
-          r.shapeName.toLowerCase().includes(q)
-      );
+      query = query.or(`sku.ilike.%${search}%,series.ilike.%${search}%,shape_name.ilike.%${search}%`);
     }
     if (seriesFilter.length > 0) {
-      data = data.filter((r) => seriesFilter.includes(r.series));
+      query = query.in("series", seriesFilter);
     }
     if (shapeFilter.length > 0) {
-      data = data.filter((r) => shapeFilter.includes(r.shapeName));
+      query = query.in("shape_name", shapeFilter);
     }
-    return data;
-  }, [search, seriesFilter, shapeFilter]);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-  const pagedData = filteredData.slice(page * pageSize, (page + 1) * pageSize);
+    query = query
+      .order("sku")
+      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+    const { data, count } = await query;
+    setProducts((data as CatalogRow[]) || []);
+    setTotalCount(count || 0);
+    setLoading(false);
+  }, [search, seriesFilter, shapeFilter, page]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   function handleAddToQuote() {
     if (!selectedProduct || !draftQuote) return;
@@ -65,11 +102,11 @@ export function ProductSelector() {
     addLineItem({
       id: Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
       sku: selectedProduct.sku,
-      description: `${selectedProduct.series} ${selectedProduct.shapeName} ${selectedProduct.size}`,
+      description: `${selectedProduct.series} ${selectedProduct.shape_name} ${selectedProduct.size}`,
       series: selectedProduct.series,
-      shape: selectedProduct.shapeName,
+      shape: selectedProduct.shape_name,
       size: selectedProduct.size,
-      listPrice: selectedProduct.listPrice || 0,
+      listPrice: selectedProduct.list_price || 0,
       netPrice,
       quantity: addQty,
       totalPrice: netPrice * addQty,
@@ -175,11 +212,11 @@ export function ProductSelector() {
               <div className="flex-1 min-w-[200px]">
                 <p className="font-mono text-sm font-semibold">{selectedProduct.sku}</p>
                 <p className="text-xs text-slate-500">
-                  {selectedProduct.series} {selectedProduct.shapeName} {selectedProduct.size}
+                  {selectedProduct.series} {selectedProduct.shape_name} {selectedProduct.size}
                 </p>
                 <p className="text-sm mt-1">
                   <span className="text-slate-500">List:</span>{" "}
-                  <span className="line-through text-slate-400">{formatCurrency(selectedProduct.listPrice || 0)}</span>
+                  <span className="line-through text-slate-400">{formatCurrency(selectedProduct.list_price || 0)}</span>
                   <span className="text-brand-green font-semibold ml-2">
                     Net: {formatCurrency((selectedProduct[tierKey] as number) || 0)}
                   </span>
@@ -211,7 +248,7 @@ export function ProductSelector() {
       <Card>
         <CardHeader className="pb-0">
           <CardTitle className="text-base">
-            Products ({filteredData.length.toLocaleString()})
+            Products ({totalCount.toLocaleString()})
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -229,43 +266,50 @@ export function ProductSelector() {
                 </tr>
               </thead>
               <tbody>
-                {pagedData.map((product) => (
-                  <tr
-                    key={product.sku}
-                    className="cursor-pointer hover:bg-slate-50"
-                    onClick={() => { setSelectedProduct(product); setAddQty(1); }}
-                  >
-                    <td className="font-mono text-xs">{product.sku}</td>
-                    <td>
-                      <Badge variant="secondary">{product.series}</Badge>
-                    </td>
-                    <td>{product.shapeName}</td>
-                    <td>{product.size}</td>
-                    <td className="price">{formatCurrency(product.listPrice || 0)}</td>
-                    <td className="price text-brand-green font-semibold">
-                      {formatCurrency((product[tierKey] as number) || 0)}
-                    </td>
-                    <td>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedProduct(product);
-                          setAddQty(1);
-                        }}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="text-center text-slate-400 py-8">
+                      Loading products...
                     </td>
                   </tr>
-                ))}
-                {pagedData.length === 0 && (
+                ) : products.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-center text-slate-400 py-8">
                       No products found. Try adjusting your filters.
                     </td>
                   </tr>
+                ) : (
+                  products.map((product) => (
+                    <tr
+                      key={product.sku}
+                      className="cursor-pointer hover:bg-slate-50"
+                      onClick={() => { setSelectedProduct(product); setAddQty(1); }}
+                    >
+                      <td className="font-mono text-xs">{product.sku}</td>
+                      <td>
+                        <Badge variant="secondary">{product.series}</Badge>
+                      </td>
+                      <td>{product.shape_name}</td>
+                      <td>{product.size}</td>
+                      <td className="price">{formatCurrency(product.list_price || 0)}</td>
+                      <td className="price text-brand-green font-semibold">
+                        {formatCurrency((product[tierKey] as number) || 0)}
+                      </td>
+                      <td>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProduct(product);
+                            setAddQty(1);
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
@@ -274,7 +318,7 @@ export function ProductSelector() {
           {/* Pagination */}
           <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
             <p className="text-sm text-slate-500">
-              Page {page + 1} of {totalPages} ({filteredData.length.toLocaleString()} products)
+              Page {page + 1} of {totalPages || 1} ({totalCount.toLocaleString()} products)
             </p>
             <div className="flex items-center gap-2">
               <Button

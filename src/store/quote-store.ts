@@ -1,29 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Quote, QuoteCustomer, DraftQuote, LineItem } from "@/types/quote-builder";
-import { useCrmStore } from "./crm-store";
-
-function generateId(): string {
-  return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-}
-
-function generateQuoteNumber(): string {
-  const year = new Date().getFullYear().toString().slice(-2);
-  const seq = Math.floor(Math.random() * 9000) + 1000;
-  return `QT-${year}-${seq}`;
-}
+import { createClient } from "@/lib/supabase/client";
 
 interface QuoteStore {
   quotes: Quote[];
-  addQuote: (quote: Omit<Quote, "id" | "createdAt" | "updatedAt" | "quoteNumber">) => string;
-  updateQuote: (id: string, updates: Partial<Quote>) => void;
-  deleteQuote: (id: string) => void;
+  isLoaded: boolean;
+  loadFromSupabase: () => Promise<void>;
+  addQuote: (quote: Omit<Quote, "id" | "createdAt" | "updatedAt" | "quoteNumber">) => Promise<string>;
+  updateQuote: (id: string, updates: Partial<Quote>) => Promise<void>;
+  deleteQuote: (id: string) => Promise<void>;
 
-  customers: QuoteCustomer[];
-  addCustomer: (customer: Omit<QuoteCustomer, "id" | "createdAt">) => string;
-  updateCustomer: (id: string, updates: Partial<QuoteCustomer>) => void;
-  deleteCustomer: (id: string) => void;
-
+  // Draft quote stays in localStorage
   draftQuote: DraftQuote | null;
   setDraftQuote: (draft: DraftQuote | null) => void;
   addLineItem: (item: LineItem) => void;
@@ -31,71 +19,206 @@ interface QuoteStore {
   updateLineItem: (itemId: string, updates: Partial<LineItem>) => void;
 }
 
+function fromSnakeQuote(row: Record<string, unknown>, lineItems: Record<string, unknown>[]): Quote {
+  return {
+    id: row.id as string,
+    quoteNumber: row.quote_number as string,
+    customer: {
+      id: "",
+      name: row.customer_name as string || "",
+      company: row.customer_company as string || "",
+      email: row.customer_email as string || "",
+      phone: row.customer_phone as string | undefined,
+      defaultTier: (row.discount_tier as Quote["discountTier"]) || "50_20",
+      createdAt: row.created_at as string,
+    },
+    projectName: row.project_name as string | undefined,
+    discountTier: (row.discount_tier as Quote["discountTier"]) || "50_20",
+    lineItems: lineItems.map((li) => ({
+      id: li.id as string,
+      sku: li.sku as string,
+      description: li.description as string || "",
+      series: li.series as string || "",
+      shape: li.shape as string || "",
+      size: li.size as string || "",
+      listPrice: Number(li.list_price) || 0,
+      netPrice: Number(li.net_price) || 0,
+      quantity: Number(li.quantity) || 1,
+      totalPrice: Number(li.total_price) || 0,
+      notes: li.notes as string | undefined,
+    })),
+    subtotal: Number(row.subtotal) || 0,
+    additionalDiscount: Number(row.additional_discount) || 0,
+    additionalDiscountType: (row.additional_discount_type as Quote["additionalDiscountType"]) || "percentage",
+    freightZone: row.freight_zone as number | undefined,
+    freightCost: Number(row.freight_cost) || 0,
+    taxRate: Number(row.tax_rate) || 0,
+    taxAmount: Number(row.tax_amount) || 0,
+    total: Number(row.total) || 0,
+    status: (row.status as Quote["status"]) || "draft",
+    notes: row.notes as string | undefined,
+    validUntil: row.valid_until as string || "",
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
+
 export const useQuoteStore = create<QuoteStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       quotes: [],
-      addQuote: (quoteData) => {
-        const id = generateId();
-        const now = new Date().toISOString();
-        const quote: Quote = {
-          ...quoteData,
-          id,
-          quoteNumber: generateQuoteNumber(),
-          createdAt: now,
-          updatedAt: now,
-        };
-        set((state) => ({ quotes: [...state.quotes, quote] }));
-        // Auto-log activity in CRM
+      isLoaded: false,
+
+      loadFromSupabase: async () => {
+        if (get().isLoaded) return;
+        const supabase = createClient();
+
+        const { data: quotesData } = await supabase
+          .from("quotes")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!quotesData || quotesData.length === 0) {
+          set({ isLoaded: true });
+          return;
+        }
+
+        // Fetch all line items for these quotes
+        const quoteIds = quotesData.map((q) => q.id);
+        const { data: lineItemsData } = await supabase
+          .from("quote_line_items")
+          .select("*")
+          .in("quote_id", quoteIds)
+          .order("sort_order");
+
+        // Group line items by quote_id
+        const lineItemsByQuote: Record<string, Record<string, unknown>[]> = {};
+        for (const li of (lineItemsData || [])) {
+          const qid = li.quote_id as string;
+          if (!lineItemsByQuote[qid]) lineItemsByQuote[qid] = [];
+          lineItemsByQuote[qid].push(li);
+        }
+
+        const quotes = quotesData.map((q) =>
+          fromSnakeQuote(q, lineItemsByQuote[q.id] || [])
+        );
+
+        set({ quotes, isLoaded: true });
+      },
+
+      addQuote: async (quoteData) => {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Insert quote (quote_number auto-generated by trigger)
+        const { data, error } = await supabase
+          .from("quotes")
+          .insert({
+            customer_name: quoteData.customer.name,
+            customer_company: quoteData.customer.company,
+            customer_email: quoteData.customer.email,
+            customer_phone: quoteData.customer.phone,
+            project_name: quoteData.projectName,
+            discount_tier: quoteData.discountTier,
+            subtotal: quoteData.subtotal,
+            additional_discount: quoteData.additionalDiscount,
+            additional_discount_type: quoteData.additionalDiscountType,
+            freight_zone: quoteData.freightZone,
+            freight_cost: quoteData.freightCost,
+            tax_rate: quoteData.taxRate,
+            tax_amount: quoteData.taxAmount,
+            total: quoteData.total,
+            status: quoteData.status,
+            notes: quoteData.notes,
+            valid_until: quoteData.validUntil || null,
+            created_by: user?.id,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Insert line items
+        if (quoteData.lineItems.length > 0) {
+          const lineItems = quoteData.lineItems.map((li, i) => ({
+            quote_id: data.id,
+            sku: li.sku,
+            description: li.description,
+            series: li.series,
+            shape: li.shape,
+            size: li.size,
+            list_price: li.listPrice,
+            net_price: li.netPrice,
+            quantity: li.quantity,
+            total_price: li.totalPrice,
+            notes: li.notes,
+            sort_order: i,
+          }));
+
+          await supabase.from("quote_line_items").insert(lineItems);
+        }
+
+        // Fetch back the full quote with line items
+        const { data: liData } = await supabase
+          .from("quote_line_items")
+          .select("*")
+          .eq("quote_id", data.id)
+          .order("sort_order");
+
+        const quote = fromSnakeQuote(data, liData || []);
+        set((state) => ({ quotes: [quote, ...state.quotes] }));
+
+        // Log CRM activity
         try {
+          const { useCrmStore } = await import("./crm-store");
           const crmStore = useCrmStore.getState();
           const org = crmStore.organizations.find(
             (o) => o.name === quoteData.customer.company
           );
-          crmStore.addActivity({
+          await crmStore.addActivity({
             type: "quote_created",
             content: `Quote ${quote.quoteNumber} created for ${quoteData.customer.name}`,
             organizationId: org?.id,
-            quoteId: id,
+            quoteId: quote.id,
           });
         } catch {
-          // CRM store may not be initialized yet
+          // CRM store may not be initialized
         }
-        return id;
+
+        return quote.id;
       },
-      updateQuote: (id, updates) =>
+
+      updateQuote: async (id, updates) => {
+        const supabase = createClient();
+        const payload: Record<string, unknown> = {};
+        if (updates.status !== undefined) payload.status = updates.status;
+        if (updates.notes !== undefined) payload.notes = updates.notes;
+        if (updates.subtotal !== undefined) payload.subtotal = updates.subtotal;
+        if (updates.total !== undefined) payload.total = updates.total;
+        if (updates.freightCost !== undefined) payload.freight_cost = updates.freightCost;
+        if (updates.taxRate !== undefined) payload.tax_rate = updates.taxRate;
+        if (updates.taxAmount !== undefined) payload.tax_amount = updates.taxAmount;
+        if (updates.additionalDiscount !== undefined) payload.additional_discount = updates.additionalDiscount;
+        if (updates.projectName !== undefined) payload.project_name = updates.projectName;
+
+        const { error } = await supabase.from("quotes").update(payload).eq("id", id);
+        if (error) throw error;
+
         set((state) => ({
           quotes: state.quotes.map((q) =>
             q.id === id ? { ...q, ...updates, updatedAt: new Date().toISOString() } : q
           ),
-        })),
-      deleteQuote: (id) =>
-        set((state) => ({
-          quotes: state.quotes.filter((q) => q.id !== id),
-        })),
-
-      customers: [],
-      addCustomer: (customerData) => {
-        const id = generateId();
-        const customer: QuoteCustomer = {
-          ...customerData,
-          id,
-          createdAt: new Date().toISOString(),
-        };
-        set((state) => ({ customers: [...state.customers, customer] }));
-        return id;
+        }));
       },
-      updateCustomer: (id, updates) =>
-        set((state) => ({
-          customers: state.customers.map((c) =>
-            c.id === id ? { ...c, ...updates } : c
-          ),
-        })),
-      deleteCustomer: (id) =>
-        set((state) => ({
-          customers: state.customers.filter((c) => c.id !== id),
-        })),
 
+      deleteQuote: async (id) => {
+        const supabase = createClient();
+        const { error } = await supabase.from("quotes").delete().eq("id", id);
+        if (error) throw error;
+        set((state) => ({ quotes: state.quotes.filter((q) => q.id !== id) }));
+      },
+
+      // Draft quote persists in localStorage
       draftQuote: null,
       setDraftQuote: (draft) => set({ draftQuote: draft }),
       addLineItem: (item) =>
@@ -124,6 +247,10 @@ export const useQuoteStore = create<QuoteStore>()(
     }),
     {
       name: "tablex-quote-builder",
+      // Only persist draft quote to localStorage, not quotes array
+      partialize: (state) => ({
+        draftQuote: state.draftQuote,
+      }),
     }
   )
 );

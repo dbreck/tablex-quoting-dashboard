@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCrmStore } from "@/store/crm-store";
 import { useQuoteStore } from "@/store/quote-store";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { OrgDetailHeader } from "@/components/crm/OrgDetailHeader";
 import { OrgDetailContacts } from "@/components/crm/OrgDetailContacts";
 import { OrgDetailQuotes } from "@/components/crm/OrgDetailQuotes";
@@ -19,19 +20,21 @@ export default function OrgDetailPage() {
   const params = useParams();
   const router = useRouter();
   const orgId = params.orgId as string;
+  const { isAdmin } = useAuth();
 
   const [mounted, setMounted] = useState(false);
   const {
     organizations,
     contacts,
     activities,
+    loadFromSupabase: loadCrm,
     updateOrganization,
     addContact,
     updateContact,
     deleteContact,
     addActivity,
   } = useCrmStore();
-  const { quotes } = useQuoteStore();
+  const { quotes, loadFromSupabase: loadQuotes } = useQuoteStore();
 
   const [orgDialogOpen, setOrgDialogOpen] = useState(false);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
@@ -39,7 +42,9 @@ export default function OrgDetailPage() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    loadCrm();
+    loadQuotes();
+  }, [loadCrm, loadQuotes]);
 
   const organization = organizations.find((o) => o.id === orgId);
   const orgContacts = contacts.filter((c) => c.organizationId === orgId);
@@ -153,6 +158,7 @@ export default function OrgDetailPage() {
               setContactDialogOpen(true);
             }}
             onDelete={deleteContact}
+            canDelete={isAdmin}
           />
           <OrgDetailQuotes quotes={orgQuotes} />
         </div>
