@@ -7,13 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { parseSku, exampleSkus, type ParsedSku } from "@/lib/sku-parser";
-import { Search, Box, Ruler, Layers, Columns3, Settings2, Hash } from "lucide-react";
+import { Search, Box, Ruler, Layers, Columns3, Settings2, Hash, Star } from "lucide-react";
 
 const componentIcons: Record<string, React.ReactNode> = {
+  Special: <Star className="h-5 w-5" />,
   Series: <Layers className="h-5 w-5" />,
   Shape: <Box className="h-5 w-5" />,
   Size: <Ruler className="h-5 w-5" />,
   Base: <Columns3 className="h-5 w-5" />,
+  "Base 2": <Columns3 className="h-5 w-5" />,
   Posts: <Hash className="h-5 w-5" />,
   Option: <Settings2 className="h-5 w-5" />,
   Height: <Ruler className="h-5 w-5" />,
@@ -130,6 +132,26 @@ function SkuDecoderContent() {
 
           {/* Component detail cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger">
+            {parsed.isSpecial && (
+              <Card hover className="animate-slide-up">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 text-orange-600">
+                      {componentIcons.Special}
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider">Prefix</p>
+                      <CardTitle className="text-base">Special Order</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-slate-600">Custom or non-standard configuration</p>
+                  <Badge variant="outline" className="mt-2">SP</Badge>
+                </CardContent>
+              </Card>
+            )}
+
             {parsed.series && (
               <Card hover className="animate-slide-up">
                 <CardHeader className="pb-3">

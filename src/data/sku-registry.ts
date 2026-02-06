@@ -14,8 +14,10 @@ export const seriesCodes: Record<string, { name: string; description: string }> 
   "20": { name: "Summit", description: "Large conference" },
   "25": { name: "Traverse", description: "Training/seminar" },
   "30": { name: "Foundation", description: "Heavy-duty" },
+  "33": { name: "Forte", description: "Enhanced durability" },
   "35": { name: "Vertex", description: "Angular modern" },
   "40": { name: "Crest", description: "Ergonomic" },
+  "44": { name: "Edge", description: "Contemporary" },
   "45": { name: "Ridge", description: "Standing/sitting" },
   "50": { name: "Element", description: "Minimalist" },
   "55": { name: "Catalyst", description: "Collaborative" },
@@ -41,11 +43,17 @@ export const shapeCodes: Record<string, { name: string; icon: string }> = {
   "KD": { name: "Kidney", icon: "kidney" },
   "HX": { name: "Hexagonal", icon: "hexagon" },
   "PW": { name: "Power Top", icon: "power" },
+  "RT": { name: "Racetrack Oval", icon: "racetrack" },
+  "HR": { name: "Half Round", icon: "semicircle" },
+  "CU": { name: "Curved", icon: "circle" },
+  "JP": { name: "Joining Panel", icon: "rectangle-horizontal" },
+  "D": { name: "D-Shape", icon: "semicircle" },
 };
 
 export const baseCodes: Record<string, { name: string; description: string }> = {
   "QD": { name: "Quad Disc", description: "4-point disc base" },
   "T": { name: "T-Base", description: "T-shaped base" },
+  "TT": { name: "T-Base (Twin)", description: "Twin T-shaped base" },
   "X": { name: "X-Base", description: "X-shaped base" },
   "C": { name: "C-Frame", description: "Cantilever frame" },
   "P": { name: "Panel Leg", description: "Panel-style leg" },
@@ -57,6 +65,8 @@ export const baseCodes: Record<string, { name: string; description: string }> = 
   "PD": { name: "Pedestal", description: "Pedestal mount" },
   "WL": { name: "Wall Mount", description: "Wall-mounted" },
   "FD": { name: "Folding", description: "Folding mechanism" },
+  "FR": { name: "Frame", description: "Full frame base" },
+  "U": { name: "U-Leg", description: "U-shaped leg" },
 };
 
 export const optionSuffixes: Record<string, { name: string; description: string }> = {
@@ -70,11 +80,23 @@ export const optionSuffixes: Record<string, { name: string; description: string 
   "PM": { name: "Power Module", description: "Integrated power/data" },
   "GL": { name: "Glides", description: "Floor glide levelers" },
   "AG": { name: "Anti-Glare", description: "Anti-glare surface" },
+  "MATCH": { name: "Match Finish", description: "Match existing order finish" },
+  "PRE": { name: "Pre-wired", description: "Pre-wired for power/data" },
+  "SOLID": { name: "Solid Surface", description: "Solid wood or solid surface top" },
+  "BB": { name: "Bar Base", description: "Bar-height base" },
+  "SELF": { name: "Self Edge", description: "Self-edge banding" },
+  "TJ": { name: "T-Joint", description: "T-joint connection" },
+  "RC": { name: "Radius Corner", description: "Rounded corner edges" },
+  "RA": { name: "Right Angle", description: "Right-angle edge" },
+  "ASB": { name: "Assembly", description: "Assembly required" },
+  "QG": { name: "Quick Glide", description: "Quick-release glides" },
+  "WMCT": { name: "Cable Tray", description: "Wire management cable tray" },
+  "GFLIP": { name: "Flip Top", description: "Flip-top mechanism" },
 };
 
-// Special height pattern: -SH.XX where XX is inches
-export const specialHeightPattern = /SH\.(\d+)/;
-// Grommet pattern: -GR.A, -GR.B etc.
-export const grommitPattern = /GR\.([A-Z])/;
-// Post config pattern: -3P, -4P etc.
-export const postConfigPattern = /(\d)P$/;
+// Special height pattern: -SH.XX where XX is inches (e.g., SH.36, SH.28.5)
+export const specialHeightPattern = /SH\.(\d+(?:\.\d+)?)/;
+// Grommet pattern: -GR.A, -GR.B, -GR.1 etc.
+export const grommitPattern = /GR\.([A-Z0-9]+)/;
+// Post config pattern: -3P, -4P, -3K, -3W etc.
+export const postConfigPattern = /^(\d)[PKW]$/;
