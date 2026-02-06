@@ -130,12 +130,22 @@ export async function POST(request: Request) {
       .eq("id", newUserData.user.id);
   }
 
-  // Send invite email if requested
+  // Send invite email if requested (uses Supabase's built-in email)
   if (send_invite !== false) {
-    await adminClient.auth.admin.generateLink({
-      type: "recovery",
-      email,
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+      || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "http://localhost:3000");
+
+    const { error: inviteError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${siteUrl}/login`,
     });
+
+    if (inviteError) {
+      // User was created but invite failed — still report success with warning
+      return NextResponse.json(
+        { user: newUserData.user, message: `User created but invite email failed: ${inviteError.message}` },
+        { status: 201 }
+      );
+    }
   }
 
   return NextResponse.json(

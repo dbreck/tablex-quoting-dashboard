@@ -43,9 +43,13 @@ export async function POST(
   }
 
   // Use the server client to trigger Supabase's built-in password reset email
-  const serverClient = await createClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "http://localhost:3000");
+
   const { error: resetError } =
-    await serverClient.auth.resetPasswordForEmail(profile.email);
+    await supabase.auth.resetPasswordForEmail(profile.email, {
+      redirectTo: `${siteUrl}/login`,
+    });
 
   if (resetError) {
     return NextResponse.json(
