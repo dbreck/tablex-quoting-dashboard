@@ -136,7 +136,7 @@ export async function POST(request: Request) {
       || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "http://localhost:3000");
 
     const { error: inviteError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl}/login`,
+      redirectTo: `${siteUrl}/auth/callback?next=/auth/set-password`,
     });
 
     if (inviteError) {

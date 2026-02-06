@@ -48,7 +48,7 @@ export async function POST(
 
   const { error: resetError } =
     await supabase.auth.resetPasswordForEmail(profile.email, {
-      redirectTo: `${siteUrl}/login`,
+      redirectTo: `${siteUrl}/auth/callback?next=/auth/set-password`,
     });
 
   if (resetError) {
