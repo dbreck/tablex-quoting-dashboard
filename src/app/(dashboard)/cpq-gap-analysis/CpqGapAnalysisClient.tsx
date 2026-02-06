@@ -340,11 +340,8 @@ function OverviewTab() {
           </div>
           <div>
             <p className="font-semibold text-amber-800">
-              Staff Insight: Root Cause of Slow Quoting
+              Insight: Root Cause of Slow Quoting is Fear of Mistakes
             </p>
-            <blockquote className="text-sm text-slate-600 mt-1 italic">
-              &ldquo;{staffInsight.quote}&rdquo;
-            </blockquote>
             <p className="text-sm text-amber-700 mt-2 font-medium">
               {staffInsight.implication}
             </p>
