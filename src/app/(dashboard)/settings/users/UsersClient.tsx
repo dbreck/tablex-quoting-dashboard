@@ -63,6 +63,7 @@ export default function UsersClient() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
   const [inviteRole, setInviteRole] = useState<"admin" | "contributor">("contributor");
+  const [sendInvite, setSendInvite] = useState(true);
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState<{
     type: "success" | "error";
@@ -112,16 +113,18 @@ export default function UsersClient() {
     const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: inviteEmail, full_name: inviteName, role: inviteRole }),
+      body: JSON.stringify({ email: inviteEmail, full_name: inviteName, role: inviteRole, send_invite: sendInvite }),
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      setInviteMessage({ type: "success", text: data.message || "Invitation sent successfully" });
+      const msg = sendInvite ? "User created and invite sent" : "User created";
+      setInviteMessage({ type: "success", text: data.message || msg });
       setInviteEmail("");
       setInviteName("");
       setInviteRole("contributor");
+      setSendInvite(true);
       loadUsers();
     } else {
       setInviteMessage({ type: "error", text: data.error || "Failed to send invitation" });
@@ -248,6 +251,15 @@ export default function UsersClient() {
               )}
             </Button>
           </form>
+          <label className="flex items-center gap-2 mt-3 cursor-pointer w-fit">
+            <input
+              type="checkbox"
+              checked={sendInvite}
+              onChange={(e) => setSendInvite(e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-brand-green focus:ring-brand-green/50"
+            />
+            <span className="text-sm text-slate-600">Send invite email with password setup link</span>
+          </label>
           {inviteMessage && (
             <div className="mt-3">
               {inviteMessage.type === "success" ? (

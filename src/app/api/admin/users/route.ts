@@ -92,10 +92,11 @@ export async function POST(request: Request) {
 
   // Parse and validate body
   const body = await request.json();
-  const { email, full_name, role } = body as {
+  const { email, full_name, role, send_invite } = body as {
     email?: string;
     full_name?: string;
     role?: "admin" | "contributor";
+    send_invite?: boolean;
   };
 
   if (!email) {
@@ -129,12 +130,16 @@ export async function POST(request: Request) {
       .eq("id", newUserData.user.id);
   }
 
-  // Generate recovery link so the user can set their password
-  // The user will need to reset their password on first login
-  await adminClient.auth.admin.generateLink({
-    type: "recovery",
-    email,
-  });
+  // Send invite email if requested
+  if (send_invite !== false) {
+    await adminClient.auth.admin.generateLink({
+      type: "recovery",
+      email,
+    });
+  }
 
-  return NextResponse.json(newUserData.user, { status: 201 });
+  return NextResponse.json(
+    { user: newUserData.user, message: send_invite !== false ? "User created and invite sent" : "User created" },
+    { status: 201 }
+  );
 }
