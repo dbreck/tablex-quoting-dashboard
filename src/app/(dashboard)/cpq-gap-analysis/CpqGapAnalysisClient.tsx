@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/layout/Header";
 import {
   Card,
@@ -32,6 +32,7 @@ import {
   Cog,
   Database,
   AlertTriangle,
+  Check,
   Lightbulb,
   Palette,
   Rocket,
@@ -706,104 +707,264 @@ function DataArchTab() {
 //  Tab 4: Action Plan
 // ═══════════════════════════════════════════════════════════════════
 
+const STORAGE_KEY_COMPLETED = "cpq-gap-completed";
+const STORAGE_KEY_DECISIONS = "cpq-gap-decisions";
+
+function usePersistedSet(key: string): [Set<number>, (id: number) => void] {
+  const [items, setItems] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) setItems(new Set(JSON.parse(stored)));
+    } catch {}
+  }, [key]);
+
+  const toggle = useCallback(
+    (id: number) => {
+      setItems((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        localStorage.setItem(key, JSON.stringify([...next]));
+        return next;
+      });
+    },
+    [key]
+  );
+
+  return [items, toggle];
+}
+
+function usePersistedMap(
+  key: string
+): [Record<number, string>, (id: number, value: string) => void] {
+  const [items, setItems] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) setItems(JSON.parse(stored));
+    } catch {}
+  }, [key]);
+
+  const select = useCallback(
+    (id: number, value: string) => {
+      setItems((prev) => {
+        const next = { ...prev };
+        if (next[id] === value) delete next[id];
+        else next[id] = value;
+        localStorage.setItem(key, JSON.stringify(next));
+        return next;
+      });
+    },
+    [key]
+  );
+
+  return [items, select];
+}
+
 function ActionPlanTab() {
+  const [completed, toggleCompleted] = usePersistedSet(STORAGE_KEY_COMPLETED);
+  const [selectedDecisions, selectDecision] =
+    usePersistedMap(STORAGE_KEY_DECISIONS);
+
+  const completedCount = completed.size;
+  const decidedCount = Object.keys(selectedDecisions).length;
+
   return (
     <div className="space-y-8">
       {/* What We Can Build Now */}
       <div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-1">
-          What We Can Build Now
-        </h3>
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-lg font-semibold text-slate-900">
+            What We Can Build Now
+          </h3>
+          {completedCount > 0 && (
+            <Badge variant="success" className="text-xs">
+              {completedCount} / {buildableNow.length} done
+            </Badge>
+          )}
+        </div>
         <p className="text-sm text-slate-500 mb-4">
-          8 items ready to start before data arrives
+          {buildableNow.length} items ready to start before data arrives
+          — click to mark complete
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {buildableNow.map((item) => (
-            <Card key={item.id} hover>
-              <CardContent className="p-5">
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-green/10 text-brand-green shrink-0 text-sm font-bold">
-                    {item.id}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-900 text-sm">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {item.description}
-                    </p>
-                    <div className="flex gap-1.5 mt-2">
-                      {item.deps.length === 0 ? (
-                        <Badge variant="success" className="text-[10px]">
-                          Ready
-                        </Badge>
+          {buildableNow.map((item) => {
+            const isDone = completed.has(item.id);
+            return (
+              <Card
+                key={item.id}
+                hover
+                className={cn(
+                  "cursor-pointer transition-all",
+                  isDone && "opacity-60 border-emerald-200 bg-emerald-50/30"
+                )}
+              >
+                <CardContent className="p-5">
+                  <button
+                    onClick={() => toggleCompleted(item.id)}
+                    className="w-full text-left flex items-start gap-3"
+                  >
+                    <div
+                      className={cn(
+                        "flex items-center justify-center w-8 h-8 rounded-lg shrink-0 text-sm font-bold transition-colors",
+                        isDone
+                          ? "bg-emerald-500 text-white"
+                          : "bg-brand-green/10 text-brand-green"
+                      )}
+                    >
+                      {isDone ? (
+                        <Check className="h-4 w-4" />
                       ) : (
-                        item.deps.map((dep, i) => (
-                          <Badge
-                            key={i}
-                            variant="warning"
-                            className="text-[10px]"
-                          >
-                            Depends on #{dep}
-                          </Badge>
-                        ))
+                        item.id
                       )}
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    <div>
+                      <p
+                        className={cn(
+                          "font-semibold text-sm",
+                          isDone
+                            ? "text-slate-400 line-through"
+                            : "text-slate-900"
+                        )}
+                      >
+                        {item.title}
+                      </p>
+                      <p
+                        className={cn(
+                          "text-xs mt-1",
+                          isDone ? "text-slate-400" : "text-slate-500"
+                        )}
+                      >
+                        {item.description}
+                      </p>
+                      <div className="flex gap-1.5 mt-2">
+                        {isDone ? (
+                          <Badge variant="success" className="text-[10px]">
+                            Complete
+                          </Badge>
+                        ) : item.deps.length === 0 ? (
+                          <Badge variant="success" className="text-[10px]">
+                            Ready
+                          </Badge>
+                        ) : (
+                          item.deps.map((dep, i) => (
+                            <Badge
+                              key={i}
+                              variant="warning"
+                              className="text-[10px]"
+                            >
+                              Depends on #{dep}
+                            </Badge>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
       {/* Decisions Needed */}
       <div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-1">
-          Decisions Needed
-        </h3>
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-lg font-semibold text-slate-900">
+            Decisions Needed
+          </h3>
+          {decidedCount > 0 && (
+            <Badge variant="success" className="text-xs">
+              {decidedCount} / {decisions.length} decided
+            </Badge>
+          )}
+        </div>
         <p className="text-sm text-slate-500 mb-4">
-          10 questions that will shape the architecture
+          {decisions.length} questions that will shape the architecture
+          — click an option to select it
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {decisions.map((d) => (
-            <Card key={d.id} hover>
-              <CardContent className="p-5">
-                <div className="flex items-start gap-3">
-                  <span className="text-xs font-mono text-slate-400 mt-0.5">
-                    #{d.id}
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-900 text-sm">
-                      {d.question}
-                    </p>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {d.options.map((opt, i) => (
-                        <Badge
-                          key={i}
-                          variant="outline"
-                          className="text-[10px]"
-                        >
-                          {opt}
-                        </Badge>
-                      ))}
+          {decisions.map((d) => {
+            const selected = selectedDecisions[d.id];
+            const isDecided = !!selected;
+            return (
+              <Card
+                key={d.id}
+                hover
+                className={cn(
+                  "transition-all",
+                  isDecided && "border-emerald-200 bg-emerald-50/30"
+                )}
+              >
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "flex items-center justify-center w-6 h-6 rounded-full shrink-0 mt-0.5 text-[10px] font-bold transition-colors",
+                        isDecided
+                          ? "bg-emerald-500 text-white"
+                          : "bg-slate-100 text-slate-400"
+                      )}
+                    >
+                      {isDecided ? (
+                        <Check className="h-3 w-3" />
+                      ) : (
+                        d.id
+                      )}
                     </div>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {d.impact.map((imp, i) => (
-                        <Badge
-                          key={i}
-                          variant="info"
-                          className="text-[10px]"
-                        >
-                          {imp}
-                        </Badge>
-                      ))}
+                    <div className="flex-1">
+                      <p
+                        className={cn(
+                          "font-semibold text-sm",
+                          isDecided ? "text-slate-600" : "text-slate-900"
+                        )}
+                      >
+                        {d.question}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {d.options.map((opt, i) => {
+                          const isSelected = selected === opt;
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => selectDecision(d.id, opt)}
+                              className={cn(
+                                "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium transition-all border cursor-pointer",
+                                isSelected
+                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300 ring-1 ring-emerald-400"
+                                  : selected
+                                  ? "bg-slate-50 text-slate-400 border-slate-200 hover:border-slate-300"
+                                  : "bg-white text-slate-700 border-slate-200 hover:border-brand-green hover:text-brand-green"
+                              )}
+                            >
+                              {isSelected && (
+                                <Check className="h-2.5 w-2.5 mr-1" />
+                              )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {d.impact.map((imp, i) => (
+                          <Badge
+                            key={i}
+                            variant="info"
+                            className="text-[10px]"
+                          >
+                            {imp}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
