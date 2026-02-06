@@ -12,6 +12,7 @@ import {
   Package,
   ClipboardList,
   Truck,
+  BookOpen,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const navigation = [
   { name: "Catalog", href: "/catalog", icon: Package },
   { name: "Queue", href: "/queue", icon: ClipboardList },
   { name: "Freight", href: "/freight", icon: Truck },
+  { name: "How Quoting Works", href: "/how-quoting-works", icon: BookOpen },
 ];
 
 export function Sidebar() {
