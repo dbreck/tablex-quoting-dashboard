@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./SidebarContext";
 import {
   LayoutDashboard,
   Workflow,
+  Route,
   ScanBarcode,
   DollarSign,
   Package,
@@ -15,11 +17,17 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  BarChart3,
+  FilePlus,
+  FilePlus2,
+  FileStack,
+  Users,
 } from "lucide-react";
 
-const navigation = [
+const analyticsNav = [
   { name: "Overview", href: "/overview", icon: LayoutDashboard },
   { name: "Workflow", href: "/workflow", icon: Workflow },
+  { name: "Customer Journey", href: "/customer-journey", icon: Route },
   { name: "SKU Decoder", href: "/sku-decoder", icon: ScanBarcode },
   { name: "Pricing", href: "/pricing", icon: DollarSign },
   { name: "Catalog", href: "/catalog", icon: Package },
@@ -28,9 +36,28 @@ const navigation = [
   { name: "How Quoting Works", href: "/how-quoting-works", icon: BookOpen },
 ];
 
+const quoteBuilderNav = [
+  { name: "Dashboard", href: "/quote/dashboard", icon: LayoutDashboard },
+  { name: "New Quote", href: "/quote/new", icon: FilePlus },
+  { name: "Quotes", href: "/quote/list", icon: FileStack },
+  { name: "Customers", href: "/quote/customers", icon: Users },
+];
+
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarOpen, setSidebarOpen } = useSidebar();
+  const { sidebarOpen, setSidebarOpen, sidebarMode, setSidebarMode } = useSidebar();
+
+  // Auto-detect mode from route
+  useEffect(() => {
+    if (pathname.startsWith("/quote")) {
+      setSidebarMode("quote-builder");
+    } else {
+      setSidebarMode("analytics");
+    }
+  }, [pathname, setSidebarMode]);
+
+  const navigation = sidebarMode === "analytics" ? analyticsNav : quoteBuilderNav;
+  const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quote Builder";
 
   return (
     <aside
@@ -48,14 +75,73 @@ export function Sidebar() {
           {sidebarOpen && (
             <div className="overflow-hidden">
               <h1 className="text-lg font-bold text-white tracking-tight">TableX</h1>
-              <p className="text-[10px] text-white/50 uppercase tracking-widest">Quote Analytics</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-widest">{subtitle}</p>
             </div>
           )}
         </Link>
       </div>
 
+      {/* Mode Switcher */}
+      {sidebarOpen ? (
+        <div className="px-3 pt-4 pb-2">
+          <div className="flex rounded-lg bg-white/5 p-1">
+            <button
+              onClick={() => setSidebarMode("analytics")}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                sidebarMode === "analytics"
+                  ? "bg-white/15 text-white"
+                  : "text-white/50 hover:text-white/70"
+              )}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span>Analytics</span>
+            </button>
+            <button
+              onClick={() => setSidebarMode("quote-builder")}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                sidebarMode === "quote-builder"
+                  ? "bg-white/15 text-white"
+                  : "text-white/50 hover:text-white/70"
+              )}
+            >
+              <FilePlus2 className="h-3.5 w-3.5" />
+              <span>Builder</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-1 px-2 pt-4 pb-2">
+          <button
+            onClick={() => setSidebarMode("analytics")}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
+              sidebarMode === "analytics"
+                ? "bg-white/10 text-brand-green"
+                : "text-white/40 hover:text-white/70"
+            )}
+            title="Analytics"
+          >
+            <BarChart3 className="h-4.5 w-4.5" />
+          </button>
+          <button
+            onClick={() => setSidebarMode("quote-builder")}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
+              sidebarMode === "quote-builder"
+                ? "bg-white/10 text-brand-green"
+                : "text-white/40 hover:text-white/70"
+            )}
+            title="Quote Builder"
+          >
+            <FilePlus2 className="h-4.5 w-4.5" />
+          </button>
+        </div>
+      )}
+
       {/* Navigation */}
-      <nav className={cn("flex-1 space-y-1", sidebarOpen ? "px-3 py-4" : "px-2 py-4")}>
+      <nav className={cn("flex-1 space-y-1", sidebarOpen ? "px-3 py-2" : "px-2 py-2")}>
         {navigation.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
