@@ -21,6 +21,7 @@ import {
   ChevronRight,
   BarChart3,
   Target,
+  Globe,
   FilePlus,
   FilePlus2,
   FileStack,
@@ -41,6 +42,7 @@ const analyticsNav = [
   { name: "Freight", href: "/freight", icon: Truck },
   { name: "How Quoting Works", href: "/how-quoting-works", icon: BookOpen },
   { name: "CPQ Gap Analysis", href: "/cpq-gap-analysis", icon: Target },
+  { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
 ];
 
 const quoteBuilderNav = [

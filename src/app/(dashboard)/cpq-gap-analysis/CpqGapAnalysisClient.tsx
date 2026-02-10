@@ -55,6 +55,11 @@ import {
   type Priority,
   type RuleCategory,
 } from "@/data/cpq-gap-analysis";
+import {
+  quoteFormAnalysis,
+  type CpqMappingStatus,
+  type SeverityLevel,
+} from "@/data/wp-quote-form-analysis";
 
 // ── Color maps ──────────────────────────────────────────────────────
 
@@ -80,6 +85,29 @@ const personaIcons: Record<string, React.ReactNode> = {
   Palette: <Palette className="h-5 w-5" />,
   Briefcase: <Briefcase className="h-5 w-5" />,
   User: <User className="h-5 w-5" />,
+};
+
+const cpqMappingBadge: Record<CpqMappingStatus, "success" | "warning" | "error" | "secondary" | "info"> = {
+  mapped: "success",
+  partial: "warning",
+  unmapped: "error",
+  deprecated: "secondary",
+  new_in_cpq: "info",
+};
+
+const cpqMappingLabel: Record<CpqMappingStatus, string> = {
+  mapped: "Mapped",
+  partial: "Partial",
+  unmapped: "Unmapped",
+  deprecated: "Deprecated",
+  new_in_cpq: "New in CPQ",
+};
+
+const severityBadge: Record<SeverityLevel, "error" | "warning" | "info" | "secondary"> = {
+  critical: "error",
+  high: "warning",
+  medium: "info",
+  low: "secondary",
 };
 
 // ── Chart colors ────────────────────────────────────────────────────
@@ -110,14 +138,17 @@ export default function CpqGapAnalysisClient() {
     <div>
       <Header
         title="CPQ Gap Analysis"
-        subtitle="Rules matrix, data gaps, architecture decisions, and action plan"
+        subtitle="Rules matrix, data gaps, architecture decisions, quote form analysis, and action plan"
       />
 
       <Tabs defaultValue="overview">
-        <TabsList className="mb-6">
+        <TabsList className="mb-6 flex-wrap">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="rules">Rules Matrix</TabsTrigger>
           <TabsTrigger value="data-arch">Data & Architecture</TabsTrigger>
+          <TabsTrigger value="form-mapping">Quote Form Mapping</TabsTrigger>
+          <TabsTrigger value="ux-problems">UX Problems</TabsTrigger>
+          <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
           <TabsTrigger value="action">Action Plan</TabsTrigger>
         </TabsList>
 
@@ -129,6 +160,15 @@ export default function CpqGapAnalysisClient() {
         </TabsContent>
         <TabsContent value="data-arch">
           <DataArchTab />
+        </TabsContent>
+        <TabsContent value="form-mapping">
+          <QuoteFormMappingTab />
+        </TabsContent>
+        <TabsContent value="ux-problems">
+          <UxProblemsTab />
+        </TabsContent>
+        <TabsContent value="recommendations">
+          <RecommendationsTab />
         </TabsContent>
         <TabsContent value="action">
           <ActionPlanTab />
@@ -966,6 +1006,620 @@ function ActionPlanTab() {
             );
           })}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Tab 5: Quote Form Mapping
+// ═══════════════════════════════════════════════════════════════════
+
+const MAPPED_COLOR = "#10b981";
+const PARTIAL_MAP_COLOR = "#f59e0b";
+const UNMAPPED_COLOR = "#ef4444";
+const DEPRECATED_COLOR = "#94a3b8";
+
+function QuoteFormMappingTab() {
+  const { fields, fieldMappingSummary, meta } = quoteFormAnalysis;
+
+  const mappingDonut = [
+    { name: "Mapped", value: fieldMappingSummary.mapped, color: MAPPED_COLOR },
+    { name: "Partial", value: fieldMappingSummary.partial, color: PARTIAL_MAP_COLOR },
+    { name: "Unmapped", value: fieldMappingSummary.unmapped, color: UNMAPPED_COLOR },
+    { name: "Deprecated", value: fieldMappingSummary.deprecated, color: DEPRECATED_COLOR },
+  ];
+
+  const sections = meta.sections;
+
+  return (
+    <div className="space-y-8">
+      {/* Summary row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Donut */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Field Mapping Status</CardTitle>
+            <CardDescription>
+              {meta.totalFields} fields from Gravity Forms Form #{meta.formId} ({meta.totalEntries.toLocaleString()} entries)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="relative">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={mappingDonut}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={90}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {mappingDonut.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => [`${value} fields`, name]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-slate-900">
+                    {meta.totalFields}
+                  </p>
+                  <p className="text-xs text-slate-500">Fields</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center gap-4 mt-2">
+              {mappingDonut.map((d) => (
+                <div key={d.name} className="flex items-center gap-1.5 text-xs">
+                  <div
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: d.color }}
+                  />
+                  <span className="text-slate-600">
+                    {d.name} ({d.value})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Stat cards */}
+        <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+          <Card hover>
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                Ready to Build
+              </p>
+              <p className="text-3xl font-bold text-emerald-600 mt-1">
+                {fieldMappingSummary.mapped}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Fields fully mapped to CPQ
+              </p>
+            </CardContent>
+          </Card>
+          <Card hover>
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                Needs Work
+              </p>
+              <p className="text-3xl font-bold text-amber-600 mt-1">
+                {fieldMappingSummary.partial}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Partially mapped fields
+              </p>
+            </CardContent>
+          </Card>
+          <Card hover>
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                Not in CPQ
+              </p>
+              <p className="text-3xl font-bold text-red-600 mt-1">
+                {fieldMappingSummary.unmapped}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                No CPQ equivalent yet
+              </p>
+            </CardContent>
+          </Card>
+          <Card hover>
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                To Remove
+              </p>
+              <p className="text-3xl font-bold text-slate-400 mt-1">
+                {fieldMappingSummary.deprecated}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Deprecated in new system
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Fields table grouped by section */}
+      {sections.map((section) => {
+        const sectionFields = fields.filter((f) => f.section === section);
+        if (sectionFields.length === 0) return null;
+        return (
+          <div key={section}>
+            <h3 className="text-lg font-semibold text-slate-900 mb-3">
+              {section}
+              <span className="text-sm font-normal text-slate-400 ml-2">
+                {sectionFields.length} fields
+              </span>
+            </h3>
+            <Card>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-xs text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                      <th className="text-left p-3">Field</th>
+                      <th className="text-left p-3 hidden lg:table-cell">Type</th>
+                      <th className="text-center p-3 hidden sm:table-cell">Req</th>
+                      <th className="text-left p-3">CPQ Status</th>
+                      <th className="text-left p-3 hidden md:table-cell">CPQ Target</th>
+                      <th className="text-left p-3 hidden xl:table-cell">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sectionFields.map((field) => (
+                      <tr
+                        key={field.id}
+                        className="border-t border-slate-50 hover:bg-slate-50/50"
+                      >
+                        <td className="p-3 text-slate-900 font-medium">
+                          {field.label}
+                          <span className="block lg:hidden text-xs text-slate-400 mt-0.5">
+                            {field.type}{field.required ? " · Required" : ""}
+                          </span>
+                        </td>
+                        <td className="p-3 text-slate-500 hidden lg:table-cell">
+                          <Badge variant="outline" className="text-[10px]">
+                            {field.type}
+                          </Badge>
+                        </td>
+                        <td className="p-3 text-center hidden sm:table-cell">
+                          {field.required ? (
+                            <Check className="h-4 w-4 text-emerald-500 mx-auto" />
+                          ) : (
+                            <span className="text-slate-300">&mdash;</span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          <Badge
+                            variant={cpqMappingBadge[field.cpqMapping]}
+                            className="text-[10px]"
+                          >
+                            {cpqMappingLabel[field.cpqMapping]}
+                          </Badge>
+                        </td>
+                        <td className="p-3 text-xs text-slate-500 hidden md:table-cell font-mono">
+                          {field.cpqTarget || <span className="text-slate-300">&mdash;</span>}
+                        </td>
+                        <td className="p-3 text-xs text-slate-500 hidden xl:table-cell max-w-xs">
+                          {field.notes}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Tab 6: UX Problems
+// ═══════════════════════════════════════════════════════════════════
+
+const UX_SEVERITY_COLORS: Record<SeverityLevel, string> = {
+  critical: "#ef4444",
+  high: "#f59e0b",
+  medium: "#3b82f6",
+  low: "#94a3b8",
+};
+
+function UxProblemsTab() {
+  const { uxProblems, dataQualityIssues } = quoteFormAnalysis;
+
+  const severityCounts = uxProblems.reduce(
+    (acc, p) => {
+      acc[p.severity] = (acc[p.severity] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const severityDonut = [
+    { name: "Critical", value: severityCounts.critical || 0, color: UX_SEVERITY_COLORS.critical },
+    { name: "High", value: severityCounts.high || 0, color: UX_SEVERITY_COLORS.high },
+    { name: "Medium", value: severityCounts.medium || 0, color: UX_SEVERITY_COLORS.medium },
+    { name: "Low", value: severityCounts.low || 0, color: UX_SEVERITY_COLORS.low },
+  ].filter((d) => d.value > 0);
+
+  return (
+    <div className="space-y-8">
+      {/* Overview row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Severity Distribution</CardTitle>
+            <CardDescription>
+              {uxProblems.length} UX problems identified
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="relative">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={severityDonut}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={90}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {severityDonut.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => [`${value} issues`, name]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-slate-900">
+                    {uxProblems.length}
+                  </p>
+                  <p className="text-xs text-slate-500">Issues</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center gap-4 mt-2">
+              {severityDonut.map((d) => (
+                <div key={d.name} className="flex items-center gap-1.5 text-xs">
+                  <div
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: d.color }}
+                  />
+                  <span className="text-slate-600">
+                    {d.name} ({d.value})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Summary cards */}
+        <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+          <Card hover className="border-red-200 bg-red-50/30">
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-red-600">
+                Critical
+              </p>
+              <p className="text-3xl font-bold text-red-700 mt-1">
+                {severityCounts.critical || 0}
+              </p>
+              <p className="text-xs text-red-500 mt-1">
+                Must fix before launch
+              </p>
+            </CardContent>
+          </Card>
+          <Card hover className="border-amber-200 bg-amber-50/30">
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-amber-600">
+                High
+              </p>
+              <p className="text-3xl font-bold text-amber-700 mt-1">
+                {severityCounts.high || 0}
+              </p>
+              <p className="text-xs text-amber-500 mt-1">
+                Should fix for MVP
+              </p>
+            </CardContent>
+          </Card>
+          <Card hover>
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                Data Quality Issues
+              </p>
+              <p className="text-3xl font-bold text-slate-900 mt-1">
+                {dataQualityIssues.length}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Fields with bad data patterns
+              </p>
+            </CardContent>
+          </Card>
+          <Card hover>
+            <CardContent className="p-6">
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                Categories
+              </p>
+              <p className="text-3xl font-bold text-slate-900 mt-1">
+                {new Set(uxProblems.map((p) => p.category)).size}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Distinct problem categories
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* UX Problems list */}
+      <div>
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">
+          UX Problems by Severity
+        </h3>
+        <div className="space-y-4">
+          {uxProblems.map((problem) => (
+            <Card key={problem.id} hover>
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-mono text-slate-400">
+                      {problem.id}
+                    </span>
+                    <p className="font-semibold text-slate-900">
+                      {problem.title}
+                    </p>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <Badge
+                      variant={severityBadge[problem.severity]}
+                      className="text-[10px]"
+                    >
+                      {problem.severity.toUpperCase()}
+                    </Badge>
+                    <Badge variant="outline" className="text-[10px]">
+                      {problem.category}
+                    </Badge>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600 mb-3">
+                  {problem.description}
+                </p>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+                    Impact
+                  </p>
+                  <p className="text-xs text-slate-600">{problem.impact}</p>
+                </div>
+                {problem.affectedFields && problem.affectedFields[0] !== "all" && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {problem.affectedFields.map((fId) => (
+                      <Badge key={fId} variant="outline" className="text-[10px] font-mono">
+                        {fId}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Data Quality Issues */}
+      <div>
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">
+          Data Quality Issues
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {dataQualityIssues.map((dq) => (
+            <Card key={dq.id} hover>
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-slate-400">
+                      {dq.id}
+                    </span>
+                    <Badge variant="outline" className="text-[10px] font-mono">
+                      {dq.field}
+                    </Badge>
+                  </div>
+                  <Badge
+                    variant={severityBadge[dq.severity]}
+                    className="text-[10px]"
+                  >
+                    {dq.severity.toUpperCase()}
+                  </Badge>
+                </div>
+                <p className="font-semibold text-sm text-slate-900 mb-3">
+                  {dq.issue}
+                </p>
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-red-500 font-semibold">
+                      Current behavior
+                    </p>
+                    <p className="text-slate-600">{dq.currentBehavior}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-emerald-600 font-semibold">
+                      Desired behavior
+                    </p>
+                    <p className="text-slate-600">{dq.desiredBehavior}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-blue-600 font-semibold">
+                      CPQ solution
+                    </p>
+                    <p className="text-slate-700">{dq.cpqSolution}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Tab 7: Recommendations
+// ═══════════════════════════════════════════════════════════════════
+
+const effortBadge: Record<string, "success" | "warning" | "error"> = {
+  small: "success",
+  medium: "warning",
+  large: "error",
+};
+
+const categoryLabel: Record<string, string> = {
+  ux: "UX",
+  data: "Data",
+  pricing: "Pricing",
+  workflow: "Workflow",
+  integration: "Integration",
+};
+
+function RecommendationsTab() {
+  const { recommendations } = quoteFormAnalysis;
+
+  const sorted = [...recommendations].sort((a, b) => {
+    const order: Record<SeverityLevel, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+    return order[a.priority] - order[b.priority];
+  });
+
+  const priorityCounts = recommendations.reduce(
+    (acc, r) => {
+      acc[r.priority] = (acc[r.priority] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  return (
+    <div className="space-y-8">
+      {/* Summary stat row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card hover className="border-red-200 bg-red-50/30">
+          <CardContent className="p-5">
+            <p className="text-xs uppercase tracking-wider text-red-600">
+              Critical
+            </p>
+            <p className="text-3xl font-bold text-red-700 mt-1">
+              {priorityCounts.critical || 0}
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover className="border-amber-200 bg-amber-50/30">
+          <CardContent className="p-5">
+            <p className="text-xs uppercase tracking-wider text-amber-600">
+              High
+            </p>
+            <p className="text-3xl font-bold text-amber-700 mt-1">
+              {priorityCounts.high || 0}
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover className="border-blue-200 bg-blue-50/30">
+          <CardContent className="p-5">
+            <p className="text-xs uppercase tracking-wider text-blue-600">
+              Medium
+            </p>
+            <p className="text-3xl font-bold text-blue-700 mt-1">
+              {priorityCounts.medium || 0}
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover>
+          <CardContent className="p-5">
+            <p className="text-xs uppercase tracking-wider text-slate-500">
+              Low
+            </p>
+            <p className="text-3xl font-bold text-slate-700 mt-1">
+              {priorityCounts.low || 0}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recommendations list */}
+      <div className="space-y-4">
+        {sorted.map((rec) => (
+          <Card key={rec.id} hover>
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-green/10 text-brand-green shrink-0 text-sm font-bold">
+                    {rec.id}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">{rec.title}</p>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      <Badge
+                        variant={severityBadge[rec.priority]}
+                        className="text-[10px]"
+                      >
+                        {rec.priority.toUpperCase()}
+                      </Badge>
+                      <Badge
+                        variant={effortBadge[rec.effort]}
+                        className="text-[10px]"
+                      >
+                        {rec.effort.toUpperCase()} effort
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px]">
+                        {categoryLabel[rec.category] || rec.category}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-600 mb-3">
+                {rec.description}
+              </p>
+
+              <div className="bg-slate-50 rounded-lg p-3 mb-3">
+                <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+                  Rationale
+                </p>
+                <p className="text-xs text-slate-600">{rec.rationale}</p>
+              </div>
+
+              {rec.dependencies && rec.dependencies.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+                    Dependencies
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {rec.dependencies.map((dep, i) => (
+                      <Badge key={i} variant="warning" className="text-[10px]">
+                        {dep}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
