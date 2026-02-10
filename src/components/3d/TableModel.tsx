@@ -18,7 +18,6 @@ function applyFinish(mesh: THREE.Mesh, finish: FinishOption) {
     roughness: finish.roughness,
     metalness: finish.metalness,
   });
-  // Dispose previous material
   if (mesh.material) {
     const prev = mesh.material as THREE.Material;
     prev.dispose();
@@ -58,12 +57,12 @@ function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelP
   return <primitive object={clone} />;
 }
 
-// Error boundary to catch useGLTF load failures without crashing the app
+// Error boundary that resets when key changes (via key={url} on parent)
 class ModelErrorBoundary extends Component<
-  { children: ReactNode; fallback?: ReactNode },
+  { children: ReactNode },
   { hasError: boolean }
 > {
-  constructor(props: { children: ReactNode; fallback?: ReactNode }) {
+  constructor(props: { children: ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -78,15 +77,19 @@ class ModelErrorBoundary extends Component<
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ?? null;
+      return null;
     }
     return this.props.children;
   }
 }
 
+/**
+ * Wraps the model loader in an error boundary keyed by URL.
+ * When the URL changes, React remounts the boundary, clearing any error state.
+ */
 export function TableModel(props: TableModelProps) {
   return (
-    <ModelErrorBoundary>
+    <ModelErrorBoundary key={props.url}>
       <TableModelInner {...props} />
     </ModelErrorBoundary>
   );

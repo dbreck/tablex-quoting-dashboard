@@ -57,6 +57,12 @@ const SERIES_BASES: Record<string, string[]> = {
   "33": ["T", "X", "U"],   // Fundamental: placeholder until converted
 };
 
+// Default "hero" model per series — shown immediately when series is selected
+// before user picks shape/size/base (a representative table for the series)
+const SERIES_DEFAULT_GLB: Record<string, string> = {
+  "00": "tc3060u28.glb",   // Ultra: 30x60 rectangular, U-leg
+};
+
 // Shape display names from compatibility-matrices
 const SHAPE_NAMES: Record<string, string> = {
   TC: "Rectangular",
@@ -164,13 +170,20 @@ export default function ConfiguratorPage() {
     return SERIES_BASES[series] ?? getBasesForShape(shape);
   }, [series, shape]);
 
-  // Resolve model URL from config
-  const { url: modelUrl } = useModelUrl({
+  // Resolve model URL from config — falls back to series default hero model
+  const { url: configModelUrl } = useModelUrl({
     series,
     shape,
     size,
     base,
   });
+
+  const defaultGlb = series ? SERIES_DEFAULT_GLB[series] : undefined;
+  const defaultUrl = defaultGlb
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/models/${defaultGlb}`
+    : null;
+
+  const modelUrl = configModelUrl ?? defaultUrl;
 
   // Reset dependent selections when parent changes
   function handleSeriesChange(val: string) {
