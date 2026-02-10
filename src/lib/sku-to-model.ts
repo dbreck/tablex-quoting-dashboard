@@ -5,9 +5,9 @@ export const SUPABASE_STORAGE_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/sto
 
 // Series that have CAD files (and will have GLB models)
 const SERIES_WITH_CAD: Record<string, string> = {
+  '00': 'Ultra',
   '30': 'Foundation',
   '33': 'Fundamental',
-  '80': 'Ultra',
 };
 
 export interface ConfigInput {
@@ -19,27 +19,36 @@ export interface ConfigInput {
 }
 
 /**
- * Build a geometry key from parsed config parts.
- * The key uniquely identifies a 3D shape (series + shape + size + base).
- * Example: "30-TC-2060-U" or "80-RD-48-RB"
+ * Build a GLB filename from parsed config parts.
+ *
+ * Matches the conversion pipeline naming convention:
+ *   DWG filename "Ultra-00TC2448U22.dwg" -> strip prefix + series code -> "tc2448u22.glb"
+ *
+ * The filename is: {shape}{size}{base}{baseWidth}.glb, all lowercase.
+ * For dual-base configs (e.g., U34U18), both bases are included.
  */
-export function getGeometryKey(config: {
+export function getGlbFilename(config: {
   shape?: string;
   size?: string;
   base?: string;
+  baseWidth?: string;
   options?: string[];
 }): string | null {
   const { shape, size, base } = config;
   if (!shape || !size) return null;
 
-  const parts = [shape, size];
-  if (base) parts.push(base);
+  // Concatenate shape + size + base (+ baseWidth if present), lowercase
+  let name = `${shape}${size}`;
+  if (base) {
+    name += base;
+    if (config.baseWidth) name += config.baseWidth;
+  }
 
-  return parts.join('-');
+  return `${name.toLowerCase()}.glb`;
 }
 
 /**
- * Full pipeline: parse SKU -> check series has CAD -> build geometry key -> return Supabase URL.
+ * Full pipeline: parse SKU -> check series has CAD -> build GLB filename -> return Supabase URL.
  */
 export function getModelUrl(sku: string): string | null {
   const parsed = parseSku(sku);
@@ -48,15 +57,18 @@ export function getModelUrl(sku: string): string | null {
   const seriesCode = parsed.series.code;
   if (!SERIES_WITH_CAD[seriesCode]) return null;
 
-  const geoKey = getGeometryKey({
+  // Extract base width from the parsed base (e.g., base code "U" + width "22")
+  const baseWidth = parsed.base?.width?.replace('"', '') ?? undefined;
+
+  const filename = getGlbFilename({
     shape: parsed.shape.code,
     size: parsed.size.raw,
     base: parsed.base?.code,
+    baseWidth,
   });
-  if (!geoKey) return null;
+  if (!filename) return null;
 
-  const seriesName = SERIES_WITH_CAD[seriesCode].toLowerCase();
-  return `${SUPABASE_STORAGE_URL}/${seriesName}/${seriesCode}-${geoKey}.glb`;
+  return `${SUPABASE_STORAGE_URL}/${filename}`;
 }
 
 /**
@@ -67,11 +79,10 @@ export function getModelUrlFromConfig(config: ConfigInput): string | null {
   if (!series || !shape || !size) return null;
   if (!SERIES_WITH_CAD[series]) return null;
 
-  const geoKey = getGeometryKey({ shape, size, base });
-  if (!geoKey) return null;
+  const filename = getGlbFilename({ shape, size, base });
+  if (!filename) return null;
 
-  const seriesName = SERIES_WITH_CAD[series].toLowerCase();
-  return `${SUPABASE_STORAGE_URL}/${seriesName}/${series}-${geoKey}.glb`;
+  return `${SUPABASE_STORAGE_URL}/${filename}`;
 }
 
 /**

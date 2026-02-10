@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { getModelUrl, getModelUrlFromConfig, getGeometryKey } from "@/lib/sku-to-model";
+import { getModelUrl, getModelUrlFromConfig, getGlbFilename } from "@/lib/sku-to-model";
 
 interface UseModelUrlInput {
   sku?: string;
@@ -31,11 +31,10 @@ export function useModelUrl(config: UseModelUrlInput) {
       options: config.options,
     });
 
-    const geometryKey = getGeometryKey({
+    const geometryKey = getGlbFilename({
       shape: config.shape,
       size: config.size,
       base: config.base,
-      options: config.options,
     });
 
     return {

@@ -36,6 +36,9 @@ yarn-error.log*
 # supabase
 supabase/.temp/
 
+# CAD/3D model working files (DWG, DXF, GLB originals — GLBs served from Supabase)
+/catalog/
+
 # vercel
 .vercel
 

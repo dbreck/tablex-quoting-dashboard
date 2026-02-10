@@ -2,329 +2,273 @@
 """
 02-dxf-to-glb.py
 
-Blender headless script that imports DXF files, normalizes geometry,
-applies mesh group naming heuristics, and exports GLB with Draco compression.
+Pure Python DXF-to-GLB converter using ezdxf + trimesh.
+Extracts 3D polyface mesh geometry from DXF files, groups meshes by
+layer name (top, base, edge), and exports as GLB with named nodes.
+
+No Blender required.
+
+Dependencies:
+    pip install ezdxf trimesh pygltflib scipy numpy
 
 Usage:
-    blender --background --python scripts/convert-dwg/02-dxf-to-glb.py -- \\
-        --input-dir ./catalog/dxf/Foundation \\
+    python3 scripts/convert-dwg/02-dxf-to-glb.py \
+        --input-dir ./catalog/dxf/Ultra \
         --output-dir ./catalog/glb
 
-Mesh naming heuristics:
-    - 'top'  : tabletop surfaces (highest Y bounding box center)
-    - 'base' : legs and bases (lowest Y bounding box center)
-    - 'edge' : edge banding (thin geometry near the top surface perimeter)
-
 GLB naming convention:
-    Strip series prefix, normalize to lowercase.
-    Example: Foundation-01TC2448T20.dxf -> tc2448t20.glb
+    Strip series prefix + 2-digit code, normalize lowercase.
+    Example: Ultra-00TC2448U22.dxf -> tc2448u22.glb
 """
 
-import sys
+import argparse
+import json
 import os
 import re
-import argparse
+import sys
 from pathlib import Path
 
-# Blender modules — only available when run inside Blender
 try:
-    import bpy
-    import mathutils
+    import ezdxf
 except ImportError:
-    print("ERROR: This script must be run inside Blender.")
-    print("Usage: blender --background --python 02-dxf-to-glb.py -- --input-dir <dir> --output-dir <dir>")
-    sys.exit(1)
+    sys.exit("Missing ezdxf: pip install ezdxf")
+
+try:
+    import trimesh
+except ImportError:
+    sys.exit("Missing trimesh: pip install trimesh pygltflib scipy")
+
+import numpy as np
+
+# ── Layer name classification ──────────────────────────────────────────
+# Maps substrings found in DXF layer names to mesh group names.
+# Based on observed TableX conventions across series:
+#   AFUTL-3-TPLM  = top laminate
+#   AFUTL-3-EDPL  = edge profile
+#   AFUTL-3-LGCH  = leg chrome
+#   AFUTL-3-GDPL  = guide plate (base structure)
+#   AFUTL-3-HWPT  = hardware/pivot (misc)
+
+LAYER_GROUP_MAP = {
+    # Top surface
+    "TPLM": "top",
+    "TPWD": "top",
+    "TOP": "top",
+    "LAM": "top",
+    "SURF": "top",
+    # Edge banding
+    "EDPL": "edge",
+    "EDGE": "edge",
+    "BAND": "edge",
+    "EDMB": "edge",
+    # Base / legs
+    "LGCH": "base",
+    "LGPL": "base",
+    "LGWD": "base",
+    "LEG": "base",
+    "BASE": "base",
+    "GDPL": "base",
+    "GDCH": "base",
+    "FRAME": "base",
+    "SUPP": "base",
+    "FTPL": "base",
+    "FTCH": "base",
+    "GLDE": "base",
+}
+
+# Default vertex colors per group (RGBA 0-255)
+GROUP_COLORS = {
+    "top": [217, 217, 217, 255],    # light gray (laminate)
+    "base": [77, 77, 77, 255],      # dark gray (powder coat)
+    "edge": [153, 153, 153, 255],   # medium gray
+    "other": [128, 128, 128, 255],
+}
 
 
-def parse_args():
-    """Parse arguments after the '--' separator in the Blender command line."""
-    argv = sys.argv
-    if "--" in argv:
-        argv = argv[argv.index("--") + 1:]
-    else:
-        argv = []
-
-    parser = argparse.ArgumentParser(
-        description="Convert DXF files to GLB with mesh group naming"
-    )
-    parser.add_argument(
-        "--input-dir",
-        type=str,
-        required=True,
-        help="Directory containing DXF files",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=str,
-        required=True,
-        help="Output directory for GLB files",
-    )
-    parser.add_argument(
-        "--scale",
-        type=float,
-        default=0.0254,
-        help="Scale factor (default: 0.0254 for inches to meters)",
-    )
-    return parser.parse_args(argv)
+def classify_layer(layer_name: str) -> str:
+    """Classify a DXF layer name into a mesh group."""
+    upper = layer_name.upper()
+    for pattern, group in LAYER_GROUP_MAP.items():
+        if pattern in upper:
+            return group
+    return "other"
 
 
-def clear_scene():
-    """Remove all objects from the current Blender scene."""
-    bpy.ops.object.select_all(action="SELECT")
-    bpy.ops.object.delete(use_global=False)
+def extract_mesh_from_polyface(entity) -> tuple:
+    """Extract vertices and triangulated faces from a polyface mesh entity.
 
-    # Also clean up orphan data
-    for block in [bpy.data.meshes, bpy.data.materials, bpy.data.curves]:
-        for item in block:
-            if item.users == 0:
-                block.remove(item)
+    Decomposes the polyface into virtual 3DFACE entities, deduplicates
+    vertices, and triangulates quads.
+
+    Returns:
+        (vertices: ndarray[N,3], faces: ndarray[M,3])
+    """
+    faces_3d = list(entity.virtual_entities())
+    if not faces_3d:
+        return np.array([]).reshape(0, 3), np.array([]).reshape(0, 3)
+
+    vert_map = {}
+    vert_list = []
+    all_faces = []
+
+    for face in faces_3d:
+        indices = []
+        for attr in ("vtx0", "vtx1", "vtx2", "vtx3"):
+            v = getattr(face.dxf, attr)
+            key = (round(v.x, 6), round(v.y, 6), round(v.z, 6))
+            if key not in vert_map:
+                vert_map[key] = len(vert_list)
+                vert_list.append(key)
+            indices.append(vert_map[key])
+
+        i0, i1, i2, i3 = indices
+        all_faces.append([i0, i1, i2])
+        if i2 != i3:  # real quad — add second triangle
+            all_faces.append([i0, i2, i3])
+
+    return np.array(vert_list, dtype=np.float64), np.array(all_faces, dtype=np.int64)
 
 
 def normalize_glb_name(dxf_filename: str) -> str:
-    """
-    Convert a DXF filename to the GLB naming convention.
-    Strip series prefix (everything before and including the first hyphen
-    followed by the series code), normalize to lowercase.
+    """Convert DXF filename to GLB naming convention.
 
+    Strip series prefix + 2-digit series code, normalize lowercase.
     Examples:
-        Foundation-01TC2448T20.dxf -> tc2448t20.glb
-        Ultra-00BT3084U28.dxf     -> bt3084u28.glb
-        Element-33AS2044T18.dxf   -> as2044t18.glb
-        43TC2460FR2157.R-3P.dxf   -> tc2460fr2157.r-3p.glb
+        Ultra-00TC2448U22.dxf    -> tc2448u22.glb
+        Foundation-30TC3060T20.dxf -> tc3060t20.glb
+        43TC2460FR2157.R-3P.dxf  -> tc2460fr2157.r-3p.glb
     """
     stem = Path(dxf_filename).stem
 
     # Pattern: SeriesName-##CODE... -> strip "SeriesName-##"
-    # Matches series prefix like "Foundation-01", "Ultra-00", "Element-33"
     match = re.match(r"^[A-Za-z]+-(\d{2})(.+)$", stem)
     if match:
-        # Keep everything after the 2-digit series code
         name = match.group(2).lower()
     else:
-        # Artisan-style: starts with the series code directly (e.g. "43TC2460...")
         match2 = re.match(r"^(\d{2})(.+)$", stem)
         if match2:
             name = match2.group(2).lower()
         else:
-            # Fallback: just lowercase the whole stem
             name = stem.lower()
 
-    # Clean up: remove trailing underscores, parenthetical dupes like "(1)"
+    # Clean up parenthesized suffixes
     name = re.sub(r"\(\d+\)$", "", name)
     name = name.rstrip("_")
-
     return f"{name}.glb"
 
 
-def center_and_scale(scale_factor: float):
-    """Center all geometry at origin and apply scale normalization."""
-    # Select all mesh objects
-    bpy.ops.object.select_all(action="SELECT")
-    meshes = [obj for obj in bpy.context.selected_objects if obj.type == "MESH"]
+def dxf_to_glb(dxf_path: str, glb_path: str) -> dict:
+    """Convert a single DXF file to GLB.
 
-    if not meshes:
-        return
+    Reads polyface mesh entities, groups by layer classification,
+    merges each group into a single mesh, centers at origin, converts
+    inches to meters, and exports as a GLB scene with named nodes.
 
-    # Calculate combined bounding box
-    min_corner = mathutils.Vector((float("inf"),) * 3)
-    max_corner = mathutils.Vector((float("-inf"),) * 3)
-
-    for obj in meshes:
-        for corner in obj.bound_box:
-            world_corner = obj.matrix_world @ mathutils.Vector(corner)
-            for i in range(3):
-                min_corner[i] = min(min_corner[i], world_corner[i])
-                max_corner[i] = max(max_corner[i], world_corner[i])
-
-    # Center point
-    center = (min_corner + max_corner) / 2
-
-    # Move all objects so center is at origin
-    for obj in meshes:
-        obj.location -= center
-
-    # Apply scale factor
-    for obj in meshes:
-        obj.scale *= scale_factor
-
-    # Apply transforms
-    bpy.ops.object.select_all(action="SELECT")
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-
-
-def classify_mesh_groups():
+    Returns a stats dict with vertex/face counts, groups, and file size.
     """
-    Classify mesh objects into 'top', 'base', and 'edge' groups using
-    bounding box heuristics.
+    doc = ezdxf.readfile(dxf_path)
+    msp = doc.modelspace()
 
-    Heuristics:
-    - Sort meshes by their bounding box center Y coordinate (height)
-    - Highest Y center = 'top' (tabletop)
-    - Lowest Y center = 'base' (legs/support)
-    - Thin meshes near the top = 'edge' (edge banding)
-    """
-    meshes = [obj for obj in bpy.data.objects if obj.type == "MESH"]
+    # Group polyface meshes by classified layer
+    groups = {}  # group_name -> list of (vertices, faces, layer_name)
 
-    if not meshes:
-        return
-
-    # Calculate bounding box stats for each mesh
-    mesh_stats = []
-    for obj in meshes:
-        bb = [obj.matrix_world @ mathutils.Vector(c) for c in obj.bound_box]
-        y_values = [v.y for v in bb]
-        z_values = [v.z for v in bb]
-        x_values = [v.x for v in bb]
-
-        y_center = (min(y_values) + max(y_values)) / 2
-        y_height = max(y_values) - min(y_values)
-        z_height = max(z_values) - min(z_values)
-        x_width = max(x_values) - min(x_values)
-
-        mesh_stats.append({
-            "obj": obj,
-            "y_center": y_center,
-            "y_min": min(y_values),
-            "y_max": max(y_values),
-            "y_height": y_height,
-            "z_height": z_height,
-            "x_width": x_width,
-            "volume_proxy": y_height * z_height * x_width,
-        })
-
-    if len(mesh_stats) == 1:
-        # Single mesh — just name it 'top' (it's the whole table)
-        mesh_stats[0]["obj"].name = "top"
-        return
-
-    # Sort by Y center (ascending = bottom to top)
-    mesh_stats.sort(key=lambda m: m["y_center"])
-
-    # Overall bounding box height
-    overall_y_min = min(m["y_min"] for m in mesh_stats)
-    overall_y_max = max(m["y_max"] for m in mesh_stats)
-    overall_height = overall_y_max - overall_y_min
-
-    if overall_height == 0:
-        overall_height = 1  # Prevent division by zero
-
-    for stats in mesh_stats:
-        obj = stats["obj"]
-        relative_y = (stats["y_center"] - overall_y_min) / overall_height
-
-        # Thin geometry in the upper region = edge banding
-        is_thin = stats["y_height"] < (overall_height * 0.05)
-        is_upper = relative_y > 0.6
-
-        if is_thin and is_upper:
-            obj.name = "edge"
-        elif relative_y > 0.6:
-            obj.name = "top"
-        else:
-            obj.name = "base"
-
-    # Handle duplicates by adding suffixes
-    name_counts: dict[str, int] = {}
-    for obj in bpy.data.objects:
-        if obj.type != "MESH":
+    for entity in msp:
+        if entity.dxftype() != "POLYLINE" or not entity.is_poly_face_mesh:
             continue
-        base_name = obj.name
-        if base_name in name_counts:
-            name_counts[base_name] += 1
-            obj.name = f"{base_name}.{name_counts[base_name]:03d}"
-        else:
-            name_counts[base_name] = 0
 
+        layer = entity.dxf.layer
+        group = classify_layer(layer)
+        vertices, faces = extract_mesh_from_polyface(entity)
 
-def apply_default_materials():
-    """Apply a neutral gray material to all meshes that lack materials."""
-    default_mat = bpy.data.materials.get("DefaultGray")
-    if default_mat is None:
-        default_mat = bpy.data.materials.new(name="DefaultGray")
-        default_mat.use_nodes = True
-        bsdf = default_mat.node_tree.nodes.get("Principled BSDF")
-        if bsdf:
-            bsdf.inputs["Base Color"].default_value = (0.7, 0.7, 0.7, 1.0)
-            bsdf.inputs["Roughness"].default_value = 0.5
-            bsdf.inputs["Metallic"].default_value = 0.0
+        if len(vertices) == 0:
+            continue
 
-    for obj in bpy.data.objects:
-        if obj.type == "MESH" and len(obj.data.materials) == 0:
-            obj.data.materials.append(default_mat)
+        if group not in groups:
+            groups[group] = []
+        groups[group].append((vertices, faces, layer))
 
+    if not groups:
+        return {"error": "No polyface meshes found", "file": os.path.basename(dxf_path)}
 
-def import_dxf(filepath: str) -> bool:
-    """Import a DXF file into the current scene."""
-    try:
-        bpy.ops.import_scene.dxf(filepath=filepath)
-        return True
-    except Exception as e:
-        print(f"  ERROR importing {filepath}: {e}")
-        # Try alternative import if available
-        try:
-            bpy.ops.import_mesh.dxf(filepath=filepath)
-            return True
-        except Exception:
-            return False
+    # Calculate global bounding box for centering
+    all_points = []
+    for meshes in groups.values():
+        for verts, _, _ in meshes:
+            all_points.append(verts)
+    global_verts = np.vstack(all_points)
+    global_center_xy = global_verts[:, :2].mean(axis=0)
+    global_z_min = global_verts[:, 2].min()
 
+    # Build trimesh scene with named nodes
+    scene = trimesh.Scene()
+    total_verts = 0
+    total_faces = 0
 
-def export_glb(filepath: str):
-    """Export the scene as GLB with Draco compression."""
-    bpy.ops.object.select_all(action="SELECT")
-    bpy.ops.export_scene.gltf(
-        filepath=filepath,
-        export_format="GLB",
-        use_selection=True,
-        export_draco_mesh_compression_enable=True,
-        export_draco_mesh_compression_level=6,
-        export_draco_position_quantization=14,
-        export_draco_normal_quantization=10,
-        export_draco_texcoord_quantization=12,
-        export_apply=True,
-    )
+    for group_name, meshes in groups.items():
+        # Merge all meshes in this group
+        merged_verts_list = []
+        merged_faces_list = []
+        offset = 0
 
+        for verts, faces, _ in meshes:
+            merged_verts_list.append(verts)
+            merged_faces_list.append(faces + offset)
+            offset += len(verts)
 
-def process_file(dxf_path: Path, output_dir: Path, scale: float) -> bool:
-    """Process a single DXF file: import, normalize, classify, export."""
-    glb_name = normalize_glb_name(dxf_path.name)
-    glb_path = output_dir / glb_name
+        merged_verts = np.vstack(merged_verts_list)
+        merged_faces = np.vstack(merged_faces_list)
 
-    print(f"  {dxf_path.name} -> {glb_name}")
+        # Convert inches to meters
+        merged_verts = merged_verts * 0.0254
 
-    # Clear existing scene
-    clear_scene()
+        # Center XY at origin, Z at ground plane (shared across all groups)
+        merged_verts[:, 0] -= global_center_xy[0] * 0.0254
+        merged_verts[:, 1] -= global_center_xy[1] * 0.0254
+        merged_verts[:, 2] -= global_z_min * 0.0254
 
-    # Import DXF
-    if not import_dxf(str(dxf_path)):
-        print(f"  FAILED: Could not import {dxf_path.name}")
-        return False
+        mesh = trimesh.Trimesh(vertices=merged_verts, faces=merged_faces)
 
-    # Check if anything was imported
-    meshes = [obj for obj in bpy.data.objects if obj.type == "MESH"]
-    if not meshes:
-        print(f"  SKIPPED: No mesh geometry in {dxf_path.name}")
-        return False
+        # Apply default color per group
+        color = GROUP_COLORS.get(group_name, GROUP_COLORS["other"])
+        mesh.visual.face_colors = np.tile(
+            np.array(color, dtype=np.uint8), (len(merged_faces), 1)
+        )
 
-    # Center and scale
-    center_and_scale(scale)
-
-    # Classify mesh groups
-    classify_mesh_groups()
-
-    # Apply default materials
-    apply_default_materials()
+        scene.add_geometry(mesh, node_name=group_name, geom_name=group_name)
+        total_verts += len(merged_verts)
+        total_faces += len(merged_faces)
 
     # Export GLB
-    try:
-        export_glb(str(glb_path))
-        return True
-    except Exception as e:
-        print(f"  FAILED: Export error for {glb_name}: {e}")
-        return False
+    glb_data = scene.export(file_type="glb")
+    with open(glb_path, "wb") as f:
+        f.write(glb_data)
+
+    file_size = os.path.getsize(glb_path)
+
+    return {
+        "file": os.path.basename(dxf_path),
+        "glb": os.path.basename(glb_path),
+        "groups": list(groups.keys()),
+        "layers": sorted(set(l for meshes in groups.values() for _, _, l in meshes)),
+        "vertices": total_verts,
+        "faces": total_faces,
+        "glb_size_kb": round(file_size / 1024, 1),
+    }
 
 
 def main():
-    args = parse_args()
+    parser = argparse.ArgumentParser(
+        description="Convert TableX DXF files to GLB (pure Python, no Blender)"
+    )
+    parser.add_argument("--input-dir", required=True, help="Directory of DXF files")
+    parser.add_argument("--output-dir", required=True, help="Output directory for GLB files")
+    parser.add_argument(
+        "--report",
+        default=None,
+        help="Optional path to write a JSON conversion report",
+    )
+    args = parser.parse_args()
+
     input_dir = Path(args.input_dir).resolve()
     output_dir = Path(args.output_dir).resolve()
 
@@ -334,33 +278,59 @@ def main():
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Find all DXF files
-    dxf_files = sorted(input_dir.glob("*.dxf")) + sorted(input_dir.glob("*.DXF"))
+    dxf_files = sorted(
+        f for f in input_dir.iterdir()
+        if f.suffix.lower() == ".dxf"
+    )
+
     if not dxf_files:
         print(f"No DXF files found in {input_dir}")
         sys.exit(1)
 
-    print(f"=== DXF to GLB Conversion ===")
+    print(f"=== DXF -> GLB Conversion (ezdxf + trimesh) ===")
     print(f"Input:  {input_dir}")
     print(f"Output: {output_dir}")
-    print(f"Scale:  {args.scale} (inches -> meters)")
     print(f"Files:  {len(dxf_files)}")
     print()
 
+    results = []
     success = 0
     failure = 0
 
-    for dxf_path in dxf_files:
-        if process_file(dxf_path, output_dir, args.scale):
-            success += 1
-        else:
+    for i, dxf_path in enumerate(dxf_files, 1):
+        glb_name = normalize_glb_name(dxf_path.name)
+        glb_path = output_dir / glb_name
+
+        print(f"[{i}/{len(dxf_files)}] {dxf_path.name} -> {glb_name}", end="", flush=True)
+
+        try:
+            stats = dxf_to_glb(str(dxf_path), str(glb_path))
+            if "error" in stats:
+                print(f"  SKIP: {stats['error']}")
+                failure += 1
+            else:
+                print(f"  {stats['vertices']}v {stats['faces']}f {stats['glb_size_kb']}KB {stats['groups']}")
+                success += 1
+            results.append(stats)
+        except Exception as ex:
+            print(f"  ERROR: {ex}")
             failure += 1
+            results.append({"file": dxf_path.name, "error": str(ex)})
 
     print()
     print(f"=== Done ===")
-    print(f"Converted: {success}")
-    print(f"Failed:    {failure}")
+    print(f"Converted: {success}/{len(dxf_files)}")
+    if failure:
+        print(f"Failed:    {failure}")
     print(f"Output:    {output_dir}")
+
+    # Write optional report
+    if args.report:
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(report_path, "w") as f:
+            json.dump(results, f, indent=2)
+        print(f"Report:    {report_path}")
 
     if failure > 0:
         sys.exit(1)
