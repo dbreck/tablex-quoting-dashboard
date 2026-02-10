@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
@@ -15,9 +15,13 @@ import {
 } from "@/components/ui/select";
 import { useModelUrl } from "@/components/3d/useModelUrl";
 import {
-  getShapesForSeries,
-  getBasesForShape,
-} from "@/data/compatibility-matrices";
+  getAvailableShapes,
+  getAvailableSizes,
+  getAvailableBases,
+  getDefaultGlb,
+  formatSizeLabel,
+  MODEL_AVAILABILITY,
+} from "@/data/model-availability";
 import {
   powderCoatFinishes,
   hplFinishes,
@@ -37,33 +41,13 @@ const ModelViewer3D = dynamic(
   { ssr: false }
 );
 
-// Series that have 3D models (codes match sku-to-model.ts SERIES_WITH_CAD)
-const CONFIGURATOR_SERIES = [
-  { code: "00", name: "Ultra" },
-  { code: "30", name: "Foundation" },
-  { code: "33", name: "Fundamental" },
-];
+// Series that have 3D models — only series present in MODEL_AVAILABILITY
+const CONFIGURATOR_SERIES = Object.keys(MODEL_AVAILABILITY).map((code) => {
+  const names: Record<string, string> = { "00": "Ultra", "30": "Foundation", "33": "Fundamental" };
+  return { code, name: names[code] ?? code };
+});
 
-// Available shapes per series (only shapes that have GLB models)
-// Overrides the global compatibility matrix which includes shapes without CAD
-const SERIES_SHAPES: Record<string, string[]> = {
-  "00": ["TC", "BT", "D", "RD", "TA"],  // Ultra: confirmed from 81 GLBs
-};
-
-// Available bases per series (only bases that have GLB models)
-const SERIES_BASES: Record<string, string[]> = {
-  "00": ["U"],             // Ultra: U-Leg only
-  "30": ["T", "X", "U"],   // Foundation: placeholder until converted
-  "33": ["T", "X", "U"],   // Fundamental: placeholder until converted
-};
-
-// Default "hero" model per series — shown immediately when series is selected
-// before user picks shape/size/base (a representative table for the series)
-const SERIES_DEFAULT_GLB: Record<string, string> = {
-  "00": "tc3060u28.glb",   // Ultra: 30x60 rectangular, U-leg
-};
-
-// Shape display names from compatibility-matrices
+// Shape display names
 const SHAPE_NAMES: Record<string, string> = {
   TC: "Rectangular",
   SQ: "Square",
@@ -87,6 +71,13 @@ const SHAPE_NAMES: Record<string, string> = {
   AS: "Asymmetric",
   BW: "Bow",
   RD: "Round",
+  D: "D-Shape",
+  BU: "Bullet",
+  SL: "Slab",
+  TN: "Tension",
+  TE: "T-Extension",
+  QD: "Quad Disc",
+  QR: "Quad Round",
 };
 
 const BASE_NAMES: Record<string, string> = {
@@ -105,31 +96,9 @@ const BASE_NAMES: Record<string, string> = {
   QC: "Quad C-Frame",
   H: "H-Leg",
   DR: "Drum Base",
+  GNT: "Gannet",
+  TOS: "T-Base (Offset)",
 };
-
-// Common table sizes (raw numeric format matching SKU parser)
-const COMMON_SIZES = [
-  { raw: "2448", label: '24" x 48"' },
-  { raw: "2460", label: '24" x 60"' },
-  { raw: "2472", label: '24" x 72"' },
-  { raw: "3048", label: '30" x 48"' },
-  { raw: "3060", label: '30" x 60"' },
-  { raw: "3072", label: '30" x 72"' },
-  { raw: "3096", label: '30" x 96"' },
-  { raw: "3636", label: '36" x 36"' },
-  { raw: "3648", label: '36" x 48"' },
-  { raw: "3660", label: '36" x 60"' },
-  { raw: "3672", label: '36" x 72"' },
-  { raw: "3696", label: '36" x 96"' },
-  { raw: "4242", label: '42" x 42"' },
-  { raw: "4260", label: '42" x 60"' },
-  { raw: "4848", label: '48" x 48"' },
-  { raw: "4896", label: '48" x 96"' },
-  { raw: "36", label: '36" Round' },
-  { raw: "42", label: '42" Round' },
-  { raw: "48", label: '48" Round' },
-  { raw: "60", label: '60" Round' },
-];
 
 type TopMaterial = "hpl" | "tfl" | "solid-surface" | "butcher-block";
 
@@ -157,18 +126,28 @@ export default function ConfiguratorPage() {
   const [topFinish, setTopFinish] = useState<FinishOption>(hplFinishes[0]);
   const [edgeType, setEdgeType] = useState<string>(edgeTypes[0].id);
 
-  // Filtered options based on selections
+  // Filtered options based on model availability map
   const availableShapes = useMemo(() => {
     if (!series) return [];
-    // Use series-specific shapes if available (only shapes with GLB models)
-    return SERIES_SHAPES[series] ?? getShapesForSeries(series);
+    return getAvailableShapes(series);
   }, [series]);
+
+  const availableSizes = useMemo(() => {
+    if (!series || !shape) return [];
+    return getAvailableSizes(series, shape);
+  }, [series, shape]);
 
   const availableBases = useMemo(() => {
     if (!series || !shape) return [];
-    // Use series-specific bases (only bases that have GLB models)
-    return SERIES_BASES[series] ?? getBasesForShape(shape);
+    return getAvailableBases(series, shape);
   }, [series, shape]);
+
+  // Auto-select base when only one option exists
+  useEffect(() => {
+    if (availableBases.length === 1 && base !== availableBases[0]) {
+      setBase(availableBases[0]);
+    }
+  }, [availableBases, base]);
 
   // Resolve model URL from config — falls back to series default hero model
   const { url: configModelUrl } = useModelUrl({
@@ -178,7 +157,7 @@ export default function ConfiguratorPage() {
     base,
   });
 
-  const defaultGlb = series ? SERIES_DEFAULT_GLB[series] : undefined;
+  const defaultGlb = series ? getDefaultGlb(series) : undefined;
   const defaultUrl = defaultGlb
     ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/models/${defaultGlb}`
     : null;
@@ -223,6 +202,7 @@ export default function ConfiguratorPage() {
                 modelUrl={modelUrl}
                 baseFinish={baseFinish}
                 topFinish={topFinish}
+                edgeFinish={topFinish}
                 className="w-full aspect-[4/3]"
               />
               {!modelUrl && series && shape && size && (
@@ -300,9 +280,9 @@ export default function ConfiguratorPage() {
                 <SelectValue placeholder={shape ? "Select size" : "Select shape first"} />
               </SelectTrigger>
               <SelectContent>
-                {COMMON_SIZES.map((s) => (
-                  <SelectItem key={s.raw} value={s.raw}>
-                    {s.label}
+                {availableSizes.map((raw) => (
+                  <SelectItem key={raw} value={raw}>
+                    {formatSizeLabel(raw)}
                   </SelectItem>
                 ))}
               </SelectContent>

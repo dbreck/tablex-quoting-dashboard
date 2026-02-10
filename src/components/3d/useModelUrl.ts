@@ -32,6 +32,7 @@ export function useModelUrl(config: UseModelUrlInput) {
     });
 
     const geometryKey = getGlbFilename({
+      series: config.series,
       shape: config.shape,
       size: config.size,
       base: config.base,

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, Component, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, Component, type ReactNode } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { FinishOption } from "@/data/finish-catalog";
 
@@ -12,38 +13,62 @@ interface TableModelProps {
   edgeFinish?: FinishOption;
 }
 
-function applyFinish(mesh: THREE.Mesh, finish: FinishOption) {
-  const material = new THREE.MeshStandardMaterial({
+/** Mesh name to part mapping — GLBs use exact names: top, base, edge, other */
+function classifyMesh(name: string): "top" | "base" | "edge" | "other" | null {
+  const n = name.toLowerCase();
+  if (n === "top" || n.startsWith("top_") || n.startsWith("top.")) return "top";
+  if (n === "base" || n.startsWith("base_") || n.startsWith("base.")) return "base";
+  if (n === "edge" || n.startsWith("edge_") || n.startsWith("edge.")) return "edge";
+  if (n === "other" || n.startsWith("other_") || n.startsWith("other.")) return "other";
+  return null;
+}
+
+function makeMaterial(finish: FinishOption): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({
     color: new THREE.Color(finish.hex),
     roughness: finish.roughness,
     metalness: finish.metalness,
   });
-  if (mesh.material) {
-    const prev = mesh.material as THREE.Material;
-    prev.dispose();
-  }
-  mesh.material = material;
 }
 
 function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);
   const clone = useMemo(() => scene.clone(true), [scene]);
+  const needsInvalidate = useRef(false);
 
+  // Apply finishes whenever they change — mutate materials in-place on the clone
   useEffect(() => {
     clone.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
-      const name = child.name.toLowerCase();
+      const part = classifyMesh(child.name);
+      if (!part) return;
 
-      if (topFinish && name.includes("top")) {
-        applyFinish(child, topFinish);
-      } else if (baseFinish && name.includes("base")) {
-        applyFinish(child, baseFinish);
-      } else if (edgeFinish && name.includes("edge")) {
-        applyFinish(child, edgeFinish);
+      let finish: FinishOption | undefined;
+      if (part === "top") finish = topFinish;
+      else if (part === "base" || part === "other") finish = baseFinish;
+      else if (part === "edge") finish = edgeFinish;
+
+      if (finish) {
+        // Dispose previous material to avoid memory leak
+        if (child.material) {
+          (child.material as THREE.Material).dispose();
+        }
+        child.material = makeMaterial(finish);
       }
     });
+    // Flag that the scene changed so R3F re-renders one frame
+    needsInvalidate.current = true;
   }, [clone, baseFinish, topFinish, edgeFinish]);
 
+  // Invalidate the R3F frame loop once after material changes
+  useFrame(({ invalidate }) => {
+    if (needsInvalidate.current) {
+      needsInvalidate.current = false;
+      invalidate();
+    }
+  });
+
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       clone.traverse((child) => {
