@@ -35,7 +35,7 @@ export function getGlbFilename(config: {
   options?: string[];
 }): string | null {
   const { shape, size, base } = config;
-  if (!shape || !size) return null;
+  if (!shape || !size || !base) return null;
 
   // Concatenate shape + size + base (+ baseWidth if present), lowercase
   let name = `${shape}${size}`;

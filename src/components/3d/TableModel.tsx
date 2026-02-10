@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, Component, type ReactNode } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import type { FinishOption } from "@/data/finish-catalog";
@@ -26,7 +26,7 @@ function applyFinish(mesh: THREE.Mesh, finish: FinishOption) {
   mesh.material = material;
 }
 
-export function TableModel({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
+function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);
   const clone = useMemo(() => scene.clone(true), [scene]);
 
@@ -56,6 +56,40 @@ export function TableModel({ url, baseFinish, topFinish, edgeFinish }: TableMode
   }, [clone]);
 
   return <primitive object={clone} />;
+}
+
+// Error boundary to catch useGLTF load failures without crashing the app
+class ModelErrorBoundary extends Component<
+  { children: ReactNode; fallback?: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; fallback?: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.warn("3D model failed to load:", error.message);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback ?? null;
+    }
+    return this.props.children;
+  }
+}
+
+export function TableModel(props: TableModelProps) {
+  return (
+    <ModelErrorBoundary>
+      <TableModelInner {...props} />
+    </ModelErrorBoundary>
+  );
 }
 
 TableModel.preload = (url: string) => useGLTF.preload(url);
