@@ -37,11 +37,11 @@ const ModelViewer3D = dynamic(
   { ssr: false }
 );
 
-// Series that have 3D models
+// Series that have 3D models (codes match sku-to-model.ts SERIES_WITH_CAD)
 const CONFIGURATOR_SERIES = [
+  { code: "00", name: "Ultra" },
   { code: "30", name: "Foundation" },
-  { code: "33", name: "Forte" },
-  { code: "80", name: "Zenith" },
+  { code: "33", name: "Fundamental" },
 ];
 
 // Shape display names from compatibility-matrices
