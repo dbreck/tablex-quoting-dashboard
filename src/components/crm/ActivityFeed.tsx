@@ -20,7 +20,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 
-const ACTIVITY_ICONS: Record<ActivityType, React.ElementType> = {
+const ACTIVITY_ICONS: Record<ActivityType, React.ComponentType<{ className?: string }>> = {
   note: StickyNote,
   quote_created: FilePlus,
   quote_sent: Send,

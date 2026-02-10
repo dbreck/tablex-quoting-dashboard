@@ -22,6 +22,7 @@ import {
   BarChart3,
   Target,
   Globe,
+  Box,
   FilePlus,
   FilePlus2,
   FileStack,
@@ -43,6 +44,7 @@ const analyticsNav = [
   { name: "How Quoting Works", href: "/how-quoting-works", icon: BookOpen },
   { name: "CPQ Gap Analysis", href: "/cpq-gap-analysis", icon: Target },
   { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
+  { name: "Configurator", href: "/configurator", icon: Box },
 ];
 
 const quoteBuilderNav = [

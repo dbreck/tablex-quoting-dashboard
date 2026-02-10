@@ -1,0 +1,180 @@
+{
+  "generatedAt": "2026-02-10T20:40:25.597Z",
+  "cadRoot": "/Users/dannybreckenridge/Applications/tablex-quoting-dashboard/catalog/cad",
+  "totalSeries": 14,
+  "totalFiles": 3265,
+  "trackA": [
+    "Artisan",
+    "Elite",
+    "Exclaim",
+    "Foundation",
+    "Fundamental",
+    "Justice",
+    "Puddle",
+    "Stretch",
+    "Ultra",
+    "VertiGO"
+  ],
+  "trackB": [
+    "App",
+    "Element",
+    "Primary",
+    "Surge"
+  ],
+  "series": [
+    {
+      "series": "App",
+      "directory": "App CAD files",
+      "fileCount": 5,
+      "minSize": 76548,
+      "maxSize": 4089436,
+      "meanSize": 1684338,
+      "sizeRatio": 53.4,
+      "classification": "has-xrefs",
+      "reason": "Known xref series (confirmed via manual inspection)"
+    },
+    {
+      "series": "Artisan",
+      "directory": "Artisan CAD files",
+      "fileCount": 36,
+      "minSize": 8354155,
+      "maxSize": 10142500,
+      "meanSize": 8554176,
+      "sizeRatio": 1.2,
+      "classification": "self-contained",
+      "reason": "Size ratio 1.2x within normal range"
+    },
+    {
+      "series": "Element",
+      "directory": "Element CAD files",
+      "fileCount": 205,
+      "minSize": 106480,
+      "maxSize": 13225740,
+      "meanSize": 1359618,
+      "sizeRatio": 124.2,
+      "classification": "has-xrefs",
+      "reason": "Known xref series (confirmed via manual inspection)"
+    },
+    {
+      "series": "Elite",
+      "directory": "Elite CAD files",
+      "fileCount": 367,
+      "minSize": 106931,
+      "maxSize": 665163,
+      "meanSize": 240875,
+      "sizeRatio": 6.2,
+      "classification": "self-contained",
+      "reason": "Size ratio 6.2x within normal range"
+    },
+    {
+      "series": "Exclaim",
+      "directory": "Exclaim CAD files",
+      "fileCount": 215,
+      "minSize": 77577,
+      "maxSize": 381470,
+      "meanSize": 156930,
+      "sizeRatio": 4.9,
+      "classification": "self-contained",
+      "reason": "Size ratio 4.9x within normal range"
+    },
+    {
+      "series": "Foundation",
+      "directory": "Foundation CAD files",
+      "fileCount": 329,
+      "minSize": 80613,
+      "maxSize": 373749,
+      "meanSize": 166309,
+      "sizeRatio": 4.6,
+      "classification": "self-contained",
+      "reason": "Size ratio 4.6x within normal range"
+    },
+    {
+      "series": "Fundamental",
+      "directory": "Fundamental CAD files",
+      "fileCount": 309,
+      "minSize": 110358,
+      "maxSize": 467431,
+      "meanSize": 216784,
+      "sizeRatio": 4.2,
+      "classification": "self-contained",
+      "reason": "Size ratio 4.2x within normal range"
+    },
+    {
+      "series": "Justice",
+      "directory": "Justice CAD files",
+      "fileCount": 100,
+      "minSize": 153800,
+      "maxSize": 343440,
+      "meanSize": 193776,
+      "sizeRatio": 2.2,
+      "classification": "self-contained",
+      "reason": "Size ratio 2.2x within normal range"
+    },
+    {
+      "series": "Primary",
+      "directory": "Primary CAD files",
+      "fileCount": 374,
+      "minSize": 54844,
+      "maxSize": 925626,
+      "meanSize": 329842,
+      "sizeRatio": 16.9,
+      "classification": "has-xrefs",
+      "reason": "Size ratio 16.9x exceeds 10x threshold"
+    },
+    {
+      "series": "Puddle",
+      "directory": "Puddle CAD files",
+      "fileCount": 55,
+      "minSize": 420694,
+      "maxSize": 1401932,
+      "meanSize": 741625,
+      "sizeRatio": 3.3,
+      "classification": "self-contained",
+      "reason": "Size ratio 3.3x within normal range"
+    },
+    {
+      "series": "Stretch",
+      "directory": "Stretch CAD files",
+      "fileCount": 279,
+      "minSize": 149221,
+      "maxSize": 524269,
+      "meanSize": 278743,
+      "sizeRatio": 3.5,
+      "classification": "self-contained",
+      "reason": "Size ratio 3.5x within normal range"
+    },
+    {
+      "series": "Surge",
+      "directory": "Surge CAD files",
+      "fileCount": 328,
+      "minSize": 54587,
+      "maxSize": 631950,
+      "meanSize": 267227,
+      "sizeRatio": 11.6,
+      "classification": "has-xrefs",
+      "reason": "Size ratio 11.6x exceeds 10x threshold"
+    },
+    {
+      "series": "Ultra",
+      "directory": "Ultra CAD files",
+      "fileCount": 81,
+      "minSize": 126017,
+      "maxSize": 220449,
+      "meanSize": 150912,
+      "sizeRatio": 1.7,
+      "classification": "self-contained",
+      "reason": "Size ratio 1.7x within normal range"
+    },
+    {
+      "series": "VertiGO",
+      "directory": "VertiGO CAD files",
+      "fileCount": 582,
+      "minSize": 55196,
+      "maxSize": 505326,
+      "meanSize": 233315,
+      "sizeRatio": 9.2,
+      "classification": "self-contained",
+      "reason": "Size ratio 9.2x within normal range"
+    }
+  ]
+}

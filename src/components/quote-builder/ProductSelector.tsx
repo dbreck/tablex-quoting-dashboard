@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { useQuoteStore } from "@/store/quote-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,7 +10,16 @@ import { Badge } from "@/components/ui/badge";
 import { TIER_PRICE_KEYS } from "@/types/quote-builder";
 import { formatCurrency } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { getModelUrl } from "@/lib/sku-to-model";
 import { Search, Plus, ShoppingCart, X, ChevronLeft, ChevronRight } from "lucide-react";
+
+const ModelViewer3D = dynamic(
+  () =>
+    import("@/components/3d/ModelViewer").then((mod) => ({
+      default: mod.ModelViewer,
+    })),
+  { ssr: false }
+);
 
 interface CatalogRow {
   sku: string;
@@ -205,44 +215,54 @@ export function ProductSelector() {
       </Card>
 
       {/* Add to Quote mini-form */}
-      {selectedProduct && (
-        <Card className="border-brand-green border-2">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex-1 min-w-[200px]">
-                <p className="font-mono text-sm font-semibold">{selectedProduct.sku}</p>
-                <p className="text-xs text-slate-500">
-                  {selectedProduct.series} {selectedProduct.shape_name} {selectedProduct.size}
-                </p>
-                <p className="text-sm mt-1">
-                  <span className="text-slate-500">List:</span>{" "}
-                  <span className="line-through text-slate-400">{formatCurrency(selectedProduct.list_price || 0)}</span>
-                  <span className="text-brand-green font-semibold ml-2">
-                    Net: {formatCurrency((selectedProduct[tierKey] as number) || 0)}
-                  </span>
-                </p>
+      {selectedProduct && (() => {
+        const modelUrl = getModelUrl(selectedProduct.sku);
+        return (
+          <Card className="border-brand-green border-2">
+            <CardContent className="p-4">
+              {modelUrl ? (
+                <div className="mb-3">
+                  <ModelViewer3D modelUrl={modelUrl} compact className="h-32 w-full" />
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 mb-3">3D preview not available for this series</p>
+              )}
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <p className="font-mono text-sm font-semibold">{selectedProduct.sku}</p>
+                  <p className="text-xs text-slate-500">
+                    {selectedProduct.series} {selectedProduct.shape_name} {selectedProduct.size}
+                  </p>
+                  <p className="text-sm mt-1">
+                    <span className="text-slate-500">List:</span>{" "}
+                    <span className="line-through text-slate-400">{formatCurrency(selectedProduct.list_price || 0)}</span>
+                    <span className="text-brand-green font-semibold ml-2">
+                      Net: {formatCurrency((selectedProduct[tierKey] as number) || 0)}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-slate-600">Qty:</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={addQty}
+                    onChange={(e) => setAddQty(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-20"
+                  />
+                </div>
+                <Button onClick={handleAddToQuote}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add to Quote
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedProduct(null)}>
+                  Cancel
+                </Button>
               </div>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-slate-600">Qty:</label>
-                <Input
-                  type="number"
-                  min={1}
-                  value={addQty}
-                  onChange={(e) => setAddQty(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-20"
-                />
-              </div>
-              <Button onClick={handleAddToQuote}>
-                <Plus className="h-4 w-4 mr-1" />
-                Add to Quote
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setSelectedProduct(null)}>
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Results Table */}
       <Card>
