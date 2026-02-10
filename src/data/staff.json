@@ -1,22 +1,60 @@
 [
   {
+    "name": "Jim Skillman",
+    "email": "jskillman@tablex.com",
+    "initials": "JS",
+    "title": "Founder and Owner",
+    "active": true
+  },
+  {
     "name": "Mark Fleck",
     "email": "mfleck@tablex.com",
-    "initials": "MAF"
+    "initials": "MAF",
+    "title": "VP of Operations",
+    "active": true
   },
   {
-    "name": "Brian Craig",
-    "email": "bcraig@tablex.com",
-    "initials": "BC"
+    "name": "Patty Wollenmann",
+    "email": "pwollenmann@tablex.com",
+    "initials": "PW",
+    "title": "Accounting Manager",
+    "active": true
   },
   {
-    "name": "Samatha Sander",
+    "name": "Tony Rasche",
+    "email": "trasche@tablex.com",
+    "initials": "TR",
+    "title": "Logistics Manager",
+    "active": true
+  },
+  {
+    "name": "Sam Sander",
     "email": "ssander@tablex.com",
-    "initials": "SS"
+    "initials": "SS",
+    "title": "Customer Service Associate",
+    "active": true
   },
   {
     "name": "Maya Mitchell",
     "email": "maya@tablex.com",
-    "initials": "MM"
+    "initials": "MM",
+    "title": "Brand Manager",
+    "active": true
+  },
+  {
+    "name": "Brian Craig",
+    "email": "bcraig@tablex.com",
+    "initials": "BC",
+    "title": "Unknown",
+    "active": false,
+    "notes": "Has 768 quotes in queue history but no longer listed on WordPress About page"
+  },
+  {
+    "name": "Sales Queue",
+    "email": null,
+    "initials": "SQ",
+    "title": "Unassigned / Sales Queue",
+    "active": true,
+    "notes": "174 quotes attributed to SQ initials in quote queue — likely represents unassigned quotes or a shared sales queue rather than an individual"
   }
 ]

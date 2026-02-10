@@ -1,41 +1,7737 @@
 [
   {
-    "name": "Ace Office Furniture"
+    "name": "Business Furnishings",
+    "quoteCount": 279,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "CFM - Contract Furniture Marketing"
+    "name": "Continental Office",
+    "quoteCount": 170,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "Commercial Interior Advisors"
+    "name": "NBS",
+    "quoteCount": 97,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "Cool Lines Group"
+    "name": "Business Furniture",
+    "quoteCount": 80,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "CRG"
+    "name": "Frank Cooney",
+    "quoteCount": 66,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
   },
   {
-    "name": "House acct"
+    "name": "Webb Contract",
+    "quoteCount": 59,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": true
   },
   {
-    "name": "IMG South"
+    "name": "RCF Group",
+    "quoteCount": 50,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "JMA"
+    "name": "Douron",
+    "quoteCount": 49,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "Melissa J. Meeks and Associates"
+    "name": "Zimmerman School Equipment",
+    "quoteCount": 47,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
   },
   {
-    "name": "Mid-States Rep"
+    "name": "Friends Office",
+    "quoteCount": 47,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "The Contract Group Inc."
+    "name": "ID+A",
+    "quoteCount": 45,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
   },
   {
-    "name": "Webb Contract"
+    "name": "CBI",
+    "quoteCount": 42,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
   },
   {
-    "name": "Western Interiors Group"
+    "name": "Mid-States Reps",
+    "quoteCount": 39,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Educational Environments",
+    "quoteCount": 39,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "SCR Group",
+    "quoteCount": 36,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "MV Sales",
+    "quoteCount": 34,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Interiors",
+    "quoteCount": 34,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sharp School Services",
+    "quoteCount": 32,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LOTH",
+    "quoteCount": 32,
+    "firstSeen": "2024",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mitsch Design",
+    "quoteCount": 31,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Essentials",
+    "quoteCount": 31,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Interiors",
+    "quoteCount": 29,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "COE",
+    "quoteCount": 26,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Environments",
+    "quoteCount": 24,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interior Elements",
+    "quoteCount": 23,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire Office",
+    "quoteCount": 23,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Group",
+    "quoteCount": 19,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "CF+D",
+    "quoteCount": 18,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "IOS",
+    "quoteCount": 17,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Office Solutions",
+    "quoteCount": 17,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "One Eleven Design",
+    "quoteCount": 17,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Indoff",
+    "quoteCount": 16,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OPM",
+    "quoteCount": 16,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefers Office Equipment",
+    "quoteCount": 16,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace Interiors",
+    "quoteCount": 16,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office Furniture",
+    "quoteCount": 16,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interiors for Business",
+    "quoteCount": 15,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ace Office Furniture",
+    "quoteCount": 15,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": true
+  },
+  {
+    "name": "School Specialty",
+    "quoteCount": 14,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements IV Interiors",
+    "quoteCount": 14,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman Office Supply",
+    "quoteCount": 14,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefer's Office Equipment",
+    "quoteCount": 14,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "HDW",
+    "quoteCount": 12,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Baldauf Group",
+    "quoteCount": 12,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "FurnLeaf Interiors",
+    "quoteCount": 12,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Concepts",
+    "quoteCount": 12,
+    "firstSeen": "2024",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Office Environments",
+    "quoteCount": 11,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "BEC",
+    "quoteCount": 11,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovate",
+    "quoteCount": 11,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CFI",
+    "quoteCount": 11,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Henricksen",
+    "quoteCount": 11,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Company",
+    "quoteCount": 10,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "RSFi",
+    "quoteCount": 10,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "King Business Interiors",
+    "quoteCount": 10,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alfred Williams",
+    "quoteCount": 10,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Purgistics",
+    "quoteCount": 10,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "NOI",
+    "quoteCount": 10,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CRG",
+    "quoteCount": 9,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": true
+  },
+  {
+    "name": "Workscapes",
+    "quoteCount": 9,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "KDA",
+    "quoteCount": 9,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frey Gaede",
+    "quoteCount": 9,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Solutions",
+    "quoteCount": 9,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Chuckals Office Products",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "BFC",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "HPS",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Design",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "HOM Furniture",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Environments 4 Business",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Storr Office",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price Modern",
+    "quoteCount": 8,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "RJE",
+    "quoteCount": 8,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Rowland Business Interiors",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Thompson Educational Furnishings",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Josie Presar Design",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "DC Interiors",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Furniture International",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "O'Reilly Office",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovate Commercial Interiors",
+    "quoteCount": 7,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "The Bradley Company",
+    "quoteCount": 7,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "BF",
+    "quoteCount": 7,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Rice",
+    "quoteCount": 7,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Martin Public Seating",
+    "quoteCount": 7,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nelson Interiors",
+    "quoteCount": 7,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "TJ Office Furniture",
+    "quoteCount": 7,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Baldauf",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "RSFI",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alamo Classroom Solutions",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "RJE Business Interiors",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CFI Workspace",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Peterson Quality Office",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "BL Distributors",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID&A",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Allied Corporate Furniture",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ROI",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CI Select",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Stephens Office Systems",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Creative Office Resources",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Midwest Educational Furnishings",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Premier Furnishing Solutions",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Webb Contract Group",
+    "quoteCount": 6,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Educational Furniture",
+    "quoteCount": 6,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OfficeWorks",
+    "quoteCount": 6,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ashland Office Supply",
+    "quoteCount": 6,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Interior Advisors",
+    "quoteCount": 6,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": true
+  },
+  {
+    "name": "CJ Associates",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contintental Office",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ohio Desk",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Essentials",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carolina Furnishing + Design",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements Interior Solutions",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "School Source AZ",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "AWE Corporate Interiors",
+    "quoteCount": 5,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "PSI",
+    "quoteCount": 5,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OFS",
+    "quoteCount": 5,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "All Makes",
+    "quoteCount": 5,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Connect Interiors",
+    "quoteCount": 5,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Evo",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman Office Supplies",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Jefferson Group",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "SCR",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ&A",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Intereum",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CI Group",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "JC White",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Rice Office Works",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "TIPS",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Fineline Furniture",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "B&L Distributors",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Prevolv",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "APG Office Furnishings",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Valley Design",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Barbour Spangle Design",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Custer",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LMC",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Fanning Howey",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Business Interiors",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Working Spaces",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Dupler Office",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Design Central",
+    "quoteCount": 4,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frey Gaede/CRG",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contract Source",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Facility Planners",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "HiTouch",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carolina Furnishings + Design",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alfred Williams & Company",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Miller Huggins",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Kentwood Office",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Fleming Interior Group",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Atmosphere Commercial Interiors",
+    "quoteCount": 4,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Interiors of South Carolina",
+    "quoteCount": 4,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Grooms",
+    "quoteCount": 4,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Way Office Plus",
+    "quoteCount": 4,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Great River Office Products",
+    "quoteCount": 4,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative",
+    "quoteCount": 4,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements IV",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "GPD Group",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ & Associates",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carolina Furnishings & Design",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CBi",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sonus Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "HDW Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "office essentials",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Best Office Solutions",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Capitol Business Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture USA",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Western Interiors Group",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": true
+  },
+  {
+    "name": "LAN Office Furnishings",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Key Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Cool Lines Group",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": true
+  },
+  {
+    "name": "Anderson & Worth Office Furniture",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Coordinators",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "KDA Furniture & Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "PC&A",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Three Rivers Business Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Design Services",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Evo Business Environments",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Creative Furnishings & Design",
+    "quoteCount": 3,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Kentwood Office Furniture",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Resources Inc.",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Pigott",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Design Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID & A",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "R3 Office Solutions",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "In2Market",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Rightsize Facility",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Solutions of FL",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Basics",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LOTH, Inc",
+    "quoteCount": 3,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Parameters",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nashville Office Interiors",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Dauphin",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LOTH Inc",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Norby's Work Perks",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Triplett Office Solutions",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "JCL Solutions",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Solutions Group",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "iSpace Environments",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture",
+    "quoteCount": 3,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CSDS Design",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "BC Sales",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "??",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "B & L Distributors",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ernie Morris",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continential Office",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "OFRS",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elon University",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Big Sky Design",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alamo Classroom",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ganassi Racing",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mike Cantal",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Weinberger's Business Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "LinkSpace",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Zimmerman",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Gallery",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Works",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Marshall Univeristy LOGO tables",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frey-Gaede",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Color Art Furniture",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "WB Mason",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Keith Stulb",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "John A. Marshall Co.",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "AOLI",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Grooms Office Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "educational environments",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "IFB",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Weinbergers Business Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schools In",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ICS",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schmidt Goodman",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "The Crump Firm",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Skilled Services",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Integrity Contract Office",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "intivity",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Purgistics, LLC",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Freedom Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Kershner",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Exterus",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innerplan",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "John A. Marshall",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "PURE Workplace Solutions",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "NexTech",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Warehouse",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Evenson Best",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "OEC",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "SDV Office Systems",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alfred Williams & Co",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Experts",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Tanner Furniture",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nextech Professional Services",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "JSD Office Furniture",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID-A Nashville",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Outfitters",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Equipment Company",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Webb Contract Associates",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Design Alternatives Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth, Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ & Associates, Inc",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "AADS Office Solutions",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Exterus Business Furniture",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Zimmerman School Equpiment",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "O Reily Office",
+    "quoteCount": 2,
+    "firstSeen": "2023",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interiors Elements",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Equipment",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Right Size Facility",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Peabody Office",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Robert Wolk",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / Solid Surface",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID& A",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schreifers Office Equipment",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "LOUER Facility Planning",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefer's Office",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "MFG Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "O`Reilly Office",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CDS",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OFW",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "LOUER",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "NOI-Knoxville",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "MBI",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Officeworks",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Storr Office Environments",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OFW Pittsburgh",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Cooney",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Facilitec",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Furniture International, Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ & Associates Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "LOTH, Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Cool Lines",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Chuckals",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "SCR Group/ HDW Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Freeform",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Thomas Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LAMMCO",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "On 1 LLC",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Franklin Interiors",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Delano Design",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LaHarpe's",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Inc.",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace Solutions",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furnleaf",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Martins Office Supply",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "SWC Office Furniture",
+    "quoteCount": 2,
+    "firstSeen": "2024",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "environments 4 Business",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office Furniture-OH",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commerial Environments",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interscape Commercial Environments",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office 360",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office Products & Services",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "HB Workplaces",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schmidt Goodman Office Products",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "FPI Facility Planners",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CFI Workspace Corporate Facilites of NJ",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "NOI Knoxville",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Busines Furnishings",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Works",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "WorkSpace Solutions",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Ashland",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ashland Office",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ORI",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Summit Office Source",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Beyer Brown",
+    "quoteCount": 2,
+    "firstSeen": "2025",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "A-Z Office Resource",
+    "quoteCount": 2,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Koch Office Group",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "VSI Facility Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Chris Ivan",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "American Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "MV Sales /  North Ridgeville Schools",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "The CI Group",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Miami Beach Fire Station",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Next Gen Office Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Work Scape",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Webb -top only",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "quote update-revisement",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Bases only replacement",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "VA-Dayton OH",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Detroit Catholic School",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alamo",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Stemcor Breakroom Table",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spry Brands",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Webb",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schwegman's Storehouse AR",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Acelyrn",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mid-States",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Albany",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hailey Havey",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Works (OFW)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "MNPS bid",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furn Leaf Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office  / Assured Partners",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Freedom Interior Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Jack Crutchfield",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Oakland U bid",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "LaHarpes",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace Inc",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Usa Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "LaHarpes-Quote Update",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sheppards Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 22.S.S1926-E.2.-addt'l",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "NBI",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "????? / Bill Sheehan",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "K Petersen Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mazda",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Apricot Office Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "IRSC",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Commercial Environments",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nova College",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "JB Officeworks",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Perdue",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "OfficeWorks LLC",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Webb Contract   / OSU Logo table for Showroom",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "COE/Dealer",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "ICE San Diego",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Pettus Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Gibson's Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continential Office / OSU Logo tops",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "RSFI / Houston TX",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "JC White / Nova College [UPDATED]",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CFM",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continential Office / Discover Christian Church",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "06TC1854T18-3P-LC-CHROME from previous order",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "MKS",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price confirmation for IRSC Clark Advanced Learning Center",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CBI / Metro Nashville Schools",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "FPI",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CFR",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "School Outfitters",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Barbour Spangle Design / Boys & Girls Club",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Updated quote for 08TC2496T22-3P-PRE-LC (new laminate)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ace Office Furniture, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Butler Business Products/Little Cypress CISD",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to SO #9857",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Arizona Interior Resource / NewCold Lebanon Ph. II",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Emerald Coast Office / SOF AMU & Weapons Hangar",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Outfitters & Planners, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "MIGIZI Project",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "BOS",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mid-States Rep",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": true
+  },
+  {
+    "name": "ORi",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Capital Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "fpi",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "ifb",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "KBI",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "NexTech Interiors / Dan",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "WorkScapes / Amalie Arena",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workflow / JCC",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Creative Office Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ Associates / two 30x60 Foundation w/ Chemsurf tops",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire Office, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Univ. of Tulsa",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Fre3Dom Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "workflow",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Strategic Spaces",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CF&D",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sharon Lawson",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "OneSource Office Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Counterbalance Nesting Tables",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "A. Pomerantz & Co. / Shephard AFB",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CWC",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney / educational environments",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "NY dealer / two Art room tables 42x48 height adjustable",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "HiTouch Business Svcs / Think Tank",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "RUSH",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "A. Pomerantz & Co / AFB bid",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "GL Seaman",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to SO #10004 (PO #31307-49372-0)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 23.SS.51723",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Legacy Group Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Depalma Group",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "School Speciality",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "The Ohio Desk Company",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Updated QTY for Taylor University (23.MM.0428.A)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spry Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Two each 24x48 VertiGO static w/ BB top",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "24x96 VertiGO static w/ BB top",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Miller Knoll-The Forum Group/The Kallen",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Essentials Office Supply",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Storey Kenworthy -Workspace Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "RCF Group -Syneos Health Order (M2218.002.01)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Tenjam",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workpointe",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Artisan tables at 34\"h (chemsurf, epoxy, std lam)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ottawa Hills High School",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Camp Lejeune tables",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "E4B",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Special Quote Req: 65 each Foundation 30x72 nesting",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "DKI Office Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Taylor University (Baldauf Group)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Resources",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "309 Office",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Coordinators, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Newton Public Library/HBM Architects",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Taylor University",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Inside Source (CT)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Skyline High School",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "The RCF Group",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Grooms Office Environment",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Facilitec / NICE Systems",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Douron Delaware",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Knowledge Tree",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "LaHarpe's Office Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "evo Business Environments",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Coastal Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Skookum Contract Services",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Zimmerman School Equip",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "HBM/Calvert Co. Library",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "E4B/LifeStance",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "A. Pomerantz & Co.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workscapes / Gensler Tampa office",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "KDA Furniture & Interiors -PO #7072-1505",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Bid",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contract Resource Group / Stainless steel serving counter w/shelf",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Christine Burdick Design",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CALVERT COUNTY LIBRARY",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Midwest Furnishings/Libertyville",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Revised quote for C36851 UW Tacoma TPS Lounge",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CRG-Southwest",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schumacher Design",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Kelly",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "ACE Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Aston Properties",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Pricing for 71BT36120Q3.V6-3P in 120\" after 10/1 price adjustment",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "A. Pomerantz & Co. / Frank McGuire Trapezoids",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Purgistics LLC",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "October 1 price confirm on 124 tables (Primary C2 and Surge disc)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Freedom",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Edge Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Gail Webb",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price check for Red Lake College quote",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price check for nesting tables w/ pre lam",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "CORE",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Atmosphere Comm Interiors / HAMH",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Laboratories Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "OneSource",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "St. Mary's School / Continental Office",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office Concepts",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Walter E. Smithe",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sumner Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "EFS",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Rice Springfield",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Kittles",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace, Inc",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "MNPS",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Henricksen Butler Workplaces",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "AMO",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schumacher Designs",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Updated pricing on SP-99TC1928QD16BLS-3P-LC1.5",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elontec",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Bumbargers Ideal Office Worx",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Renee Yarcho",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Inspire Workplace Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Friend's Office",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "SCR Office",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Outfitters",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Clear pH",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Interiors & Design",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Facility Planners -PO 1-620-5512",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commerical Office Environments",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "W.B. Mason Company",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Zimmerman Schools",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Essentials-PO#33143",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "The Workplace Group",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Office Systems",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Jones Group Interiors, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 23.MM.1122.B",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Updated Olivet Weber Entrepreneurial Space quote",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 23.MM.1106.C",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace Elements",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interiors for Business, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovate Commercial Interiors PO#23-082",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nashville Office Interiors (NOI)",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "MA Design",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 23.SS.121523-A",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Emerald Business Supply",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "JSD Office Group",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ideal Office Works",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schumacher Designs, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "BSU Logo table",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "USAN",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "OCI",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Solutions of Florida",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Collective Architect",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "M. Hanson & Company, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "American Design Associates",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contact Source, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "KDA Furniture and Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Professional Systems Installations",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Advanced Ergonomic Concepts, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Wolverine Commercial Furnishings",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Capital Furniture Source, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ICI",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "BC Sales Group",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Products Marketing",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Crawford Hoying",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price check on 23.SS.121523-03-A",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "Revision to 24.MAF.1162024 (TEL Covenant quote)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furniture + Co.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price check on SP-00TCU2054U18-3P-LC-SH.34 (from SO #10244)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contact Source",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Logo table",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ACRE",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Emmons Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "The Wells Group",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Custer, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "High School Logo table",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office 204861-248317",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Yeshiva Univ. NY (Eric McKinney)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "GL Seaman & Company",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / Notre Dame Breen-Phillips dorm",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings -Beacon Medical Group PO#S63922-2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Prevolv PO# 3214639",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Suzy Brown",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney/ Educational Environments-10116-20236",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mitsch Design -PO#223-633-TBX",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schmidt-Goodman / Mayo Clinic remodel",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "HDW Commercial Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Office Solutions-PO#4-373-30416",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "FriendsOffice",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schmidt-Goodman / Mayo Clinic remodel / PO A43455-2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Joe Bernskoetter / LJC Spaces",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Chip Ganassi Racing",
+    "quoteCount": 1,
+    "firstSeen": "2023",
+    "lastSeen": "2023",
+    "isRepGroup": false
+  },
+  {
+    "name": "FriendsOffice / PO 1719071",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings  / 331 Oshag",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman Office Supply / PO 8861",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman Office Supply / PO 8860",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "LFI Ela Area PL",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "SCR Group / Abbott",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "G L Seaman / update quote 24.MAF.212024",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Avon-Sharp School Services",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carolina Furnishings + Design PO#2024-14-6922",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Storey Kentworthy/Workspace- PO#A134861",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "MItsch Design / PO 223-633-TBX",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Triway Local Schools PK-12",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Office Environments -PO#GBURG01",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Furniture International / PO 11433.02.09.2024",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Friends Office / RCR Wall Mount",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Quality Mill Supply / PO 1700",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Perkins Eastman / Senior Living",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman Office Supply / Dubois County Health Department",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "FriendsOffice / PO TBX1720138",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "KOI-Knoxville",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth Inc. / solid surface",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Business Interiors / PO 2-305-7328",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Eau Claire Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID-A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements / PO 2550.7J-SBC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / UPDATE Quote 24.MAF.282024 / Change to laminate top",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / South Bend Country Club",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update quote 24.MM.0119-A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / PO S63989-16",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Jefferson Group / Tyler Markham",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Coordinators / Tops ONLY",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / PO S63987-7",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings  / Midwest Automotive Designs",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "G. L Seaman / PO 33289-54020-004",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative PO 225819-332157",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alfred Williams PO S259478.002.04",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "HiTouch Business Services",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Martin's Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "O'Reilly's / Epoxy Resin / Chemsurf",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "COE / Toyota",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furniture / PO A285323-2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman Office Supply / PO 8863",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "School Source",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Equipment / PO 17065",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RSFI Office Furniture / 94181-022024J2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Jefferson Group PO 21781",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "BX1722062",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Labs",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RCF Group / PO CHB3045.001.01",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / Brinkley RV, Plant 3",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office / PO 214896-248747",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office  / 203580-248810",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office / PO 204999-248831",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Chuckals /  F1119902TX",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "MItsch Design / PO 255-725-TBX",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "One Eleven Design / PO 7514",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Works- Chattanooga",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RJE- Franciscan",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Douron-Johns Hopkins Health Keswick",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RCF Group / CHB30.59.001.01",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings /  Jennifer Franklin / Main 502",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "St. Charles Prep",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Tanner",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "W B Mason",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Tom Sexton and Associates",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "COE-Indy",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Portland",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire Office / PO A715273-9-MAG",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire Office / PO A715271-9-MAG",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Valley Design / Sample tops",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Solutions of FL",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth PO A321467",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth PO A321470-24",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID-A / PO 5552-11721",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sonus / PO 35543-0005",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Design and Project Management",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings  PO S64045-4",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID & A / PO 8196-11794",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings  / PO S64039-3",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Essentials PO 36711",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Link Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office PO 205406-249001",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "WRG",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office PO 205412-249003",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Company / PO 10214",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Coordinators / PO 103-221-26923",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office PO 205438-249014",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RJE PO 35859-55758",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth PO A321133-23 / GAIC Tower 18",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace Interiors PO W30941-6",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "COE Indy -various sizes 122 page document",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings PO  S64060-10",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Inc. / PO 1774-4056",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings -Choero Rocheser",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID & A  PO 7305-11935",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office Products PO 3579",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Environments PO EL3121K",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ& Associates",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth PO A312603-18 / GAIC Tower 14",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Office Solutions-RSC Borra Center tables and chairs",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "In2Market-ConAgra(aka Burris Inc.)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements IV PO 33-215-62555",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Essentials PO 37144",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RCF Group /  PO KA2246.002.08",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / PO  S64089-7",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Emerald Business Supply PO 582308TBX",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CI -Group PO M1127.120.05",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "School Source -AZ PO 5947",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Weatherford",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nortek",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Emerald Coast Office- Hangar Project",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ROI / Arab American Chamber",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Company / Naperville SD",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Company/ Naperville SD-Lincoln Jr High",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Koch- River's Edge",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Interiors / Wellfield Botanical Gardens",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Douron PO 31737",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "City of Boston",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Emerald Coast Office PO 2838",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Essentials PO 37215",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "HDW PO 106-473-25801",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interiors Unlimited PO 24-1031R",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Douron PO 23648-31535",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements IV PO 33-78-62593",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Environemnts 4 Business",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / ND Eck Law Commons",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings  / PLS Classroom",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Desgin Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID & A PO 8034-12328",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "NBS- Bay City / PO N305131-2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "U of M",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Columbus Office",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "MItsch Design",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "WJ Office PO#  143641",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "FurnLeaf Interiors PO 4523",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "JAM",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interior Investments",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Widmer Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "School Source AZ Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Henricksen & Company",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "In2. Market",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Thiemann Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.3262024",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "IOS -1-242-30712",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Works (Chattanooga)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RJE -38870-56215-CARCLASC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefer's Office Equip- 186 G-Flip Nesting from quote table",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefer's Office Equip- 186 G-Flip Nesting + Justice option from quote table",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 23.SQ.0908.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Revolution",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Valley Design PO#62077-00",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "F.C. WoodWorks Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Univeristy of Minnesota",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Saint Joseph High School",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Educational Furniture, LTD",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Furniture International, LLC.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Eau Claire Business Interiors 24-700134.01.JW",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Bus. Furnishings",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Douron / Odd sizes butcher block tops",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "MId-States / ADA tables",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CC & COMPANY, INC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Design Services PO#2693-1917",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.4252024-2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to P&A Industries Breakroom quote",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "SCH-MO / 18 G-Flip tables",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "JMA/Harbinger National/Insalco",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.4012024-REV",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ezkin Company",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hoffman",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elkhart General Boardroom",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Facilitech",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CSDS",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Creative Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CBI-Nashville",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "FCi",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to  24.MAF.2222024-3",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Samco",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "EvensonBest",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.4152024",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "In2.Market",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Furniture Int'l",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Wheeling Office Supply",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "American Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hillsman, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Central Christian College",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Notre Dame, Research 2 REVISION",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Pan Pacific Whistler",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Culver Educational Foundation dba Culver Academies",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Cascade Design",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Executive Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ABI",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "C&S",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Perdue Office Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carmel HS",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney-Glenview SD 34-Tablex",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Midwest Ed",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "waiting on request from quote portal",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Strongsville HS",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Design Collaborative",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Seely Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Daco /Dauphin",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "St. Meinrad",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Design Central KS",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "AADS",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Fourth Addition",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "American Fun Food Co/ Daniksco Office Int, LLC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "111 Design",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace Interiors -Eastman DC Govt. Affairs Office (VertiGO Elec. base only)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workscape",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Aesthetic Working Environments",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings PO#S64519-17",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Environments 4 Business / Burntwood Tavern-Naples (solid surface tops)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Cascade Commercial Design, LLC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "PeopleSpace",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contintenal Office",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "EVO Business Environments",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "PAC World Wide",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Butler Business Products",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Inc",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Lohr Design",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "E-FCi",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Millington Lockwood",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "A-Z Office Resources",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nolan's",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.5242024-2",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Interiors Inc",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefers",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "King Business",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire Office-Orlando / Surge BL base only",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "COE-PO#GBURG01CA",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Group PO# 2024-514157",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frey Gaede / TCI Nolans",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workscape Inc",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "PFW",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "FCI",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Concepts / Bases ONLY",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contract Source, Inc",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MM.0621.B",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "L. A. N. Office Furnishings",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "PVI",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "WorkSpace Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sheppards's Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Rice-Lenexa, KS / Blue Springs; 8 Artisan",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Oakland City Public Library",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Dauphin North America",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Custer Office Environments",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "CDS-Tampa",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Office Environments -PO#GURL96 9.11.54",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furnleaf Interiors / doesn't want T-bases wants X-bases",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Office Environments -PO#GURL96 9.12.24",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MM.0909.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Creative Office-Boston",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Furniture International / Megan Papsis (all in the book)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Office Solutions PO#1-320-31685",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office -PO#209452-253585",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "SPACES, INC.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Facilitec Corporate Furnishings- SO#11038",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Evo Business Environments- Jack needs a formal quote",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Indoff / Kenworth: 45 each 01SQ4242X36-3P-FT-LC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings PO#S64835-8",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MM.0912.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "KDA/Blackbird Design",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Lochmueller",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings- Needed revisions to previous quote",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Holiday Beach Decor",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elments IV Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Tops ONLY",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Bethlehem Lutheran Church",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Centerburg",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "A-Z Office Resource, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schriefers Office",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MM.0415.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sharp School Service-PO#12076",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "John A Marshall",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "AAA Interests",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Oakland City / Columbia TWP Library",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Washington Univ",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "AVI",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Price Modern LLC",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nelson Interiors-Nesting for Tips",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Business",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "OfficeWorks Nashville",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "United Local Schools",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office Products & Svc / 2 tops only",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "A + Office Supply",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Laboratory Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Elements IV / Wright Patterson",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental / Fairfield County",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Evo Arkansas",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "RSFI / NCR Vasser Village",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Arrow McLaren NC project",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Interiors / Ace Office",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Samco Business Products / Trig 30x60 GTBL w/ pencil stop",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "EVO Arkansas",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings Martin Marketing",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office Products & Service",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Samco Business Products",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corp. Outfitters (Houston) / Premium Industrial",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MM.0610.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Gallery International",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Indoff / Kenworth quote revision",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Farmville Public Libary",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ohio Desk CO",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MM.0610.A1",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ace Office Furniture Associates",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovative Office",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workflow Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update quote 24.MAF.111322024",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Boyden Library quote",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "C & S / Berks Career & Technology",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ace Furniture / Corporate Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.12092024 (solid surface)",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Spaces Group PO#515025",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "ID+A Nashville",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workflow",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Noble Elementary",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Revision of quote #24.SQ.1122.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "St. Louis Zoo",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update laminate on quote 24.MAF.11272027",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Marriott",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update Deaconess Hospital quote",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "NBS, Bay City",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Midwest Eductional / Dave Welter",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Oak Cliff Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contract Source Inc",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Way Office",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "UPDATE to 24.MM.0506.A",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "W.B. Mason",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "UPDATE to 24.SQ.1001.A",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Custer Inc",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Phelan's Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "HB Workplaces (formerly MBI in Utah)/Fanning Howey bid",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings quote",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Edu-Env by Cooney",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nat'l Office Liquidators",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "FurnLeaf Interiors, LLC",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Equipment Co.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Grooms Office",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ND",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Franciscan",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alamo Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Episcopal Cathedral of Saint James",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Zimmerman School",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CJ&Associates",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Scott Rice Office Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Forward Space / Green Associates",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "NBS / Learning Care Group",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furniture / Republic Airways  (15th REVISION)",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "COFCO",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Dayton VA Clinic",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ORI Nashville",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Co.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "EZ Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Alfred Williams & Co.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "GWS",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Total Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LarHarpe's Office Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Phoenician",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Encompas",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Broadway Business Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Capital Furniture Source",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings  / replacement solid surface",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Connect Interiors / First International Bank & Trust",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Requote 25.SS.12425-A-Rev.C // Wants a different laminate and edge.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "National Office Liquidators",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnshings",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Broadway Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Comercial Office Environments-Updated quote from Luke`s previous",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Studio Axis; Luke Wagner completed this quote, straight out of the book",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Challenge Office Products / Frey Gaede",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Gallery International- Biltmore Cherry w/ 3mm match",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CBI Nashville",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Lowery McDonnell Company",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to Wexner Medical Center (25.MAF.32625-4)",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CFI Workspace NJ / Merck",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Loth...ANOTHER revision 25.MAF.32625-B",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office360",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Element IV Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.MAF.42125",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.MM.0324.A",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Changes to 25.MAF.42525.5",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Professional Installations Systems",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continental Office PO#212813-258081",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Cousins Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Southwest Facility Services quote",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Creative Furnishings",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Kirksey & Co",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "D C Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Martin Purblic Seating quote UPDATE",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Southwest Facility Services",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Environments / RSCC Seminar Tables",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "McGee Designhouse",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "FCi Furniture Consultants",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "I-Space / Next X-base",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Nolan's Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Schmidt-Goodman / update quote 25.MAF.42525-6 with different qty and laminate",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Images Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OstermanCron",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "AHI / AAA Interests",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Company (Standard laminate)",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Challenge Office Products",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Frank Cooney Company // base only",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Michigan Office Environments",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Michingan Office Environments",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "University of North Texas",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace IA",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "McGee Desginhouse / ITCC IFC",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Phillips Workplace Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "MV Sales LLC",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Prugistics",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Phoenix Contract, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "King's Walk Clubhouse",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "SchoolsIN",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Concepts / all in the price book, sent an email",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings // UPDATE quote 25.MAF.61725-1",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ohio State Men's Basketball",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "PIGGOTT / Missouri RIver Energy Training tables",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sharp School Services /// Luke Wagner too lazy to type up",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Imageworks",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture Concepts",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continua",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "JCL Solutions / UPDATE with matching edges.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "A-Z Office Resource / Freed-Hardeman University",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furniture / Ford Meter Box // bases ONLY",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "A-Z Office Resource / Freed-Hardeman University // changed to tops only",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Friends Office / City of Dayton Municipal Court // Premium matching edges",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Norby's // needs a quick NE quote",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ashland Office -X base",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Empire Office, copy SO 8888",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Taylor U / Horne Academic Center-Cornwall Rotunda Room",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.MM.0620.A",
+    "quoteCount": 1,
+    "firstSeen": "2024",
+    "lastSeen": "2024",
+    "isRepGroup": false
+  },
+  {
+    "name": "Station 19 Architects",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "All Makes Office",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furnleaf Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "J.Arnold Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update quote 25.MAF.62725-4",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Interiors / 24\" x 30\" nesting tables",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sonus Interiors // update 24.MM.0620.A1",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "NBS // McLaren Bay City /// too lazy to look it up in the book",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ImageWorks Commercial Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Mayville State Unitersity",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Louer Facility Planning",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Headwaters Development",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hi Touch",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Hitachi",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings.... in the book.... too lazy to type up",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Sidwell Friends Upper School",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Norby's",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Business Furnishings / Morris Performing Art Center / Bases ONLY",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Wrklab",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "NewSpace",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 24.MAF.5222024",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Martin's Office Supply",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "OEC Business Interiors of Mobile, AL",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Burchfield Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Equipment Co. of Mobile",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "ORI-Nashville // out of the pricer sales person too lazy to type up",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "DP Supply Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CBI Workspace",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.MAF.6325",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "LAN Office / Match SO 9035",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Triplett",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Element Interiors Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Library Funiture International",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Corporate Design Evansville",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Castell Spaces",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carolina Furnishings & Design LLC",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Commercial Office Environmnets",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "MOE",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "The Bradley Co.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.MM.0722.A",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture, Ashland",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ohio State University",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "John A Marshall Co",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Supply Post",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Premier Furnishings Solutions PO#1871",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Furniture (Ashland)",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Rose City Office Furnishings",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Grooms Office Environments",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "PSi",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Reorder of SO #5643 (just qty. 1 of 06TC3060T26NE)",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "North Ridgeville City School District",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Ashland Office Supply- PO #KDMC DR FRIDAY",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "JCL Solutions / Spencer Office Supplies",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Complete Office",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Innovativeos",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Challenge OP / Frey Gaede",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Challenge OP",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Unique Office Solutions, Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continua Interiors of Minnesota",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "CLG",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Consultants Miami Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Melissa Meeks",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Weston High School",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Resources Group",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Omega Commercial Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Stephens Office",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Workspace",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Furniture Resource Group",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Fleming Interior Group- D shaped table quote update",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Continua Interiors",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Louer",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Unique Office Solutions",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Tablex PO#Casters-Willoughby",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Contract Source Inc.",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.112025-A_x000D_",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Update to 25.MAF.102325-2_x000D_",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Interior Design and Architecture",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Meteor Education / Sharp School Services",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "25.SS.123025-A-Update",
+    "quoteCount": 1,
+    "firstSeen": "2025",
+    "lastSeen": "2025",
+    "isRepGroup": false
+  },
+  {
+    "name": "Office Peeps",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Medallion Services",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Carrollton Office Equipment",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Osterman Cron",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "SOS Office Furniture",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Wallin Marketing Services",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Meteor Education",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
+  },
+  {
+    "name": "Harmony Public Schools",
+    "quoteCount": 1,
+    "firstSeen": "2026",
+    "lastSeen": "2026",
+    "isRepGroup": false
   }
 ]
