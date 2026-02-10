@@ -44,6 +44,19 @@ const CONFIGURATOR_SERIES = [
   { code: "33", name: "Fundamental" },
 ];
 
+// Available shapes per series (only shapes that have GLB models)
+// Overrides the global compatibility matrix which includes shapes without CAD
+const SERIES_SHAPES: Record<string, string[]> = {
+  "00": ["TC", "BT", "D", "RD", "TA"],  // Ultra: confirmed from 81 GLBs
+};
+
+// Available bases per series (only bases that have GLB models)
+const SERIES_BASES: Record<string, string[]> = {
+  "00": ["U"],             // Ultra: U-Leg only
+  "30": ["T", "X", "U"],   // Foundation: placeholder until converted
+  "33": ["T", "X", "U"],   // Fundamental: placeholder until converted
+};
+
 // Shape display names from compatibility-matrices
 const SHAPE_NAMES: Record<string, string> = {
   TC: "Rectangular",
@@ -141,13 +154,15 @@ export default function ConfiguratorPage() {
   // Filtered options based on selections
   const availableShapes = useMemo(() => {
     if (!series) return [];
-    return getShapesForSeries(series);
+    // Use series-specific shapes if available (only shapes with GLB models)
+    return SERIES_SHAPES[series] ?? getShapesForSeries(series);
   }, [series]);
 
   const availableBases = useMemo(() => {
-    if (!shape) return [];
-    return getBasesForShape(shape);
-  }, [shape]);
+    if (!series || !shape) return [];
+    // Use series-specific bases (only bases that have GLB models)
+    return SERIES_BASES[series] ?? getBasesForShape(shape);
+  }, [series, shape]);
 
   // Resolve model URL from config
   const { url: modelUrl } = useModelUrl({

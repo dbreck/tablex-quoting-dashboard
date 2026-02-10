@@ -19,6 +19,22 @@ export interface ConfigInput {
 }
 
 /**
+ * Derive the base width from the table width.
+ *
+ * Ultra naming convention: base width = table width - 2
+ *   24" table -> U22, 30" -> U28, 36" -> U34, 42" -> U40, 48" -> U46
+ *
+ * For round tables (RD), the base is always U18 with a "-4" suffix.
+ */
+function deriveBaseWidth(size: string): string | null {
+  if (size.length >= 4) {
+    const tableWidth = parseInt(size.substring(0, 2), 10);
+    if (!isNaN(tableWidth)) return String(tableWidth - 2);
+  }
+  return null;
+}
+
+/**
  * Build a GLB filename from parsed config parts.
  *
  * Matches the conversion pipeline naming convention:
@@ -37,11 +53,25 @@ export function getGlbFilename(config: {
   const { shape, size, base } = config;
   if (!shape || !size || !base) return null;
 
-  // Concatenate shape + size + base (+ baseWidth if present), lowercase
-  let name = `${shape}${size}`;
-  if (base) {
-    name += base;
-    if (config.baseWidth) name += config.baseWidth;
+  const shapeUpper = shape.toUpperCase();
+
+  // Round tables: fixed pattern {shape}{diameter}u18-4.glb
+  if (shapeUpper === 'RD') {
+    return `rd${size}u18-4.glb`;
+  }
+
+  let name = `${shape}${size}${base}`;
+
+  // Use explicit baseWidth if provided, otherwise derive from table width
+  const bw = config.baseWidth ?? deriveBaseWidth(size);
+  if (bw) name += bw;
+
+  // Dual-base for very long tables (120"+): second base is always u18
+  if (size.length >= 5) {
+    const tableLength = parseInt(size.substring(2), 10);
+    if (!isNaN(tableLength) && tableLength >= 120) {
+      name += `${base}18`;
+    }
   }
 
   return `${name.toLowerCase()}.glb`;
