@@ -132,6 +132,29 @@ export const edgeTypes: EdgeType[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Edge Type → Material mapping (for 3D viewer)
+// ---------------------------------------------------------------------------
+const EDGE_TYPE_FINISHES: Record<string, FinishOption> = {
+  'self-edge':      { id: 'edge-self', name: 'Self Edge', category: 'hpl', hex: '#000000', roughness: 0.6, metalness: 0 }, // placeholder, replaced by top finish
+  'no-edge':        { id: 'edge-none', name: 'No Edge', category: 'hpl', hex: '#000000', roughness: 0.6, metalness: 0 },   // placeholder, replaced by top finish
+  't-mold':         { id: 'edge-tmold', name: 'T-Mold', category: 'hpl', hex: '#3a3a3a', roughness: 0.5, metalness: 0 },
+  'vinyl-bullnose': { id: 'edge-vinyl', name: 'Vinyl Bullnose', category: 'hpl', hex: '#404040', roughness: 0.5, metalness: 0 },
+  'urethane-band':  { id: 'edge-urethane', name: 'Urethane Band', category: 'hpl', hex: '#1a1a1a', roughness: 0.8, metalness: 0 },
+  'rubber-t-mold':  { id: 'edge-rubber', name: 'Rubber T-Mold', category: 'hpl', hex: '#1a1a1a', roughness: 0.85, metalness: 0 },
+  'wood-bullnose':  { id: 'edge-wood', name: 'Wood Bullnose', category: 'hpl', hex: '#a0734a', roughness: 0.75, metalness: 0 },
+  'phenolic':       { id: 'edge-phenolic', name: 'Phenolic', category: 'hpl', hex: '#3d2b1f', roughness: 0.6, metalness: 0 },
+};
+
+/**
+ * Get the FinishOption for an edge type. For "self-edge" and "no-edge",
+ * returns null — caller should use the top finish instead.
+ */
+export function getEdgeFinish(edgeTypeId: string): FinishOption | null {
+  if (edgeTypeId === 'self-edge' || edgeTypeId === 'no-edge') return null;
+  return EDGE_TYPE_FINISHES[edgeTypeId] ?? null;
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 const finishMap = new Map(allFinishes.map((f) => [f.id, f]));

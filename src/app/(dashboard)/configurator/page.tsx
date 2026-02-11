@@ -28,6 +28,7 @@ import {
   solidSurfaceFinishes,
   butcherBlockFinishes,
   edgeTypes,
+  getEdgeFinish,
   type FinishOption,
 } from "@/data/finish-catalog";
 import { ShoppingCart } from "lucide-react";
@@ -207,7 +208,7 @@ export default function ConfiguratorPage() {
                 modelUrl={modelUrl}
                 baseFinish={baseFinish}
                 topFinish={topFinish}
-                edgeFinish={topFinish}
+                edgeFinish={getEdgeFinish(edgeType) ?? topFinish}
                 className="w-full aspect-[4/3]"
               />
               {!modelUrl && (
