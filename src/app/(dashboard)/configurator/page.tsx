@@ -18,7 +18,6 @@ import {
   getAvailableShapes,
   getAvailableSizes,
   getAvailableBases,
-  getDefaultGlb,
   formatSizeLabel,
   MODEL_AVAILABILITY,
 } from "@/data/model-availability";
@@ -149,20 +148,13 @@ export default function ConfiguratorPage() {
     }
   }, [availableBases, base]);
 
-  // Resolve model URL from config — falls back to series default hero model
-  const { url: configModelUrl } = useModelUrl({
+  // Resolve model URL — only when shape+size+base are all selected
+  const { url: modelUrl } = useModelUrl({
     series,
     shape,
     size,
     base,
   });
-
-  const defaultGlb = series ? getDefaultGlb(series) : undefined;
-  const defaultUrl = defaultGlb
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/models/${defaultGlb}`
-    : null;
-
-  const modelUrl = configModelUrl ?? defaultUrl;
 
   // Reset dependent selections when parent changes
   function handleSeriesChange(val: string) {
@@ -205,9 +197,15 @@ export default function ConfiguratorPage() {
                 edgeFinish={topFinish}
                 className="w-full aspect-[4/3]"
               />
-              {!modelUrl && series && shape && size && (
+              {!modelUrl && (
                 <p className="text-xs text-slate-400 text-center mt-2">
-                  3D model not available for this configuration
+                  {!series
+                    ? "Select a series to get started"
+                    : !shape
+                      ? "Choose a shape to preview"
+                      : !size || !base
+                        ? "Select size and base to load 3D model"
+                        : "3D model not available for this configuration"}
                 </p>
               )}
             </CardContent>

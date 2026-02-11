@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useCallback, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Stage } from "@react-three/drei";
+import { OrbitControls, Center, Environment } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Box } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -87,22 +87,26 @@ export function ModelViewer({
         className,
       )}
     >
-      <Canvas camera={{ position: [3, 2, 5], fov: 45 }}>
+      <Canvas camera={{ position: [2, 1.5, 3], fov: 40 }}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 8, 5]} intensity={0.8} />
+        <directionalLight position={[-3, 4, -2]} intensity={0.3} />
+        <Environment preset="studio" />
         <Suspense fallback={null}>
-          <Stage adjustCamera intensity={0.5}>
+          <Center>
             <TableModel
               url={modelUrl}
               baseFinish={baseFinish}
               topFinish={topFinish}
               edgeFinish={edgeFinish}
             />
-          </Stage>
+          </Center>
         </Suspense>
         <OrbitControls
           ref={controlsRef}
           enablePan={false}
-          minDistance={2}
-          maxDistance={15}
+          minDistance={1}
+          maxDistance={10}
         />
       </Canvas>
 

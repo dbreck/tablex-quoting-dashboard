@@ -31,20 +31,26 @@ function makeMaterial(finish: FinishOption): THREE.MeshStandardMaterial {
   });
 }
 
+const DEFAULT_MATERIAL = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.5 });
+
 function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);
   const invalidate = useThree((s) => s.invalidate);
 
-  // Clone scene and strip baked vertex colors (COLOR_0) so our materials take effect.
-  // The GLBs from trimesh have vertex colors but no GLTF materials, so three.js
-  // creates default materials with vertexColors:true — which override our finish colors.
+  // Clone scene, strip baked vertex colors, replace shared materials, and fix orientation.
+  // GLBs from trimesh have COLOR_0 vertex attrs + no GLTF materials → three.js creates
+  // default materials with vertexColors:true that override our finish colors.
+  // Also: DXF source files are Z-up but three.js is Y-up → rotate -90° around X.
   const clone = useMemo(() => {
     const c = scene.clone(true);
     c.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.deleteAttribute("color");
+        child.material = DEFAULT_MATERIAL.clone();
       }
     });
+    // DXF/DWG files use Z-up; three.js uses Y-up
+    c.rotation.x = -Math.PI / 2;
     return c;
   }, [scene]);
 
