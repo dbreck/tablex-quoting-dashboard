@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, Component, type ReactNode } from "react";
+import { useEffect, useMemo, Component, type ReactNode } from "react";
 import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import type { FinishOption } from "@/data/finish-catalog";
 
@@ -33,10 +33,22 @@ function makeMaterial(finish: FinishOption): THREE.MeshStandardMaterial {
 
 function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);
-  const clone = useMemo(() => scene.clone(true), [scene]);
-  const needsInvalidate = useRef(false);
+  const invalidate = useThree((s) => s.invalidate);
 
-  // Apply finishes whenever they change — mutate materials in-place on the clone
+  // Clone scene and strip baked vertex colors (COLOR_0) so our materials take effect.
+  // The GLBs from trimesh have vertex colors but no GLTF materials, so three.js
+  // creates default materials with vertexColors:true — which override our finish colors.
+  const clone = useMemo(() => {
+    const c = scene.clone(true);
+    c.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.deleteAttribute("color");
+      }
+    });
+    return c;
+  }, [scene]);
+
+  // Apply finishes whenever they change
   useEffect(() => {
     clone.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
@@ -49,24 +61,14 @@ function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelP
       else if (part === "edge") finish = edgeFinish;
 
       if (finish) {
-        // Dispose previous material to avoid memory leak
         if (child.material) {
           (child.material as THREE.Material).dispose();
         }
         child.material = makeMaterial(finish);
       }
     });
-    // Flag that the scene changed so R3F re-renders one frame
-    needsInvalidate.current = true;
-  }, [clone, baseFinish, topFinish, edgeFinish]);
-
-  // Invalidate the R3F frame loop once after material changes
-  useFrame(({ invalidate }) => {
-    if (needsInvalidate.current) {
-      needsInvalidate.current = false;
-      invalidate();
-    }
-  });
+    invalidate();
+  }, [clone, baseFinish, topFinish, edgeFinish, invalidate]);
 
   // Cleanup on unmount
   useEffect(() => {
