@@ -28,6 +28,13 @@ export function getGlbFilename(config: {
 }
 
 /**
+ * Build storage path: {seriesCode}/{filename}
+ */
+function storagePath(seriesCode: string, filename: string): string {
+  return `${seriesCode}/${filename}`;
+}
+
+/**
  * Full pipeline: parse SKU -> check series has model -> look up GLB filename -> return Supabase URL.
  */
 export function getModelUrl(sku: string): string | null {
@@ -43,7 +50,7 @@ export function getModelUrl(sku: string): string | null {
   );
   if (!filename) return null;
 
-  return `${SUPABASE_STORAGE_URL}/${filename}`;
+  return `${SUPABASE_STORAGE_URL}/${storagePath(seriesCode, filename)}`;
 }
 
 /**
@@ -56,7 +63,7 @@ export function getModelUrlFromConfig(config: ConfigInput): string | null {
   const filename = lookupGlbFilename(series, shape, size, base);
   if (!filename) return null;
 
-  return `${SUPABASE_STORAGE_URL}/${filename}`;
+  return `${SUPABASE_STORAGE_URL}/${storagePath(series, filename)}`;
 }
 
 /**

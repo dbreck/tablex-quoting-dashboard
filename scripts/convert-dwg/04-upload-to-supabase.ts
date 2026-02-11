@@ -3,6 +3,7 @@
  * 04-upload-to-supabase.ts
  *
  * Uploads GLB files to Supabase Storage bucket 'models'.
+ * Files are stored under {seriesCode}/{filename} subdirectories.
  * Skips files that already exist in the bucket.
  *
  * Usage:
@@ -21,6 +22,22 @@ const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "../..");
 const DEFAULT_INPUT = path.join(PROJECT_ROOT, "catalog/glb");
 const BUCKET = "models";
 const CONTENT_TYPE = "model/gltf-binary";
+
+// Series directory name -> series code mapping
+const SERIES_CODE_MAP: Record<string, string> = {
+  Ultra: "00",
+  Stretch: "06",
+  Elite: "08",
+  Foundation: "30",
+  Fundamental: "33",
+  Justice: "40",
+  Artisan: "43",
+  Primary: "44",
+  Puddle: "45",
+  Exclaim: "71",
+  VertiGO: "74",
+  Surge: "99",
+};
 
 function parseArgs(): { inputDir: string } {
   const args = process.argv.slice(2);
@@ -46,20 +63,45 @@ function getEnvOrExit(name: string): string {
   return value;
 }
 
-function collectGlbFiles(dir: string): string[] {
-  const files: string[] = [];
+interface GlbFile {
+  localPath: string;
+  storagePath: string;
+}
+
+function collectGlbFiles(dir: string): GlbFile[] {
+  const files: GlbFile[] = [];
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      files.push(...collectGlbFiles(fullPath));
+      // Check if this is a series directory
+      const seriesCode = SERIES_CODE_MAP[entry.name];
+      if (seriesCode) {
+        // Collect GLBs from series directory
+        const seriesFiles = fs.readdirSync(fullPath, { withFileTypes: true });
+        for (const sf of seriesFiles) {
+          if (sf.isFile() && sf.name.toLowerCase().endsWith(".glb")) {
+            files.push({
+              localPath: path.join(fullPath, sf.name),
+              storagePath: `${seriesCode}/${sf.name}`,
+            });
+          }
+        }
+      } else {
+        // Recurse into unknown directories
+        files.push(...collectGlbFiles(fullPath));
+      }
     } else if (entry.isFile() && entry.name.toLowerCase().endsWith(".glb")) {
-      files.push(fullPath);
+      // Root-level GLBs (shouldn't happen with new structure)
+      files.push({
+        localPath: fullPath,
+        storagePath: entry.name,
+      });
     }
   }
 
-  return files.sort();
+  return files.sort((a, b) => a.storagePath.localeCompare(b.storagePath));
 }
 
 async function listExistingFiles(
@@ -77,7 +119,8 @@ async function listExistingFiles(
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${serviceKey}`,
+          apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -94,11 +137,19 @@ async function listExistingFiles(
       break;
     }
 
-    const items = (await response.json()) as { name: string }[];
+    const items = (await response.json()) as { name: string; id?: string }[];
     if (items.length === 0) break;
 
     for (const item of items) {
-      existing.add(prefix ? `${prefix}/${item.name}` : item.name);
+      // For directory items, recurse to list contents
+      if (!item.id) {
+        const subItems = await listExistingFiles(supabaseUrl, serviceKey, prefix ? `${prefix}/${item.name}` : item.name);
+        for (const sub of subItems) {
+          existing.add(sub);
+        }
+      } else {
+        existing.add(prefix ? `${prefix}/${item.name}` : item.name);
+      }
     }
 
     if (items.length < limit) break;
@@ -121,9 +172,10 @@ async function uploadFile(
     {
       method: "POST",
       headers: {
+        apikey: serviceKey,
         Authorization: `Bearer ${serviceKey}`,
         "Content-Type": CONTENT_TYPE,
-        "x-upsert": "false",
+        "x-upsert": "true",
       },
       body: fileBuffer,
     },
@@ -163,10 +215,15 @@ async function main() {
     return;
   }
 
-  // Check what already exists in the bucket
-  console.log("Checking existing files in Supabase...");
-  const existing = await listExistingFiles(supabaseUrl, serviceKey);
-  console.log(`Found ${existing.size} files already in bucket`);
+  // Summarize by series
+  const seriesCounts = new Map<string, number>();
+  for (const f of glbFiles) {
+    const prefix = f.storagePath.split("/")[0];
+    seriesCounts.set(prefix, (seriesCounts.get(prefix) || 0) + 1);
+  }
+  for (const [prefix, count] of [...seriesCounts.entries()].sort()) {
+    console.log(`  ${prefix}: ${count} files`);
+  }
   console.log();
 
   let uploaded = 0;
@@ -174,23 +231,15 @@ async function main() {
   let failed = 0;
 
   for (let i = 0; i < glbFiles.length; i++) {
-    const localPath = glbFiles[i];
-    const fileName = path.basename(localPath);
-    const storagePath = fileName; // Flat structure in bucket
-
+    const { localPath, storagePath } = glbFiles[i];
     const progress = `[${i + 1}/${glbFiles.length}]`;
 
-    if (existing.has(storagePath)) {
-      console.log(`${progress} SKIP: ${fileName} (already exists)`);
-      skipped++;
-      continue;
-    }
-
     const size = fs.statSync(localPath).size;
-    console.log(`${progress} UPLOAD: ${fileName} (${formatBytes(size)})`);
+    process.stdout.write(`${progress} ${storagePath} (${formatBytes(size)})...`);
 
     const ok = await uploadFile(supabaseUrl, serviceKey, storagePath, localPath);
     if (ok) {
+      console.log(" OK");
       uploaded++;
     } else {
       failed++;
@@ -200,8 +249,8 @@ async function main() {
   console.log();
   console.log("=== Done ===");
   console.log(`Uploaded: ${uploaded}`);
-  console.log(`Skipped:  ${skipped} (already existed)`);
-  console.log(`Failed:   ${failed}`);
+  if (skipped) console.log(`Skipped:  ${skipped} (already existed)`);
+  if (failed) console.log(`Failed:   ${failed}`);
 }
 
 function formatBytes(bytes: number): string {

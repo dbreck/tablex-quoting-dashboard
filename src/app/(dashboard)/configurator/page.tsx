@@ -42,10 +42,23 @@ const ModelViewer3D = dynamic(
 );
 
 // Series that have 3D models — only series present in MODEL_AVAILABILITY
-const CONFIGURATOR_SERIES = Object.keys(MODEL_AVAILABILITY).map((code) => {
-  const names: Record<string, string> = { "00": "Ultra", "30": "Foundation", "33": "Fundamental" };
-  return { code, name: names[code] ?? code };
-});
+const SERIES_NAMES: Record<string, string> = {
+  "00": "Ultra",
+  "06": "Stretch",
+  "08": "Elite",
+  "30": "Foundation",
+  "33": "Fundamental",
+  "40": "Justice",
+  "44": "Primary",
+  "45": "Puddle",
+  "71": "Exclaim",
+  "74": "VertiGO",
+  "99": "Surge",
+};
+const CONFIGURATOR_SERIES = Object.keys(MODEL_AVAILABILITY).map((code) => ({
+  code,
+  name: SERIES_NAMES[code] ?? code,
+}));
 
 // Shape display names
 const SHAPE_NAMES: Record<string, string> = {
@@ -97,7 +110,9 @@ const BASE_NAMES: Record<string, string> = {
   H: "H-Leg",
   DR: "Drum Base",
   GNT: "Gannet",
+  GN: "Gannet",
   TOS: "T-Base (Offset)",
+  SD: "Sled Base",
 };
 
 type TopMaterial = "hpl" | "tfl" | "solid-surface" | "butcher-block";
