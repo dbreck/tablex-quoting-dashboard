@@ -271,6 +271,25 @@ export default function ConfiguratorPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Lighting */}
+          <div className="mt-3">
+            <label className="text-sm font-medium text-slate-700 mb-1.5 block">
+              Lighting
+            </label>
+            <Select value={envPreset} onValueChange={(val) => setEnvPreset(val as EnvironmentPreset)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ENV_PRESETS.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Configuration Panel */}
@@ -457,25 +476,6 @@ export default function ConfiguratorPage() {
                 {edgeTypes.map((edge) => (
                   <SelectItem key={edge.id} value={edge.id}>
                     {edge.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Lighting */}
-          <div>
-            <label className="text-sm font-medium text-slate-700 mb-1.5 block">
-              Lighting
-            </label>
-            <Select value={envPreset} onValueChange={(val) => setEnvPreset(val as EnvironmentPreset)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ENV_PRESETS.map((p) => (
-                  <SelectItem key={p.value} value={p.value}>
-                    {p.label}
                   </SelectItem>
                 ))}
               </SelectContent>
