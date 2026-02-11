@@ -59,6 +59,15 @@ export function ModelViewer({
     controls.update();
   }, []);
 
+  const handleCentered = useCallback(({ height }: { height: number }) => {
+    const ctrl = controlsRef.current;
+    if (ctrl) {
+      ctrl.target.set(0, height / 2, 0);
+      ctrl.update();
+      ctrl.saveState(); // So reset() returns to this state
+    }
+  }, []);
+
   const handleFullscreen = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -99,8 +108,9 @@ export function ModelViewer({
         gl={{ toneMapping: NeutralToneMapping, toneMappingExposure: 1.0 }}
       >
         <ambientLight intensity={0.3} />
+        <gridHelper args={[10, 10, '#cccccc', '#e5e5e5']} />
         <Suspense fallback={null}>
-          <Center>
+          <Center bottom onCentered={handleCentered}>
             <TableModel
               url={modelUrl}
               baseFinish={baseFinish}
@@ -110,7 +120,7 @@ export function ModelViewer({
           </Center>
           <Environment preset={environmentPreset} background={false} environmentIntensity={1.0} />
           <ContactShadows
-            position={[0, -0.01, 0]}
+            position={[0, 0, 0]}
             opacity={0.4}
             blur={2.5}
             scale={10}
