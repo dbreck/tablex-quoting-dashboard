@@ -62,7 +62,10 @@ export function ModelViewer({
   const handleCentered = useCallback(({ height }: { height: number }) => {
     const ctrl = controlsRef.current;
     if (ctrl) {
-      ctrl.target.set(0, height / 2, 0);
+      const centerY = height / 2;
+      ctrl.target.set(0, centerY, 0);
+      // Shift camera up by centerY to maintain the same relative viewing angle
+      ctrl.object.position.set(1.8, centerY + 0.7, 1.2);
       ctrl.update();
       ctrl.saveState(); // So reset() returns to this state
     }
