@@ -59,15 +59,26 @@ export function ModelViewer({
     controls.update();
   }, []);
 
-  const handleCentered = useCallback(({ height }: { height: number }) => {
+  const handleCentered = useCallback(({ width, height, depth }: { width: number; height: number; depth: number }) => {
     const ctrl = controlsRef.current;
     if (ctrl) {
       const centerY = height / 2;
       ctrl.target.set(0, centerY, 0);
-      // Shift camera up by centerY to maintain the same relative viewing angle
-      ctrl.object.position.set(1.8, centerY + 0.7, 1.2);
+
+      // Auto-fit camera distance for FOV 40°
+      const maxDim = Math.max(width, height, depth);
+      const fovRad = (40 * Math.PI) / 180;
+      const fitDist = (maxDim / 2) / Math.tan(fovRad / 2) * 1.2;
+
+      // Maintain original viewing angle [1.8, 0.7, 1.2] but scale to fit
+      const len = Math.sqrt(1.8 * 1.8 + 0.7 * 0.7 + 1.2 * 1.2);
+      ctrl.object.position.set(
+        (1.8 / len) * fitDist,
+        centerY + (0.7 / len) * fitDist,
+        (1.2 / len) * fitDist,
+      );
       ctrl.update();
-      ctrl.saveState(); // So reset() returns to this state
+      ctrl.saveState();
     }
   }, []);
 
