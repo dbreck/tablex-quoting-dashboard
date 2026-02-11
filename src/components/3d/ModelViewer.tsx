@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useCallback, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Center, Environment, ContactShadows } from "@react-three/drei";
+import { OrbitControls, Center, Environment, ContactShadows, Bounds, useBounds } from "@react-three/drei";
 import { NeutralToneMapping } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Box } from "lucide-react";
@@ -24,6 +24,20 @@ interface ModelViewerProps {
   environmentPreset?: EnvironmentPreset;
   className?: string;
   compact?: boolean;
+}
+
+/** Triggers Bounds.refresh() whenever the model URL changes */
+function BoundsRefresher({ modelUrl }: { modelUrl: string }) {
+  const bounds = useBounds();
+  const prevUrl = useRef(modelUrl);
+
+  if (modelUrl !== prevUrl.current) {
+    prevUrl.current = modelUrl;
+    // Schedule refresh after the new model mounts
+    requestAnimationFrame(() => bounds.refresh().clip().fit());
+  }
+
+  return null;
 }
 
 export function ModelViewer({
@@ -57,29 +71,6 @@ export function ModelViewer({
     const camera = controls.object;
     camera.position.multiplyScalar(1.25);
     controls.update();
-  }, []);
-
-  const handleCentered = useCallback(({ width, height, depth }: { width: number; height: number; depth: number }) => {
-    const ctrl = controlsRef.current;
-    if (ctrl) {
-      const centerY = height / 2;
-      ctrl.target.set(0, centerY, 0);
-
-      // Auto-fit camera distance for FOV 40°
-      const maxDim = Math.max(width, height, depth);
-      const fovRad = (40 * Math.PI) / 180;
-      const fitDist = (maxDim / 2) / Math.tan(fovRad / 2) * 1.2;
-
-      // Maintain original viewing angle [1.8, 0.7, 1.2] but scale to fit
-      const len = Math.sqrt(1.8 * 1.8 + 0.7 * 0.7 + 1.2 * 1.2);
-      ctrl.object.position.set(
-        (1.8 / len) * fitDist,
-        centerY + (0.7 / len) * fitDist,
-        (1.2 / len) * fitDist,
-      );
-      ctrl.update();
-      ctrl.saveState();
-    }
   }, []);
 
   const handleFullscreen = useCallback(() => {
@@ -124,14 +115,17 @@ export function ModelViewer({
         <ambientLight intensity={0.3} />
         <gridHelper args={[10, 10, '#cccccc', '#e5e5e5']} />
         <Suspense fallback={null}>
-          <Center bottom onCentered={handleCentered}>
-            <TableModel
-              url={modelUrl}
-              baseFinish={baseFinish}
-              topFinish={topFinish}
-              edgeFinish={edgeFinish}
-            />
-          </Center>
+          <Bounds fit clip observe margin={1.2}>
+            <Center bottom>
+              <TableModel
+                url={modelUrl}
+                baseFinish={baseFinish}
+                topFinish={topFinish}
+                edgeFinish={edgeFinish}
+              />
+            </Center>
+            <BoundsRefresher modelUrl={modelUrl} />
+          </Bounds>
           <Environment preset={environmentPreset} background={false} environmentIntensity={1.0} />
           <ContactShadows
             position={[0, 0, 0]}
@@ -147,6 +141,7 @@ export function ModelViewer({
           enablePan={false}
           minDistance={1}
           maxDistance={10}
+          makeDefault
         />
       </Canvas>
 
