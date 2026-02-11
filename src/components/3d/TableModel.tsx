@@ -28,6 +28,7 @@ function makeMaterial(finish: FinishOption): THREE.MeshPhysicalMaterial {
     color: new THREE.Color(finish.hex),
     roughness: finish.roughness,
     metalness: finish.metalness,
+    envMapIntensity: 1.0,
   };
 
   switch (finish.category) {
@@ -62,7 +63,7 @@ function makeMaterial(finish: FinishOption): THREE.MeshPhysicalMaterial {
   }
 }
 
-const DEFAULT_MATERIAL = new THREE.MeshPhysicalMaterial({ color: 0x888888, roughness: 0.5 });
+const DEFAULT_MATERIAL = new THREE.MeshPhysicalMaterial({ color: 0x888888, roughness: 0.5, envMapIntensity: 1.0 });
 
 function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);
