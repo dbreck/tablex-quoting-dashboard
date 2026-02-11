@@ -31,7 +31,7 @@ export function ModelViewer({
   baseFinish,
   topFinish,
   edgeFinish,
-  environmentPreset = "lobby",
+  environmentPreset = "city",
   className,
   compact = false,
 }: ModelViewerProps) {

@@ -154,7 +154,7 @@ export default function ConfiguratorPage() {
   const [baseFinish, setBaseFinish] = useState<FinishOption>(powderCoatFinishes[0]);
   const [topMaterial, setTopMaterial] = useState<TopMaterial>("hpl");
   const [topFinish, setTopFinish] = useState<FinishOption>(hplFinishes[0]);
-  const [envPreset, setEnvPreset] = useState<EnvironmentPreset>("lobby");
+  const [envPreset, setEnvPreset] = useState<EnvironmentPreset>("city");
   const [shapesOpen, setShapesOpen] = useState(true);
   const [edgeType, setEdgeType] = useState<string>(edgeTypes[0].id);
 
