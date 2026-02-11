@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useTexture } from "@react-three/drei";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -176,6 +177,20 @@ export default function ConfiguratorPage() {
       setBase(availableBases[0]);
     }
   }, [availableBases, base]);
+
+  // Preload textures for the selected top material category
+  useEffect(() => {
+    const finishes = TOP_FINISH_MAP[topMaterial];
+    for (const finish of finishes) {
+      const urls: string[] = [];
+      if (finish.textureUrl) urls.push(finish.textureUrl);
+      if (finish.normalMapUrl) urls.push(finish.normalMapUrl);
+      if (finish.roughnessMapUrl) urls.push(finish.roughnessMapUrl);
+      for (const url of urls) {
+        useTexture.preload(url);
+      }
+    }
+  }, [topMaterial]);
 
   // Resolve model URL — only when shape+size+base are all selected
   const { url: modelUrl } = useModelUrl({

@@ -6,6 +6,8 @@ export interface FinishOption {
   roughness: number;
   metalness: number;
   textureUrl?: string;
+  normalMapUrl?: string;
+  roughnessMapUrl?: string;
 }
 
 export interface EdgeType {
@@ -19,6 +21,7 @@ export interface EdgeType {
 // ---------------------------------------------------------------------------
 const powderCoat = (id: string, name: string, hex: string): FinishOption => ({
   id, name, category: 'powder-coat', hex, roughness: 0.4, metalness: 0.1,
+  normalMapUrl: '/textures/powder-coat/orange-peel-normal.png',
 });
 
 export const powderCoatFinishes: FinishOption[] = [
@@ -71,38 +74,38 @@ export const chromeFinish: FinishOption = {
 // HPL (High Pressure Laminate) — neutral tones for tops
 // ---------------------------------------------------------------------------
 export const hplFinishes: FinishOption[] = [
-  { id: 'hpl-white', name: 'HPL White', category: 'hpl', hex: '#f0f0f0', roughness: 0.6, metalness: 0 },
-  { id: 'hpl-gray', name: 'HPL Gray', category: 'hpl', hex: '#b0b0b0', roughness: 0.6, metalness: 0 },
-  { id: 'hpl-charcoal', name: 'HPL Charcoal', category: 'hpl', hex: '#4a4a4a', roughness: 0.6, metalness: 0 },
-  { id: 'hpl-linen', name: 'HPL Linen', category: 'hpl', hex: '#e8dcc8', roughness: 0.6, metalness: 0 },
-  { id: 'hpl-fog', name: 'HPL Fog', category: 'hpl', hex: '#d0cfc9', roughness: 0.6, metalness: 0 },
+  { id: 'hpl-white', name: 'HPL White', category: 'hpl', hex: '#f0f0f0', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/white-normal.png' },
+  { id: 'hpl-gray', name: 'HPL Gray', category: 'hpl', hex: '#b0b0b0', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/gray-normal.png' },
+  { id: 'hpl-charcoal', name: 'HPL Charcoal', category: 'hpl', hex: '#4a4a4a', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/charcoal-normal.png' },
+  { id: 'hpl-linen', name: 'HPL Linen', category: 'hpl', hex: '#e8dcc8', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/linen-normal.png' },
+  { id: 'hpl-fog', name: 'HPL Fog', category: 'hpl', hex: '#d0cfc9', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/fog-normal.png' },
 ];
 
 // ---------------------------------------------------------------------------
 // TFL (Thermally Fused Laminate) — wood tones for tops
 // ---------------------------------------------------------------------------
 export const tflFinishes: FinishOption[] = [
-  { id: 'tfl-natural-maple', name: 'Natural Maple', category: 'tfl', hex: '#d4a76a', roughness: 0.7, metalness: 0 },
-  { id: 'tfl-honey-oak', name: 'Honey Oak', category: 'tfl', hex: '#c08840', roughness: 0.7, metalness: 0 },
-  { id: 'tfl-cherry', name: 'Cherry', category: 'tfl', hex: '#8b4513', roughness: 0.7, metalness: 0 },
-  { id: 'tfl-walnut', name: 'Walnut', category: 'tfl', hex: '#5c4033', roughness: 0.7, metalness: 0 },
-  { id: 'tfl-espresso', name: 'Espresso', category: 'tfl', hex: '#3c2415', roughness: 0.7, metalness: 0 },
+  { id: 'tfl-natural-maple', name: 'Natural Maple', category: 'tfl', hex: '#d4a76a', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/maple-color.webp', normalMapUrl: '/textures/tfl/maple-normal.png' },
+  { id: 'tfl-honey-oak', name: 'Honey Oak', category: 'tfl', hex: '#c08840', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/oak-color.webp', normalMapUrl: '/textures/tfl/oak-normal.png' },
+  { id: 'tfl-cherry', name: 'Cherry', category: 'tfl', hex: '#8b4513', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/cherry-color.webp', normalMapUrl: '/textures/tfl/cherry-normal.png' },
+  { id: 'tfl-walnut', name: 'Walnut', category: 'tfl', hex: '#5c4033', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/walnut-color.webp', normalMapUrl: '/textures/tfl/walnut-normal.png' },
+  { id: 'tfl-espresso', name: 'Espresso', category: 'tfl', hex: '#3c2415', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/espresso-color.webp', normalMapUrl: '/textures/tfl/espresso-normal.png' },
 ];
 
 // ---------------------------------------------------------------------------
 // Solid Surface
 // ---------------------------------------------------------------------------
 export const solidSurfaceFinishes: FinishOption[] = [
-  { id: 'ss-white', name: 'Solid Surface White', category: 'solid-surface', hex: '#f5f5f5', roughness: 0.3, metalness: 0 },
-  { id: 'ss-gray', name: 'Solid Surface Gray', category: 'solid-surface', hex: '#a0a0a0', roughness: 0.3, metalness: 0 },
+  { id: 'ss-white', name: 'Solid Surface White', category: 'solid-surface', hex: '#f5f5f5', roughness: 0.3, metalness: 0, normalMapUrl: '/textures/solid-surface/white-normal.png' },
+  { id: 'ss-gray', name: 'Solid Surface Gray', category: 'solid-surface', hex: '#a0a0a0', roughness: 0.3, metalness: 0, normalMapUrl: '/textures/solid-surface/gray-normal.png' },
 ];
 
 // ---------------------------------------------------------------------------
 // Butcher Block
 // ---------------------------------------------------------------------------
 export const butcherBlockFinishes: FinishOption[] = [
-  { id: 'bb-natural', name: 'Butcher Block Natural', category: 'butcher-block', hex: '#c49a6c', roughness: 0.8, metalness: 0 },
-  { id: 'bb-walnut', name: 'Butcher Block Walnut', category: 'butcher-block', hex: '#5c3a21', roughness: 0.8, metalness: 0 },
+  { id: 'bb-natural', name: 'Butcher Block Natural', category: 'butcher-block', hex: '#c49a6c', roughness: 0.8, metalness: 0, textureUrl: '/textures/butcher-block/natural-color.webp', normalMapUrl: '/textures/butcher-block/natural-normal.png' },
+  { id: 'bb-walnut', name: 'Butcher Block Walnut', category: 'butcher-block', hex: '#5c3a21', roughness: 0.8, metalness: 0, textureUrl: '/textures/butcher-block/walnut-color.webp', normalMapUrl: '/textures/butcher-block/walnut-normal.png' },
 ];
 
 // ---------------------------------------------------------------------------

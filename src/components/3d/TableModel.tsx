@@ -5,6 +5,7 @@ import { useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import type { FinishOption } from "@/data/finish-catalog";
+import { useFinishMaterial } from "./useFinishMaterial";
 
 interface TableModelProps {
   url: string;
@@ -23,44 +24,49 @@ function classifyMesh(name: string): "top" | "base" | "edge" | "other" | null {
   return null;
 }
 
-function makeMaterial(finish: FinishOption): THREE.MeshPhysicalMaterial {
-  const base = {
-    color: new THREE.Color(finish.hex),
-    roughness: finish.roughness,
-    metalness: finish.metalness,
-    envMapIntensity: 1.0,
-  };
-
-  switch (finish.category) {
-    case 'chrome':
-      return new THREE.MeshPhysicalMaterial({
-        ...base,
-        metalness: 1.0,
-        roughness: 0.05,
-        envMapIntensity: 1.5,
-      });
-    case 'powder-coat':
-      return new THREE.MeshPhysicalMaterial({
-        ...base,
-        clearcoat: 0.3,
-        clearcoatRoughness: 0.6,
-      });
-    case 'solid-surface':
-      return new THREE.MeshPhysicalMaterial({
-        ...base,
-        clearcoat: 0.4,
-        clearcoatRoughness: 0.3,
-      });
-    case 'butcher-block':
-      return new THREE.MeshPhysicalMaterial({
-        ...base,
-        sheen: 0.3,
-        sheenRoughness: 0.8,
-        sheenColor: new THREE.Color(finish.hex),
-      });
-    default:
-      return new THREE.MeshPhysicalMaterial(base);
+/**
+ * Generate box-projected UV coordinates from vertex positions and normals.
+ * For each vertex, projects UV from the dominant normal axis direction.
+ * Works well for architectural/furniture geometry (flat surfaces, boxes, cylinders).
+ */
+function generateBoxProjectedUVs(geometry: THREE.BufferGeometry): void {
+  if (!geometry.attributes.normal) {
+    geometry.computeVertexNormals();
   }
+
+  const position = geometry.attributes.position;
+  const normal = geometry.attributes.normal;
+
+  if (!position || !normal) return;
+
+  const count = position.count;
+  const uvs = new Float32Array(count * 2);
+
+  for (let i = 0; i < count; i++) {
+    const px = position.getX(i);
+    const py = position.getY(i);
+    const pz = position.getZ(i);
+    const nx = Math.abs(normal.getX(i));
+    const ny = Math.abs(normal.getY(i));
+    const nz = Math.abs(normal.getZ(i));
+
+    // Pick UV projection based on dominant normal axis
+    if (nx >= ny && nx >= nz) {
+      // X-dominant: project onto YZ plane
+      uvs[i * 2] = pz;
+      uvs[i * 2 + 1] = py;
+    } else if (ny >= nx && ny >= nz) {
+      // Y-dominant: project onto XZ plane (table tops)
+      uvs[i * 2] = px;
+      uvs[i * 2 + 1] = pz;
+    } else {
+      // Z-dominant: project onto XY plane
+      uvs[i * 2] = px;
+      uvs[i * 2 + 1] = py;
+    }
+  }
+
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 }
 
 const DEFAULT_MATERIAL = new THREE.MeshPhysicalMaterial({ color: 0x888888, roughness: 0.5, envMapIntensity: 1.0 });
@@ -69,16 +75,29 @@ function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelP
   const { scene } = useGLTF(url);
   const invalidate = useThree((s) => s.invalidate);
 
-  // Clone scene, strip baked vertex colors, replace shared materials, and fix orientation.
-  // GLBs from trimesh have COLOR_0 vertex attrs + no GLTF materials → three.js creates
-  // default materials with vertexColors:true that override our finish colors.
-  // Also: DXF source files are Z-up but three.js is Y-up → rotate -90° around X.
+  // Hook-managed materials (handles textures, category recipes, and disposal)
+  const baseMaterial = useFinishMaterial(baseFinish);
+  const topMaterial = useFinishMaterial(topFinish);
+  const edgeMaterial = useFinishMaterial(edgeFinish);
+
+  // Clone scene, strip baked vertex colors, generate UVs, and fix orientation.
   const clone = useMemo(() => {
     const c = scene.clone(true);
     c.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.deleteAttribute("color");
-        child.material = DEFAULT_MATERIAL.clone();
+
+        // Generate UVs if missing (our GLBs from trimesh lack UV coordinates)
+        if (!child.geometry.attributes.uv) {
+          generateBoxProjectedUVs(child.geometry);
+        }
+
+        // Safety net: ensure normals exist
+        if (!child.geometry.attributes.normal) {
+          child.geometry.computeVertexNormals();
+        }
+
+        child.material = DEFAULT_MATERIAL;
       }
     });
     // DXF/DWG files use Z-up; three.js uses Y-up
@@ -86,38 +105,19 @@ function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelP
     return c;
   }, [scene]);
 
-  // Apply finishes whenever they change
+  // Apply hook-managed materials to classified mesh parts
   useEffect(() => {
     clone.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
       const part = classifyMesh(child.name);
       if (!part) return;
 
-      let finish: FinishOption | undefined;
-      if (part === "top") finish = topFinish;
-      else if (part === "base" || part === "other") finish = baseFinish;
-      else if (part === "edge") finish = edgeFinish;
-
-      if (finish) {
-        if (child.material) {
-          (child.material as THREE.Material).dispose();
-        }
-        child.material = makeMaterial(finish);
-      }
+      if (part === "top") child.material = topMaterial;
+      else if (part === "base" || part === "other") child.material = baseMaterial;
+      else if (part === "edge") child.material = edgeMaterial;
     });
     invalidate();
-  }, [clone, baseFinish, topFinish, edgeFinish, invalidate]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      clone.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material) {
-          (child.material as THREE.Material).dispose();
-        }
-      });
-    };
-  }, [clone]);
+  }, [clone, baseMaterial, topMaterial, edgeMaterial, invalidate]);
 
   return <primitive object={clone} />;
 }
