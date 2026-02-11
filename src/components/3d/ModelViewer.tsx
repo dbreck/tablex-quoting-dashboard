@@ -3,6 +3,7 @@
 import { Suspense, useRef, useCallback, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Center, Environment } from "@react-three/drei";
+import { NoToneMapping } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Box } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -87,10 +88,13 @@ export function ModelViewer({
         className,
       )}
     >
-      <Canvas camera={{ position: [2, 1.5, 3], fov: 40 }}>
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 8, 5]} intensity={0.8} />
-        <directionalLight position={[-3, 4, -2]} intensity={0.3} />
+      <Canvas
+        camera={{ position: [2, 1.5, 3], fov: 40 }}
+        gl={{ toneMapping: NoToneMapping }}
+      >
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[5, 8, 5]} intensity={1} />
+        <directionalLight position={[-3, 4, -2]} intensity={0.4} />
         <Environment preset="studio" />
         <Suspense fallback={null}>
           <Center>
