@@ -23,15 +23,46 @@ function classifyMesh(name: string): "top" | "base" | "edge" | "other" | null {
   return null;
 }
 
-function makeMaterial(finish: FinishOption): THREE.MeshStandardMaterial {
-  return new THREE.MeshStandardMaterial({
+function makeMaterial(finish: FinishOption): THREE.MeshPhysicalMaterial {
+  const base = {
     color: new THREE.Color(finish.hex),
     roughness: finish.roughness,
     metalness: finish.metalness,
-  });
+  };
+
+  switch (finish.category) {
+    case 'chrome':
+      return new THREE.MeshPhysicalMaterial({
+        ...base,
+        metalness: 1.0,
+        roughness: 0.05,
+        envMapIntensity: 1.5,
+      });
+    case 'powder-coat':
+      return new THREE.MeshPhysicalMaterial({
+        ...base,
+        clearcoat: 0.3,
+        clearcoatRoughness: 0.6,
+      });
+    case 'solid-surface':
+      return new THREE.MeshPhysicalMaterial({
+        ...base,
+        clearcoat: 0.4,
+        clearcoatRoughness: 0.3,
+      });
+    case 'butcher-block':
+      return new THREE.MeshPhysicalMaterial({
+        ...base,
+        sheen: 0.3,
+        sheenRoughness: 0.8,
+        sheenColor: new THREE.Color(finish.hex),
+      });
+    default:
+      return new THREE.MeshPhysicalMaterial(base);
+  }
 }
 
-const DEFAULT_MATERIAL = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.5 });
+const DEFAULT_MATERIAL = new THREE.MeshPhysicalMaterial({ color: 0x888888, roughness: 0.5 });
 
 function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);

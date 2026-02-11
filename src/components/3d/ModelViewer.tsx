@@ -2,8 +2,8 @@
 
 import { Suspense, useRef, useCallback, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Center, Environment } from "@react-three/drei";
-import { NoToneMapping } from "three";
+import { OrbitControls, Center, Environment, ContactShadows } from "@react-three/drei";
+import { NeutralToneMapping } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { Box } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -90,11 +90,8 @@ export function ModelViewer({
     >
       <Canvas
         camera={{ position: [1.2, 0.8, 1.8], fov: 40 }}
-        gl={{ toneMapping: NoToneMapping }}
+        gl={{ toneMapping: NeutralToneMapping }}
       >
-        <ambientLight intensity={1.2} />
-        <directionalLight position={[5, 8, 5]} intensity={1.5} />
-        <directionalLight position={[-3, 4, -2]} intensity={0.6} />
         <Suspense fallback={null}>
           <Center>
             <TableModel
@@ -104,6 +101,15 @@ export function ModelViewer({
               edgeFinish={edgeFinish}
             />
           </Center>
+          <Environment preset="studio" background={false} />
+          <ContactShadows
+            position={[0, -0.01, 0]}
+            opacity={0.4}
+            blur={2.5}
+            scale={10}
+            resolution={256}
+            color="#1a3c5c"
+          />
         </Suspense>
         <OrbitControls
           ref={controlsRef}
