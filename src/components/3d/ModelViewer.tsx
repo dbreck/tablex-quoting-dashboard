@@ -90,10 +90,10 @@ export function ModelViewer({
     >
       <Canvas
         camera={{ position: [1.2, 0.8, 1.8], fov: 40 }}
-        gl={{ toneMapping: NeutralToneMapping, toneMappingExposure: 1.5 }}
+        gl={{ toneMapping: NeutralToneMapping, toneMappingExposure: 1.0 }}
       >
-        <ambientLight intensity={1.0} />
-        <directionalLight position={[5, 8, 5]} intensity={1.2} />
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 8, 5]} intensity={0.8} />
         <Suspense fallback={null}>
           <Center>
             <TableModel
@@ -103,7 +103,7 @@ export function ModelViewer({
               edgeFinish={edgeFinish}
             />
           </Center>
-          <Environment preset="studio" background={false} environmentIntensity={1.5} />
+          <Environment preset="studio" background={false} environmentIntensity={1.0} />
           <ContactShadows
             position={[0, -0.01, 0]}
             opacity={0.4}
