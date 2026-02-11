@@ -32,7 +32,8 @@ import {
   getEdgeFinish,
   type FinishOption,
 } from "@/data/finish-catalog";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, ChevronDown, ChevronRight } from "lucide-react";
+import type { EnvironmentPreset } from "@/components/3d/ModelViewer";
 
 const ModelViewer3D = dynamic(
   () =>
@@ -132,6 +133,19 @@ const TOP_FINISH_MAP: Record<TopMaterial, FinishOption[]> = {
   "butcher-block": butcherBlockFinishes,
 };
 
+const ENV_PRESETS: { value: EnvironmentPreset; label: string }[] = [
+  { value: "lobby", label: "Lobby" },
+  { value: "studio", label: "Studio" },
+  { value: "apartment", label: "Apartment" },
+  { value: "city", label: "City" },
+  { value: "dawn", label: "Dawn" },
+  { value: "forest", label: "Forest" },
+  { value: "night", label: "Night" },
+  { value: "park", label: "Park" },
+  { value: "sunset", label: "Sunset" },
+  { value: "warehouse", label: "Warehouse" },
+];
+
 export default function ConfiguratorPage() {
   const [series, setSeries] = useState<string>("");
   const [shape, setShape] = useState<string>("");
@@ -140,6 +154,8 @@ export default function ConfiguratorPage() {
   const [baseFinish, setBaseFinish] = useState<FinishOption>(powderCoatFinishes[0]);
   const [topMaterial, setTopMaterial] = useState<TopMaterial>("hpl");
   const [topFinish, setTopFinish] = useState<FinishOption>(hplFinishes[0]);
+  const [envPreset, setEnvPreset] = useState<EnvironmentPreset>("lobby");
+  const [shapesOpen, setShapesOpen] = useState(true);
   const [edgeType, setEdgeType] = useState<string>(edgeTypes[0].id);
 
   // Filtered options based on model availability map
@@ -239,6 +255,7 @@ export default function ConfiguratorPage() {
                 baseFinish={baseFinish}
                 topFinish={topFinish}
                 edgeFinish={getEdgeFinish(edgeType) ?? topFinish}
+                environmentPreset={envPreset}
                 className="w-full aspect-[4/3]"
               />
               {!modelUrl && (
@@ -279,10 +296,15 @@ export default function ConfiguratorPage() {
 
           {/* Shape */}
           <div>
-            <label className="text-sm font-medium text-slate-700 mb-1.5 block">
-              Shape
-            </label>
-            {availableShapes.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => setShapesOpen(!shapesOpen)}
+              className="flex items-center gap-1 text-sm font-medium text-slate-700 mb-1.5 cursor-pointer hover:text-slate-900"
+            >
+              {shapesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              Shape{shape ? `: ${SHAPE_NAMES[shape] || shape}` : ""}
+            </button>
+            {shapesOpen && availableShapes.length > 0 ? (
               <div className="grid grid-cols-4 gap-2">
                 {availableShapes.map((code) => (
                   <button
@@ -303,9 +325,9 @@ export default function ConfiguratorPage() {
                   </button>
                 ))}
               </div>
-            ) : (
+            ) : shapesOpen ? (
               <p className="text-sm text-slate-400">Select a series first</p>
-            )}
+            ) : null}
           </div>
 
           {/* Size */}
@@ -435,6 +457,25 @@ export default function ConfiguratorPage() {
                 {edgeTypes.map((edge) => (
                   <SelectItem key={edge.id} value={edge.id}>
                     {edge.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Lighting */}
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1.5 block">
+              Lighting
+            </label>
+            <Select value={envPreset} onValueChange={(val) => setEnvPreset(val as EnvironmentPreset)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ENV_PRESETS.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
                   </SelectItem>
                 ))}
               </SelectContent>

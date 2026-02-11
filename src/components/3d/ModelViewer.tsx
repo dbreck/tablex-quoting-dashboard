@@ -12,11 +12,16 @@ import { TableModel } from "./TableModel";
 import { ModelViewerSkeleton } from "./ModelViewerSkeleton";
 import { ViewerControls } from "./ViewerControls";
 
+export type EnvironmentPreset =
+  | "apartment" | "city" | "dawn" | "forest" | "lobby"
+  | "night" | "park" | "studio" | "sunset" | "warehouse";
+
 interface ModelViewerProps {
   modelUrl: string | null;
   baseFinish?: FinishOption;
   topFinish?: FinishOption;
   edgeFinish?: FinishOption;
+  environmentPreset?: EnvironmentPreset;
   className?: string;
   compact?: boolean;
 }
@@ -26,6 +31,7 @@ export function ModelViewer({
   baseFinish,
   topFinish,
   edgeFinish,
+  environmentPreset = "lobby",
   className,
   compact = false,
 }: ModelViewerProps) {
@@ -102,7 +108,7 @@ export function ModelViewer({
               edgeFinish={edgeFinish}
             />
           </Center>
-          <Environment preset="lobby" background={false} environmentIntensity={1.0} />
+          <Environment preset={environmentPreset} background={false} environmentIntensity={1.0} />
           <ContactShadows
             position={[0, -0.01, 0]}
             opacity={0.4}
