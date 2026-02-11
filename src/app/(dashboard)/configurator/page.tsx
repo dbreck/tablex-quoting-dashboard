@@ -141,6 +141,19 @@ export default function ConfiguratorPage() {
     return getAvailableBases(series, shape);
   }, [series, shape]);
 
+  // Auto-select first shape + first size when series changes
+  useEffect(() => {
+    if (availableShapes.length > 0 && !shape) {
+      setShape(availableShapes[0]);
+    }
+  }, [availableShapes, shape]);
+
+  useEffect(() => {
+    if (availableSizes.length > 0 && !size) {
+      setSize(availableSizes[0]);
+    }
+  }, [availableSizes, size]);
+
   // Auto-select base when only one option exists
   useEffect(() => {
     if (availableBases.length === 1 && base !== availableBases[0]) {

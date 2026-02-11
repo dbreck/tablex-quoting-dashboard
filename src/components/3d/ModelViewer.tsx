@@ -89,13 +89,12 @@ export function ModelViewer({
       )}
     >
       <Canvas
-        camera={{ position: [2, 1.5, 3], fov: 40 }}
+        camera={{ position: [1.2, 0.8, 1.8], fov: 40 }}
         gl={{ toneMapping: NoToneMapping }}
       >
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[5, 8, 5]} intensity={1} />
-        <directionalLight position={[-3, 4, -2]} intensity={0.4} />
-        <Environment preset="studio" />
+        <ambientLight intensity={1.2} />
+        <directionalLight position={[5, 8, 5]} intensity={1.5} />
+        <directionalLight position={[-3, 4, -2]} intensity={0.6} />
         <Suspense fallback={null}>
           <Center>
             <TableModel
