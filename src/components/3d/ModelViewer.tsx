@@ -116,7 +116,7 @@ export function ModelViewer({
         <gridHelper args={[10, 10, '#cccccc', '#e5e5e5']} />
         <Suspense fallback={null}>
           <Bounds fit clip observe margin={1.2}>
-            <Center bottom>
+            <Center disableY>
               <TableModel
                 url={modelUrl}
                 baseFinish={baseFinish}

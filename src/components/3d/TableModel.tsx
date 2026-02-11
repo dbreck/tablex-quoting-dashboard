@@ -102,6 +102,10 @@ function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelP
     });
     // DXF/DWG files use Z-up; three.js uses Y-up
     c.rotation.x = -Math.PI / 2;
+    // Floor-align: shift model up so its bottom sits at y=0
+    c.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(c);
+    c.position.y = -box.min.y;
     return c;
   }, [scene]);
 
