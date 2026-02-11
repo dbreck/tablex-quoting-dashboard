@@ -92,8 +92,7 @@ export function ModelViewer({
         camera={{ position: [1.2, 0.8, 1.8], fov: 40 }}
         gl={{ toneMapping: NeutralToneMapping, toneMappingExposure: 1.0 }}
       >
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 8, 5]} intensity={0.8} />
+        <ambientLight intensity={0.3} />
         <Suspense fallback={null}>
           <Center>
             <TableModel
