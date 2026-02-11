@@ -89,8 +89,11 @@ export function ModelViewer({
       )}
     >
       <Canvas
-        camera={{ position: [1.2, 0.8, 1.8], fov: 40 }}
+        camera={{ position: [1.8, 0.7, 1.2], fov: 40 }}
         gl={{ toneMapping: NeutralToneMapping, toneMappingExposure: 1.0 }}
+        onCreated={({ scene }) => {
+          scene.environmentRotation.set(0, Math.PI / 4, 0);
+        }}
       >
         <ambientLight intensity={0.3} />
         <Suspense fallback={null}>
