@@ -155,9 +155,9 @@ export default function ConfiguratorPage() {
     }
   }, [availableSizes, size]);
 
-  // Auto-select base when only one option exists
+  // Auto-select first base when none is selected
   useEffect(() => {
-    if (availableBases.length === 1 && base !== availableBases[0]) {
+    if (availableBases.length > 0 && !base) {
       setBase(availableBases[0]);
     }
   }, [availableBases, base]);
