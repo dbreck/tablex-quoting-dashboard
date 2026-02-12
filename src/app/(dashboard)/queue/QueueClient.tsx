@@ -59,8 +59,11 @@ export default function QueueClient({ queueData }: QueueClientProps) {
       .map(([key, count]) => {
         const [year, month] = key.split("-");
         const monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthNum = parseInt(month);
         return {
-          month: `${monthNames[parseInt(month)]} ${year.slice(2)}`,
+          month: `${monthNames[monthNum]} '${year.slice(2)}`,
+          year,
+          monthNum,
           count,
         };
       });
@@ -110,6 +113,14 @@ export default function QueueClient({ queueData }: QueueClientProps) {
     }
     return result;
   }, [queueData]);
+
+  // Derive actual date range from data
+  const dateRange = useMemo(() => {
+    if (monthlyVolume.length === 0) return { first: "", last: "", months: 0 };
+    const first = monthlyVolume[0].month;
+    const last = monthlyVolume[monthlyVolume.length - 1].month;
+    return { first, last, months: monthlyVolume.length };
+  }, [monthlyVolume]);
 
   // Stats
   const totalQuotes = queueData.length;
@@ -199,7 +210,7 @@ export default function QueueClient({ queueData }: QueueClientProps) {
           <Card>
             <CardHeader>
               <CardTitle>Monthly Quote Volume</CardTitle>
-              <CardDescription>Feb 2023 to present — {monthlyVolume.length} months tracked</CardDescription>
+              <CardDescription>{dateRange.first} – {dateRange.last} ({dateRange.months} months tracked)</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
@@ -213,10 +224,31 @@ export default function QueueClient({ queueData }: QueueClientProps) {
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis
                     dataKey="month"
-                    tick={{ fontSize: 10 }}
-                    interval={2}
-                    angle={-45}
-                    textAnchor="end"
+                    tick={(props: Record<string, unknown>) => {
+                      const x = Number(props.x);
+                      const y = Number(props.y);
+                      const payload = props.payload as { value: string; index: number };
+                      const item = monthlyVolume[payload.index];
+                      const isJan = item?.monthNum === 1;
+                      // Show label for Jan (year boundary) and every 3rd month
+                      if (!isJan && payload.index % 3 !== 0) return <g />;
+                      const label = isJan ? `Jan '${item.year.slice(2)}` : payload.value;
+                      return (
+                        <g transform={`translate(${x},${y})`}>
+                          <text
+                            x={0} y={0} dy={12}
+                            textAnchor="end"
+                            transform="rotate(-45)"
+                            fontSize={isJan ? 11 : 10}
+                            fontWeight={isJan ? 700 : 400}
+                            fill={isJan ? "#1a3c5c" : "#94a3b8"}
+                          >
+                            {label}
+                          </text>
+                        </g>
+                      );
+                    }}
+                    interval={0}
                     height={60}
                   />
                   <YAxis />

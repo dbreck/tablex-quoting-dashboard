@@ -538,14 +538,14 @@ export const buildableNow: BuildableItem[] = [
     id: 1,
     title: "Extract compatibility matrices",
     description:
-      "From existing SKU data → shape-to-base, size-to-base validation tables",
+      "DONE — model-availability.ts provides getAvailableShapes/Sizes/Bases per series; compatibility-matrices.ts has shape→base and series→shape lookups. Configurator enforces valid combos.",
     deps: [],
   },
   {
     id: 2,
     title: "Configurator UI shell",
     description:
-      "9-step flow with placeholder data, persona switcher",
+      "DONE — Full configurator at /configurator with series, shape, size, base selectors, finish/edge pickers, and 3D model viewer with PBR materials.",
     deps: [],
   },
   {

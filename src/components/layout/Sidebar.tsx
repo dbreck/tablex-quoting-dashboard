@@ -40,6 +40,7 @@ const analyticsNavGroups = [
     label: "Website Redesign",
     items: [
       { name: "User Personas", href: "/user-personas", icon: Users },
+      { name: "Customer Journey", href: "/customer-journey", icon: Route },
       { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
       { name: "Site Architecture", href: "/site-architecture", icon: Network },
       { name: "Catalog", href: "/catalog", icon: Package },
@@ -49,27 +50,33 @@ const analyticsNavGroups = [
   {
     label: "Business Intelligence",
     items: [
-      { name: "Quoting Process", href: "/quoting-process", icon: Workflow },
-      { name: "Customer Journey", href: "/customer-journey", icon: Route },
       { name: "SKU Decoder", href: "/sku-decoder", icon: ScanBarcode },
       { name: "Pricing", href: "/pricing", icon: DollarSign },
       { name: "Queue", href: "/queue", icon: ClipboardList },
       { name: "Freight", href: "/freight", icon: Truck },
     ],
   },
+];
+
+const builderOverviewItem = { name: "Overview", href: "/how-quoting-works", icon: LayoutDashboard };
+
+const builderNavGroups = [
   {
     label: "Quoting System",
     items: [
+      { name: "Quoting Process", href: "/quoting-process", icon: Workflow },
       { name: "CPQ Gap Analysis", href: "/cpq-gap-analysis", icon: Target },
     ],
   },
-];
-
-const quoteBuilderNav = [
-  { name: "Dashboard", href: "/quote/dashboard", icon: LayoutDashboard },
-  { name: "New Quote", href: "/quote/new", icon: FilePlus },
-  { name: "Quotes", href: "/quote/list", icon: FileStack },
-  { name: "CRM", href: "/quote/crm", icon: Building2 },
+  {
+    label: "QuoteX Platform",
+    items: [
+      { name: "Dashboard", href: "/quote/dashboard", icon: LayoutDashboard },
+      { name: "New Quote", href: "/quote/new", icon: FilePlus },
+      { name: "Quotes", href: "/quote/list", icon: FileStack },
+      { name: "CRM", href: "/quote/crm", icon: Building2 },
+    ],
+  },
 ];
 
 export function Sidebar() {
@@ -79,14 +86,14 @@ export function Sidebar() {
 
   // Auto-detect mode from route
   useEffect(() => {
-    if (pathname.startsWith("/quote")) {
+    if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works") {
       setSidebarMode("quote-builder");
     } else {
       setSidebarMode("analytics");
     }
   }, [pathname, setSidebarMode]);
 
-  const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quote Builder";
+  const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quoting";
 
   // Get user initials
   const initials = profile?.full_name
@@ -146,7 +153,7 @@ export function Sidebar() {
               )}
             >
               <FilePlus2 className="h-3.5 w-3.5" />
-              <span>Builder</span>
+              <span>Quoting</span>
             </button>
           </div>
         </div>
@@ -172,7 +179,7 @@ export function Sidebar() {
                 ? "bg-white/10 text-brand-green"
                 : "text-white/40 hover:text-white/70"
             )}
-            title="Quote Builder"
+            title="Quoting"
           >
             <FilePlus2 className="h-4.5 w-4.5" />
           </button>
@@ -240,13 +247,13 @@ export function Sidebar() {
             ))}
           </>
         ) : (
-          <div className="space-y-1">
-            {quoteBuilderNav.map((item) => {
-              const isActive = pathname.startsWith(item.href);
+          <>
+            {/* Overview — standalone */}
+            {(() => {
+              const isActive = pathname === builderOverviewItem.href;
               return (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  href={builderOverviewItem.href}
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     isActive
@@ -254,14 +261,49 @@ export function Sidebar() {
                       : "text-white/60 hover:bg-white/5 hover:text-white",
                     !sidebarOpen && "justify-center px-0"
                   )}
-                  title={!sidebarOpen ? item.name : undefined}
+                  title={!sidebarOpen ? builderOverviewItem.name : undefined}
                 >
-                  <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
-                  {sidebarOpen && <span>{item.name}</span>}
+                  <builderOverviewItem.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                  {sidebarOpen && <span>{builderOverviewItem.name}</span>}
                 </Link>
               );
-            })}
-          </div>
+            })()}
+
+            {/* Grouped sections */}
+            {builderNavGroups.map((group, groupIdx) => (
+              <div key={group.label} className={cn(groupIdx === 0 ? "mt-2" : "mt-1")}>
+                {sidebarOpen ? (
+                  <p className="px-3 pt-3 pb-1 text-[10px] uppercase tracking-widest text-white/50 font-semibold">
+                    {group.label}
+                  </p>
+                ) : (
+                  <div className="mx-2 my-2 border-t border-white/10" />
+                )}
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const isActive = pathname.startsWith(item.href);
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                          isActive
+                            ? "bg-white/10 text-white"
+                            : "text-white/60 hover:bg-white/5 hover:text-white",
+                          !sidebarOpen && "justify-center px-0"
+                        )}
+                        title={!sidebarOpen ? item.name : undefined}
+                      >
+                        <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                        {sidebarOpen && <span>{item.name}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </>
         )}
       </nav>
 
