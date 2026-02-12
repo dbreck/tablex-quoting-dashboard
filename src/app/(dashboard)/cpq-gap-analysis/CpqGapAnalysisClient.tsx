@@ -24,8 +24,6 @@ import {
   Legend,
 } from "recharts";
 import {
-  BookOpen,
-  Briefcase,
   ChevronDown,
   ChevronRight,
   ClipboardCheck,
@@ -34,17 +32,12 @@ import {
   AlertTriangle,
   Check,
   Lightbulb,
-  Palette,
-  Rocket,
   Shield,
-  User,
-  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   summary,
   architectureDecision,
-  personas,
   staffInsight,
   ruleCategories,
   dataGaps,
@@ -79,12 +72,6 @@ const priorityBadge: Record<Priority, "error" | "warning" | "secondary"> = {
   high: "error",
   medium: "warning",
   low: "secondary",
-};
-
-const personaIcons: Record<string, React.ReactNode> = {
-  Palette: <Palette className="h-5 w-5" />,
-  Briefcase: <Briefcase className="h-5 w-5" />,
-  User: <User className="h-5 w-5" />,
 };
 
 const cpqMappingBadge: Record<CpqMappingStatus, "success" | "warning" | "error" | "secondary" | "info"> = {
@@ -293,16 +280,33 @@ function OverviewTab() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-brand-navy" />
-            Core Decision: Rules-Driven CPQ, NOT SKU-Driven
+            Core Decision: SKU-Driven CPQ with Rules &amp; Exceptions
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <blockquote className="border-l-4 border-brand-navy/30 pl-4 italic text-sm text-slate-600 mb-4">
+          {/* Corrected quote (Feb 10, 2026) */}
+          <blockquote className="border-l-4 border-brand-green/50 pl-4 italic text-sm text-slate-700 mb-4">
             &ldquo;{architectureDecision.brianQuote}&rdquo;
-            <span className="block text-xs text-slate-400 mt-1 not-italic">
-              — Brian Craig, Feb 6, 2026
+            <span className="block text-xs text-brand-green mt-1 not-italic font-medium">
+              — Danny&apos;s framing, confirmed by Brian Craig, Feb 10, 2026
             </span>
           </blockquote>
+
+          {/* Original quote (superseded) */}
+          <div className="mb-4 p-3 rounded-lg bg-slate-100 border border-slate-200">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-medium text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">Superseded Feb 10, 2026</span>
+            </div>
+            <blockquote className="pl-3 border-l-2 border-slate-300 italic text-xs text-slate-400 line-through decoration-slate-300">
+              &ldquo;{architectureDecision.brianOriginalQuote}&rdquo;
+              <span className="block text-[10px] text-slate-400 mt-1 not-italic no-underline">
+                — Brian Craig, Feb 6, 2026
+              </span>
+            </blockquote>
+            <p className="text-[11px] text-slate-500 mt-2 not-italic">
+              {architectureDecision.correctionContext}
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="text-sm font-semibold text-emerald-700 mb-2">
@@ -339,39 +343,6 @@ function OverviewTab() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Persona Cards */}
-      <div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">
-          User Personas
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {personas.map((p) => (
-            <Card key={p.role} hover>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-green/10 text-brand-green">
-                    {personaIcons[p.icon]}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-900">{p.role}</p>
-                    <p className="text-xs text-slate-500">{p.goal}</p>
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
-                    Pricing visibility
-                  </p>
-                  <p className="text-sm text-slate-700">{p.pricing}</p>
-                </div>
-                <blockquote className="border-l-2 border-slate-200 pl-3 text-xs italic text-slate-500">
-                  &ldquo;{p.quote}&rdquo;
-                </blockquote>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       {/* Staff Insight Callout */}
       <Card className="border-amber-200 bg-amber-50">

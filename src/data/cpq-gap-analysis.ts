@@ -73,8 +73,15 @@ export const summary = {
 // Architecture decision record
 // -------------------------------------------------------------------
 export const architectureDecision = {
-  brianQuote:
+  brianOriginalQuote:
     "I do think it could be hard to set this up as a sku driven CPQ. This is because every part is its own sku and 36x36 top could be put on 10 different bases. If we run it by sku our sku's are going to grow exponentially.",
+  brianQuote:
+    "It's SKU-based with rules and exceptions.",
+  brianCorrectedQuote:
+    "It's SKU-based with rules and exceptions. \u2014 Danny's framing, confirmed by Brian: \"Absolutely, absolutely. Yep.\" (Feb 10, 2026)",
+  correctionContext:
+    "Brian is only 6 weeks in at TableX \u2014 his Feb 6 statement conflated the specialty 'binder' process with standard quoting. Mark's Configura demo validates the SKU+rules model.",
+  correctionDate: "2026-02-10",
   keep: [
     "Discount tiers (50/20 through 50/20/20 — 5 tiers)",
     "Freight zone logic (5 zones by state)",
@@ -88,7 +95,7 @@ export const architectureDecision = {
     "ProductSelector → full configurator (shape → size → base → laminate → edge → paint → feet)",
     "Pricing → dynamic calculation from rules, not static lookup",
     "Line items → must store full configuration detail, not just SKU + quantity",
-    "5-step linear wizard → 9-step rules-driven flow",
+    "5-step linear wizard \u2192 SKU-based configurator with rules & exceptions",
   ],
 };
 

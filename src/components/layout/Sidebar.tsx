@@ -16,7 +16,6 @@ import {
   Package,
   ClipboardList,
   Truck,
-  BookOpen,
   ChevronLeft,
   ChevronRight,
   BarChart3,
@@ -29,22 +28,39 @@ import {
   Building2,
   Settings,
   User,
+  Users,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
-const analyticsNav = [
-  { name: "Overview", href: "/overview", icon: LayoutDashboard },
-  { name: "Workflow", href: "/workflow", icon: Workflow },
-  { name: "Customer Journey", href: "/customer-journey", icon: Route },
-  { name: "SKU Decoder", href: "/sku-decoder", icon: ScanBarcode },
-  { name: "Pricing", href: "/pricing", icon: DollarSign },
-  { name: "Catalog", href: "/catalog", icon: Package },
-  { name: "Queue", href: "/queue", icon: ClipboardList },
-  { name: "Freight", href: "/freight", icon: Truck },
-  { name: "How Quoting Works", href: "/how-quoting-works", icon: BookOpen },
-  { name: "CPQ Gap Analysis", href: "/cpq-gap-analysis", icon: Target },
-  { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
-  { name: "Configurator", href: "/configurator", icon: Box },
+const overviewItem = { name: "Overview", href: "/overview", icon: LayoutDashboard };
+
+const analyticsNavGroups = [
+  {
+    label: "Website Redesign",
+    items: [
+      { name: "User Personas", href: "/user-personas", icon: Users },
+      { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
+      { name: "Catalog", href: "/catalog", icon: Package },
+      { name: "Configurator", href: "/configurator", icon: Box },
+    ],
+  },
+  {
+    label: "Business Intelligence",
+    items: [
+      { name: "Quoting Process", href: "/quoting-process", icon: Workflow },
+      { name: "Customer Journey", href: "/customer-journey", icon: Route },
+      { name: "SKU Decoder", href: "/sku-decoder", icon: ScanBarcode },
+      { name: "Pricing", href: "/pricing", icon: DollarSign },
+      { name: "Queue", href: "/queue", icon: ClipboardList },
+      { name: "Freight", href: "/freight", icon: Truck },
+    ],
+  },
+  {
+    label: "Quoting System",
+    items: [
+      { name: "CPQ Gap Analysis", href: "/cpq-gap-analysis", icon: Target },
+    ],
+  },
 ];
 
 const quoteBuilderNav = [
@@ -68,7 +84,6 @@ export function Sidebar() {
     }
   }, [pathname, setSidebarMode]);
 
-  const navigation = sidebarMode === "analytics" ? analyticsNav : quoteBuilderNav;
   const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quote Builder";
 
   // Get user initials
@@ -163,27 +178,89 @@ export function Sidebar() {
       )}
 
       {/* Navigation */}
-      <nav className={cn("flex-1 space-y-1", sidebarOpen ? "px-3 py-2" : "px-2 py-2")}>
-        {navigation.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "bg-white/10 text-white"
-                  : "text-white/60 hover:bg-white/5 hover:text-white",
-                !sidebarOpen && "justify-center px-0"
-              )}
-              title={!sidebarOpen ? item.name : undefined}
-            >
-              <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
-              {sidebarOpen && <span>{item.name}</span>}
-            </Link>
-          );
-        })}
+      <nav className={cn("flex-1 overflow-y-auto", sidebarOpen ? "px-3 py-2" : "px-2 py-2")}>
+        {sidebarMode === "analytics" ? (
+          <>
+            {/* Overview — standalone */}
+            {(() => {
+              const isActive = pathname === "/overview" || pathname === "/";
+              return (
+                <Link
+                  href={overviewItem.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-white/60 hover:bg-white/5 hover:text-white",
+                    !sidebarOpen && "justify-center px-0"
+                  )}
+                  title={!sidebarOpen ? overviewItem.name : undefined}
+                >
+                  <overviewItem.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                  {sidebarOpen && <span>{overviewItem.name}</span>}
+                </Link>
+              );
+            })()}
+
+            {/* Grouped sections */}
+            {analyticsNavGroups.map((group, groupIdx) => (
+              <div key={group.label} className={cn(groupIdx === 0 ? "mt-2" : "mt-1")}>
+                {sidebarOpen ? (
+                  <p className="px-3 pt-3 pb-1 text-[10px] uppercase tracking-widest text-white/50 font-semibold">
+                    {group.label}
+                  </p>
+                ) : (
+                  <div className="mx-2 my-2 border-t border-white/10" />
+                )}
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const isActive = pathname.startsWith(item.href);
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                          isActive
+                            ? "bg-white/10 text-white"
+                            : "text-white/60 hover:bg-white/5 hover:text-white",
+                          !sidebarOpen && "justify-center px-0"
+                        )}
+                        title={!sidebarOpen ? item.name : undefined}
+                      >
+                        <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                        {sidebarOpen && <span>{item.name}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <div className="space-y-1">
+            {quoteBuilderNav.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-white/60 hover:bg-white/5 hover:text-white",
+                    !sidebarOpen && "justify-center px-0"
+                  )}
+                  title={!sidebarOpen ? item.name : undefined}
+                >
+                  <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                  {sidebarOpen && <span>{item.name}</span>}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </nav>
 
       {/* User Menu + Collapse Toggle */}
