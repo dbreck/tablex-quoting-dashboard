@@ -30,6 +30,7 @@ import {
   User,
   Users,
   Network,
+  Inbox,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -71,6 +72,7 @@ const builderNavGroups = [
   {
     label: "QuoteX Platform",
     items: [
+      { name: "Quote Requests", href: "/quote/requests", icon: Inbox },
       { name: "Dashboard", href: "/quote/dashboard", icon: LayoutDashboard },
       { name: "New Quote", href: "/quote/new", icon: FilePlus },
       { name: "Quotes", href: "/quote/list", icon: FileStack },

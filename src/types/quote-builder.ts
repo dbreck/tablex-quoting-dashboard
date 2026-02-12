@@ -112,6 +112,33 @@ export interface Contact {
   createdAt: string;
 }
 
+// Quote Request types
+
+export type QuoteRequestStatus = 'pending' | 'in_progress' | 'quoted' | 'closed';
+
+export interface QuoteRequest {
+  id: string;
+  requestNumber: string;
+  contactFirstName: string;
+  contactLastName: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactCompany?: string;
+  seriesCode: string;
+  seriesName: string;
+  shapeCode: string;
+  size: string;
+  baseCode: string;
+  baseFinish?: string;
+  topMaterial?: string;
+  topFinish?: string;
+  edgeType?: string;
+  quantity: number;
+  status: QuoteRequestStatus;
+  notes?: string;
+  createdAt: string;
+}
+
 export type ActivityType = 'note' | 'quote_created' | 'quote_sent' | 'call' | 'email' | 'meeting';
 
 export interface Activity {

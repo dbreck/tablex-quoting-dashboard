@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useTexture } from "@react-three/drei";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,8 +31,9 @@ import {
   getEdgeFinish,
   type FinishOption,
 } from "@/data/finish-catalog";
-import { ShoppingCart, ChevronDown, ChevronRight } from "lucide-react";
+import { ShoppingCart, ChevronDown, ChevronRight, Plus, Minus } from "lucide-react";
 import type { EnvironmentPreset } from "@/components/3d/ModelViewer";
+import { QuoteRequestModal } from "@/components/configurator/QuoteRequestModal";
 
 const ModelViewer3D = dynamic(
   () =>
@@ -157,6 +157,9 @@ export default function ConfiguratorPage() {
   const [envPreset, setEnvPreset] = useState<EnvironmentPreset>("city");
   const [shapesOpen, setShapesOpen] = useState(true);
   const [edgeType, setEdgeType] = useState<string>(edgeTypes[0].id);
+  const [quantity, setQuantity] = useState(1);
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   // Filtered options based on model availability map
   const availableShapes = useMemo(() => {
@@ -482,13 +485,76 @@ export default function ConfiguratorPage() {
             </Select>
           </div>
 
+          {/* Quantity */}
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1.5 block">
+              Quantity
+            </label>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={quantity <= 1}
+                className="h-9 w-9 p-0"
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="text-lg font-semibold tabular-nums w-12 text-center">
+                {quantity}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setQuantity((q) => q + 1)}
+                className="h-9 w-9 p-0"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
           {/* Request Quote Button */}
-          <Link href="/quote/new" className="block">
-            <Button className="w-full" size="lg">
+          <div>
+            <Button
+              className="w-full"
+              size="lg"
+              disabled={!series || !shape || !size || !base}
+              onClick={() => setQuoteModalOpen(true)}
+            >
               <ShoppingCart className="h-5 w-5" />
               Request Quote
             </Button>
-          </Link>
+            {submitted && (
+              <p className="text-sm text-brand-green font-medium mt-2 text-center">
+                Quote request submitted successfully!
+              </p>
+            )}
+          </div>
+
+          {/* Quote Request Modal */}
+          <QuoteRequestModal
+            open={quoteModalOpen}
+            onOpenChange={setQuoteModalOpen}
+            config={{
+              seriesCode: series,
+              seriesName: SERIES_NAMES[series] || series,
+              shapeCode: shape,
+              shapeName: SHAPE_NAMES[shape] || shape,
+              size,
+              baseCode: base,
+              baseName: BASE_NAMES[base] || base,
+              baseFinish: baseFinish.name,
+              topMaterial,
+              topFinish: topFinish.name,
+              edgeType: edgeTypes.find((e) => e.id === edgeType)?.name || edgeType,
+              quantity,
+            }}
+            onSuccess={() => {
+              setSubmitted(true);
+              setTimeout(() => setSubmitted(false), 4000);
+            }}
+          />
         </div>
       </div>
     </div>
