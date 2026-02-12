@@ -119,6 +119,7 @@ export default function WpSiteAuditClient() {
           <TabsTrigger value="forms">Forms & Data</TabsTrigger>
           <TabsTrigger value="team">Team & Users</TabsTrigger>
           <TabsTrigger value="findings">Key Findings</TabsTrigger>
+          <TabsTrigger value="mindmap">Mind Map</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -135,6 +136,9 @@ export default function WpSiteAuditClient() {
         </TabsContent>
         <TabsContent value="findings">
           <FindingsTab />
+        </TabsContent>
+        <TabsContent value="mindmap">
+          <MindMapTab />
         </TabsContent>
       </Tabs>
     </div>
@@ -1193,6 +1197,393 @@ function FindingsTab() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Tab 6: Mind Map
+// ═══════════════════════════════════════════════════════════════════
+
+const mindMapBranches = [
+  {
+    id: "products",
+    label: "Products",
+    count: productSeries.length,
+    color: "green" as const,
+    icon: Package,
+    items: productSeries.map((s) => s.name),
+  },
+  {
+    id: "accessories",
+    label: "Accessories",
+    count: accessories.length,
+    color: "sky" as const,
+    icon: Plug,
+    items: accessories.map((a) => a.name),
+  },
+  {
+    id: "applications",
+    label: "Applications",
+    count: applications.length,
+    color: "violet" as const,
+    icon: Layers,
+    items: applications.map((a) => a.name),
+  },
+  {
+    id: "finishes",
+    label: "Finishes",
+    count: finishCategories.length,
+    color: "amber" as const,
+    icon: Palette,
+    items: finishCategories.map((f) => f.name),
+  },
+  {
+    id: "resources",
+    label: "Resources",
+    count:
+      navigationStructure.find((n) => n.label === "Resources")?.children
+        ?.length ?? 0,
+    color: "slate" as const,
+    icon: FileText,
+    items:
+      navigationStructure
+        .find((n) => n.label === "Resources")
+        ?.children?.map((c) => c.label) ?? [],
+  },
+  {
+    id: "forms",
+    label: "Forms",
+    count: gravityForms.length,
+    color: "emerald" as const,
+    icon: ClipboardList,
+    items: gravityForms.map(
+      (f) => `${f.title} (${f.entries.toLocaleString()})`
+    ),
+  },
+  {
+    id: "team",
+    label: "Team",
+    count: team.length,
+    color: "indigo" as const,
+    icon: Users,
+    items: team.map((t) => `${t.name} — ${t.role}`),
+  },
+  {
+    id: "tech",
+    label: "Tech Stack",
+    count: siteOverview.plugins.length,
+    color: "rose" as const,
+    icon: Database,
+    items: siteOverview.plugins.map((p) => p.name),
+  },
+];
+
+const branchColors: Record<
+  string,
+  { bg: string; bgLight: string; text: string; border: string; dot: string }
+> = {
+  green: {
+    bg: "bg-green-500",
+    bgLight: "bg-green-50",
+    text: "text-green-700",
+    border: "border-green-200",
+    dot: "bg-green-400",
+  },
+  sky: {
+    bg: "bg-sky-500",
+    bgLight: "bg-sky-50",
+    text: "text-sky-700",
+    border: "border-sky-200",
+    dot: "bg-sky-400",
+  },
+  violet: {
+    bg: "bg-violet-500",
+    bgLight: "bg-violet-50",
+    text: "text-violet-700",
+    border: "border-violet-200",
+    dot: "bg-violet-400",
+  },
+  amber: {
+    bg: "bg-amber-500",
+    bgLight: "bg-amber-50",
+    text: "text-amber-700",
+    border: "border-amber-200",
+    dot: "bg-amber-400",
+  },
+  slate: {
+    bg: "bg-slate-500",
+    bgLight: "bg-slate-50",
+    text: "text-slate-600",
+    border: "border-slate-200",
+    dot: "bg-slate-400",
+  },
+  emerald: {
+    bg: "bg-emerald-500",
+    bgLight: "bg-emerald-50",
+    text: "text-emerald-700",
+    border: "border-emerald-200",
+    dot: "bg-emerald-400",
+  },
+  indigo: {
+    bg: "bg-indigo-500",
+    bgLight: "bg-indigo-50",
+    text: "text-indigo-700",
+    border: "border-indigo-200",
+    dot: "bg-indigo-400",
+  },
+  rose: {
+    bg: "bg-rose-500",
+    bgLight: "bg-rose-50",
+    text: "text-rose-700",
+    border: "border-rose-200",
+    dot: "bg-rose-400",
+  },
+};
+
+function MindMapTab() {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const toggle = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-500">
+          Click branches to expand · {expanded.size} of{" "}
+          {mindMapBranches.length} open
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() =>
+              setExpanded(new Set(mindMapBranches.map((b) => b.id)))
+            }
+            className="text-xs text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+          >
+            Expand All
+          </button>
+          <button
+            onClick={() => setExpanded(new Set())}
+            className="text-xs text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+          >
+            Collapse All
+          </button>
+        </div>
+      </div>
+
+      <Card>
+        <CardContent className="p-8 overflow-x-auto">
+          <div className="min-w-[1100px] flex flex-col items-center py-4">
+            {/* Root node */}
+            <div className="flex flex-col items-center px-8 py-4 bg-brand-navy rounded-2xl text-white shadow-lg shadow-brand-navy/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Globe className="h-5 w-5 text-brand-green" />
+                <span className="text-lg font-bold tracking-tight">
+                  tablex.com
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">
+                  WP {siteOverview.wordpress}
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">
+                  {siteOverview.theme}
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">
+                  PHP {siteOverview.phpVersion}
+                </span>
+              </div>
+              <div className="flex gap-3 mt-2 text-[10px] text-white/50">
+                <span>
+                  {contentTotals.totalPages + contentTotals.totalPosts} content
+                  items
+                </span>
+                <span>·</span>
+                <span>
+                  {contentTotals.totalMedia.toLocaleString()} media
+                </span>
+                <span>·</span>
+                <span>
+                  {formEntryTotals.total.toLocaleString()} form entries
+                </span>
+              </div>
+            </div>
+
+            {/* Root → branches connector */}
+            <div className="w-px h-10 bg-slate-300" />
+
+            {/* Branch row */}
+            <div className="relative w-full">
+              {/* Horizontal spanning line */}
+              <div
+                className="absolute top-0 h-px bg-slate-300"
+                style={{
+                  left: `${100 / (mindMapBranches.length * 2)}%`,
+                  right: `${100 / (mindMapBranches.length * 2)}%`,
+                }}
+              />
+
+              <div className="flex">
+                {mindMapBranches.map((branch) => {
+                  const c = branchColors[branch.color];
+                  const isOpen = expanded.has(branch.id);
+                  const Icon = branch.icon;
+
+                  return (
+                    <div
+                      key={branch.id}
+                      className="flex flex-col items-center"
+                      style={{
+                        width: `${100 / mindMapBranches.length}%`,
+                      }}
+                    >
+                      {/* Vertical connector */}
+                      <div className="w-px h-6 bg-slate-300" />
+
+                      {/* Branch node */}
+                      <button
+                        onClick={() => toggle(branch.id)}
+                        className={cn(
+                          "flex flex-col items-center gap-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer",
+                          isOpen
+                            ? `${c.bgLight} ${c.border} shadow-sm`
+                            : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+                        )}
+                      >
+                        <Icon
+                          className={cn(
+                            "h-4 w-4",
+                            isOpen ? c.text : "text-slate-400"
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            "text-[11px] font-semibold whitespace-nowrap",
+                            isOpen ? c.text : "text-slate-700"
+                          )}
+                        >
+                          {branch.label}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-[10px] px-2 py-0.5 rounded-full font-medium",
+                            isOpen
+                              ? `${c.bg} text-white`
+                              : "bg-slate-100 text-slate-500"
+                          )}
+                        >
+                          {branch.count}
+                        </span>
+                      </button>
+
+                      {/* Expanded children */}
+                      {isOpen && (
+                        <>
+                          <div className={cn("w-px h-3", c.dot)} />
+                          <div
+                            className={cn(
+                              "rounded-lg border p-2 space-y-0.5 max-h-[260px] overflow-y-auto",
+                              c.border,
+                              c.bgLight
+                            )}
+                          >
+                            {branch.items.map((item, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center gap-1.5"
+                              >
+                                <div
+                                  className={cn(
+                                    "w-1 h-1 rounded-full shrink-0",
+                                    c.dot
+                                  )}
+                                />
+                                <span
+                                  className={cn(
+                                    "text-[10px] whitespace-nowrap",
+                                    c.text
+                                  )}
+                                >
+                                  {item}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Get a Quote CTA */}
+            <div className="mt-10 flex flex-col items-center">
+              <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">
+                Standalone CTA
+              </p>
+              <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-green/10 border-2 border-brand-green/30">
+                <Navigation className="h-4 w-4 text-brand-green" />
+                <span className="text-sm font-bold text-brand-green">
+                  Get a Quote
+                </span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Summary stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Card hover>
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900">
+              {navigationStructure.length}
+            </p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 mt-1">
+              Top-Level Sections
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover>
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900">
+              {navigationStructure.reduce(
+                (sum, n) => sum + (n.children?.length ?? 0),
+                0
+              )}
+            </p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 mt-1">
+              Nav Items
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover>
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900">
+              {siteOverview.plugins.length}
+            </p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 mt-1">
+              Plugins
+            </p>
+          </CardContent>
+        </Card>
+        <Card hover>
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900">{team.length}</p>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 mt-1">
+              Team Members
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -29,6 +29,7 @@ import {
   Settings,
   User,
   Users,
+  Network,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -40,6 +41,7 @@ const analyticsNavGroups = [
     items: [
       { name: "User Personas", href: "/user-personas", icon: Users },
       { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
+      { name: "Site Architecture", href: "/site-architecture", icon: Network },
       { name: "Catalog", href: "/catalog", icon: Package },
       { name: "Configurator", href: "/configurator", icon: Box },
     ],
@@ -106,8 +108,8 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         <Link href="/overview" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green">
-            <span className="text-xl font-bold text-white">T</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green p-1.5">
+            <img src="/tablex-logomark.svg" alt="TableX" className="h-full w-full" />
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">
