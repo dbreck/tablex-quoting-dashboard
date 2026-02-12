@@ -6,12 +6,24 @@ import type { GfQuoteRequest } from "./QueueClient";
 export default async function QueuePage() {
   const supabase = await createClient();
 
-  const { data: rows, error } = await supabase
-    .from("quote_queue")
-    .select("*");
+  // Supabase caps at 1,000 rows per request — paginate to get all 3,595
+  let rows: Record<string, unknown>[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from("quote_queue")
+      .select("*")
+      .range(from, from + pageSize - 1);
 
-  if (error) {
-    console.error("Failed to fetch quote_queue:", error);
+    if (error) {
+      console.error("Failed to fetch quote_queue:", error);
+      break;
+    }
+    if (!data || data.length === 0) break;
+    rows = rows.concat(data as Record<string, unknown>[]);
+    if (data.length < pageSize) break;
+    from += pageSize;
   }
 
   const queueData = (rows || []).map((r: Record<string, unknown>) => ({
