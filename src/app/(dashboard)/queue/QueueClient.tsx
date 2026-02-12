@@ -21,7 +21,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { ClipboardList, Users, Building2, Clock } from "lucide-react";
+import { ClipboardList, Users, Building2, Globe } from "lucide-react";
 
 interface QueueRow {
   rowNum: number;
@@ -37,13 +37,24 @@ interface QueueRow {
   statusNormalized: string;
 }
 
+export interface GfQuoteRequest {
+  entryId: number;
+  dateCreated: string;
+  companyName: string;
+  contactName: string;
+  baseSeries: string;
+  baseFinish: string;
+  quantity: number;
+}
+
 const COLORS = ["#8dc63f", "#1a3c5c", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#10b981", "#6366f1", "#f97316", "#94a3b8"];
 
 interface QueueClientProps {
   queueData: QueueRow[];
+  gfRequests: GfQuoteRequest[];
 }
 
-export default function QueueClient({ queueData }: QueueClientProps) {
+export default function QueueClient({ queueData, gfRequests }: QueueClientProps) {
   // Monthly volume data
   const monthlyVolume = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -114,6 +125,101 @@ export default function QueueClient({ queueData }: QueueClientProps) {
     return result;
   }, [queueData]);
 
+  // GF monthly volume (for Inbound tab dual-line chart)
+  const gfMonthlyVolume = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const r of gfRequests) {
+      if (!r.dateCreated) continue;
+      const match = r.dateCreated.match(/^(\d{4})-(\d{2})/);
+      if (!match) continue;
+      const key = `${match[1]}-${match[2]}`;
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return counts;
+  }, [gfRequests]);
+
+  // Combined inbound chart data (queue + GF by month)
+  const inboundData = useMemo(() => {
+    // Build a union of all month keys from both datasets
+    const allKeys = new Set<string>();
+    // Queue months
+    for (const row of queueData) {
+      if (!row.year || !row.dateNormalized) continue;
+      const match = row.dateNormalized.match(/^(\d{2})-/);
+      if (!match) continue;
+      allKeys.add(`${row.year}-${match[1]}`);
+    }
+    // GF months
+    for (const key of Object.keys(gfMonthlyVolume)) {
+      allKeys.add(key);
+    }
+
+    // Queue monthly counts
+    const queueCounts: Record<string, number> = {};
+    for (const row of queueData) {
+      if (!row.year || !row.dateNormalized) continue;
+      const match = row.dateNormalized.match(/^(\d{2})-/);
+      if (!match) continue;
+      const key = `${row.year}-${match[1]}`;
+      queueCounts[key] = (queueCounts[key] || 0) + 1;
+    }
+
+    const monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return Array.from(allKeys)
+      .sort()
+      .map((key) => {
+        const [year, month] = key.split("-");
+        const monthNum = parseInt(month);
+        return {
+          month: `${monthNames[monthNum]} '${year.slice(2)}`,
+          year,
+          monthNum,
+          queue: queueCounts[key] || 0,
+          webForm: gfMonthlyVolume[key] || 0,
+        };
+      });
+  }, [queueData, gfMonthlyVolume]);
+
+  // Top base series from GF data
+  const seriesData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const r of gfRequests) {
+      const s = (r.baseSeries || "").trim();
+      if (!s) continue;
+      counts[s] = (counts[s] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 12)
+      .map(([name, count]) => ({ name, count }));
+  }, [gfRequests]);
+
+  // Top base finishes from GF data
+  const finishData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const r of gfRequests) {
+      const f = (r.baseFinish || "").trim();
+      if (!f) continue;
+      counts[f] = (counts[f] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 12)
+      .map(([name, count]) => ({ name, count }));
+  }, [gfRequests]);
+
+  // Top companies from GF data (for stat card)
+  const gfTopCompany = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const r of gfRequests) {
+      const c = (r.companyName || "").trim();
+      if (!c) continue;
+      counts[c] = (counts[c] || 0) + 1;
+    }
+    const sorted = Object.entries(counts).sort(([, a], [, b]) => b - a);
+    return sorted[0] ? { name: sorted[0][0], count: sorted[0][1] } : { name: "N/A", count: 0 };
+  }, [gfRequests]);
+
   // Derive actual date range from data
   const dateRange = useMemo(() => {
     if (monthlyVolume.length === 0) return { first: "", last: "", months: 0 };
@@ -124,18 +230,18 @@ export default function QueueClient({ queueData }: QueueClientProps) {
 
   // Stats
   const totalQuotes = queueData.length;
-  const specialCount = queueData.filter((r) => r.special).length;
+  const webRequestCount = gfRequests.length;
+  const webPct = totalQuotes > 0 ? ((webRequestCount / totalQuotes) * 100).toFixed(0) : "0";
   const busiestMonth = monthlyVolume.reduce(
     (max, m) => (m.count > max.count ? m : max),
     { month: "", count: 0 }
   );
-  const topDealer = dealerData[0]?.name || "N/A";
 
   return (
     <div>
       <Header
         title="Quote Queue Analytics"
-        subtitle="Volume trends, staff workload, and dealer analysis from 3,595 quote requests"
+        subtitle="Volume trends, product demand, and dealer analysis from queue data + web form requests"
       />
 
       {/* Stats row */}
@@ -156,13 +262,13 @@ export default function QueueClient({ queueData }: QueueClientProps) {
         <Card hover className="stat-card animate-slide-up">
           <CardContent className="p-5">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-100">
-                <Clock className="h-5 w-5 text-amber-600" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100">
+                <Globe className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Special Quotes</p>
-                <p className="text-2xl font-bold text-slate-900">{formatNumber(specialCount)}</p>
-                <p className="text-xs text-slate-400">{((specialCount / totalQuotes) * 100).toFixed(0)}% of total</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">Web Requests</p>
+                <p className="text-2xl font-bold text-slate-900">{formatNumber(webRequestCount)}</p>
+                <p className="text-xs text-slate-400">{webPct}% via web form</p>
               </div>
             </div>
           </CardContent>
@@ -188,9 +294,9 @@ export default function QueueClient({ queueData }: QueueClientProps) {
                 <Building2 className="h-5 w-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Top Dealer</p>
-                <p className="text-lg font-bold text-slate-900 truncate max-w-[160px]">{topDealer}</p>
-                <p className="text-xs text-slate-400">{dealerData[0]?.value || 0} quotes</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">Top Company</p>
+                <p className="text-lg font-bold text-slate-900 truncate max-w-[160px]">{gfTopCompany.name}</p>
+                <p className="text-xs text-slate-400">{gfTopCompany.count} web requests</p>
               </div>
             </div>
           </CardContent>
@@ -201,6 +307,8 @@ export default function QueueClient({ queueData }: QueueClientProps) {
       <Tabs defaultValue="volume">
         <TabsList className="mb-6">
           <TabsTrigger value="volume">Volume</TabsTrigger>
+          <TabsTrigger value="inbound">Inbound</TabsTrigger>
+          <TabsTrigger value="product-mix">Product Mix</TabsTrigger>
           <TabsTrigger value="staff">Staff</TabsTrigger>
           <TabsTrigger value="dealers">Dealers</TabsTrigger>
         </TabsList>
@@ -267,6 +375,120 @@ export default function QueueClient({ queueData }: QueueClientProps) {
               </ResponsiveContainer>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Inbound Tab */}
+        <TabsContent value="inbound">
+          <Card>
+            <CardHeader>
+              <CardTitle>Inbound Quote Sources</CardTitle>
+              <CardDescription>Internal queue processing vs web form requests by month</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={inboundData}>
+                  <defs>
+                    <linearGradient id="colorQueue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8dc63f" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#8dc63f" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorWebForm" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="month"
+                    tick={(props: Record<string, unknown>) => {
+                      const x = Number(props.x);
+                      const y = Number(props.y);
+                      const payload = props.payload as { value: string; index: number };
+                      const item = inboundData[payload.index];
+                      const isJan = item?.monthNum === 1;
+                      if (!isJan && payload.index % 3 !== 0) return <g />;
+                      const label = isJan ? `Jan '${item.year.slice(2)}` : payload.value;
+                      return (
+                        <g transform={`translate(${x},${y})`}>
+                          <text
+                            x={0} y={0} dy={12}
+                            textAnchor="end"
+                            transform="rotate(-45)"
+                            fontSize={isJan ? 11 : 10}
+                            fontWeight={isJan ? 700 : 400}
+                            fill={isJan ? "#1a3c5c" : "#94a3b8"}
+                          >
+                            {label}
+                          </text>
+                        </g>
+                      );
+                    }}
+                    interval={0}
+                    height={60}
+                  />
+                  <YAxis />
+                  <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0" }} />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="queue"
+                    name="Queue (Internal)"
+                    stroke="#8dc63f"
+                    strokeWidth={2}
+                    fill="url(#colorQueue)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="webForm"
+                    name="Web Form"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    fill="url(#colorWebForm)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Product Mix Tab */}
+        <TabsContent value="product-mix">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Base Series</CardTitle>
+                <CardDescription>Most requested table series from {formatNumber(webRequestCount)} web form entries</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={seriesData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0" }} />
+                    <Bar dataKey="count" name="Requests" fill="#8dc63f" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Base Finishes</CardTitle>
+                <CardDescription>Most requested powder coat finishes from web form entries</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={finishData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0" }} />
+                    <Bar dataKey="count" name="Requests" fill="#1a3c5c" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Staff Tab */}

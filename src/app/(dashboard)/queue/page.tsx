@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import QueueClient from "./QueueClient";
+import gfRaw from "@/data/gf-quote-requests.json";
+import type { GfQuoteRequest } from "./QueueClient";
 
 export default async function QueuePage() {
   const supabase = await createClient();
@@ -26,5 +28,15 @@ export default async function QueuePage() {
     statusNormalized: (r.status_normalized as string) || "",
   }));
 
-  return <QueueClient queueData={queueData} />;
+  const gfRequests: GfQuoteRequest[] = (gfRaw as Record<string, unknown>[]).map((r) => ({
+    entryId: (r.entryId as number) || 0,
+    dateCreated: (r.dateCreated as string) || "",
+    companyName: (r.companyName as string) || "",
+    contactName: (r.contactName as string) || "",
+    baseSeries: (r.baseSeries as string) || "",
+    baseFinish: (r.baseFinish as string) || "",
+    quantity: (r.quantity as number) || 0,
+  }));
+
+  return <QueueClient queueData={queueData} gfRequests={gfRequests} />;
 }
