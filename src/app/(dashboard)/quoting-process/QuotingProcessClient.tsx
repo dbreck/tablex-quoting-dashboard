@@ -1,6 +1,9 @@
 "use client";
 
 import { Header } from "@/components/layout/Header";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertTriangle } from "lucide-react";
+import { staffInsight } from "@/data/cpq-gap-analysis";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HowItWorksTodayTab } from "./components/HowItWorksTodayTab";
 import { SalesOrderFlowTab } from "./components/SalesOrderFlowTab";
@@ -74,6 +77,23 @@ export default function QuotingProcessClient({
         title="Quoting Process"
         subtitle="Complete analysis of TableX's quoting workflow — from request to delivery"
       />
+
+      {/* Staff Insight Callout */}
+      <Card className="mb-6 border-amber-200 bg-amber-50">
+        <CardContent className="p-5 flex items-start gap-4">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-100 shrink-0">
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-amber-800">
+              Insight: Root Cause of Slow Quoting is Fear of Mistakes
+            </p>
+            <p className="text-sm text-amber-700 mt-1">
+              {staffInsight.implication}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="how-it-works">
         <TabsList className="mb-6">

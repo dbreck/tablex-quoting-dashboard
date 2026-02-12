@@ -26,7 +26,7 @@ const sections = [
     icon: Globe,
     accent: "blue",
     highlights: [
-      "3 user personas defined (Designer, Rep, End User)",
+      "3 user personas defined (Dealer, Rep, Individual)",
       "164 content items inventoried",
       "3D configurator with 2,920 models",
     ],
