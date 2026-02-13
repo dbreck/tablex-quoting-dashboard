@@ -92,11 +92,12 @@ export async function POST(request: Request) {
 
   // Parse and validate body
   const body = await request.json();
-  const { email, full_name, role, send_invite } = body as {
+  const { email, full_name, role, send_invite, password } = body as {
     email?: string;
     full_name?: string;
     role?: "admin" | "contributor";
     send_invite?: boolean;
+    password?: string;
   };
 
   if (!email) {
@@ -106,11 +107,19 @@ export async function POST(request: Request) {
     );
   }
 
-  // Create the user
+  if (password && password.length < 8) {
+    return NextResponse.json(
+      { error: "Password must be at least 8 characters" },
+      { status: 400 }
+    );
+  }
+
+  // Create the user (with password if provided)
   const { data: newUserData, error: createError } =
     await adminClient.auth.admin.createUser({
       email,
       email_confirm: true,
+      ...(password ? { password } : {}),
       user_metadata: { full_name: full_name || "" },
     });
 

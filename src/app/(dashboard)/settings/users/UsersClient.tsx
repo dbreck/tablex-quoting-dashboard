@@ -62,8 +62,9 @@ export default function UsersClient() {
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
+  const [invitePassword, setInvitePassword] = useState("");
   const [inviteRole, setInviteRole] = useState<"admin" | "contributor">("contributor");
-  const [sendInvite, setSendInvite] = useState(true);
+  const [sendInvite, setSendInvite] = useState(false);
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState<{
     type: "success" | "error";
@@ -75,6 +76,9 @@ export default function UsersClient() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [passwordUser, setPasswordUser] = useState<UserRow | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [settingPassword, setSettingPassword] = useState(false);
 
   const loadUsers = useCallback(async () => {
     const res = await fetch("/api/admin/users");
@@ -113,7 +117,13 @@ export default function UsersClient() {
     const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: inviteEmail, full_name: inviteName, role: inviteRole, send_invite: sendInvite }),
+      body: JSON.stringify({
+        email: inviteEmail,
+        full_name: inviteName,
+        role: inviteRole,
+        send_invite: sendInvite,
+        ...(invitePassword ? { password: invitePassword } : {}),
+      }),
     });
 
     const data = await res.json();
@@ -123,8 +133,9 @@ export default function UsersClient() {
       setInviteMessage({ type: "success", text: data.message || msg });
       setInviteEmail("");
       setInviteName("");
+      setInvitePassword("");
       setInviteRole("contributor");
-      setSendInvite(true);
+      setSendInvite(false);
       loadUsers();
     } else {
       setInviteMessage({ type: "error", text: data.error || "Failed to send invitation" });
@@ -174,20 +185,28 @@ export default function UsersClient() {
     setDeleting(false);
   }
 
-  async function handleResetPassword(userId: string) {
+  async function handleSetPassword() {
+    if (!passwordUser || !newPassword) return;
+    setSettingPassword(true);
     setActionMessage(null);
 
-    const res = await fetch(`/api/admin/users/${userId}/reset-password`, {
+    const res = await fetch(`/api/admin/users/${passwordUser.id}/reset-password`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: newPassword }),
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      setActionMessage({ type: "success", text: data.message || "Password reset email sent" });
+      setActionMessage({ type: "success", text: `Password set for ${passwordUser.full_name || passwordUser.email}` });
     } else {
-      setActionMessage({ type: "error", text: data.error || "Failed to send reset email" });
+      setActionMessage({ type: "error", text: data.error || "Failed to set password" });
     }
+
+    setPasswordUser(null);
+    setNewPassword("");
+    setSettingPassword(false);
   }
 
   if (loading) {
@@ -215,51 +234,60 @@ export default function UsersClient() {
           <CardDescription>Create a new dashboard user</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleInvite} className="flex flex-col sm:flex-row gap-3">
-            <Input
-              type="email"
-              placeholder="Email address"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              required
-              className="flex-1"
-            />
-            <Input
-              type="text"
-              placeholder="Full name (optional)"
-              value={inviteName}
-              onChange={(e) => setInviteName(e.target.value)}
-              className="flex-1"
-            />
-            <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as "admin" | "contributor")}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="contributor">Contributor</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button type="submit" disabled={inviting || !inviteEmail}>
-              {inviting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Adding...
-                </>
-              ) : (
-                "Add User"
-              )}
-            </Button>
+          <form onSubmit={handleInvite} className="space-y-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                type="email"
+                placeholder="Email address"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                required
+                className="flex-1"
+              />
+              <Input
+                type="text"
+                placeholder="Full name (optional)"
+                value={inviteName}
+                onChange={(e) => setInviteName(e.target.value)}
+                className="flex-1"
+              />
+              <Input
+                type="text"
+                placeholder="Password (min 8 chars)"
+                value={invitePassword}
+                onChange={(e) => setInvitePassword(e.target.value)}
+                className="flex-1"
+              />
+              <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as "admin" | "contributor")}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="contributor">Contributor</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button type="submit" disabled={inviting || !inviteEmail}>
+                {inviting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  "Add User"
+                )}
+              </Button>
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer w-fit">
+              <input
+                type="checkbox"
+                checked={sendInvite}
+                onChange={(e) => setSendInvite(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-brand-green focus:ring-brand-green/50"
+              />
+              <span className="text-sm text-slate-600">Also send invite email with password setup link</span>
+            </label>
           </form>
-          <label className="flex items-center gap-2 mt-3 cursor-pointer w-fit">
-            <input
-              type="checkbox"
-              checked={sendInvite}
-              onChange={(e) => setSendInvite(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 text-brand-green focus:ring-brand-green/50"
-            />
-            <span className="text-sm text-slate-600">Send invite email with password setup link</span>
-          </label>
           {inviteMessage && (
             <div className="mt-3">
               {inviteMessage.type === "success" ? (
@@ -355,9 +383,9 @@ export default function UsersClient() {
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            title="Reset password"
+                            title="Set password"
                             disabled={isCurrentUser}
-                            onClick={() => handleResetPassword(u.id)}
+                            onClick={() => setPasswordUser(u)}
                           >
                             <KeyRound className="h-4 w-4 text-slate-500" />
                           </Button>
@@ -387,6 +415,40 @@ export default function UsersClient() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Set Password Dialog */}
+      <Dialog open={!!passwordUser} onOpenChange={(open) => { if (!open) { setPasswordUser(null); setNewPassword(""); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Set Password</DialogTitle>
+            <DialogDescription>
+              Set a new password for {passwordUser?.full_name || passwordUser?.email}. You can then share it with them directly.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            type="text"
+            placeholder="New password (min 8 characters)"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setPasswordUser(null); setNewPassword(""); }} disabled={settingPassword}>
+              Cancel
+            </Button>
+            <Button onClick={handleSetPassword} disabled={settingPassword || newPassword.length < 8}>
+              {settingPassword ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Setting...
+                </>
+              ) : (
+                "Set Password"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteUser} onOpenChange={(open) => !open && setDeleteUser(null)}>

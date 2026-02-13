@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -31,7 +31,34 @@ export async function POST(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Look up user email from profiles
+  // Parse body for optional password
+  const body = await request.json().catch(() => ({}));
+  const { password } = body as { password?: string };
+
+  // If password provided, set it directly via admin API
+  if (password) {
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" },
+        { status: 400 }
+      );
+    }
+
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(id, {
+      password,
+    });
+
+    if (updateError) {
+      return NextResponse.json(
+        { error: updateError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ message: "Password updated" });
+  }
+
+  // Otherwise, send reset email via Supabase
   const { data: profile, error: lookupError } = await adminClient
     .from("profiles")
     .select("email")
@@ -42,7 +69,6 @@ export async function POST(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Use the server client to trigger Supabase's built-in password reset email
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
     || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : "http://localhost:3000");
 
