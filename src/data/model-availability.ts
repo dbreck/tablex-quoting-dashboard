@@ -2939,10 +2939,39 @@ export function getAvailableSizes(seriesCode: string, shapeCode: string): string
 /**
  * Get bases available for a specific series + shape combo.
  */
+/**
+ * Supplier bases available as generic fallback previews for series
+ * that don't have series-specific GLBs for these base types.
+ */
+export const SUPPLIER_BASES_BY_SERIES: Record<string, string[]> = {
+  "00": ["OU"],
+  "08": ["HT", "VTR", "WT"],
+  "33": ["A", "H"],
+  "44": ["DP", "QC", "SQ"],
+  "99": ["TT"],
+};
+
+/**
+ * Supplier base + series combos verified against real order history.
+ * Combos NOT in this map are exploratory/unverified.
+ */
+export const VERIFIED_SUPPLIER_BASES: Record<string, string[]> = {
+  "08": ["VTR"],
+  "33": ["A", "H"],
+  "99": ["TT"],
+};
+
 export function getAvailableBases(seriesCode: string, shapeCode: string): string[] {
   const series = MODEL_AVAILABILITY[seriesCode];
   if (!series) return [];
-  return series.shapes[shapeCode]?.bases ?? [];
+  const nativeBases = series.shapes[shapeCode]?.bases ?? [];
+  const supplierBases = SUPPLIER_BASES_BY_SERIES[seriesCode] ?? [];
+  if (supplierBases.length === 0) return nativeBases;
+  const combined = [...nativeBases];
+  for (const b of supplierBases) {
+    if (!combined.includes(b)) combined.push(b);
+  }
+  return combined;
 }
 
 /**

@@ -18,6 +18,7 @@ export type EnvironmentPreset =
 
 interface ModelViewerProps {
   modelUrl: string | null;
+  supplierBaseUrl?: string | null;
   baseFinish?: FinishOption;
   topFinish?: FinishOption;
   edgeFinish?: FinishOption;
@@ -27,12 +28,12 @@ interface ModelViewerProps {
 }
 
 /** Triggers Bounds.refresh() whenever the model URL changes */
-function BoundsRefresher({ modelUrl }: { modelUrl: string }) {
+function BoundsRefresher({ modelKey }: { modelKey: string }) {
   const bounds = useBounds();
-  const prevUrl = useRef(modelUrl);
+  const prevKey = useRef(modelKey);
 
-  if (modelUrl !== prevUrl.current) {
-    prevUrl.current = modelUrl;
+  if (modelKey !== prevKey.current) {
+    prevKey.current = modelKey;
     // Schedule refresh after the new model mounts
     requestAnimationFrame(() => bounds.refresh().clip().fit());
   }
@@ -42,6 +43,7 @@ function BoundsRefresher({ modelUrl }: { modelUrl: string }) {
 
 export function ModelViewer({
   modelUrl,
+  supplierBaseUrl,
   baseFinish,
   topFinish,
   edgeFinish,
@@ -119,12 +121,13 @@ export function ModelViewer({
             <Center disableY>
               <TableModel
                 url={modelUrl}
+                supplierBaseUrl={supplierBaseUrl}
                 baseFinish={baseFinish}
                 topFinish={topFinish}
                 edgeFinish={edgeFinish}
               />
             </Center>
-            <BoundsRefresher modelUrl={modelUrl} />
+            <BoundsRefresher modelKey={`${modelUrl}|${supplierBaseUrl ?? ''}`} />
           </Bounds>
           <Environment preset={environmentPreset} background={false} environmentIntensity={1.0} />
           <ContactShadows

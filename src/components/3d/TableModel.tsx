@@ -9,6 +9,7 @@ import { useFinishMaterial } from "./useFinishMaterial";
 
 interface TableModelProps {
   url: string;
+  supplierBaseUrl?: string | null;
   baseFinish?: FinishOption;
   topFinish?: FinishOption;
   edgeFinish?: FinishOption;
@@ -71,7 +72,50 @@ function generateBoxProjectedUVs(geometry: THREE.BufferGeometry): void {
 
 const DEFAULT_MATERIAL = new THREE.MeshPhysicalMaterial({ color: 0x888888, roughness: 0.5, envMapIntensity: 1.0 });
 
-function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelProps) {
+/**
+ * Prepare a loaded GLB scene: strip vertex colors, generate UVs, fix Z-up orientation, floor-align.
+ */
+function prepareScene(scene: THREE.Group): THREE.Group {
+  const c = scene.clone(true);
+  c.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.geometry.deleteAttribute("color");
+      if (!child.geometry.attributes.uv) {
+        generateBoxProjectedUVs(child.geometry);
+      }
+      if (!child.geometry.attributes.normal) {
+        child.geometry.computeVertexNormals();
+      }
+      child.material = DEFAULT_MATERIAL;
+    }
+  });
+  c.rotation.x = -Math.PI / 2;
+  c.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(c);
+  c.position.y = -box.min.y;
+  return c;
+}
+
+/** Renders the supplier base GLB alongside the native model (which provides tabletop). */
+function SupplierBaseModel({ url, baseMaterial }: { url: string; baseMaterial: THREE.Material }) {
+  const { scene } = useGLTF(url);
+  const invalidate = useThree((s) => s.invalidate);
+
+  const clone = useMemo(() => prepareScene(scene), [scene]);
+
+  useEffect(() => {
+    clone.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material = baseMaterial;
+      }
+    });
+    invalidate();
+  }, [clone, baseMaterial, invalidate]);
+
+  return <primitive object={clone} />;
+}
+
+function TableModelInner({ url, supplierBaseUrl, baseFinish, topFinish, edgeFinish }: TableModelProps) {
   const { scene } = useGLTF(url);
   const invalidate = useThree((s) => s.invalidate);
 
@@ -80,50 +124,41 @@ function TableModelInner({ url, baseFinish, topFinish, edgeFinish }: TableModelP
   const topMaterial = useFinishMaterial(topFinish);
   const edgeMaterial = useFinishMaterial(edgeFinish);
 
+  const hasSupplierBase = !!supplierBaseUrl;
+
   // Clone scene, strip baked vertex colors, generate UVs, and fix orientation.
-  const clone = useMemo(() => {
-    const c = scene.clone(true);
-    c.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.geometry.deleteAttribute("color");
-
-        // Generate UVs if missing (our GLBs from trimesh lack UV coordinates)
-        if (!child.geometry.attributes.uv) {
-          generateBoxProjectedUVs(child.geometry);
-        }
-
-        // Safety net: ensure normals exist
-        if (!child.geometry.attributes.normal) {
-          child.geometry.computeVertexNormals();
-        }
-
-        child.material = DEFAULT_MATERIAL;
-      }
-    });
-    // DXF/DWG files use Z-up; three.js uses Y-up
-    c.rotation.x = -Math.PI / 2;
-    // Floor-align: shift model up so its bottom sits at y=0
-    c.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(c);
-    c.position.y = -box.min.y;
-    return c;
-  }, [scene]);
+  const clone = useMemo(() => prepareScene(scene), [scene]);
 
   // Apply hook-managed materials to classified mesh parts
+  // When using a supplier base, hide the native base meshes
   useEffect(() => {
     clone.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
       const part = classifyMesh(child.name);
       if (!part) return;
 
-      if (part === "top") child.material = topMaterial;
-      else if (part === "base" || part === "other") child.material = baseMaterial;
-      else if (part === "edge") child.material = edgeMaterial;
+      if (part === "top") {
+        child.material = topMaterial;
+        child.visible = true;
+      } else if (part === "base" || part === "other") {
+        child.material = baseMaterial;
+        child.visible = !hasSupplierBase;
+      } else if (part === "edge") {
+        child.material = edgeMaterial;
+        child.visible = true;
+      }
     });
     invalidate();
-  }, [clone, baseMaterial, topMaterial, edgeMaterial, invalidate]);
+  }, [clone, baseMaterial, topMaterial, edgeMaterial, hasSupplierBase, invalidate]);
 
-  return <primitive object={clone} />;
+  return (
+    <>
+      <primitive object={clone} />
+      {supplierBaseUrl && (
+        <SupplierBaseModel url={supplierBaseUrl} baseMaterial={baseMaterial} />
+      )}
+    </>
+  );
 }
 
 // Error boundary that resets when key changes (via key={url} on parent)
@@ -158,7 +193,7 @@ class ModelErrorBoundary extends Component<
  */
 export function TableModel(props: TableModelProps) {
   return (
-    <ModelErrorBoundary key={props.url}>
+    <ModelErrorBoundary key={`${props.url}|${props.supplierBaseUrl ?? ''}`}>
       <TableModelInner {...props} />
     </ModelErrorBoundary>
   );

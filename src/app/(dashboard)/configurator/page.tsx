@@ -20,6 +20,8 @@ import {
   getAvailableBases,
   formatSizeLabel,
   MODEL_AVAILABILITY,
+  SUPPLIER_BASES_BY_SERIES,
+  VERIFIED_SUPPLIER_BASES,
 } from "@/data/model-availability";
 import {
   powderCoatFinishes,
@@ -31,8 +33,9 @@ import {
   getEdgeFinish,
   type FinishOption,
 } from "@/data/finish-catalog";
-import { ShoppingCart, ChevronDown, ChevronRight, Plus, Minus } from "lucide-react";
+import { ShoppingCart, ChevronDown, ChevronRight, Plus, Minus, Info } from "lucide-react";
 import type { EnvironmentPreset } from "@/components/3d/ModelViewer";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { QuoteRequestModal } from "@/components/configurator/QuoteRequestModal";
 
 const ModelViewer3D = dynamic(
@@ -115,7 +118,23 @@ const BASE_NAMES: Record<string, string> = {
   GN: "Gannet",
   TOS: "T-Base (Offset)",
   SD: "Sled Base",
+  A: "A-Base",
+  HT: "Height-Adjustable T",
+  VTR: "V-Trestle",
+  WT: "Wall/Cantilever T",
+  OU: "Oversize U-Leg",
+  DP: "Disc Pedestal",
+  SQ: "Square Disc",
 };
+
+type BaseCategory = "native" | "verified" | "unverified";
+
+function classifyBase(seriesCode: string, baseCode: string): BaseCategory {
+  const supplierBases = SUPPLIER_BASES_BY_SERIES[seriesCode] ?? [];
+  if (!supplierBases.includes(baseCode)) return "native";
+  const verified = VERIFIED_SUPPLIER_BASES[seriesCode] ?? [];
+  return verified.includes(baseCode) ? "verified" : "unverified";
+}
 
 type TopMaterial = "hpl" | "tfl" | "solid-surface" | "butcher-block";
 
@@ -212,7 +231,7 @@ export default function ConfiguratorPage() {
   }, [topMaterial]);
 
   // Resolve model URL — only when shape+size+base are all selected
-  const { url: modelUrl } = useModelUrl({
+  const { url: modelUrl, supplierBaseUrl, isSupplierBase, isVerifiedCombo } = useModelUrl({
     series,
     shape,
     size,
@@ -255,6 +274,7 @@ export default function ConfiguratorPage() {
             <CardContent className="p-4">
               <ModelViewer3D
                 modelUrl={modelUrl}
+                supplierBaseUrl={supplierBaseUrl}
                 baseFinish={baseFinish}
                 topFinish={topFinish}
                 edgeFinish={getEdgeFinish(edgeType) ?? topFinish}
@@ -270,6 +290,13 @@ export default function ConfiguratorPage() {
                       : !size || !base
                         ? "Select size and base to load 3D model"
                         : "3D model not available for this configuration"}
+                </p>
+              )}
+              {isSupplierBase && (
+                <p className={`text-xs text-center mt-2 ${isVerifiedCombo ? "text-slate-400" : "text-amber-500"}`}>
+                  {isVerifiedCombo
+                    ? "Approximate preview — base shown is a generic reference model, not series-specific geometry."
+                    : "This base has not been verified as a standard option for this series. Shown for reference only."}
                 </p>
               )}
             </CardContent>
@@ -377,9 +404,35 @@ export default function ConfiguratorPage() {
 
           {/* Base */}
           <div>
-            <label className="text-sm font-medium text-slate-700 mb-1.5 block">
-              Base
-            </label>
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <label className="text-sm font-medium text-slate-700">
+                Base
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button type="button" className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent side="top" className="w-80 text-sm">
+                  <p className="font-medium text-slate-800 mb-2">Base Availability</p>
+                  <div className="space-y-2 text-slate-600 text-xs leading-relaxed">
+                    <p>
+                      <span className="inline-block w-2 h-2 rounded-full bg-brand-green mr-1.5 align-middle" />
+                      <strong>Series-specific</strong> — Exact 3D model for this series, built from manufacturer CAD files.
+                    </p>
+                    <p>
+                      <span className="inline-block w-2 h-2 rounded-full bg-blue-400 mr-1.5 align-middle" />
+                      <strong>Generic preview</strong> — Uses a reference base model from the component supplier. This base is a verified option for this series but the 3D preview is approximate.
+                    </p>
+                    <p>
+                      <span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1.5 align-middle" />
+                      <strong>Exploratory</strong> — This base has not been verified as a standard option for this series. Shown for reference only.
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
             <Select
               value={base}
               onValueChange={setBase}
@@ -389,11 +442,21 @@ export default function ConfiguratorPage() {
                 <SelectValue placeholder={shape ? "Select base" : "Select shape first"} />
               </SelectTrigger>
               <SelectContent>
-                {availableBases.map((code) => (
-                  <SelectItem key={code} value={code}>
-                    {BASE_NAMES[code] || code} ({code})
-                  </SelectItem>
-                ))}
+                {availableBases.map((code) => {
+                  const cat = series ? classifyBase(series, code) : "native";
+                  return (
+                    <SelectItem key={code} value={code}>
+                      <span className="flex items-center gap-2">
+                        {cat !== "native" && (
+                          <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                            cat === "verified" ? "bg-blue-400" : "bg-amber-400"
+                          }`} />
+                        )}
+                        {BASE_NAMES[code] || code} ({code})
+                      </span>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
