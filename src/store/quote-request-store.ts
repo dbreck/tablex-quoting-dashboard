@@ -31,6 +31,7 @@ function fromSnakeRow(row: Record<string, unknown>): QuoteRequest {
     quantity: Number(row.quantity) || 1,
     status: (row.status as QuoteRequestStatus) || "pending",
     notes: row.notes as string | undefined,
+    quoteId: row.quote_id as string | undefined,
     createdAt: row.created_at as string,
   };
 }
@@ -43,17 +44,29 @@ export const useQuoteRequestStore = create<QuoteRequestStore>()((set, get) => ({
     if (get().isLoaded) return;
     const supabase = createClient();
 
-    const { data } = await supabase
-      .from("quote_requests")
-      .select("*")
-      .order("created_at", { ascending: false });
+    // Paginate to get all rows (Supabase default limit is 1,000)
+    const all: Record<string, unknown>[] = [];
+    const pageSize = 1000;
+    let from = 0;
 
-    if (!data || data.length === 0) {
-      set({ isLoaded: true });
-      return;
+    while (true) {
+      const { data, error } = await supabase
+        .from("quote_requests")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .range(from, from + pageSize - 1);
+
+      if (error) {
+        console.error("Failed to load quote requests:", error.message);
+        break;
+      }
+      if (!data || data.length === 0) break;
+      all.push(...data);
+      if (data.length < pageSize) break;
+      from += pageSize;
     }
 
-    set({ requests: data.map(fromSnakeRow), isLoaded: true });
+    set({ requests: all.map(fromSnakeRow), isLoaded: true });
   },
 
   addRequest: async (requestData) => {

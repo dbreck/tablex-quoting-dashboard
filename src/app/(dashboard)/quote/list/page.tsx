@@ -27,6 +27,7 @@ import {
   ArrowRight,
   FileText,
   Plus,
+  Inbox,
 } from "lucide-react";
 
 const statusBadge: Record<string, "secondary" | "info" | "success" | "error"> = {
@@ -41,18 +42,34 @@ const columnHelper = createColumnHelper<Quote>();
 const columns = [
   columnHelper.accessor("quoteNumber", {
     header: "Quote #",
-    cell: (info) => <span className="font-mono text-sm">{info.getValue()}</span>,
-    size: 120,
+    cell: (info) => {
+      const hasLinkedRequest = !!info.row.original.quoteRequestId;
+      return (
+        <span className="inline-flex items-center gap-1.5 font-mono text-sm">
+          {info.getValue()}
+          {hasLinkedRequest && (
+            <span title="From quote request">
+              <Inbox className="h-3 w-3 text-brand-green" />
+            </span>
+          )}
+        </span>
+      );
+    },
+    size: 130,
   }),
   columnHelper.accessor("customer", {
     header: "Customer",
     cell: (info) => {
       const customer = info.getValue();
-      return (
+      const name = customer.name || customer.company;
+      const subtitle = customer.name ? customer.company : "";
+      return name ? (
         <div>
-          <p className="font-medium text-sm">{customer.name}</p>
-          <p className="text-xs text-slate-500">{customer.company}</p>
+          <p className="font-medium text-sm">{name}</p>
+          {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
         </div>
+      ) : (
+        <span className="text-slate-400">&mdash;</span>
       );
     },
     size: 200,
@@ -67,17 +84,27 @@ const columns = [
   }),
   columnHelper.accessor("lineItems", {
     header: "Items",
-    cell: (info) => (
-      <Badge variant="secondary">{info.getValue().length}</Badge>
-    ),
+    cell: (info) => {
+      const count = info.getValue().length;
+      return count > 0 ? (
+        <Badge variant="secondary">{count}</Badge>
+      ) : (
+        <span className="text-slate-400">&mdash;</span>
+      );
+    },
     size: 80,
     enableSorting: false,
   }),
   columnHelper.accessor("total", {
     header: "Total",
-    cell: (info) => (
-      <span className="price font-semibold">{formatCurrency(info.getValue())}</span>
-    ),
+    cell: (info) => {
+      const total = info.getValue();
+      return total > 0 ? (
+        <span className="price font-semibold">{formatCurrency(total)}</span>
+      ) : (
+        <span className="text-slate-400">&mdash;</span>
+      );
+    },
     size: 120,
   }),
   columnHelper.accessor("status", {
@@ -122,9 +149,9 @@ export default function QuoteListPage() {
     const q = search.toLowerCase();
     return quotes.filter(
       (quote) =>
-        quote.quoteNumber.toLowerCase().includes(q) ||
-        quote.customer.name.toLowerCase().includes(q) ||
-        quote.customer.company.toLowerCase().includes(q)
+        (quote.quoteNumber || "").toLowerCase().includes(q) ||
+        (quote.customer.name || "").toLowerCase().includes(q) ||
+        (quote.customer.company || "").toLowerCase().includes(q)
     );
   }, [quotes, search]);
 

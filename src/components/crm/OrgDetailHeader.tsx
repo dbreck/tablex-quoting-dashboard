@@ -3,15 +3,39 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DISCOUNT_TIER_LABELS, type Organization } from "@/types/quote-builder";
-import { ArrowLeft, Pencil, Store, Building2 } from "lucide-react";
+import { ArrowLeft, Pencil, Store, Building2, Network } from "lucide-react";
 import Link from "next/link";
 
 interface OrgDetailHeaderProps {
   organization: Organization;
   onEdit: () => void;
+  parentOrg?: Organization | null;
 }
 
-export function OrgDetailHeader({ organization, onEdit }: OrgDetailHeaderProps) {
+export function OrgDetailHeader({ organization, onEdit, parentOrg }: OrgDetailHeaderProps) {
+  const icon =
+    organization.type === "rep_group" ? (
+      <Network className="h-6 w-6 text-violet-600" />
+    ) : organization.type === "dealer" ? (
+      <Store className="h-6 w-6 text-purple-600" />
+    ) : (
+      <Building2 className="h-6 w-6 text-blue-600" />
+    );
+
+  const badgeVariant =
+    organization.type === "rep_group"
+      ? "info"
+      : organization.type === "dealer"
+        ? "info"
+        : "secondary";
+
+  const badgeLabel =
+    organization.type === "rep_group"
+      ? "Rep Group"
+      : organization.type === "dealer"
+        ? "Dealer"
+        : "End Customer";
+
   return (
     <div className="mb-8">
       <Link
@@ -25,23 +49,29 @@ export function OrgDetailHeader({ organization, onEdit }: OrgDetailHeaderProps) 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-            {organization.type === "dealer" ? (
-              <Store className="h-6 w-6 text-purple-600" />
-            ) : (
-              <Building2 className="h-6 w-6 text-blue-600" />
-            )}
+            {icon}
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
               {organization.name}
             </h1>
+            {parentOrg && organization.type === "dealer" && (
+              <p className="text-sm text-slate-500 mt-0.5">
+                Rep Group:{" "}
+                <Link
+                  href={`/quote/crm/${parentOrg.id}`}
+                  className="text-brand-green hover:underline"
+                >
+                  {parentOrg.name}
+                </Link>
+              </p>
+            )}
             <div className="flex items-center gap-2 mt-1">
               <Badge
-                variant={
-                  organization.type === "dealer" ? "info" : "secondary"
-                }
+                variant={badgeVariant}
+                className={organization.type === "rep_group" ? "bg-violet-100 text-violet-700" : undefined}
               >
-                {organization.type === "dealer" ? "Dealer" : "End Customer"}
+                {badgeLabel}
               </Badge>
               <Badge variant="default">
                 {DISCOUNT_TIER_LABELS[organization.defaultTier]}

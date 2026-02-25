@@ -31,6 +31,9 @@ import {
   Users,
   Network,
   Inbox,
+  ShieldAlert,
+  ShoppingCart,
+  Receipt,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -55,6 +58,7 @@ const analyticsNavGroups = [
       { name: "Pricing", href: "/pricing", icon: DollarSign },
       { name: "Queue", href: "/queue", icon: ClipboardList },
       { name: "Freight", href: "/freight", icon: Truck },
+      { name: "Competitor Analysis", href: "/competitor-analysis", icon: ShieldAlert },
     ],
   },
 ];
@@ -72,11 +76,13 @@ const builderNavGroups = [
   {
     label: "QuoteX Platform",
     items: [
-      { name: "Quote Requests", href: "/quote/requests", icon: Inbox },
       { name: "Dashboard", href: "/quote/dashboard", icon: LayoutDashboard },
+      { name: "Quote Requests", href: "/quote/requests", icon: Inbox },
       { name: "New Quote", href: "/quote/new", icon: FilePlus },
       { name: "Quotes", href: "/quote/list", icon: FileStack },
       { name: "CRM", href: "/quote/crm", icon: Building2 },
+      { name: "Orders", href: "/orders", icon: ShoppingCart },
+      { name: "Invoices", href: "/invoices", icon: Receipt },
     ],
   },
 ];
@@ -84,16 +90,30 @@ const builderNavGroups = [
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen, sidebarMode, setSidebarMode } = useSidebar();
-  const { profile, isAdmin } = useAuth();
+  const { profile, isAdmin, isRep } = useAuth();
 
-  // Auto-detect mode from route
+  // Auto-detect mode from route (reps are always locked to quote-builder)
   useEffect(() => {
-    if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works") {
+    if (isRep) {
+      setSidebarMode("quote-builder");
+    } else if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works" || pathname === "/orders" || pathname === "/invoices") {
       setSidebarMode("quote-builder");
     } else {
       setSidebarMode("analytics");
     }
-  }, [pathname, setSidebarMode]);
+  }, [pathname, setSidebarMode, isRep]);
+
+  // Rep-specific nav: hide Quoting System group, hide Quote Requests and Invoices
+  const repBuilderNavGroups = builderNavGroups
+    .filter((group) => group.label !== "Quoting System")
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => item.name !== "Quote Requests" && item.name !== "Invoices"
+      ),
+    }));
+
+  const activeBuilderNavGroups = isRep ? repBuilderNavGroups : builderNavGroups;
 
   const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quoting";
 
@@ -129,63 +149,65 @@ export function Sidebar() {
         </Link>
       </div>
 
-      {/* Mode Switcher */}
-      {sidebarOpen ? (
-        <div className="px-3 pt-4 pb-2">
-          <div className="flex rounded-lg bg-white/5 p-1">
+      {/* Mode Switcher — hidden for reps (locked to Quoting mode) */}
+      {!isRep && (
+        sidebarOpen ? (
+          <div className="px-3 pt-4 pb-2">
+            <div className="flex rounded-lg bg-white/5 p-1">
+              <button
+                onClick={() => setSidebarMode("analytics")}
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                  sidebarMode === "analytics"
+                    ? "bg-white/15 text-white"
+                    : "text-white/50 hover:text-white/70"
+                )}
+              >
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span>Analytics</span>
+              </button>
+              <button
+                onClick={() => setSidebarMode("quote-builder")}
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                  sidebarMode === "quote-builder"
+                    ? "bg-white/15 text-white"
+                    : "text-white/50 hover:text-white/70"
+                )}
+              >
+                <FilePlus2 className="h-3.5 w-3.5" />
+                <span>Quoting</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-1 px-2 pt-4 pb-2">
             <button
               onClick={() => setSidebarMode("analytics")}
               className={cn(
-                "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
                 sidebarMode === "analytics"
-                  ? "bg-white/15 text-white"
-                  : "text-white/50 hover:text-white/70"
+                  ? "bg-white/10 text-brand-green"
+                  : "text-white/40 hover:text-white/70"
               )}
+              title="Analytics"
             >
-              <BarChart3 className="h-3.5 w-3.5" />
-              <span>Analytics</span>
+              <BarChart3 className="h-4.5 w-4.5" />
             </button>
             <button
               onClick={() => setSidebarMode("quote-builder")}
               className={cn(
-                "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
                 sidebarMode === "quote-builder"
-                  ? "bg-white/15 text-white"
-                  : "text-white/50 hover:text-white/70"
+                  ? "bg-white/10 text-brand-green"
+                  : "text-white/40 hover:text-white/70"
               )}
+              title="Quoting"
             >
-              <FilePlus2 className="h-3.5 w-3.5" />
-              <span>Quoting</span>
+              <FilePlus2 className="h-4.5 w-4.5" />
             </button>
           </div>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-1 px-2 pt-4 pb-2">
-          <button
-            onClick={() => setSidebarMode("analytics")}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
-              sidebarMode === "analytics"
-                ? "bg-white/10 text-brand-green"
-                : "text-white/40 hover:text-white/70"
-            )}
-            title="Analytics"
-          >
-            <BarChart3 className="h-4.5 w-4.5" />
-          </button>
-          <button
-            onClick={() => setSidebarMode("quote-builder")}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
-              sidebarMode === "quote-builder"
-                ? "bg-white/10 text-brand-green"
-                : "text-white/40 hover:text-white/70"
-            )}
-            title="Quoting"
-          >
-            <FilePlus2 className="h-4.5 w-4.5" />
-          </button>
-        </div>
+        )
       )}
 
       {/* Navigation */}
@@ -272,7 +294,7 @@ export function Sidebar() {
             })()}
 
             {/* Grouped sections */}
-            {builderNavGroups.map((group, groupIdx) => (
+            {activeBuilderNavGroups.map((group, groupIdx) => (
               <div key={group.label} className={cn(groupIdx === 0 ? "mt-2" : "mt-1")}>
                 {sidebarOpen ? (
                   <p className="px-3 pt-3 pb-1 text-[10px] uppercase tracking-widest text-white/50 font-semibold">

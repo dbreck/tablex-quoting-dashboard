@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { competitorAnalysis } from "@/data/competitor-analysis";
 import {
   BarChart3,
   Globe,
@@ -17,6 +19,8 @@ import {
   Package,
   Box,
   Users,
+  ShieldAlert,
+  ArrowUpRight,
 } from "lucide-react";
 
 const sections = [
@@ -54,6 +58,7 @@ const sections = [
       { name: "Pricing", href: "/pricing", icon: DollarSign },
       { name: "Queue", href: "/queue", icon: ClipboardList },
       { name: "Freight", href: "/freight", icon: Truck },
+      { name: "Competitor Analysis", href: "/competitor-analysis", icon: ShieldAlert },
     ],
   },
   {
@@ -95,6 +100,12 @@ const accentStyles = {
     linkHover: "hover:text-amber-600",
   },
 };
+
+const threatVariants = {
+  High: "warning",
+  Medium: "info",
+  Low: "secondary",
+} as const;
 
 export default function OverviewClient() {
   return (
@@ -156,6 +167,57 @@ export default function OverviewClient() {
           );
         })}
       </div>
+
+      <Card className="mt-8 border-slate-200/90">
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+                  <ShieldAlert className="h-4 w-4 text-slate-700" />
+                </div>
+                <h2 className="text-base font-semibold text-slate-900">Competitor Analysis</h2>
+              </div>
+              <p className="text-sm text-slate-600 max-w-3xl">{competitorAnalysis.method}</p>
+            </div>
+            <Badge variant="outline">As of {competitorAnalysis.asOf}</Badge>
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-5">
+            {competitorAnalysis.competitors.map((competitor) => (
+              <div
+                key={competitor.name}
+                className="rounded-xl border border-slate-200 bg-slate-50/40 p-4"
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900">{competitor.name}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {competitor.mentionCount} quote mention
+                      {competitor.mentionCount === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                  <Badge variant={threatVariants[competitor.threat]}>{competitor.threat} Threat</Badge>
+                </div>
+
+                <p className="text-sm text-slate-700 mb-3">{competitor.overlap}</p>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {competitor.findings[0]}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/competitor-analysis"
+            className="mt-5 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:border-slate-300 hover:text-slate-900 transition-colors"
+          >
+            View Full Competitor Analysis
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }

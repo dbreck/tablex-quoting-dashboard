@@ -14,13 +14,15 @@ export interface Profile {
   id: string;
   email: string;
   full_name: string | null;
-  role: "admin" | "contributor";
+  role: "admin" | "contributor" | "rep";
+  organization_id: string | null;
 }
 
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   isAdmin: boolean;
+  isRep: boolean;
   isLoading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -30,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   isAdmin: false,
+  isRep: false,
   isLoading: true,
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -78,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createClient();
     const { data } = await supabase
       .from("profiles")
-      .select("id, email, full_name, role")
+      .select("id, email, full_name, role, organization_id")
       .eq("id", userId)
       .single();
 
@@ -106,6 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         profile,
         isAdmin: profile?.role === "admin",
+        isRep: profile?.role === "rep",
         isLoading,
         signOut,
         refreshProfile,

@@ -36,12 +36,14 @@ import {
   Users,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useCrmStore } from "@/store/crm-store";
 
 interface UserRow {
   id: string;
   email: string;
   full_name: string | null;
-  role: "admin" | "contributor";
+  role: "admin" | "contributor" | "rep";
+  organization_id: string | null;
   created_at: string;
   last_sign_in_at: string | null;
 }
@@ -57,13 +59,16 @@ function formatDate(date: string) {
 export default function UsersClient() {
   const { user } = useAuth();
   const currentUserId = user?.id;
+  const { organizations, loadFromSupabase: loadCrm } = useCrmStore();
+  const repGroups = organizations.filter((o) => o.type === "rep_group");
 
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
   const [invitePassword, setInvitePassword] = useState("");
-  const [inviteRole, setInviteRole] = useState<"admin" | "contributor">("contributor");
+  const [inviteRole, setInviteRole] = useState<"admin" | "contributor" | "rep">("contributor");
+  const [inviteOrgId, setInviteOrgId] = useState("");
   const [sendInvite, setSendInvite] = useState(false);
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState<{
@@ -91,7 +96,8 @@ export default function UsersClient() {
 
   useEffect(() => {
     loadUsers();
-  }, [loadUsers]);
+    loadCrm();
+  }, [loadUsers, loadCrm]);
 
   // Clear invite message after 5 seconds
   useEffect(() => {
@@ -123,6 +129,7 @@ export default function UsersClient() {
         role: inviteRole,
         send_invite: sendInvite,
         ...(invitePassword ? { password: invitePassword } : {}),
+        ...(inviteRole === "rep" && inviteOrgId ? { organization_id: inviteOrgId } : {}),
       }),
     });
 
@@ -135,6 +142,7 @@ export default function UsersClient() {
       setInviteName("");
       setInvitePassword("");
       setInviteRole("contributor");
+      setInviteOrgId("");
       setSendInvite(false);
       loadUsers();
     } else {
@@ -160,6 +168,25 @@ export default function UsersClient() {
       loadUsers();
     } else {
       setActionMessage({ type: "error", text: data.error || "Failed to update role" });
+    }
+  }
+
+  async function handleOrgAssignment(userId: string, orgId: string) {
+    setActionMessage(null);
+
+    const res = await fetch(`/api/admin/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ organization_id: orgId || null }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setActionMessage({ type: "success", text: "Rep group assignment updated" });
+      loadUsers();
+    } else {
+      setActionMessage({ type: "error", text: data.error || "Failed to assign rep group" });
     }
   }
 
@@ -258,13 +285,17 @@ export default function UsersClient() {
                 onChange={(e) => setInvitePassword(e.target.value)}
                 className="flex-1"
               />
-              <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as "admin" | "contributor")}>
+              <Select value={inviteRole} onValueChange={(v) => {
+                setInviteRole(v as "admin" | "contributor" | "rep");
+                if (v !== "rep") setInviteOrgId("");
+              }}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="contributor">Contributor</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="rep">Rep</SelectItem>
                 </SelectContent>
               </Select>
               <Button type="submit" disabled={inviting || !inviteEmail}>
@@ -278,6 +309,25 @@ export default function UsersClient() {
                 )}
               </Button>
             </div>
+            {inviteRole === "rep" && (
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-slate-600 shrink-0">Rep Group:</span>
+                <Select value={inviteOrgId} onValueChange={setInviteOrgId}>
+                  <SelectTrigger className="w-[280px]">
+                    <SelectValue placeholder="Select rep group..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {repGroups.length === 0 ? (
+                      <SelectItem value="" disabled>No rep groups yet</SelectItem>
+                    ) : (
+                      repGroups.map((rg) => (
+                        <SelectItem key={rg.id} value={rg.id}>{rg.name}</SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <label className="flex items-center gap-2 cursor-pointer w-fit">
               <input
                 type="checkbox"
@@ -340,6 +390,7 @@ export default function UsersClient() {
                   <th className="px-4 py-3 rounded-tl-lg">Name</th>
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3">Rep Group</th>
                   <th className="px-4 py-3">Joined</th>
                   <th className="px-4 py-3 rounded-tr-lg">Actions</th>
                 </tr>
@@ -372,8 +423,29 @@ export default function UsersClient() {
                           <SelectContent>
                             <SelectItem value="admin">Admin</SelectItem>
                             <SelectItem value="contributor">Contributor</SelectItem>
+                            <SelectItem value="rep">Rep</SelectItem>
                           </SelectContent>
                         </Select>
+                      </td>
+                      <td className="px-4 py-3">
+                        {u.role === "rep" ? (
+                          <Select
+                            value={u.organization_id || ""}
+                            onValueChange={(value) => handleOrgAssignment(u.id, value)}
+                          >
+                            <SelectTrigger className="w-[180px] h-8 text-xs">
+                              <SelectValue placeholder="Assign..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">None</SelectItem>
+                              {repGroups.map((rg) => (
+                                <SelectItem key={rg.id} value={rg.id}>{rg.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span className="text-xs text-slate-400">&mdash;</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-slate-500">
                         {formatDate(u.created_at)}
@@ -405,7 +477,7 @@ export default function UsersClient() {
                 })}
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-400">
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">
                       No users found
                     </td>
                   </tr>

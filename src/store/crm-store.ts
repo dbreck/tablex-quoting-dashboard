@@ -34,6 +34,10 @@ interface CrmStore {
   addActivity: (
     activity: Omit<Activity, "id" | "createdAt">
   ) => Promise<string>;
+
+  // Helpers
+  getRepGroups: () => Organization[];
+  getDealersByRepGroup: (repGroupId: string) => Organization[];
 }
 
 // Convert camelCase keys from TypeScript types to snake_case for Supabase
@@ -48,6 +52,9 @@ function toSnakeOrg(org: Partial<Organization>) {
     ...(org.website !== undefined && { website: org.website }),
     ...(org.notes !== undefined && { notes: org.notes }),
     ...(org.isSeeded !== undefined && { is_seeded: org.isSeeded }),
+    ...(org.parentOrganizationId !== undefined && {
+      parent_organization_id: org.parentOrganizationId || null,
+    }),
   };
 }
 
@@ -62,6 +69,7 @@ function fromSnakeOrg(row: Record<string, unknown>): Organization {
     address: row.address as string | undefined,
     website: row.website as string | undefined,
     notes: row.notes as string | undefined,
+    parentOrganizationId: row.parent_organization_id as string | undefined,
     isSeeded: row.is_seeded as boolean,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
@@ -254,5 +262,15 @@ export const useCrmStore = create<CrmStore>()((set, get) => ({
     const activity = fromSnakeActivity(data);
     set((state) => ({ activities: [activity, ...state.activities] }));
     return activity.id;
+  },
+
+  getRepGroups: () => {
+    return get().organizations.filter((o) => o.type === "rep_group");
+  },
+
+  getDealersByRepGroup: (repGroupId: string) => {
+    return get().organizations.filter(
+      (o) => o.parentOrganizationId === repGroupId
+    );
   },
 }));

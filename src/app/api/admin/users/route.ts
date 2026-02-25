@@ -92,12 +92,13 @@ export async function POST(request: Request) {
 
   // Parse and validate body
   const body = await request.json();
-  const { email, full_name, role, send_invite, password } = body as {
+  const { email, full_name, role, send_invite, password, organization_id } = body as {
     email?: string;
     full_name?: string;
-    role?: "admin" | "contributor";
+    role?: "admin" | "contributor" | "rep";
     send_invite?: boolean;
     password?: string;
+    organization_id?: string;
   };
 
   if (!email) {
@@ -127,10 +128,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: createError.message }, { status: 400 });
   }
 
-  // Update profile with full_name and role if provided
-  const profileUpdate: Record<string, string> = {};
+  // Update profile with full_name, role, and organization_id if provided
+  const profileUpdate: Record<string, string | null> = {};
   if (full_name) profileUpdate.full_name = full_name;
-  if (role && (role === "admin" || role === "contributor")) profileUpdate.role = role;
+  if (role && ["admin", "contributor", "rep"].includes(role)) profileUpdate.role = role;
+  if (organization_id !== undefined) profileUpdate.organization_id = organization_id || null;
 
   if (Object.keys(profileUpdate).length > 0) {
     await adminClient

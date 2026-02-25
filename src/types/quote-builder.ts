@@ -52,6 +52,7 @@ export interface LineItem {
 export interface Quote {
   id: string;
   quoteNumber: string;
+  quoteRequestId?: string; // originating quote request
   customer: QuoteCustomer;
   projectName?: string;
   discountTier: DiscountTier;
@@ -81,12 +82,13 @@ export interface DraftQuote {
 
 // CRM Types
 
-export type OrganizationType = 'dealer' | 'end_customer';
+export type OrganizationType = 'dealer' | 'end_customer' | 'rep_group';
 
 export interface Organization {
   id: string;
   name: string;
   type: OrganizationType;
+  parentOrganizationId?: string;
   defaultTier: DiscountTier;
   phone?: string;
   email?: string;
@@ -136,6 +138,7 @@ export interface QuoteRequest {
   quantity: number;
   status: QuoteRequestStatus;
   notes?: string;
+  quoteId?: string; // linked quote (if converted)
   createdAt: string;
 }
 
@@ -150,4 +153,56 @@ export interface Activity {
   content: string;
   createdAt: string;
   createdBy?: string;
+}
+
+// Order types
+
+export type OrderStatus = 'pending' | 'confirmed' | 'in_production' | 'shipped' | 'delivered' | 'completed' | 'cancelled';
+
+export interface Order {
+  id: string;
+  orderNumber: string;
+  quoteId: string;
+  organizationId?: string;
+  status: OrderStatus;
+  poNumber?: string;
+  shipToAddress?: string;
+  shipToCity?: string;
+  shipToState?: string;
+  shipToZip?: string;
+  requestedShipDate?: string;
+  actualShipDate?: string;
+  notes?: string;
+  sageSalesOrderId?: string;
+  sageSyncedAt?: string;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Invoice types
+
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'void';
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  orderId: string;
+  organizationId?: string;
+  subtotal: number;
+  freight: number;
+  tax: number;
+  total: number;
+  status: InvoiceStatus;
+  dueDate?: string;
+  paidDate?: string;
+  paidAmount?: number;
+  paymentMethod?: string;
+  notes?: string;
+  sageInvoiceId?: string;
+  sageSyncedAt?: string;
+  sentAt?: string;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
 }

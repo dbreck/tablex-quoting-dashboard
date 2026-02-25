@@ -25,10 +25,12 @@ import {
   type Organization,
   type OrganizationType,
 } from "@/types/quote-builder";
+import { useCrmStore } from "@/store/crm-store";
 
 interface OrgFormData {
   name: string;
   type: OrganizationType;
+  parentOrganizationId: string;
   defaultTier: DiscountTier;
   phone: string;
   email: string;
@@ -40,6 +42,7 @@ interface OrgFormData {
 const emptyForm: OrgFormData = {
   name: "",
   type: "end_customer",
+  parentOrganizationId: "",
   defaultTier: "50_20",
   phone: "",
   email: "",
@@ -63,12 +66,15 @@ export function OrganizationForm({
 }: OrganizationFormProps) {
   const [form, setForm] = useState<OrgFormData>(emptyForm);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const organizations = useCrmStore((s) => s.organizations);
+  const repGroups = organizations.filter((o) => o.type === "rep_group");
 
   useEffect(() => {
     if (organization) {
       setForm({
         name: organization.name,
         type: organization.type,
+        parentOrganizationId: organization.parentOrganizationId || "",
         defaultTier: organization.defaultTier,
         phone: organization.phone || "",
         email: organization.email || "",
@@ -127,6 +133,8 @@ export function OrganizationForm({
                   setForm((f) => ({
                     ...f,
                     type: val as OrganizationType,
+                    // Clear parent when switching away from dealer
+                    ...(val !== "dealer" && { parentOrganizationId: "" }),
                   }))
                 }
               >
@@ -136,6 +144,7 @@ export function OrganizationForm({
                 <SelectContent>
                   <SelectItem value="dealer">Dealer</SelectItem>
                   <SelectItem value="end_customer">End Customer</SelectItem>
+                  <SelectItem value="rep_group">Rep Group</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -171,6 +180,35 @@ export function OrganizationForm({
               </Select>
             </div>
           </div>
+
+          {form.type === "dealer" && repGroups.length > 0 && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">
+                Rep Group
+              </label>
+              <Select
+                value={form.parentOrganizationId || "__none__"}
+                onValueChange={(val) =>
+                  setForm((f) => ({
+                    ...f,
+                    parentOrganizationId: val === "__none__" ? "" : val,
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="None" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">None</SelectItem>
+                  {repGroups.map((rg) => (
+                    <SelectItem key={rg.id} value={rg.id}>
+                      {rg.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">

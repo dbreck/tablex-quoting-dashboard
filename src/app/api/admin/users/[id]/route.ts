@@ -33,27 +33,45 @@ export async function PATCH(
 
   // Parse and validate body
   const body = await request.json();
-  const { role } = body as { role?: string };
+  const { role, organization_id } = body as { role?: string; organization_id?: string | null };
 
-  if (!role || !["admin", "contributor"].includes(role)) {
+  // Build update payload
+  const update: Record<string, string | null> = {};
+
+  if (role !== undefined) {
+    if (!["admin", "contributor", "rep"].includes(role)) {
+      return NextResponse.json(
+        { error: 'Role must be "admin", "contributor", or "rep"' },
+        { status: 400 }
+      );
+    }
+
+    // Prevent self-demotion
+    if (id === user.id) {
+      return NextResponse.json(
+        { error: "Cannot change your own role" },
+        { status: 400 }
+      );
+    }
+
+    update.role = role;
+  }
+
+  if (organization_id !== undefined) {
+    update.organization_id = organization_id || null;
+  }
+
+  if (Object.keys(update).length === 0) {
     return NextResponse.json(
-      { error: 'Role must be "admin" or "contributor"' },
+      { error: "No fields to update" },
       { status: 400 }
     );
   }
 
-  // Prevent self-demotion
-  if (id === user.id) {
-    return NextResponse.json(
-      { error: "Cannot change your own role" },
-      { status: 400 }
-    );
-  }
-
-  // Update role
+  // Update profile
   const { data: updatedProfile, error: updateError } = await adminClient
     .from("profiles")
-    .update({ role })
+    .update(update)
     .eq("id", id)
     .select()
     .single();

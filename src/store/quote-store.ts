@@ -23,6 +23,7 @@ function fromSnakeQuote(row: Record<string, unknown>, lineItems: Record<string, 
   return {
     id: row.id as string,
     quoteNumber: row.quote_number as string,
+    quoteRequestId: row.quote_request_id as string | undefined,
     customer: {
       id: "",
       name: row.customer_name as string || "",
@@ -73,34 +74,73 @@ export const useQuoteStore = create<QuoteStore>()(
         if (get().isLoaded) return;
         const supabase = createClient();
 
-        const { data: quotesData } = await supabase
-          .from("quotes")
-          .select("*")
-          .order("created_at", { ascending: false });
+        // Paginate to get all quotes (Supabase default limit is 1,000)
+        const allQuotes: Record<string, unknown>[] = [];
+        const pageSize = 1000;
+        let from = 0;
 
-        if (!quotesData || quotesData.length === 0) {
+        while (true) {
+          const { data, error } = await supabase
+            .from("quotes")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .range(from, from + pageSize - 1);
+
+          if (error) {
+            console.error("Failed to load quotes:", error.message);
+            break;
+          }
+          if (!data || data.length === 0) break;
+          allQuotes.push(...data);
+          if (data.length < pageSize) break;
+          from += pageSize;
+        }
+
+        if (allQuotes.length === 0) {
           set({ isLoaded: true });
           return;
         }
 
-        // Fetch all line items for these quotes
-        const quoteIds = quotesData.map((q) => q.id);
-        const { data: lineItemsData } = await supabase
-          .from("quote_line_items")
-          .select("*")
-          .in("quote_id", quoteIds)
-          .order("sort_order");
+        // Fetch all line items, batching quote IDs in groups of 500
+        // (Supabase has a limit on IN clause size)
+        const quoteIds = allQuotes.map((q) => q.id as string);
+        const allLineItems: Record<string, unknown>[] = [];
+        const idBatchSize = 500;
+
+        for (let i = 0; i < quoteIds.length; i += idBatchSize) {
+          const idBatch = quoteIds.slice(i, i + idBatchSize);
+
+          // Paginate within each ID batch in case there are many line items
+          let liFrom = 0;
+          while (true) {
+            const { data: liData, error: liError } = await supabase
+              .from("quote_line_items")
+              .select("*")
+              .in("quote_id", idBatch)
+              .order("sort_order")
+              .range(liFrom, liFrom + pageSize - 1);
+
+            if (liError) {
+              console.error("Failed to load line items:", liError.message);
+              break;
+            }
+            if (!liData || liData.length === 0) break;
+            allLineItems.push(...liData);
+            if (liData.length < pageSize) break;
+            liFrom += pageSize;
+          }
+        }
 
         // Group line items by quote_id
         const lineItemsByQuote: Record<string, Record<string, unknown>[]> = {};
-        for (const li of (lineItemsData || [])) {
+        for (const li of allLineItems) {
           const qid = li.quote_id as string;
           if (!lineItemsByQuote[qid]) lineItemsByQuote[qid] = [];
           lineItemsByQuote[qid].push(li);
         }
 
-        const quotes = quotesData.map((q) =>
-          fromSnakeQuote(q, lineItemsByQuote[q.id] || [])
+        const quotes = allQuotes.map((q) =>
+          fromSnakeQuote(q, lineItemsByQuote[q.id as string] || [])
         );
 
         set({ quotes, isLoaded: true });
