@@ -2,6 +2,7 @@
 
 import { Sidebar } from "./Sidebar";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
+import { CommentProvider } from "@/components/comments";
 import { cn } from "@/lib/utils";
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
@@ -16,8 +17,8 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
           sidebarOpen ? "ml-64" : "ml-20"
         )}
       >
-        <div className="p-8">
-          {children}
+        <div className="relative p-8" data-comment-container>
+          <CommentProvider>{children}</CommentProvider>
         </div>
       </main>
     </div>
