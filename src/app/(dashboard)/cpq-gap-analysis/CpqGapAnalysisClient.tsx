@@ -32,6 +32,7 @@ import {
   AlertTriangle,
   Check,
   Lightbulb,
+  MessageSquare,
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,9 +45,11 @@ import {
   archGaps,
   buildableNow,
   decisions,
+  brianRequirements,
   type RuleStatus,
   type Priority,
   type RuleCategory,
+  type RequirementStatus,
 } from "@/data/cpq-gap-analysis";
 import {
   quoteFormAnalysis,
@@ -95,6 +98,18 @@ const severityBadge: Record<SeverityLevel, "error" | "warning" | "info" | "secon
   high: "warning",
   medium: "info",
   low: "secondary",
+};
+
+const requirementStatusBadge: Record<RequirementStatus, "success" | "warning" | "info"> = {
+  addressed: "success",
+  partial: "warning",
+  planned: "info",
+};
+
+const requirementStatusLabel: Record<RequirementStatus, string> = {
+  addressed: "Addressed",
+  partial: "Partial",
+  planned: "Planned",
 };
 
 // ── Chart colors ────────────────────────────────────────────────────
@@ -274,6 +289,47 @@ function OverviewTab() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Stakeholder Requirements */}
+      <Card className="border-blue-200 bg-blue-50/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-blue-600" />
+            Stakeholder Requirements
+          </CardTitle>
+          <CardDescription>
+            Process requirements mapped to current system capabilities
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {brianRequirements.map((req) => (
+              <div
+                key={req.id}
+                className="flex items-start gap-3 p-3 rounded-lg bg-white border border-blue-100"
+              >
+                <Badge
+                  variant={requirementStatusBadge[req.status]}
+                  className="text-[10px] mt-0.5 shrink-0"
+                >
+                  {requirementStatusLabel[req.status]}
+                </Badge>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-slate-900">
+                    {req.title}
+                  </p>
+                  <p className="text-xs text-slate-500 italic mt-0.5">
+                    &ldquo;{req.quote}&rdquo;
+                  </p>
+                  <p className="text-xs text-slate-600 mt-1">
+                    {req.statusNote}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Architecture Decision Card */}
       <Card className="border-brand-navy/20 bg-brand-navy/5">

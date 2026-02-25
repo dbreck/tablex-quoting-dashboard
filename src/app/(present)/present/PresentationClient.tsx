@@ -12,6 +12,7 @@ import { PipelineSlide } from "@/components/presentation/slides/PipelineSlide";
 import { CrmSlide } from "@/components/presentation/slides/CrmSlide";
 import { AnalyticsSlide } from "@/components/presentation/slides/AnalyticsSlide";
 import { FinancialSlide } from "@/components/presentation/slides/FinancialSlide";
+import { SageIntegrationSlide } from "@/components/presentation/slides/SageIntegrationSlide";
 import { RoadmapSlide } from "@/components/presentation/slides/RoadmapSlide";
 import { ThankYouSlide } from "@/components/presentation/slides/ThankYouSlide";
 
@@ -24,6 +25,7 @@ const SLIDES = [
   CrmSlide,
   AnalyticsSlide,
   FinancialSlide,
+  SageIntegrationSlide,
   RoadmapSlide,
   ThankYouSlide,
 ];
@@ -114,7 +116,7 @@ export function PresentationClient() {
   return (
     <div className="relative h-screen w-screen overflow-hidden" onClick={handleClick}>
       {/* Ambient glow */}
-      <div className="pointer-events-none absolute -left-[10%] -top-[20%] h-[600px] w-[600px] rounded-full bg-brand-green/5 blur-[120px]" />
+      <div className="pointer-events-none absolute -left-[10%] -top-[20%] h-[600px] w-[600px] rounded-full bg-[#ff6b6b]/5 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-[10%] -right-[5%] h-[500px] w-[500px] rounded-full bg-brand-navy/30 blur-[100px]" />
 
       {/* Slide content */}

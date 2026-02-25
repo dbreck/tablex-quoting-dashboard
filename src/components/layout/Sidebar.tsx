@@ -130,19 +130,19 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-brand-navy transition-all duration-300 ease-in-out flex flex-col",
+        "fixed left-0 top-0 z-40 h-screen bg-[#030609] transition-all duration-300 ease-in-out flex flex-col",
         sidebarOpen ? "w-64" : "w-20"
       )}
     >
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         <Link href="/overview" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green p-1.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl p-1.5">
             <img src="/tablex-logomark.svg" alt="TableX" className="h-full w-full" />
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">
-              <h1 className="text-lg font-bold text-white tracking-tight">TableX</h1>
+              <h1 className="text-lg font-bold tracking-tight"><span className="text-white">TABLE</span><span className="text-[#ff6b6b]">X</span></h1>
               <p className="text-[10px] text-white/50 uppercase tracking-widest">{subtitle}</p>
             </div>
           )}

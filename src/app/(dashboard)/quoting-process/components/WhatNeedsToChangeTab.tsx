@@ -91,8 +91,15 @@ const kpis = [
   {
     label: "Time-to-Quote (TTQ)",
     current: "~4h",
-    target: "<1h",
+    target: "<24h (SLA target)",
+    stretch: "<1h (QuoteX goal)",
     icon: Clock,
+  },
+  {
+    label: "PO → Work Order",
+    current: "Manual (untracked)",
+    target: "<24h (SLA target)",
+    icon: Zap,
   },
   {
     label: "Quote-to-Order Conversion",
@@ -111,12 +118,6 @@ const kpis = [
     current: "Days (email dependent)",
     target: "Hours (self-service)",
     icon: Timer,
-  },
-  {
-    label: "Vendor Response Time",
-    current: "1hr to half-day",
-    target: "Automated where possible",
-    icon: Zap,
   },
 ];
 
@@ -250,6 +251,16 @@ export function WhatNeedsToChangeTab() {
                         {kpi.target}
                       </Badge>
                     </div>
+                    {"stretch" in kpi && kpi.stretch && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-medium uppercase tracking-wide text-slate-400 w-14">
+                          Stretch
+                        </span>
+                        <Badge variant="info" className="text-[10px]">
+                          {kpi.stretch}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, MessageSquare } from "lucide-react";
 import { staffInsight } from "@/data/cpq-gap-analysis";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HowItWorksTodayTab } from "./components/HowItWorksTodayTab";
@@ -79,7 +79,7 @@ export default function QuotingProcessClient({
       />
 
       {/* Staff Insight Callout */}
-      <Card className="mb-6 border-amber-200 bg-amber-50">
+      <Card className="mb-4 border-amber-200 bg-amber-50">
         <CardContent className="p-5 flex items-start gap-4">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-100 shrink-0">
             <AlertTriangle className="h-5 w-5 text-amber-600" />
@@ -90,6 +90,31 @@ export default function QuotingProcessClient({
             </p>
             <p className="text-sm text-amber-700 mt-1">
               {staffInsight.implication}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Process Targets Callout */}
+      <Card className="mb-6 border-brand-navy/20 bg-brand-navy/5">
+        <CardContent className="p-5 flex items-start gap-4">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-brand-navy/10 shrink-0">
+            <MessageSquare className="h-5 w-5 text-brand-navy" />
+          </div>
+          <div>
+            <p className="font-semibold text-brand-navy">
+              Process Targets
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              <li className="text-sm text-slate-700">
+                <span className="font-semibold">&ldquo;All quotes turned within 24 hours.&rdquo;</span>
+              </li>
+              <li className="text-sm text-slate-700">
+                <span className="font-semibold">&ldquo;All POs converted to work order with materials ordered within 24 hours.&rdquo;</span>
+              </li>
+            </ul>
+            <p className="text-xs text-slate-500 mt-2">
+              These SLA targets directly inform the KPI benchmarks in the &ldquo;What Needs to Change&rdquo; tab below.
             </p>
           </div>
         </CardContent>

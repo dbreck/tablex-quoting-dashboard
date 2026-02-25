@@ -11,7 +11,7 @@ const tabs = [
 
 export function AnalyticsSlide() {
   return (
-    <Slide appLink="/queue" linkLabel="See the analytics">
+    <Slide appLink="/queue" linkLabel="See the analytics" takeaway="For the first time, you have real dashboards showing volume trends, product mix, staff workload, and top dealers — all derived from your own data, not guesswork.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">Business Intelligence</h2>
@@ -26,8 +26,8 @@ export function AnalyticsSlide() {
               key={tab.label}
               className="animate-slide-up flex items-center gap-5 rounded-xl border border-white/10 bg-white/5 px-6 py-4"
             >
-              <div className="rounded-lg bg-brand-green/10 p-2.5">
-                <tab.icon className="h-5 w-5 text-brand-green" />
+              <div className="rounded-lg bg-[#ff6b6b]/10 p-2.5">
+                <tab.icon className="h-5 w-5 text-[#ff6b6b]" />
               </div>
               <div>
                 <div className="font-semibold text-white">{tab.label}</div>

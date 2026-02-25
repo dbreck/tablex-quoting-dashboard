@@ -4,7 +4,7 @@ import { DollarSign, Package, Receipt } from "lucide-react";
 
 export function FinancialSlide() {
   return (
-    <Slide appLink="/invoices" linkLabel="See the invoices">
+    <Slide appLink="/invoices" linkLabel="See the invoices" takeaway="$13.7M in quote value and 1,812 orders are now visible in one place. You can see the full financial picture — from quote to order to invoice — without digging through Sage or spreadsheets.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">Financial Visibility</h2>

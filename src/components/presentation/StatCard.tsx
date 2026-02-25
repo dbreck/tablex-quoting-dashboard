@@ -12,14 +12,14 @@ export function StatCard({ value, label, icon, accent }: StatCardProps) {
     <div
       className={`rounded-2xl border p-6 ${
         accent
-          ? "border-brand-green/20 bg-brand-green/5 shadow-2xl shadow-brand-green/10"
+          ? "border-[#ff6b6b]/20 bg-[#ff6b6b]/5 shadow-2xl shadow-[#ff6b6b]/10"
           : "border-white/10 bg-white/5"
       }`}
     >
       {icon && <div className="mb-3 text-white/40">{icon}</div>}
       <div
         className={`text-3xl font-bold tracking-tight ${
-          accent ? "text-brand-green" : "text-white"
+          accent ? "text-[#ff6b6b]" : "text-white"
         }`}
       >
         {value}

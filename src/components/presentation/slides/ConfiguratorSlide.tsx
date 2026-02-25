@@ -2,7 +2,7 @@ import { Slide } from "../Slide";
 
 export function ConfiguratorSlide() {
   return (
-    <Slide appLink="/configurator" linkLabel="Try the configurator">
+    <Slide appLink="/configurator" linkLabel="Try the configurator" takeaway="Dealers and internal staff can visually configure any table with real-time 3D preview — eliminating guesswork and reducing quoting errors before a quote is even created.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">3D Product Configurator</h2>
@@ -21,7 +21,7 @@ export function ConfiguratorSlide() {
               { num: "8", label: "Edge types with material swapping" },
             ].map((item) => (
               <div key={item.label} className="flex items-baseline gap-4">
-                <span className="text-2xl font-bold text-brand-green">{item.num}</span>
+                <span className="text-2xl font-bold text-[#ff6b6b]">{item.num}</span>
                 <span className="text-sm text-white/60">{item.label}</span>
               </div>
             ))}

@@ -11,7 +11,7 @@ const steps = [
 
 export function PipelineSlide() {
   return (
-    <Slide appLink="/quote/requests" linkLabel="See the pipeline">
+    <Slide appLink="/quote/requests" linkLabel="See the pipeline" takeaway="Every stage from configuration to payment is tracked in one system. No more spreadsheet handoffs, lost emails, or status calls — the entire quote-to-cash flow is connected.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">End-to-End Pipeline</h2>
@@ -28,13 +28,13 @@ export function PipelineSlide() {
                 <div
                   className={`rounded-xl border p-4 ${
                     i === 0
-                      ? "border-brand-green/30 bg-brand-green/10"
+                      ? "border-[#ff6b6b]/30 bg-[#ff6b6b]/10"
                       : "border-white/10 bg-white/5"
                   }`}
                 >
                   <step.icon
                     className={`h-7 w-7 ${
-                      i === 0 ? "text-brand-green" : "text-white/50"
+                      i === 0 ? "text-[#ff6b6b]" : "text-white/50"
                     }`}
                   />
                 </div>

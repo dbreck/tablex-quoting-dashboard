@@ -4,7 +4,7 @@ import { Building2, Users, Network } from "lucide-react";
 
 export function CrmSlide() {
   return (
-    <Slide appLink="/quote/crm" linkLabel="Explore the CRM">
+    <Slide appLink="/quote/crm" linkLabel="Explore the CRM" takeaway="Your entire dealer network — 933 organizations, 13 rep group hierarchies, and every contact — is mapped and linked to quote history. You can finally see who your best customers are.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">CRM & Relationships</h2>

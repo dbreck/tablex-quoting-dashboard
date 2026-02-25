@@ -36,7 +36,7 @@ export function SlideNav({ current, total, onNavigate, onPrev, onNext }: SlideNa
               onClick={() => onNavigate(i)}
               className={`transition-all duration-300 ${
                 i === current
-                  ? "h-2 w-8 rounded-full bg-brand-green"
+                  ? "h-2 w-8 rounded-full bg-[#ff6b6b]"
                   : "h-2 w-2 rounded-full bg-white/20 hover:bg-white/40"
               }`}
             />

@@ -56,6 +56,17 @@ export interface Persona {
   icon: string; // lucide icon name
 }
 
+export type RequirementStatus = "addressed" | "partial" | "planned";
+
+export interface StakeholderRequirement {
+  id: string;
+  title: string;
+  quote: string;
+  status: RequirementStatus;
+  statusNote: string;
+  relatedGaps: string[]; // IDs from archGaps/decisions
+}
+
 // -------------------------------------------------------------------
 // Summary counts
 // -------------------------------------------------------------------
@@ -678,6 +689,81 @@ export const decisions: Decision[] = [
 ];
 
 // -------------------------------------------------------------------
+// Stakeholder requirements — Brian Craig (Feb 2026)
+// -------------------------------------------------------------------
+export const brianRequirements: StakeholderRequirement[] = [
+  {
+    id: "br-1",
+    title: "Rep group → dealer hierarchy",
+    quote:
+      "We need to be able to see what rep group a dealer is under, and what dealers are under a rep group.",
+    status: "addressed",
+    statusNote:
+      "CRM already has 13 rep groups with dealer children linked via parent_organization_id",
+    relatedGaps: ["persona-system"],
+  },
+  {
+    id: "br-2",
+    title: "Dealer reassignment between rep groups",
+    quote:
+      "Dealers change rep groups. We need to be able to move a dealer from one rep group to another.",
+    status: "partial",
+    statusNote:
+      "CRM data model supports reassignment; no bulk-move UI built yet",
+    relatedGaps: ["persona-system"],
+  },
+  {
+    id: "br-3",
+    title: "Multi-line quotes (multiple tables per quote)",
+    quote:
+      "A quote almost always has more than one table on it. We need to be able to add multiple line items.",
+    status: "partial",
+    statusNote:
+      "Line items schema exists in DB; web form only allows a single item per submission",
+    relatedGaps: ["line-items", "configurator-ui"],
+  },
+  {
+    id: "br-4",
+    title: "Dealer/rep portal (self-service quoting & order tracking)",
+    quote:
+      "Dealers and reps should be able to log in, build a quote, and track their orders without calling us.",
+    status: "planned",
+    statusNote:
+      'Persona system arch gap + "Dealer Portal" in recommendations; no portal UI yet',
+    relatedGaps: ["persona-system"],
+  },
+  {
+    id: "br-5",
+    title: "Quote → order → invoice → email flow",
+    quote:
+      "1 click conversions are a must. Quote to order, order to invoice, invoice emailed to dealer.",
+    status: "addressed",
+    statusNote:
+      "Full pipeline exists — quotes, orders, invoices tables with status tracking and linking",
+    relatedGaps: ["order-entity"],
+  },
+  {
+    id: "br-6",
+    title: "24hr quote turnaround SLA",
+    quote: "All quotes turned within 24 hours.",
+    status: "planned",
+    statusNote:
+      "Process target; QuoteX automation (auto-pricing, rules engine) enables meeting this consistently",
+    relatedGaps: ["rules-engine", "dynamic-pricing"],
+  },
+  {
+    id: "br-7",
+    title: "24hr PO → work order SLA",
+    quote:
+      "All POs converted to work order with materials ordered within 24 hours.",
+    status: "planned",
+    statusNote:
+      "Requires Sage integration + order flow automation; order entity and linking already built",
+    relatedGaps: ["order-entity"],
+  },
+];
+
+// -------------------------------------------------------------------
 // Bundled export
 // -------------------------------------------------------------------
 export const cpqGapData = {
@@ -690,4 +776,5 @@ export const cpqGapData = {
   archGaps,
   buildableNow,
   decisions,
+  brianRequirements,
 };

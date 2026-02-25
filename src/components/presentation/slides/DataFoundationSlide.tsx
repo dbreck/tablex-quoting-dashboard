@@ -4,12 +4,12 @@ import { FileText, Box, Globe, Boxes } from "lucide-react";
 
 export function DataFoundationSlide() {
   return (
-    <Slide appLink="/queue" linkLabel="See the analytics">
+    <Slide appLink="/queue" linkLabel="See the analytics" takeaway="We've already ingested 3 years of real business data — 3,595 quotes, 6,098 SKUs, 1,150 web requests, and 2,920 3D models. This isn't a mockup; the system is built on your actual data.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">The Data Foundation</h2>
           <p className="mt-2 text-white/40">
-            We&apos;ve already digitized your entire operation
+            Data analyzed for our research
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export function DataFoundationSlide() {
         </div>
 
         <p className="text-center text-sm text-white/30">
-          Every quote, SKU, web request, and 3D model from the past 3 years — already loaded and searchable
+          Every quote, SKU, web request, and 3D model from the past 3 years — loaded and searchable
         </p>
       </div>
     </Slide>

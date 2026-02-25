@@ -29,8 +29,8 @@ const phases = [
     quarter: "Q4 2026",
     title: "Automation & Growth",
     items: [
-      "Sage ERP integration",
-      "Automated quote-to-order flow",
+      "Sage Intacct migration + API integration",
+      "Automated quote-to-order via Sage API",
       "Customer portal for dealers",
       "Advanced reporting & forecasting",
     ],
@@ -39,7 +39,7 @@ const phases = [
 
 export function RoadmapSlide() {
   return (
-    <Slide>
+    <Slide takeaway="This is a three-phase plan — website first, then internal tools, then full automation with Sage Intacct. Each phase delivers standalone value, so you see results immediately.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white">The Roadmap</h2>
@@ -52,19 +52,19 @@ export function RoadmapSlide() {
               key={phase.quarter}
               className={`animate-slide-up flex flex-col gap-4 rounded-2xl border p-6 ${
                 i === 0
-                  ? "border-brand-green/30 bg-brand-green/5"
+                  ? "border-[#ff6b6b]/30 bg-[#ff6b6b]/5"
                   : "border-white/10 bg-white/5"
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`rounded-lg p-2 ${
-                    i === 0 ? "bg-brand-green/20" : "bg-white/10"
+                    i === 0 ? "bg-[#ff6b6b]/20" : "bg-white/10"
                   }`}
                 >
                   <phase.icon
                     className={`h-5 w-5 ${
-                      i === 0 ? "text-brand-green" : "text-white/50"
+                      i === 0 ? "text-[#ff6b6b]" : "text-white/50"
                     }`}
                   />
                 </div>
