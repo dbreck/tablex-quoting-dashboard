@@ -77,7 +77,7 @@ export function CommentProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadComments = useCommentStore((s) => s.loadComments);
-  const getCommentsByPage = useCommentStore((s) => s.getCommentsByPage);
+  const comments = useCommentStore((s) => s.comments);
 
   // Load comments when page changes
   useEffect(() => {
@@ -139,7 +139,9 @@ export function CommentProvider({ children }: { children: ReactNode }) {
     setSidebarOpen(true);
   }, []);
 
-  const topLevelComments = mounted ? getCommentsByPage(pathname) : [];
+  const topLevelComments = mounted
+    ? comments.filter((c) => c.pagePath === pathname && !c.parentId)
+    : [];
   const unresolvedCount = topLevelComments.filter(
     (c) => !c.isResolved
   ).length;
