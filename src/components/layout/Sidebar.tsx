@@ -96,6 +96,8 @@ export function Sidebar() {
   useEffect(() => {
     if (isRep) {
       setSidebarMode("quote-builder");
+    } else if (pathname.startsWith("/settings")) {
+      // Settings pages keep current mode (don't switch)
     } else if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works" || pathname === "/orders" || pathname === "/invoices") {
       setSidebarMode("quote-builder");
     } else {
