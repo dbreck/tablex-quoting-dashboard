@@ -16,6 +16,7 @@ export interface Profile {
   full_name: string | null;
   role: "admin" | "contributor" | "rep";
   organization_id: string | null;
+  can_access_proposal: boolean;
 }
 
 interface AuthContextType {
@@ -81,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createClient();
     const { data } = await supabase
       .from("profiles")
-      .select("id, email, full_name, role, organization_id")
+      .select("id, email, full_name, role, organization_id, can_access_proposal")
       .eq("id", userId)
       .single();
 

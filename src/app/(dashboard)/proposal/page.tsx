@@ -160,10 +160,10 @@ export default function ProjectScopePage() {
                           </div>
                           <div className="text-right shrink-0">
                             <p className="text-sm font-medium text-gray-900">
-                              {formatNumber(d.estimatedHours)} hrs
+                              {d.status === "complete" ? "0" : formatNumber(d.estimatedHours)} hrs
                             </p>
                             <p className="text-xs text-gray-500">
-                              {formatCurrency(d.estimatedHours * d.hourlyRate)}
+                              {d.status === "complete" ? "$0" : formatCurrency(d.estimatedHours * d.hourlyRate)}
                             </p>
                           </div>
                         </div>

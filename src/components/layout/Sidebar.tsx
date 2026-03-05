@@ -34,6 +34,7 @@ import {
   ShieldAlert,
   ShoppingCart,
   Receipt,
+  FileText,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -96,8 +97,8 @@ export function Sidebar() {
   useEffect(() => {
     if (isRep) {
       setSidebarMode("quote-builder");
-    } else if (pathname.startsWith("/settings")) {
-      // Settings pages keep current mode (don't switch)
+    } else if (pathname.startsWith("/settings") || pathname.startsWith("/proposal")) {
+      // Settings/Proposal pages keep current mode (don't switch)
     } else if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works" || pathname === "/orders" || pathname === "/invoices") {
       setSidebarMode("quote-builder");
     } else {
@@ -335,6 +336,22 @@ export function Sidebar() {
 
       {/* User Menu + Collapse Toggle */}
       <div className={cn("border-t border-white/10", sidebarOpen ? "px-3 py-3" : "px-2 py-3")}>
+        {/* Proposal Link */}
+        {profile?.can_access_proposal && (
+          <Link
+            href="/proposal"
+            className={cn(
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors mb-1",
+              pathname.startsWith("/proposal") && "bg-white/10 text-white",
+              !sidebarOpen && "justify-center px-0"
+            )}
+            title={!sidebarOpen ? "Proposal" : undefined}
+          >
+            <FileText className={cn("h-5 w-5 shrink-0", pathname.startsWith("/proposal") && "text-brand-green")} />
+            {sidebarOpen && <span>Proposal</span>}
+          </Link>
+        )}
+
         {/* Admin Settings Link */}
         {isAdmin && (
           <Link

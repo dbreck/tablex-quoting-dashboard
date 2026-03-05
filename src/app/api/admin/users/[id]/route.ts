@@ -33,10 +33,10 @@ export async function PATCH(
 
   // Parse and validate body
   const body = await request.json();
-  const { role, organization_id } = body as { role?: string; organization_id?: string | null };
+  const { role, organization_id, can_access_proposal } = body as { role?: string; organization_id?: string | null; can_access_proposal?: boolean };
 
   // Build update payload
-  const update: Record<string, string | null> = {};
+  const update: Record<string, string | boolean | null> = {};
 
   if (role !== undefined) {
     if (!["admin", "contributor", "rep"].includes(role)) {
@@ -59,6 +59,10 @@ export async function PATCH(
 
   if (organization_id !== undefined) {
     update.organization_id = organization_id || null;
+  }
+
+  if (can_access_proposal !== undefined) {
+    update.can_access_proposal = !!can_access_proposal;
   }
 
   if (Object.keys(update).length === 0) {
