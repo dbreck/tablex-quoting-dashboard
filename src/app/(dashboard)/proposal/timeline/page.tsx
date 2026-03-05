@@ -300,17 +300,18 @@ function GanttChart({ phases, deliverables, milestones, workstreams, totalWeeks,
 const DYN_TOTAL = 12;
 
 const DYN_PHASES: ProjectPhase[] = [
-  { id: "design",    name: "Design",       startWeek: 1,  durationWeeks: 3, color: "#8b5cf6" },
-  { id: "build",     name: "Build",        startWeek: 2,  durationWeeks: 9, color: "#8dc63f" },
+  { id: "design",    name: "Design",       startWeek: 1,  durationWeeks: 5, color: "#8b5cf6" },
+  { id: "build",     name: "Build",        startWeek: 3,  durationWeeks: 8, color: "#8dc63f" },
   { id: "qa-launch", name: "QA & Launch",  startWeek: 10, durationWeeks: 3, color: "#f59e0b" },
 ];
 
 // Deliverables with hours-based scheduling and dependency ordering
 const DYN_DELIVERABLES: Deliverable[] = [
   // ── Design track (Designer) ────────────────────────────────────────────
-  // Wk 1: Xero scoping (6h) + Website UI/UX (24h of 32h)
-  // Wk 2: Website UI/UX done (8h) + CRM UI (16h) + CPQ UI starts (6h)
-  // Wk 3: CPQ UI done (10h) + Portal UI (10h) + Xero arch (8h)
+  // Wk 1: Xero scoping (6h) + Style Guide & Site Design starts (24h)
+  // Wk 2: Style Guide done + CRM UI (16h) + CPQ UI starts (16h)
+  // Wk 3: CPQ UI done + Portal UI (10h) + Xero arch (8h)
+  // Wk 3-5: Web Feature Design (16h) + 3D Configurator Design (16h) — overlap with dev
 
   // Complete discovery items (already paid for, shown faded)
   { id: "web-1",    workstream: "website", name: "Information Architecture & Sitemap", description: "Define page hierarchy, URL structure, navigation, and content taxonomy.", requirements: ["Sitemap document", "Navigation wireframes", "URL redirect plan"], phase: "design", startWeek: 1, endWeek: 1, estimatedHours: 16, hourlyRate: 150, status: "complete" },
@@ -320,24 +321,26 @@ const DYN_DELIVERABLES: Deliverable[] = [
 
   // Active design work
   { id: "xero-1",  workstream: "xero",    name: "Xero API Scoping & Auth Setup", description: "Evaluate Xero API capabilities, set up OAuth2 connection, and map data entities.", requirements: ["API capability assessment", "OAuth2 implementation", "Entity mapping document"], phase: "design", startWeek: 1, endWeek: 1, estimatedHours: 6, hourlyRate: 150, status: "planned" },
-  { id: "web-2",   workstream: "website", name: "UI/UX Design & Prototyping", description: "High-fidelity designs for all page templates, mobile breakpoints, and interactive elements.", requirements: ["Figma designs for 8+ templates", "Mobile-first responsive layouts", "Design system tokens"], phase: "design", startWeek: 1, endWeek: 2, estimatedHours: 32, hourlyRate: 150, status: "planned" },
+  { id: "web-2a",  workstream: "website", name: "Web Style Guide & Site Design", description: "Design system tokens, typography, color palette, high-fidelity page templates, and mobile breakpoints.", requirements: ["Design system tokens (colors, type, spacing)", "Figma designs for 8+ page templates", "Mobile-first responsive layouts", "Component library"], phase: "design", startWeek: 1, endWeek: 2, estimatedHours: 24, hourlyRate: 150, status: "planned" },
   { id: "crm-2",   workstream: "crm",     name: "CRM UI Design", description: "Design organization profiles, contact management, activity timeline, and pipeline views.", requirements: ["Org detail page", "Contact management", "Activity timeline", "Pipeline/funnel views"], phase: "design", startWeek: 2, endWeek: 2, estimatedHours: 16, hourlyRate: 150, status: "planned" },
   { id: "cpq-2",   workstream: "cpq",     name: "CPQ UI Design", description: "Design quote builder, line item editor, pricing calculator, and PDF output.", requirements: ["Quote builder flow", "Line item configuration", "Price breakdown views", "PDF template design"], phase: "design", startWeek: 2, endWeek: 3, estimatedHours: 16, hourlyRate: 150, status: "planned" },
   { id: "portal-2", workstream: "portal",  name: "Portal UI Design", description: "Design shared portal shell, dealer-specific views, and rep-specific management screens.", requirements: ["Shared dashboard + account wireframes", "Dealer: quote request flow, order tracking", "Rep: dealer roster, territory analytics, commissions"], phase: "design", startWeek: 3, endWeek: 3, estimatedHours: 10, hourlyRate: 150, status: "planned" },
   { id: "xero-2",  workstream: "xero",    name: "Xero Sync Architecture", description: "Design sync strategy — conflict resolution, retry logic, and data transformation layer.", requirements: ["Sync architecture doc", "Conflict resolution rules", "Error handling strategy"], phase: "design", startWeek: 3, endWeek: 3, estimatedHours: 8, hourlyRate: 150, status: "planned" },
+  { id: "web-2b",  workstream: "website", name: "Web Feature Design", description: "Detailed designs for interactive features — dealer locator, blog, contact forms, search, and filtering.", requirements: ["Dealer locator UX + map integration", "Blog/news layout", "Contact & quote request forms", "Search & filtering patterns"], phase: "design", startWeek: 3, endWeek: 5, estimatedHours: 16, hourlyRate: 150, status: "planned" },
+  { id: "web-2c",  workstream: "website", name: "3D Configurator Design", description: "UX design for the 3D table configurator — material swatches, viewer controls, mobile experience, and quote flow.", requirements: ["Configurator layout & controls", "Material/finish swatch presentation", "Mobile 3D viewer experience", "Configuration-to-quote flow"], phase: "design", startWeek: 3, endWeek: 5, estimatedHours: 16, hourlyRate: 150, status: "planned" },
 
   // ── Build track (Developer) ────────────────────────────────────────────
-  // Sequenced by dependency chain. Dev starts as each design completes.
-  // Wk 2-3:  Website frontend (40h) — first design done, build immediately
+  // Sequenced by dependency chain. Dev starts once Style Guide is done.
+  // Wk 3-4:  Website frontend (40h) — style guide done, backend can start; features designed in parallel
   // Wk 4-5:  CRM development (32h) — foundation for portal + CPQ orgs
   // Wk 5-7:  CPQ engine (80h) — longest item, needs CRM orgs/pricing
   // Wk 7-8:  CMS integration (16h) — needs website pages built
   // Wk 8-9:  Portal development (30h) — needs CRM + CPQ
   // Wk 9-10: Xero integration (28h) — needs CPQ invoices/orders
 
-  { id: "web-3",    workstream: "website", name: "Frontend Development", description: "Build all pages with Next.js — product catalog, dealer locator, about, contact, blog.", requirements: ["Product listing & detail pages", "Dealer locator with map", "Blog/news section", "SEO optimization"], phase: "build", startWeek: 2, endWeek: 3, estimatedHours: 40, hourlyRate: 185, status: "planned" },
+  { id: "web-3",    workstream: "website", name: "Frontend Development", description: "Build all pages with Next.js — product catalog, dealer locator, about, contact, blog.", requirements: ["Product listing & detail pages", "Dealer locator with map", "Blog/news section", "SEO optimization"], phase: "build", startWeek: 3, endWeek: 4, estimatedHours: 40, hourlyRate: 185, status: "planned" },
   { id: "crm-3",   workstream: "crm",     name: "CRM Development", description: "Build full CRM — org management, contact database, activity tracking, notes, and search.", requirements: ["Organization CRUD", "Contact management", "Activity/note logging", "Search & filtering", "Rep-dealer hierarchy management"], phase: "build", startWeek: 4, endWeek: 5, estimatedHours: 32, hourlyRate: 185, status: "planned" },
-  { id: "cpq-3",   workstream: "cpq",     name: "CPQ Engine Development", description: "Build pricing engine, discount calculations, multi-line quotes, and quote-to-order workflow.", requirements: ["Pricing engine with tier support", "Multi-line quote builder", "Discount calculations (50/20/x)", "Quote → Order → Invoice flow", "PDF generation"], phase: "build", startWeek: 5, endWeek: 7, estimatedHours: 80, hourlyRate: 185, status: "planned" },
+  { id: "cpq-3",   workstream: "cpq",     name: "CPQ Engine Development", description: "Build pricing engine, discount calculations, multi-line quotes, and quote-to-order workflow.", requirements: ["Pricing engine with tier support", "Multi-line quote builder", "Discount calculations (50/20/x)", "Quote → Order → Invoice flow", "PDF generation"], phase: "build", startWeek: 5, endWeek: 8, estimatedHours: 80, hourlyRate: 185, status: "planned" },
   { id: "web-4",   workstream: "website", name: "CMS Integration & Content Migration", description: "Headless CMS setup, content modeling, and migration of existing site content.", requirements: ["CMS content models", "Media library migration", "Editorial workflow"], phase: "build", startWeek: 7, endWeek: 8, estimatedHours: 16, hourlyRate: 185, status: "planned" },
   { id: "portal-3", workstream: "portal",  name: "Portal Development", description: "Build single authenticated portal with role-based routing — shared shell, dealer features, and rep management layers.", requirements: ["Auth + role-based routing", "Shared: dashboard, account management, notifications", "Dealer: configurator embed, quote requests, order/invoice history", "Rep: dealer roster, territory analytics, commission calculations, activity feed"], phase: "build", startWeek: 8, endWeek: 9, estimatedHours: 30, hourlyRate: 185, status: "planned" },
   { id: "xero-3",  workstream: "xero",    name: "Xero Integration Development", description: "Build two-way sync — invoices, payments, contacts, and chart of accounts.", requirements: ["Invoice sync (QuoteX → Xero)", "Payment sync (Xero → QuoteX)", "Contact sync", "Webhook listeners", "Sync status dashboard"], phase: "build", startWeek: 9, endWeek: 10, estimatedHours: 28, hourlyRate: 185, status: "planned" },
@@ -354,14 +357,15 @@ const DYN_DELIVERABLES: Deliverable[] = [
 ];
 
 const DYN_MILESTONES: Milestone[] = [
-  { id: "dm-1", name: "Design Complete",       week: 3,  phase: "design",    deliverableIds: ["web-2", "crm-2", "cpq-2", "portal-2", "xero-2"] },
-  { id: "dm-2", name: "Website Beta",          week: 3,  phase: "build",     deliverableIds: ["web-3"] },
+  { id: "dm-1", name: "Core Design Complete",  week: 3,  phase: "design",    deliverableIds: ["web-2a", "crm-2", "cpq-2", "portal-2", "xero-2"] },
+  { id: "dm-2", name: "Website Beta",          week: 4,  phase: "build",     deliverableIds: ["web-3"] },
   { id: "dm-3", name: "CRM Ready",             week: 5,  phase: "build",     deliverableIds: ["crm-3"] },
-  { id: "dm-4", name: "CPQ Engine Ready",      week: 7,  phase: "build",     deliverableIds: ["cpq-3"] },
-  { id: "dm-5", name: "CMS Complete",          week: 8,  phase: "build",     deliverableIds: ["web-4"] },
-  { id: "dm-6", name: "Portal Beta",           week: 9,  phase: "build",     deliverableIds: ["portal-3"] },
-  { id: "dm-7", name: "Integration Complete",  week: 10, phase: "build",     deliverableIds: ["xero-3"] },
-  { id: "dm-8", name: "Launch",                week: 12, phase: "qa-launch", deliverableIds: ["web-5", "portal-4", "crm-4", "cpq-4", "xero-4"] },
+  { id: "dm-4", name: "Feature Design Done",   week: 5,  phase: "design",    deliverableIds: ["web-2b", "web-2c"] },
+  { id: "dm-5", name: "CPQ Engine Ready",      week: 7,  phase: "build",     deliverableIds: ["cpq-3"] },
+  { id: "dm-6", name: "CMS Complete",          week: 8,  phase: "build",     deliverableIds: ["web-4"] },
+  { id: "dm-7", name: "Portal Beta",           week: 9,  phase: "build",     deliverableIds: ["portal-3"] },
+  { id: "dm-8", name: "Integration Complete",  week: 10, phase: "build",     deliverableIds: ["xero-3"] },
+  { id: "dm-9", name: "Launch",                week: 12, phase: "qa-launch", deliverableIds: ["web-5", "portal-4", "crm-4", "cpq-4", "xero-4"] },
 ];
 
 // ─── Page ───────────────────────────────────────────────────────────────────
