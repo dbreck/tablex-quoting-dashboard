@@ -45,6 +45,7 @@ interface UserRow {
   role: "admin" | "contributor" | "rep";
   organization_id: string | null;
   can_access_proposal: boolean;
+  can_access_estimate: boolean;
   created_at: string;
   last_sign_in_at: string | null;
 }
@@ -188,6 +189,25 @@ export default function UsersClient() {
       loadUsers();
     } else {
       setActionMessage({ type: "error", text: data.error || "Failed to update proposal access" });
+    }
+  }
+
+  async function handleEstimateAccess(userId: string, value: boolean) {
+    setActionMessage(null);
+
+    const res = await fetch(`/api/admin/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ can_access_estimate: value }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setActionMessage({ type: "success", text: "Estimate access updated" });
+      loadUsers();
+    } else {
+      setActionMessage({ type: "error", text: data.error || "Failed to update estimate access" });
     }
   }
 
@@ -412,6 +432,7 @@ export default function UsersClient() {
                   <th className="px-4 py-3">Role</th>
                   <th className="px-4 py-3">Rep Group</th>
                   <th className="px-4 py-3">Proposal</th>
+                  <th className="px-4 py-3">Estimate</th>
                   <th className="px-4 py-3">Joined</th>
                   <th className="px-4 py-3 rounded-tr-lg">Actions</th>
                 </tr>
@@ -476,6 +497,14 @@ export default function UsersClient() {
                           className="h-4 w-4 rounded border-slate-300 text-brand-green focus:ring-brand-green/50 cursor-pointer"
                         />
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <input
+                          type="checkbox"
+                          checked={u.can_access_estimate ?? false}
+                          onChange={(e) => handleEstimateAccess(u.id, e.target.checked)}
+                          className="h-4 w-4 rounded border-slate-300 text-brand-green focus:ring-brand-green/50 cursor-pointer"
+                        />
+                      </td>
                       <td className="px-4 py-3 text-slate-500">
                         {formatDate(u.created_at)}
                       </td>
@@ -506,7 +535,7 @@ export default function UsersClient() {
                 })}
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-sm text-slate-400">
+                    <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-400">
                       No users found
                     </td>
                   </tr>

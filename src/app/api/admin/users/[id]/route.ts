@@ -33,7 +33,7 @@ export async function PATCH(
 
   // Parse and validate body
   const body = await request.json();
-  const { role, organization_id, can_access_proposal } = body as { role?: string; organization_id?: string | null; can_access_proposal?: boolean };
+  const { role, organization_id, can_access_proposal, can_access_estimate } = body as { role?: string; organization_id?: string | null; can_access_proposal?: boolean; can_access_estimate?: boolean };
 
   // Build update payload
   const update: Record<string, string | boolean | null> = {};
@@ -63,6 +63,10 @@ export async function PATCH(
 
   if (can_access_proposal !== undefined) {
     update.can_access_proposal = !!can_access_proposal;
+  }
+
+  if (can_access_estimate !== undefined) {
+    update.can_access_estimate = !!can_access_estimate;
   }
 
   if (Object.keys(update).length === 0) {
