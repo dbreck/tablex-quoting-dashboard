@@ -8,7 +8,7 @@ const phases = [
     title: "Website Rebuild",
     items: [
       "Modern design on new platform",
-      "Integrated 3D configurator",
+      "Spec Studio + Collections",
       "Quote request flow built-in",
       "Mobile-first responsive design",
     ],

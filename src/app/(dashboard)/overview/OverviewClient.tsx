@@ -32,7 +32,7 @@ const sections = [
     highlights: [
       "3 user personas defined (Dealer, Rep, Individual)",
       "164 content items inventoried",
-      "3D configurator with 2,920 models",
+      "Spec Studio configurator with 2,920 models",
     ],
     pages: [
       { name: "User Personas", href: "/user-personas", icon: Users },

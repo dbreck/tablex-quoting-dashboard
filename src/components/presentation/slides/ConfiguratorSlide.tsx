@@ -2,12 +2,12 @@ import { Slide } from "../Slide";
 
 export function ConfiguratorSlide() {
   return (
-    <Slide appLink="/configurator" linkLabel="Try the configurator" takeaway="Dealers and internal staff can visually configure any table with real-time 3D preview — eliminating guesswork and reducing quoting errors before a quote is even created.">
+    <Slide appLink="/configurator" linkLabel="Try the Spec Studio" takeaway="Dealers and internal staff pick a base style, then customize freely in real-time 3D — eliminating guesswork and reducing quoting errors. Collections offer curated groupings for A&D.">
       <div className="flex flex-col gap-10">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-white">3D Product Configurator</h2>
+          <h2 className="text-4xl font-bold text-white">Spec Studio + Collections</h2>
           <p className="mt-2 text-white/40">
-            Interactive table builder with real-time 3D preview
+            Interactive table builder with real-time 3D preview &amp; curated design groupings
           </p>
         </div>
 

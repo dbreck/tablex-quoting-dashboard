@@ -105,6 +105,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 const sectionIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   products: Package,
+  collections: Layers,
   spaces: Layers,
   applications: Layers,
   finishes: Palette,
@@ -184,7 +185,7 @@ const v3Sections: ArchSection[] = architectureSections.map((s) => {
       ...s,
       children: s.children.map((c) =>
         c.id === "prod-browse"
-          ? { ...c, description: "Filterable grid of 17 series" }
+          ? { ...c, description: "Filterable grid of all base styles and collections" }
           : c
       ),
     };

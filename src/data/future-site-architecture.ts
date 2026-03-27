@@ -1,5 +1,6 @@
 // Future Site Architecture — proposed IA for the redesigned tablex.com
 // Informed by: user personas, WP site audit, customer journey, CPQ gap analysis
+// Updated: Brian Craig feedback (Mar 19 & 26, 2026) — Spec Studio / Collections split, geo-aware rep finder
 
 // ── Types ───────────────────────────────────────────────────────────
 
@@ -52,21 +53,21 @@ export const designPrinciples: DesignPrinciple[] = [
     icon: "Users",
   },
   {
+    title: "Spec Studio + Collections",
+    description:
+      "The Spec Studio configurator highlights TableX's unique base-style customization. Collections offer curated, design-focused groupings to attract the A&D community.",
+    icon: "Palette",
+  },
+  {
     title: "Self-Service First",
     description:
       "Eliminate 617 hours/year of manual re-entry. Users configure, price, quote, and track orders without calling or emailing.",
     icon: "Zap",
   },
   {
-    title: "Frictionless Downloads",
-    description:
-      "Specs, CAD files, brochures, and images available instantly. No login walls for public assets — gate only dealer pricing.",
-    icon: "Download",
-  },
-  {
     title: "Mobile-Ready for Reps",
     description:
-      "Optimized for tablet demos during dealer visits. Reps can configure, quote, and present the full catalog on the go.",
+      "Optimized for tablet demos during dealer visits. Reps can configure, quote, and present the full catalog on the go. Geo-aware rep cards surface local contacts.",
     icon: "Tablet",
   },
 ];
@@ -78,20 +79,27 @@ export const architectureSections: ArchSection[] = [
   {
     id: "products",
     label: "Products",
-    description: "Full catalog with interactive 3D configurator",
+    description: "Spec Studio configurator + curated Collections",
     color: "green",
     tier: "primary",
     children: [
       {
-        id: "prod-browse",
-        label: "Browse All Series",
-        description: "Filterable grid of 17 series",
+        id: "prod-spec-studio",
+        label: "Spec Studio",
+        description: "Interactive 3D configurator — pick a base style, then customize",
         isNew: true,
       },
       {
-        id: "prod-series",
-        label: "Series Detail Pages",
-        description: "3D configurator, specs, downloads per series",
+        id: "prod-collections",
+        label: "Collections",
+        description: "Curated design-focused groupings (App, Solo, Outdoor, Occasional, Dining)",
+        isNew: true,
+      },
+      {
+        id: "prod-browse",
+        label: "Browse All",
+        description: "Filterable grid of all base styles and collections",
+        isNew: true,
       },
       {
         id: "prod-compare",
@@ -238,7 +246,7 @@ export const architectureSections: ArchSection[] = [
   {
     id: "find-rep",
     label: "Find Your Rep",
-    description: "Interactive territory map with rep profiles",
+    description: "Interactive territory map + geo-aware rep cards on product pages",
     color: "indigo",
     tier: "action",
     isNew: true,
@@ -253,6 +261,12 @@ export const architectureSections: ArchSection[] = [
         id: "rep-profiles",
         label: "Rep Profiles",
         description: "Contact info, territories, specialties",
+        isNew: true,
+      },
+      {
+        id: "rep-geo",
+        label: "Geo-Aware Rep Cards",
+        description: "Auto-show local reps at bottom of product/collection pages (à la JSI)",
         isNew: true,
       },
     ],
@@ -383,8 +397,8 @@ export const personaPaths: PersonaPath[] = [
       },
       {
         label: "Configure",
-        node: "Products → Configurator",
-        action: "Select series, shape, size, finishes in 3D",
+        node: "Spec Studio",
+        action: "Pick a base style, then customize shape, size, finishes in 3D",
       },
       {
         label: "Price",
@@ -432,7 +446,7 @@ export const personaPaths: PersonaPath[] = [
       },
       {
         label: "Demo",
-        node: "3D Configurator",
+        node: "Spec Studio",
         action: "Live demo for dealer on tablet at their showroom",
       },
       {
@@ -466,7 +480,7 @@ export const personaPaths: PersonaPath[] = [
       },
       {
         label: "Configure",
-        node: "3D Configurator",
+        node: "Spec Studio",
         action: "Select finishes, see total price instantly",
       },
       {
@@ -489,7 +503,7 @@ export const currentVsFuture: Comparison[] = [
   {
     area: "Product Browsing",
     current: "17 static Divi pages with no filtering or comparison",
-    future: "Filterable grid with 3D configurator and side-by-side comparison",
+    future: "Spec Studio for base-style customization + curated Collections for A&D. Filterable grid with 3D configurator and side-by-side comparison",
   },
   {
     area: "Quoting",
@@ -509,7 +523,7 @@ export const currentVsFuture: Comparison[] = [
   {
     area: "Find a Rep",
     current: "Static hardcoded HTML page, no territory mapping",
-    future: "Interactive map with zip/state search and rep profiles",
+    future: "Interactive map with zip/state search, rep profiles, and geo-aware rep cards on product pages (à la JSI)",
   },
   {
     area: "Dealer Portal",
@@ -586,6 +600,12 @@ export const v1DesignPrinciples: DesignPrinciple[] = [
     icon: "Users",
   },
   {
+    title: "Spec Studio + Collections",
+    description:
+      "The Spec Studio configurator highlights TableX's unique base-style customization. Collections offer curated, design-focused groupings to attract the A&D community.",
+    icon: "Palette",
+  },
+  {
     title: "Pricing Transparency",
     description:
       "End the 'request a quote' dead-end. Public pricing ranges, tiered dealer pricing behind login, self-service CPQ for all audiences.",
@@ -596,12 +616,6 @@ export const v1DesignPrinciples: DesignPrinciple[] = [
     description:
       "Eliminate 617 hours/year of manual re-entry. Users configure, price, quote, and track orders without calling or emailing.",
     icon: "Zap",
-  },
-  {
-    title: "Frictionless Downloads",
-    description:
-      "Specs, CAD files, brochures, and images available instantly. No login walls for public assets — gate only dealer pricing.",
-    icon: "Download",
   },
 ];
 
@@ -614,7 +628,7 @@ export const v1PersonaPaths: PersonaPath[] = [
     goal: "Quote a project for a client in under 5 minutes",
     steps: [
       { label: "Login", node: "Dealer Portal", action: "Authenticate with dealer credentials" },
-      { label: "Configure", node: "Products → Configurator", action: "Select series, shape, size, finishes in 3D" },
+      { label: "Configure", node: "Spec Studio", action: "Pick a base style, then customize shape, size, finishes in 3D" },
       { label: "Price", node: "Configure & Price", action: "See tiered dealer pricing in real-time" },
       { label: "Quote", node: "Get a Quote", action: "Generate and download quote PDF instantly" },
       { label: "Track", node: "My Quotes", action: "Monitor status, request revisions online" },
@@ -631,7 +645,7 @@ export const v1PersonaPaths: PersonaPath[] = [
       { label: "Login", node: "Rep Portal", action: "Access territory dashboard on tablet" },
       { label: "Review", node: "Products", action: "Check latest specs, pricing, and lead times" },
       { label: "Download", node: "Sales Tools", action: "Grab brochures, images, and presentations" },
-      { label: "Demo", node: "3D Configurator", action: "Live demo for dealer on tablet at their showroom" },
+      { label: "Demo", node: "Spec Studio", action: "Live demo for dealer on tablet at their showroom" },
       { label: "Quote", node: "Quote Pipeline", action: "Submit quote on dealer's behalf, track status" },
       { label: "Report", node: "Territory Dashboard", action: "Review pipeline and commission forecasts" },
     ],
@@ -645,7 +659,7 @@ export const v1PersonaPaths: PersonaPath[] = [
     steps: [
       { label: "Discover", node: "Applications → Training", action: "Land via Google, browse by use case" },
       { label: "Browse", node: "Products → Browse", action: "Filter by application, see pricing ranges" },
-      { label: "Configure", node: "3D Configurator", action: "Select finishes, see total price instantly" },
+      { label: "Configure", node: "Spec Studio", action: "Select finishes, see total price instantly" },
       { label: "Purchase", node: "Cart → Checkout", action: "Buy directly — no dealer required for small orders" },
       { label: "Track", node: "My Orders", action: "Confirmation email, delivery tracking" },
     ],
@@ -656,7 +670,7 @@ export const v1CurrentVsFuture: Comparison[] = [
   {
     area: "Product Browsing",
     current: "17 static Divi pages with no filtering or comparison",
-    future: "Filterable grid with 3D configurator, instant pricing ranges",
+    future: "Spec Studio for base-style customization + curated Collections for A&D. Filterable grid with 3D configurator, instant pricing ranges",
   },
   {
     area: "Pricing",
@@ -676,7 +690,7 @@ export const v1CurrentVsFuture: Comparison[] = [
   {
     area: "Find a Rep",
     current: "Static hardcoded HTML page, no territory mapping",
-    future: "Interactive map with zip/state search and rep profiles",
+    future: "Interactive map with zip/state search, rep profiles, and geo-aware rep cards on product pages (à la JSI)",
   },
   {
     area: "Dealer Portal",
@@ -727,7 +741,7 @@ export const v3DesignPrinciples: DesignPrinciple[] = [
   {
     title: "Configure Without Commitment",
     description:
-      "Users explore and configure freely without seeing pricing. Removes sticker shock, encourages exploration, and protects dealer margins.",
+      "Users explore the Spec Studio configurator freely without seeing pricing. Collections offer curated groupings for A&D visitors. Removes sticker shock and protects dealer margins.",
     icon: "Palette",
   },
   {
@@ -739,7 +753,7 @@ export const v3DesignPrinciples: DesignPrinciple[] = [
   {
     title: "Mobile-Ready for Reps",
     description:
-      "Optimized for tablet demos during dealer visits. Reps configure and submit quote requests on the go, receive responses in their portal.",
+      "Optimized for tablet demos during dealer visits. Reps configure and submit quote requests on the go. Geo-aware rep cards surface local contacts on every product page.",
     icon: "Tablet",
   },
 ];
@@ -767,7 +781,7 @@ export const v3PersonaFlows: V3PersonaFlow[] = [
     goal: "Configure a project and receive a dealer-priced quote",
     steps: [
       { label: "Login", node: "Dealer Portal", action: "Authenticate with dealer credentials", zone: "frontend" },
-      { label: "Configure", node: "3D Configurator", action: "Select series, shape, size, finishes — no pricing shown", zone: "frontend" },
+      { label: "Configure", node: "Spec Studio", action: "Pick a base style, customize shape, size, finishes — no pricing shown", zone: "frontend" },
       { label: "Submit", node: "Request a Quote", action: "Configuration sent to TableX for pricing", zone: "frontend" },
       { label: "Process", node: "Pricing Engine", action: "Dealer tier, volume discounts, and rules applied", zone: "backend" },
       { label: "Receive", node: "Portal + Email", action: "Quote PDF appears in My Quotes dashboard and inbox", zone: "delivery" },
@@ -782,7 +796,7 @@ export const v3PersonaFlows: V3PersonaFlow[] = [
     goal: "Demo products on tablet and submit quotes for dealers",
     steps: [
       { label: "Login", node: "Rep Portal", action: "Access territory dashboard on tablet", zone: "frontend" },
-      { label: "Demo", node: "3D Configurator", action: "Live configuration demo — no pricing visible", zone: "frontend" },
+      { label: "Demo", node: "Spec Studio", action: "Live configuration demo — no pricing visible", zone: "frontend" },
       { label: "Submit", node: "Request a Quote", action: "Submit on dealer's behalf with territory info", zone: "frontend" },
       { label: "Process", node: "Pricing Engine", action: "Territory pricing and rep commission calculated", zone: "backend" },
       { label: "Receive", node: "Portal + Email", action: "Quote in rep portal, dealer portal, and both inboxes", zone: "delivery" },
@@ -797,7 +811,7 @@ export const v3PersonaFlows: V3PersonaFlow[] = [
     goal: "Find training tables and get a price without needing a dealer",
     steps: [
       { label: "Discover", node: "Spaces", action: "Browse by room type — training, conference, etc.", zone: "frontend" },
-      { label: "Configure", node: "3D Configurator", action: "Select finishes and options — no pricing shown", zone: "frontend" },
+      { label: "Configure", node: "Spec Studio", action: "Select finishes and options — no pricing shown", zone: "frontend" },
       { label: "Submit", node: "Request a Quote", action: "Provide email; optionally create an account", zone: "frontend" },
       { label: "Process", node: "Pricing Engine", action: "Standard pricing rules and availability checked", zone: "backend" },
       { label: "Receive", node: "Email (+ Account)", action: "Quote sent to email; also in account if created", zone: "delivery" },
@@ -810,7 +824,7 @@ export const v3CurrentVsFuture: Comparison[] = [
   {
     area: "Product Browsing",
     current: "17 static Divi pages with no filtering or comparison",
-    future: "Filterable grid with 3D configurator — explore freely without pricing pressure",
+    future: "Spec Studio for base-style customization + curated Collections for A&D. Explore freely without pricing pressure",
   },
   {
     area: "Pricing Visibility",
@@ -835,7 +849,7 @@ export const v3CurrentVsFuture: Comparison[] = [
   {
     area: "Find a Rep",
     current: "Static hardcoded HTML page, no territory mapping",
-    future: "Interactive map with zip/state search and rep profiles",
+    future: "Interactive map with zip/state search, rep profiles, and geo-aware rep cards on product pages (à la JSI)",
   },
   {
     area: "Dealer Portal",
