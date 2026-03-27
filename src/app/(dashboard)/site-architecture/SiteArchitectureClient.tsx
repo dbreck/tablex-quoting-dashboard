@@ -174,7 +174,7 @@ const v3Sections: ArchSection[] = architectureSections.map((s) => {
         c.id === "quote-cpq"
           ? {
               ...c,
-              label: "Configure Table",
+              label: "Spec Studio",
               description: "Interactive configurator — pricing calculated after submission",
             }
           : c
