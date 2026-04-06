@@ -22,12 +22,22 @@ import {
   HardDrive,
   CircleCheck,
   CircleX,
+  MessageSquareText,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type Cadence = "monthly" | "annual" | "one-time" | "usage";
 type Status = "current" | "recommended" | "optional" | "future";
+
+interface Alternative {
+  name: string;
+  provider: string;
+  monthlyCost: string; // display string (e.g. "$20/mo", "$5–50/mo", "Included")
+  tier: string;
+  pros: string[];
+  cons: string[];
+}
 
 interface Service {
   id: string;
@@ -45,6 +55,7 @@ interface Service {
   cadence: Cadence;
   notes: string[];
   url?: string;
+  alternatives?: Alternative[];
 }
 
 interface CostSummary {
@@ -87,6 +98,44 @@ const SERVICES: Service[] = [
       "Preview deployments for every PR — great for client review",
       "Analytics and Web Vitals included",
     ],
+    alternatives: [
+      {
+        name: "Cloudflare Pages",
+        provider: "Cloudflare",
+        monthlyCost: "$20/mo (Pro)",
+        tier: "Pro — 10,000 builds/mo, unlimited bandwidth",
+        pros: [
+          "200+ edge data centers — best global latency",
+          "Workers for serverless compute with near-zero cold starts",
+          "R2 object storage ($0.015/GB, no egress fees) for 3D models",
+          "Built-in DDoS protection and WAF",
+        ],
+        cons: [
+          "Next.js support via @cloudflare/next-on-pages — not first-party",
+          "Some Next.js features (ISR, middleware) have edge-case limitations",
+          "Less polished preview deployment UX than Vercel",
+          "Vercel literally makes Next.js — tighter integration is hard to beat",
+        ],
+      },
+      {
+        name: "Railway",
+        provider: "Railway Corp.",
+        monthlyCost: "$5–50/mo (usage-based)",
+        tier: "Pay-as-you-go — per-resource pricing",
+        pros: [
+          "Transparent, predictable pricing — no surprise bills",
+          "Integrated Postgres databases included",
+          "Built-in observability and monitoring",
+          "Great for background jobs, cron tasks, and workers",
+        ],
+        cons: [
+          "Traditional container hosting, not edge-optimized",
+          "No preview deployments per PR (manual branch deploys)",
+          "Smaller ecosystem than Vercel/Netlify",
+          "Next.js runs as a Node server, not on edge network",
+        ],
+      },
+    ],
   },
   {
     id: "supabase",
@@ -109,6 +158,44 @@ const SERVICES: Service[] = [
       "Auth handles login, password reset, role management",
       "Storage hosts 2,920+ GLB 3D models",
       "Realtime subscriptions available for live quote updates",
+    ],
+    alternatives: [
+      {
+        name: "Neon",
+        provider: "Neon Inc.",
+        monthlyCost: "$19/mo (Pro)",
+        tier: "Pro — 100 compute hours, autoscaling",
+        pros: [
+          "Serverless Postgres — scales to zero when idle (no charges)",
+          "Superior database branching for CI/CD and preview environments",
+          "$6/mo cheaper than Supabase Pro for pure Postgres",
+          "Point-in-time recovery and logical replication",
+        ],
+        cons: [
+          "Database only — no auth, file storage, or realtime included",
+          "Would need separate services for auth (Clerk/Auth.js), storage (R2/S3), realtime",
+          "Rebuilding Supabase's bundled features adds complexity and cost",
+          "Smaller community than Supabase",
+        ],
+      },
+      {
+        name: "Appwrite",
+        provider: "Appwrite (open-source)",
+        monthlyCost: "$15/mo (Cloud) · Free self-hosted",
+        tier: "Pro — full platform (DB + auth + storage + functions)",
+        pros: [
+          "Full BaaS platform like Supabase — DB, auth, storage, functions",
+          "Open-source and self-hostable (Docker)",
+          "Cloud tier at $15/mo is $10 cheaper than Supabase",
+          "Built-in realtime, webhooks, and scheduled functions",
+        ],
+        cons: [
+          "Uses MariaDB internally, not Postgres — different SQL dialect",
+          "Smaller community and ecosystem than Supabase",
+          "Self-hosted requires significant DevOps overhead",
+          "Less mature RLS model — permissions are SDK-level, not database-level",
+        ],
+      },
     ],
   },
 
@@ -164,24 +251,62 @@ const SERVICES: Service[] = [
   {
     id: "email-transactional",
     name: "Transactional Email",
-    provider: "Resend / Postmark",
+    provider: "Resend",
     description: "Quote delivery, order confirmations, password resets, and system notifications.",
     icon: Mail,
     color: "#000000",
     category: "Email & Notifications",
     status: "recommended",
     currentTier: "N/A",
-    recommendedTier: "Free–Pro",
+    recommendedTier: "Free (3K emails/mo)",
     monthlyCost: 0,
     annualCost: 0,
     cadence: "monthly",
     notes: [
       "Supabase handles auth emails (password reset, invite) on its own",
       "Need transactional email for: quote PDFs, order confirmations, notifications",
-      "Resend: 3,000 emails/mo free, then $20/mo for 50K emails",
-      "Postmark: 100 emails/mo free, then $15/mo for 10K emails",
-      "At TableX's volume (~200 quotes/mo), free tier may suffice initially",
-      "Cost shown as $0 — free tier should cover Phase 2 launch volume",
+      "React Email: build email templates as React + Tailwind components — same stack as the app",
+      "Free tier: 100 emails/day (~3,000/mo) — covers 200 quotes/month + system emails easily",
+      "Pro tier: $20/mo for 50K emails if volume grows post-launch",
+      "First-class Next.js SDK (@resend/next) with webhook support",
+    ],
+    alternatives: [
+      {
+        name: "Postmark",
+        provider: "ActiveCampaign",
+        monthlyCost: "$15/mo (no free tier)",
+        tier: "Starter — 10,000 emails/mo",
+        pros: [
+          "Industry-best delivery speed — under 10 seconds average",
+          "Transactional-only policy keeps IP reputation pristine",
+          "Excellent inbound email processing",
+          "Most reliable deliverability in the industry",
+        ],
+        cons: [
+          "No free tier — $15/mo minimum from day one",
+          "No native React Email support — render HTML separately",
+          "Less modern developer experience than Resend",
+          "Overkill reliability for 200 quotes/month volume",
+        ],
+      },
+      {
+        name: "Plunk",
+        provider: "Plunk (open-source)",
+        monthlyCost: "$9/mo (Cloud) · Free self-hosted",
+        tier: "Cloud — 10,000 emails/mo (uses AWS SES)",
+        pros: [
+          "Open-source and self-hostable — aligns with data sovereignty",
+          "React Email template support",
+          "Cloud tier at $9/mo is affordable",
+          "Could self-host on Railway alongside CMS (~$5–7/mo)",
+        ],
+        cons: [
+          "Small team, small community — higher bus-factor risk",
+          "Less mature than Resend or Postmark",
+          "Self-hosted requires managing your own SES credentials and reputation",
+          "Limited documentation compared to established providers",
+        ],
+      },
     ],
   },
 
@@ -206,6 +331,44 @@ const SERVICES: Service[] = [
       "Vercel edge network provides automatic CDN caching",
       "If bandwidth becomes an issue, consider Cloudflare R2 ($0.015/GB after 10GB free)",
       "No additional cost expected at current scale",
+    ],
+    alternatives: [
+      {
+        name: "Cloudflare R2",
+        provider: "Cloudflare",
+        monthlyCost: "$0.015/GB/mo (no egress fees)",
+        tier: "Pay-as-you-go — S3-compatible",
+        pros: [
+          "Zero egress fees — biggest cost advantage over S3/other storage",
+          "S3-compatible API — easy migration from any S3-like storage",
+          "Global edge caching via Cloudflare's CDN network",
+          "Best upgrade path if 3D model bandwidth becomes expensive",
+        ],
+        cons: [
+          "Separate service to manage (not bundled like Supabase Storage)",
+          "At current scale (~1.5GB), savings are negligible vs included storage",
+          "Adds another vendor dependency",
+          "No built-in admin UI for managing files",
+        ],
+      },
+      {
+        name: "Bunny.net",
+        provider: "Bunny.net",
+        monthlyCost: "$1/mo + $0.005/GB bandwidth",
+        tier: "Pay-as-you-go — 114 global PoPs",
+        pros: [
+          "Cheapest dedicated CDN — as low as $0.005/GB bandwidth",
+          "114 points of presence globally — great for international dealers",
+          "Bunny Storage included — simple file management",
+          "Edge rules and optimization for media delivery",
+        ],
+        cons: [
+          "Another service to manage outside the Supabase ecosystem",
+          "Minimal savings at current bandwidth levels",
+          "Less developer-focused than Cloudflare",
+          "No S3-compatible API — uses their own upload API",
+        ],
+      },
     ],
   },
 
@@ -256,6 +419,44 @@ const SERVICES: Service[] = [
       "Supabase dashboard has built-in database monitoring",
       "Recommendation: start with free tiers, upgrade only if needed",
       "Cost shown as $0 — free tiers adequate for Phase 2 launch",
+    ],
+    alternatives: [
+      {
+        name: "Highlight.io",
+        provider: "Highlight (open-source)",
+        monthlyCost: "$0 (free: 500 sessions, 1K errors)",
+        tier: "Free — session replay + errors + logs",
+        pros: [
+          "All-in-one: session replay + error tracking + logs in one tool",
+          "Open-source and self-hostable (Apache 2.0)",
+          "See exactly what a dealer was doing in Spec Studio when an error occurred",
+          "Active development, modern UI, growing community",
+        ],
+        cons: [
+          "Smaller ecosystem and community than Sentry",
+          "Self-hosted requires ClickHouse + Kafka (heavy infrastructure)",
+          "Less mature error grouping and deduplication",
+          "Session replay SDK can impact client-side performance",
+        ],
+      },
+      {
+        name: "GlitchTip",
+        provider: "GlitchTip (open-source)",
+        monthlyCost: "$18/mo (Cloud) · Free self-hosted",
+        tier: "Cloud — 100K events/mo, unlimited users",
+        pros: [
+          "Lightweight self-hosted Sentry — runs on just 512MB RAM",
+          "Uses Sentry's SDK (@sentry/nextjs) — proven Next.js integration",
+          "Could self-host on Railway for ~$5–7/mo",
+          "MIT license, true data sovereignty",
+        ],
+        cons: [
+          "Much fewer features than Sentry (no session replay, basic perf monitoring)",
+          "Very small team (2–3 developers)",
+          "No profiling, no cron monitoring, no release tracking",
+          "UI is functional but basic compared to Sentry",
+        ],
+      },
     ],
   },
 
@@ -401,6 +602,55 @@ const CMS_OPTIONS: CmsOption[] = [
       "Adds complexity to main app deployment",
       "Admin UI functional but less polished than Sanity",
       "Fewer third-party plugins than Strapi",
+    ],
+  },
+  {
+    name: "Directus",
+    model: "Open-source, self-hosted",
+    freeTier: "Community Edition — unlimited, no restrictions",
+    paidTier: "Cloud $99+/mo (hosted) · Self-hosted free",
+    docLimit: "Unlimited (self-hosted — it's just SQL)",
+    storage: "Whatever your server/database has",
+    dataOwnership: "Full — wraps your existing Postgres (even Supabase's)",
+    nextjsFit: "REST + GraphQL APIs, webhooks for ISR",
+    collaboration: "Roles, field-level permissions, activity log, comments",
+    pros: [
+      "Wraps your existing database — could point at Supabase's Postgres directly",
+      "Best data sovereignty: if you remove Directus, your data is untouched",
+      "No document limits — 6K+ entries is trivial (it's raw SQL)",
+      "Built-in automation/flows engine for workflows and notifications",
+      "Auto-generates admin UI from your schema — no custom modeling needed",
+    ],
+    cons: [
+      "No visual/inline editing — traditional admin panel",
+      "Next.js integration is DIY (no official SDK or preview helpers)",
+      "Self-hosted requires managing updates and backups",
+      "Admin UI less polished than Sanity Studio or Contentful",
+    ],
+  },
+  {
+    name: "Contentful",
+    model: "Cloud SaaS (fully managed)",
+    freeTier: "25K entries, 5 users, 50 content types, 2 locales",
+    paidTier: "Team $300/mo · Enterprise $2,000+/mo",
+    docLimit: "25K free · higher on paid · unlimited on Enterprise",
+    storage: "50GB assets free, more on paid",
+    dataOwnership: "Vendor-managed — proprietary cloud, Contentful-specific export format",
+    nextjsFit: "Official JS SDK, rich-text renderer, Live Preview, ISR webhooks",
+    collaboration: "Scheduled publishing, workflows, comments, tasks, audit logs",
+    pros: [
+      "Most polished editing experience for non-technical marketing staff",
+      "Best-in-class collaboration features (workflows, scheduling, comments)",
+      "25K entries on free tier — more than enough for 6K SKUs",
+      "Strong Next.js integration with official SDK and Live Preview",
+      "Most mature ecosystem — largest community, extensive documentation",
+    ],
+    cons: [
+      "Cloud-only — no self-hosting, no data sovereignty",
+      "Team tier at $300/mo is expensive for a small team",
+      "Vendor lock-in — proprietary content model format",
+      "Content modeling is flat (no true relational joins, only references)",
+      "Your content data lives on someone else's platform",
     ],
   },
 ];
@@ -604,6 +854,52 @@ export default function InfrastructurePage() {
                           </li>
                         ))}
                       </ul>
+
+                      {/* Alternatives */}
+                      {service.alternatives && service.alternatives.length > 0 && (
+                        <div className="mt-5 pt-4 border-t border-gray-200">
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 font-semibold mb-3">
+                            Alternatives Considered
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {service.alternatives.map((alt) => (
+                              <div
+                                key={alt.name}
+                                className="rounded-lg border border-gray-200 bg-white p-3"
+                              >
+                                <div className="flex items-baseline justify-between mb-2">
+                                  <div>
+                                    <p className="text-xs font-semibold text-gray-900">{alt.name}</p>
+                                    <p className="text-[10px] text-gray-400">{alt.provider}</p>
+                                  </div>
+                                  <p className="text-[10px] font-medium text-gray-500 shrink-0 ml-2">
+                                    {alt.monthlyCost}
+                                  </p>
+                                </div>
+                                <p className="text-[10px] text-gray-500 mb-2">{alt.tier}</p>
+                                <div className="space-y-2">
+                                  <ul className="space-y-0.5">
+                                    {alt.pros.map((pro, i) => (
+                                      <li key={i} className="text-[11px] text-gray-600 flex items-start gap-1.5">
+                                        <CircleCheck className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                                        {pro}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                  <ul className="space-y-0.5">
+                                    {alt.cons.map((con, i) => (
+                                      <li key={i} className="text-[11px] text-gray-600 flex items-start gap-1.5">
+                                        <CircleX className="w-3 h-3 text-red-400 shrink-0 mt-0.5" />
+                                        {con}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -715,6 +1011,106 @@ export default function InfrastructurePage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* CMS Analysis */}
+      <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-5 py-5">
+        <div className="flex items-start gap-3">
+          <MessageSquareText className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+          <div className="space-y-3">
+            <p className="text-sm text-indigo-900 font-semibold">CMS Analysis &mdash; Where Our Thinking Stands</p>
+            <p className="text-xs text-indigo-800 leading-relaxed">
+              The core stack (Vercel + Supabase + Resend + Sentry) is solid and I wouldn&apos;t change any of it.
+              The CMS is the one decision that deserves a harder look. The current lean is <strong>Strapi</strong> self-hosted
+              on Railway (~$7/mo), which means a <em>second Postgres database</em> living on a separate server. Your product
+              catalog, quotes, CRM, orders &mdash; all of that is already in Supabase&apos;s Postgres. Strapi would create its own
+              schema in its own database. That&apos;s two databases to back up, two to monitor, and content data living
+              separately from everything else.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {/* Strapi */}
+              <div className="rounded-lg bg-white/70 border border-indigo-100 p-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-700">SAFE BET</span>
+                  <p className="text-xs font-semibold text-indigo-900">Strapi</p>
+                </div>
+                <p className="text-[11px] text-indigo-700 leading-relaxed">
+                  Biggest community, a TableX competitor already uses it, proven at scale. The pragmatic choice.
+                  Trade-off: separate Railway server (~$7/mo) and a second Postgres database to maintain.
+                </p>
+              </div>
+
+              {/* Directus */}
+              <div className="rounded-lg bg-white/70 border border-indigo-100 p-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-700">WORTH A LOOK</span>
+                  <p className="text-xs font-semibold text-indigo-900">Directus</p>
+                </div>
+                <p className="text-[11px] text-indigo-700 leading-relaxed">
+                  Wraps your <em>existing</em> Supabase Postgres &mdash; one database, one source of truth. If you remove
+                  Directus, your tables are untouched. Strongest data sovereignty story. Eliminates the ~$7/mo Railway cost.
+                  Downside: auto-generated admin UI (functional, not as polished), Next.js integration is DIY.
+                </p>
+              </div>
+
+              {/* Payload */}
+              <div className="rounded-lg bg-white/70 border border-indigo-100 p-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-700">DARK HORSE</span>
+                  <p className="text-xs font-semibold text-indigo-900">Payload</p>
+                </div>
+                <p className="text-[11px] text-indigo-700 leading-relaxed">
+                  Runs <em>inside</em> the Next.js app &mdash; same Vercel deployment, same codebase, same Postgres.
+                  Zero additional infrastructure cost. TypeScript-native with auto-generated types.
+                  Concern: newer/smaller community for a client project where long-term support matters.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-indigo-800 leading-relaxed">
+              <strong>Bottom line:</strong> Strapi is the safe call. Directus is the most architecturally interesting
+              option for <em>this specific project</em> because the data is already in Supabase. Payload is the most
+              developer-elegant but the newest bet. All three self-hosted options keep data ownership in our hands &mdash;
+              Sanity and Contentful are included as references but the cloud-only model and vendor lock-in make them
+              harder to recommend given our data sovereignty preference.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stack Assessment */}
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-5">
+        <div className="flex items-start gap-3">
+          <CircleCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+          <div className="space-y-2">
+            <p className="text-sm text-emerald-900 font-semibold">Overall Stack Assessment</p>
+            <div className="text-xs text-emerald-800 leading-relaxed space-y-1.5">
+              <p>
+                <strong>Vercel</strong> &mdash; Right choice. They make Next.js; no one integrates better. Cloudflare Pages
+                is close on paper but the first-party DX gap is real. <em>Keep.</em>
+              </p>
+              <p>
+                <strong>Supabase</strong> &mdash; Right choice. The bundled platform (Postgres + Auth + Storage + Realtime)
+                at $25/mo is hard to beat. Neon is cheaper for raw Postgres but you&apos;d need 3&ndash;4 separate services to
+                replace what Supabase bundles. <em>Keep.</em>
+              </p>
+              <p>
+                <strong>Resend</strong> &mdash; Right choice. React Email templates (JSX + Tailwind) match the existing
+                stack perfectly. Free tier covers launch volume. Postmark is the fallback if delivery speed ever
+                becomes critical. <em>Keep.</em>
+              </p>
+              <p>
+                <strong>Sentry</strong> &mdash; Right choice. Best Next.js integration in the industry, generous free tier.
+                Highlight.io is worth revisiting later if session replay for the Spec Studio becomes valuable. <em>Keep.</em>
+              </p>
+              <p>
+                <strong>CMS</strong> &mdash; The one open question. Strapi is the safe bet, Directus is the architecturally
+                superior option for this project, Payload is the most developer-native. <em>Decision pending.</em>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
