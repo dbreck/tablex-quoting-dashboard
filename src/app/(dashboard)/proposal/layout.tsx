@@ -9,6 +9,7 @@ const tabs = [
   { name: "Scope", href: "/proposal" },
   { name: "Timeline", href: "/proposal/timeline" },
   { name: "Estimate", href: "/proposal/estimate" },
+  { name: "Infrastructure", href: "/proposal/infrastructure" },
 ];
 
 export default function ProposalLayout({ children }: { children: React.ReactNode }) {
