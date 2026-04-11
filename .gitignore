@@ -12,6 +12,13 @@
 
 # testing
 /coverage
+/test-results/
+
+# scratch / local output
+/tmp/
+
+# macOS Finder artifacts
+Icon?
 
 # next.js
 /.next/

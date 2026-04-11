@@ -7,16 +7,22 @@ import { ChevronDown, Check, Maximize2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import FinalStackView from "./views/FinalStackView";
 import ResearchNotesView from "./views/ResearchNotesView";
+import SetupTrackerView from "./views/SetupTrackerView";
 
 // ── View definitions ─────────────────────────────────────────────────
 
-type ViewId = "final" | "research-notes";
+type ViewId = "final" | "setup-tracker" | "research-notes";
 
 const views: { id: ViewId; label: string; description: string; isNew?: boolean }[] = [
   {
     id: "final",
     label: "Final Stack",
     description: "Decided April 2026 — what we're building on",
+  },
+  {
+    id: "setup-tracker",
+    label: "Setup Tracker",
+    description: "Signup progress, checklists, handoff plan, LastPass refs",
     isNew: true,
   },
   {
@@ -127,6 +133,7 @@ export default function InfrastructurePage() {
 
       {/* View content */}
       {currentView === "final" && <FinalStackView />}
+      {currentView === "setup-tracker" && <SetupTrackerView />}
       {currentView === "research-notes" && <ResearchNotesView />}
 
       {/* Visual Breakdown Modal */}
