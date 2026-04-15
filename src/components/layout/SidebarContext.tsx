@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-type SidebarMode = "analytics" | "quote-builder";
+type SidebarMode = "project" | "analytics" | "quote-builder";
 
 interface SidebarContextType {
   sidebarOpen: boolean;

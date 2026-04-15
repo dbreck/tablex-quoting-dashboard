@@ -34,9 +34,31 @@ import {
   ShieldAlert,
   ShoppingCart,
   Receipt,
-  FileText,
+  KanbanSquare,
+  GanttChart,
+  ListChecks,
+  Server,
+  Crosshair,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
+
+// ─── Mode definitions ────────────────────────────────────────────────────────
+
+const modes = [
+  { id: "project" as const, label: "Project", icon: Crosshair, subtitle: "Project Tracker" },
+  { id: "analytics" as const, label: "Analytics", icon: BarChart3, subtitle: "Quote Analytics" },
+  { id: "quote-builder" as const, label: "Quoting", icon: FilePlus2, subtitle: "Quoting" },
+];
+
+// ─── Nav groups per mode ─────────────────────────────────────────────────────
+
+const projectNavItems = [
+  { name: "Dashboard", href: "/project", icon: LayoutDashboard, exact: true },
+  { name: "Board", href: "/project/board", icon: KanbanSquare },
+  { name: "Timeline", href: "/project/timeline", icon: GanttChart },
+  { name: "Scope", href: "/project/scope", icon: ListChecks },
+  { name: "Infra Setup", href: "/project/infrastructure", icon: Server },
+];
 
 const overviewItem = { name: "Overview", href: "/overview", icon: LayoutDashboard };
 
@@ -97,8 +119,10 @@ export function Sidebar() {
   useEffect(() => {
     if (isRep) {
       setSidebarMode("quote-builder");
-    } else if (pathname.startsWith("/settings") || pathname.startsWith("/proposal")) {
-      // Settings/Proposal pages keep current mode (don't switch)
+    } else if (pathname.startsWith("/admin")) {
+      // Admin pages keep current mode (don't switch)
+    } else if (pathname.startsWith("/project")) {
+      setSidebarMode("project");
     } else if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works" || pathname === "/orders" || pathname === "/invoices") {
       setSidebarMode("quote-builder");
     } else {
@@ -118,7 +142,7 @@ export function Sidebar() {
 
   const activeBuilderNavGroups = isRep ? repBuilderNavGroups : builderNavGroups;
 
-  const subtitle = sidebarMode === "analytics" ? "Quote Analytics" : "Quoting";
+  const activeMode = modes.find((m) => m.id === sidebarMode) ?? modes[0];
 
   // Get user initials
   const initials = profile?.full_name
@@ -139,83 +163,78 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
-        <Link href="/overview" className="flex items-center gap-3">
+        <Link href="/project" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl p-1.5">
             <img src="/tablex-logomark.svg" alt="TableX" className="h-full w-full" />
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">
               <h1 className="text-lg font-bold tracking-tight"><span className="text-white">TABLE</span><span className="text-[#ff6b6b]">X</span></h1>
-              <p className="text-[10px] text-white/50 uppercase tracking-widest">{subtitle}</p>
+              <p className="text-[10px] text-white/50 uppercase tracking-widest">{activeMode.subtitle}</p>
             </div>
           )}
         </Link>
       </div>
 
-      {/* Mode Switcher — hidden for reps (locked to Quoting mode) */}
+      {/* Mode Switcher — 3-way vertical icon tabs (hidden for reps) */}
       {!isRep && (
-        sidebarOpen ? (
-          <div className="px-3 pt-4 pb-2">
-            <div className="flex rounded-lg bg-white/5 p-1">
-              <button
-                onClick={() => setSidebarMode("analytics")}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
-                  sidebarMode === "analytics"
-                    ? "bg-white/15 text-white"
-                    : "text-white/50 hover:text-white/70"
-                )}
-              >
-                <BarChart3 className="h-3.5 w-3.5" />
-                <span>Analytics</span>
-              </button>
-              <button
-                onClick={() => setSidebarMode("quote-builder")}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200",
-                  sidebarMode === "quote-builder"
-                    ? "bg-white/15 text-white"
-                    : "text-white/50 hover:text-white/70"
-                )}
-              >
-                <FilePlus2 className="h-3.5 w-3.5" />
-                <span>Quoting</span>
-              </button>
-            </div>
+        <div className={cn("border-b border-white/10", sidebarOpen ? "px-3 pt-3 pb-2" : "px-2 pt-3 pb-2")}>
+          <div className="space-y-1">
+            {modes.map((mode) => {
+              const isActive = sidebarMode === mode.id;
+              const Icon = mode.icon;
+              return (
+                <button
+                  key={mode.id}
+                  onClick={() => setSidebarMode(mode.id)}
+                  className={cn(
+                    "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-white/40 hover:bg-white/5 hover:text-white/70",
+                    !sidebarOpen && "justify-center px-0"
+                  )}
+                  title={!sidebarOpen ? mode.label : undefined}
+                >
+                  <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-brand-green")} />
+                  {sidebarOpen && <span>{mode.label}</span>}
+                </button>
+              );
+            })}
           </div>
-        ) : (
-          <div className="flex flex-col items-center gap-1 px-2 pt-4 pb-2">
-            <button
-              onClick={() => setSidebarMode("analytics")}
-              className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
-                sidebarMode === "analytics"
-                  ? "bg-white/10 text-brand-green"
-                  : "text-white/40 hover:text-white/70"
-              )}
-              title="Analytics"
-            >
-              <BarChart3 className="h-4.5 w-4.5" />
-            </button>
-            <button
-              onClick={() => setSidebarMode("quote-builder")}
-              className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
-                sidebarMode === "quote-builder"
-                  ? "bg-white/10 text-brand-green"
-                  : "text-white/40 hover:text-white/70"
-              )}
-              title="Quoting"
-            >
-              <FilePlus2 className="h-4.5 w-4.5" />
-            </button>
-          </div>
-        )
+        </div>
       )}
 
       {/* Navigation */}
       <nav className={cn("flex-1 overflow-y-auto", sidebarOpen ? "px-3 py-2" : "px-2 py-2")}>
-        {sidebarMode === "analytics" ? (
+        {sidebarMode === "project" ? (
+          /* ── Project Mode ─────────────────────────────────────────── */
+          <div className="space-y-0.5">
+            {projectNavItems.map((item) => {
+              const isActive = item.exact
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-white/60 hover:bg-white/5 hover:text-white",
+                    !sidebarOpen && "justify-center px-0"
+                  )}
+                  title={!sidebarOpen ? item.name : undefined}
+                >
+                  <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                  {sidebarOpen && <span>{item.name}</span>}
+                </Link>
+              );
+            })}
+          </div>
+        ) : sidebarMode === "analytics" ? (
+          /* ── Analytics Mode ───────────────────────────────────────── */
           <>
             {/* Overview — standalone */}
             {(() => {
@@ -274,6 +293,7 @@ export function Sidebar() {
             ))}
           </>
         ) : (
+          /* ── Quoting Mode ─────────────────────────────────────────── */
           <>
             {/* Overview — standalone */}
             {(() => {
@@ -334,37 +354,21 @@ export function Sidebar() {
         )}
       </nav>
 
-      {/* User Menu + Collapse Toggle */}
+      {/* Admin + User + Collapse */}
       <div className={cn("border-t border-white/10", sidebarOpen ? "px-3 py-3" : "px-2 py-3")}>
-        {/* Proposal Link */}
-        {profile?.can_access_proposal && (
-          <Link
-            href="/proposal"
-            className={cn(
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors mb-1",
-              pathname.startsWith("/proposal") && "bg-white/10 text-white",
-              !sidebarOpen && "justify-center px-0"
-            )}
-            title={!sidebarOpen ? "Proposal" : undefined}
-          >
-            <FileText className={cn("h-5 w-5 shrink-0", pathname.startsWith("/proposal") && "text-brand-green")} />
-            {sidebarOpen && <span>Proposal</span>}
-          </Link>
-        )}
-
-        {/* Admin Settings Link */}
+        {/* Admin Link (was Settings) */}
         {isAdmin && (
           <Link
-            href="/settings/users"
+            href="/admin/users"
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors mb-2",
-              pathname.startsWith("/settings") && "bg-white/10 text-white",
+              pathname.startsWith("/admin") && "bg-white/10 text-white",
               !sidebarOpen && "justify-center px-0"
             )}
-            title={!sidebarOpen ? "Settings" : undefined}
+            title={!sidebarOpen ? "Admin" : undefined}
           >
-            <Settings className={cn("h-5 w-5 shrink-0", pathname.startsWith("/settings") && "text-brand-green")} />
-            {sidebarOpen && <span>Settings</span>}
+            <Settings className={cn("h-5 w-5 shrink-0", pathname.startsWith("/admin") && "text-brand-green")} />
+            {sidebarOpen && <span>Admin</span>}
           </Link>
         )}
 
