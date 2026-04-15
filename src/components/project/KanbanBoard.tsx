@@ -3,8 +3,7 @@
 import { useCallback } from "react";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
-import { type Task, type KanbanColumn as KanbanColumnType, COLUMNS } from "@/data/project-tracker";
-import { DELIVERABLES } from "@/data/project-phase2";
+import { type Task, type KanbanColumn as KanbanColumnType, COLUMNS, filterTasks } from "@/data/project-tracker";
 import { KanbanColumn } from "./KanbanColumn";
 
 interface KanbanBoardProps {
@@ -15,20 +14,7 @@ interface KanbanBoardProps {
 export function KanbanBoard({ onTaskClick, onAddTask }: KanbanBoardProps) {
   const { tasks, filters, moveTask } = useProjectTrackerStore();
 
-  // Apply filters
-  const filteredTasks = tasks.filter((t) => {
-    if (filters.assignee !== "all" && t.assignee !== filters.assignee) return false;
-    if (filters.priority !== "all" && t.priority !== filters.priority) return false;
-    if (filters.workstream !== "all") {
-      const deliverable = DELIVERABLES.find((d) => d.id === t.deliverableId);
-      if (deliverable?.workstream !== filters.workstream) return false;
-    }
-    if (filters.search) {
-      const search = filters.search.toLowerCase();
-      if (!t.title.toLowerCase().includes(search) && !t.description?.toLowerCase().includes(search)) return false;
-    }
-    return true;
-  });
+  const filteredTasks = filterTasks(tasks, filters);
 
   const getColumnTasks = useCallback(
     (columnId: KanbanColumnType) =>

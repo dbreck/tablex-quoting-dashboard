@@ -34,8 +34,9 @@ export default function ProjectDashboard() {
       <ProgressSummary />
 
       {/* Quick links */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <QuickLink href="/project/board" icon={KanbanSquare} label="Board" desc="Kanban view" />
+        <QuickLink href="/project/tasks" icon={ListChecks} label="Tasks" desc="List view" />
         <QuickLink href="/project/timeline" icon={GanttChart} label="Timeline" desc="Gantt chart" />
         <QuickLink href="/project/scope" icon={ListChecks} label="Scope" desc="Deliverables" />
         <QuickLink href="/project/infrastructure" icon={Server} label="Infra Setup" desc="Service tracker" />

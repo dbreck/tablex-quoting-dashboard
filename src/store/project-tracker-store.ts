@@ -37,6 +37,9 @@ interface ProjectTrackerStore {
   toggleSubtask: (taskId: string, subtaskId: string) => void;
   removeSubtask: (taskId: string, subtaskId: string) => void;
 
+  // Bulk operations
+  bulkUpdateTasks: (ids: string[], updates: Partial<Omit<Task, "id" | "createdAt">>) => void;
+
   // Filters (transient)
   filters: Filters;
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
@@ -149,6 +152,15 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
                   updatedAt: new Date().toISOString(),
                 }
               : t
+          ),
+        });
+      },
+
+      bulkUpdateTasks: (ids, updates) => {
+        const now = new Date().toISOString();
+        set({
+          tasks: get().tasks.map((t) =>
+            ids.includes(t.id) ? { ...t, ...updates, updatedAt: now } : t
           ),
         });
       },

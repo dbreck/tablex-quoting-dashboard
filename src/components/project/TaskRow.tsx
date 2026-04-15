@@ -1,0 +1,183 @@
+"use client";
+
+import { useState } from "react";
+import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import {
+  type Task,
+  type KanbanColumn,
+  type TeamMember,
+  TEAM_MEMBERS,
+  LABELS,
+  COLUMNS,
+  getWorkstreamForDeliverable,
+} from "@/data/project-tracker";
+import { cn } from "@/lib/utils";
+import { CheckCircle2, Circle, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
+import { TaskRowExpanded } from "./TaskRowExpanded";
+
+const priorityDot: Record<string, string> = {
+  critical: "bg-red-500",
+  high: "bg-orange-400",
+  medium: "bg-yellow-400",
+  low: "bg-gray-300",
+};
+
+interface TaskRowProps {
+  task: Task;
+  onOpenDetail: (task: Task) => void;
+  selected?: boolean;
+  onSelect?: (taskId: string, shiftKey: boolean) => void;
+  showWorkstream?: boolean;
+}
+
+export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream }: TaskRowProps) {
+  const { updateTask } = useProjectTrackerStore();
+  const [expanded, setExpanded] = useState(false);
+  const isDone = task.column === "done";
+  const workstream = showWorkstream ? getWorkstreamForDeliverable(task.deliverableId) : null;
+  const assignee = TEAM_MEMBERS.find((m) => m.id === task.assignee);
+  const completedSubtasks = task.subtasks.filter((s) => s.completed).length;
+  const totalSubtasks = task.subtasks.length;
+
+  const toggleDone = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    updateTask(task.id, {
+      column: isDone ? "backlog" : "done",
+      completedAt: isDone ? undefined : new Date().toISOString(),
+    });
+  };
+
+  return (
+    <div>
+      <div
+        className={cn(
+          "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group cursor-pointer",
+          selected ? "bg-blue-50 border border-blue-200" : "hover:bg-gray-50 border border-transparent",
+          isDone && "opacity-60"
+        )}
+        onClick={(e) => {
+          if (onSelect) {
+            onSelect(task.id, e.shiftKey);
+          }
+        }}
+      >
+        {/* Checkbox */}
+        <button
+          onClick={toggleDone}
+          className="shrink-0 p-0.5"
+        >
+          {isDone ? (
+            <CheckCircle2 className="h-4 w-4 text-brand-green" />
+          ) : (
+            <Circle className="h-4 w-4 text-gray-300 hover:text-gray-400 transition-colors" />
+          )}
+        </button>
+
+        {/* Title */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenDetail(task);
+          }}
+          className={cn(
+            "flex-1 text-left text-sm font-medium truncate min-w-0",
+            isDone ? "line-through text-gray-400" : "text-gray-800 hover:text-gray-900"
+          )}
+          title={task.title}
+        >
+          {task.title}
+        </button>
+
+        {/* Workstream badge (shown in flat group-by modes) */}
+        {workstream && (
+          <span
+            className="text-[9px] font-medium px-1.5 py-0.5 rounded shrink-0"
+            style={{ backgroundColor: workstream.color + "15", color: workstream.color }}
+          >
+            {workstream.name}
+          </span>
+        )}
+
+        {/* Label dots */}
+        {task.labels.length > 0 && (
+          <div className="flex gap-0.5 shrink-0">
+            {task.labels.slice(0, 3).map((labelId) => {
+              const label = LABELS.find((l) => l.id === labelId);
+              return label ? (
+                <span
+                  key={labelId}
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: label.color }}
+                  title={label.name}
+                />
+              ) : null;
+            })}
+          </div>
+        )}
+
+        {/* Subtask count */}
+        {totalSubtasks > 0 && (
+          <span className="flex items-center gap-0.5 text-[10px] text-gray-400 shrink-0">
+            <CheckCircle2 className="h-3 w-3" />
+            {completedSubtasks}/{totalSubtasks}
+          </span>
+        )}
+
+        {/* Priority dot */}
+        <span
+          className={cn("w-2 h-2 rounded-full shrink-0", priorityDot[task.priority])}
+          title={task.priority}
+        />
+
+        {/* Status dropdown */}
+        <select
+          value={task.column}
+          onChange={(e) => {
+            e.stopPropagation();
+            const col = e.target.value as KanbanColumn;
+            updateTask(task.id, {
+              column: col,
+              completedAt: col === "done" ? new Date().toISOString() : undefined,
+            });
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="text-[10px] border border-gray-200 rounded px-1.5 py-0.5 bg-white text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-green/50 shrink-0 w-24"
+        >
+          {COLUMNS.map((c) => (
+            <option key={c.id} value={c.id}>{c.label}</option>
+          ))}
+        </select>
+
+        {/* Assignee chip */}
+        <select
+          value={task.assignee ?? ""}
+          onChange={(e) => {
+            e.stopPropagation();
+            updateTask(task.id, { assignee: (e.target.value || null) as TeamMember | null });
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="text-[10px] border border-gray-200 rounded px-1.5 py-0.5 bg-white text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-green/50 shrink-0 w-20"
+        >
+          <option value="">—</option>
+          {TEAM_MEMBERS.map((m) => (
+            <option key={m.id} value={m.id}>{m.name}</option>
+          ))}
+        </select>
+
+        {/* Expand chevron */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+          className="p-0.5 rounded hover:bg-gray-100 text-gray-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          {expanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+        </button>
+      </div>
+
+      {/* Inline expanded detail */}
+      {expanded && <TaskRowExpanded task={task} />}
+    </div>
+  );
+}

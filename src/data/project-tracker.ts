@@ -152,3 +152,32 @@ export function getWorkstreamForDeliverable(deliverableId: string) {
   if (!d) return null;
   return WORKSTREAMS.find((ws) => ws.id === d.workstream) ?? null;
 }
+
+/** Filter tasks by assignee, workstream, priority, and search */
+export function filterTasks(
+  tasks: Task[],
+  filters: { assignee: string; workstream: string; priority: string; search: string }
+): Task[] {
+  return tasks.filter((t) => {
+    if (filters.assignee !== "all" && t.assignee !== filters.assignee) return false;
+    if (filters.priority !== "all" && t.priority !== filters.priority) return false;
+    if (filters.workstream !== "all") {
+      const deliverable = DELIVERABLES.find((d) => d.id === t.deliverableId);
+      if (deliverable?.workstream !== filters.workstream) return false;
+    }
+    if (filters.search) {
+      const search = filters.search.toLowerCase();
+      if (!t.title.toLowerCase().includes(search) && !t.description?.toLowerCase().includes(search)) return false;
+    }
+    return true;
+  });
+}
+
+/** Get progress stats for a deliverable's tasks */
+export function getDeliverableProgress(tasks: Task[], deliverableId: string) {
+  const deliverableTasks = tasks.filter((t) => t.deliverableId === deliverableId);
+  const done = deliverableTasks.filter((t) => t.column === "done").length;
+  const total = deliverableTasks.length;
+  const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+  return { done, total, percent };
+}
