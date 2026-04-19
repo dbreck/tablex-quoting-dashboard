@@ -41,6 +41,7 @@ import {
   Server,
   Crosshair,
   Fingerprint,
+  LayoutTemplate,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -73,6 +74,7 @@ const analyticsNavGroups = [
       { name: "Customer Journey", href: "/customer-journey", icon: Route },
       { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
       { name: "Site Architecture", href: "/site-architecture", icon: Network },
+      { name: "Wireframes", href: "/wireframes", icon: LayoutTemplate },
       { name: "Product Library", href: "/product-library", icon: Library },
       { name: "Catalog", href: "/catalog", icon: Package },
       { name: "Configurator", href: "/configurator", icon: Box },
