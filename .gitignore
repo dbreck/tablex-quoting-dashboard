@@ -46,6 +46,12 @@ supabase/.temp/
 # CAD/3D model working files (DWG, DXF, GLB originals — GLBs served from Supabase)
 /catalog/
 
+# Design system source bundles (displayed assets live in /public/wireframes/)
+/docs/TableX Design System/
+/docs/TableX Design System.zip
+/project-brief.json
+/.claude/
+
 # vercel
 .vercel
 
