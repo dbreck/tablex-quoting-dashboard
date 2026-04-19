@@ -173,6 +173,7 @@ export default function ConfiguratorPage() {
   const [baseFinish, setBaseFinish] = useState<FinishOption>(powderCoatFinishes[0]);
   const [topMaterial, setTopMaterial] = useState<TopMaterial>("hpl");
   const [topFinish, setTopFinish] = useState<FinishOption>(hplFinishes[0]);
+  const [tierFilter, setTierFilter] = useState<"Core" | "Select" | "Luxe" | "Custom" | null>(null);
   const [envPreset, setEnvPreset] = useState<EnvironmentPreset>("city");
   const [shapesOpen, setShapesOpen] = useState(true);
   const [edgeType, setEdgeType] = useState<string>(edgeTypes[0].id);
@@ -256,6 +257,7 @@ export default function ConfiguratorPage() {
     setTopMaterial(val);
     const finishes = TOP_FINISH_MAP[val];
     setTopFinish(finishes[0]);
+    setTierFilter(null);
   }
 
   const topFinishes = TOP_FINISH_MAP[topMaterial];
@@ -511,20 +513,103 @@ export default function ConfiguratorPage() {
             <label className="text-sm font-medium text-slate-700 mb-1.5 block">
               Top Color
             </label>
-            <div className="flex flex-wrap gap-2">
-              {topFinishes.map((finish) => (
-                <button
-                  key={finish.id}
-                  onClick={() => setTopFinish(finish)}
-                  title={finish.name}
-                  className={`h-8 w-8 rounded-full border-2 transition-all cursor-pointer ${
-                    topFinish.id === finish.id
-                      ? "border-brand-green scale-110 ring-2 ring-brand-green/30"
-                      : "border-slate-200 hover:border-slate-400"
-                  }`}
-                  style={{ backgroundColor: finish.hex }}
-                />
-              ))}
+            {topFinishes.some((f) => f.priceTier) && (
+              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                <span className="text-xs text-slate-500 mr-1">Tier:</span>
+                {(["Core", "Select", "Luxe", "Custom"] as const).map((tier) => (
+                  <button
+                    key={tier}
+                    onClick={() => setTierFilter(tierFilter === tier ? null : tier)}
+                    className={`text-[11px] font-medium px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                      tierFilter === tier
+                        ? "border-brand-green bg-brand-green/10 text-brand-green"
+                        : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    {tier}
+                  </button>
+                ))}
+                {tierFilter && (
+                  <button
+                    onClick={() => setTierFilter(null)}
+                    className="text-[11px] text-slate-500 hover:text-slate-700 ml-1 cursor-pointer"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            )}
+            <div className="grid grid-cols-4 gap-2">
+              {topFinishes
+                .filter((f) => !tierFilter || f.priceTier === tierFilter)
+                .map((finish) => {
+                  const hasMetadata = finish.brand || finish.priceTier;
+                  const tierBadgeClass =
+                    finish.priceTier === "Core"
+                      ? "bg-slate-100 text-slate-700"
+                      : finish.priceTier === "Select"
+                        ? "bg-amber-100 text-amber-800"
+                        : finish.priceTier === "Luxe"
+                          ? "bg-violet-100 text-violet-800"
+                          : finish.priceTier === "Custom"
+                            ? "bg-slate-900 text-white"
+                            : "";
+                  return (
+                    <button
+                      key={finish.id}
+                      onClick={() => setTopFinish(finish)}
+                      title={finish.name}
+                      className={`flex flex-col items-stretch rounded-lg border text-left transition-all cursor-pointer overflow-hidden ${
+                        topFinish.id === finish.id
+                          ? "border-brand-green ring-2 ring-brand-green/30"
+                          : "border-slate-200 hover:border-slate-400"
+                      }`}
+                    >
+                      <div
+                        className="relative h-12 w-full"
+                        style={{ backgroundColor: finish.hex }}
+                      >
+                        {finish.brand && (
+                          <span className="absolute top-1 left-1 inline-flex items-center justify-center w-5 h-5 rounded bg-white/90 text-slate-900 text-[10px] font-bold">
+                            {finish.brand === "Wilsonart" ? "W" : "F"}
+                          </span>
+                        )}
+                      </div>
+                      {hasMetadata ? (
+                        <div className="px-1.5 py-1 space-y-0.5">
+                          <div className="text-[11px] font-medium text-slate-900 leading-tight truncate">
+                            {finish.name}
+                          </div>
+                          {finish.itemNumber && (
+                            <div className="text-[10px] font-mono text-slate-500 truncate">
+                              {finish.itemNumber}
+                            </div>
+                          )}
+                          {finish.priceTier && (
+                            <div className="flex items-center">
+                              <span
+                                className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${tierBadgeClass}`}
+                              >
+                                {finish.priceTier}
+                              </span>
+                              {finish.upchargePct !== undefined && finish.upchargePct > 0 && (
+                                <span className="text-[10px] text-slate-500 ml-1">
+                                  +{finish.upchargePct}%
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="px-1.5 py-1">
+                          <div className="text-[11px] font-medium text-slate-900 leading-tight truncate">
+                            {finish.name}
+                          </div>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
             <p className="text-xs text-slate-500 mt-1">{topFinish.name}</p>
           </div>

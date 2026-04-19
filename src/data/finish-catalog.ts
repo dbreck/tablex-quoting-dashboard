@@ -1,3 +1,7 @@
+export type LaminateBrand = "Wilsonart" | "Formica";
+export type LaminatePriceTier = "Core" | "Select" | "Luxe" | "Custom";
+export type LaminateSubCategory = "woodgrain" | "solid" | "pattern";
+
 export interface FinishOption {
   id: string;
   name: string;
@@ -8,6 +12,15 @@ export interface FinishOption {
   textureUrl?: string;
   normalMapUrl?: string;
   roughnessMapUrl?: string;
+
+  // TableX laminate metadata (populated for 2026 Wilsonart / Formica catalog)
+  brand?: LaminateBrand;
+  itemNumber?: string;
+  subCategory?: LaminateSubCategory;
+  priceTier?: LaminatePriceTier;
+  upchargePct?: number;             // 0, 10, 15, 20, 30, 35
+  hasMatchingEdgeband?: boolean;
+  isStock?: boolean;                // TableX "must stock" flag
 }
 
 export interface EdgeType {
@@ -71,26 +84,126 @@ export const chromeFinish: FinishOption = {
 };
 
 // ---------------------------------------------------------------------------
-// HPL (High Pressure Laminate) — neutral tones for tops
+// 2026 TableX Laminate Catalog — Wilsonart + Formica
+// Source: "2026 TableX Laminate Colors FINAL.xlsx"
+//
+// Organized as:
+//  - Woodgrains (28 colors) → exposed as `tflFinishes` for UI grouping
+//  - Solids (15) + Patterns (23) → exposed as `hplFinishes`
+//
+// Hex values are visual approximations based on color names; swap in real
+// texture URLs (`textureUrl`, `normalMapUrl`) as they become available.
 // ---------------------------------------------------------------------------
-export const hplFinishes: FinishOption[] = [
-  { id: 'hpl-white', name: 'HPL White', category: 'hpl', hex: '#f0f0f0', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/white-normal.png' },
-  { id: 'hpl-gray', name: 'HPL Gray', category: 'hpl', hex: '#b0b0b0', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/gray-normal.png' },
-  { id: 'hpl-charcoal', name: 'HPL Charcoal', category: 'hpl', hex: '#4a4a4a', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/charcoal-normal.png' },
-  { id: 'hpl-linen', name: 'HPL Linen', category: 'hpl', hex: '#e8dcc8', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/linen-normal.png' },
-  { id: 'hpl-fog', name: 'HPL Fog', category: 'hpl', hex: '#d0cfc9', roughness: 0.6, metalness: 0, normalMapUrl: '/textures/hpl/fog-normal.png' },
+
+function laminate(
+  id: string,
+  name: string,
+  hex: string,
+  category: 'hpl' | 'tfl',
+  subCategory: LaminateSubCategory,
+  brand: LaminateBrand,
+  itemNumber: string,
+  priceTier: LaminatePriceTier,
+  upchargePct: number,
+  hasMatchingEdgeband: boolean,
+  isStock = true,
+): FinishOption {
+  return {
+    id,
+    name,
+    category,
+    hex,
+    roughness: subCategory === "solid" ? 0.55 : subCategory === "pattern" ? 0.65 : 0.72,
+    metalness: 0,
+    brand,
+    itemNumber,
+    subCategory,
+    priceTier,
+    upchargePct,
+    hasMatchingEdgeband,
+    isStock,
+  };
+}
+
+// ----- WOODGRAINS (28) → tflFinishes -----
+export const tflFinishes: FinishOption[] = [
+  laminate('lam-7122K-07', 'Empire Mahogany',    '#4a2618', 'tfl', 'woodgrain', 'Wilsonart', '7122K-07',  'Core',   0,  true),
+  laminate('lam-7925-38',  'Monticello Maple',   '#c89668', 'tfl', 'woodgrain', 'Wilsonart', '7925-38',   'Core',   0,  true),
+  laminate('lam-7960K-18', 'Studio Teak',        '#8b6239', 'tfl', 'woodgrain', 'Wilsonart', '7960K-18',  'Core',   0,  true),
+  laminate('lam-7946-38',  'Brazilwood',         '#6b2e1f', 'tfl', 'woodgrain', 'Wilsonart', '7946-38',   'Core',   0,  true),
+  laminate('lam-10776-60', 'Kensington Maple',   '#d4a374', 'tfl', 'woodgrain', 'Wilsonart', '10776-60',  'Core',   0,  true),
+  laminate('lam-7054-60',  'Wild Cherry',        '#7a3b28', 'tfl', 'woodgrain', 'Wilsonart', '7054-60',   'Core',   0,  true),
+  laminate('lam-7965K-12', 'Walnut Heights',     '#5a3c2a', 'tfl', 'woodgrain', 'Wilsonart', '7965K-12',  'Core',   0,  true),
+  laminate('lam-7943K-07', 'Colombian Walnut',   '#3d2817', 'tfl', 'woodgrain', 'Wilsonart', '7943K-07',  'Core',   0,  true),
+  laminate('lam-5785-NG',  'Ashwood Beige',      '#b39a77', 'tfl', 'woodgrain', 'Formica',   '5785-NG',   'Select', 10, true),
+  laminate('lam-5788-NG',  'Hazel Walnut',       '#8b6a4a', 'tfl', 'woodgrain', 'Formica',   '5788-NG',   'Select', 10, true),
+  laminate('lam-7991-38',  'Neowalnut',          '#6a4a33', 'tfl', 'woodgrain', 'Wilsonart', '7991-38',   'Select', 15, true),
+  laminate('lam-7992-38',  'Pinnacle Walnut',    '#7a5a3e', 'tfl', 'woodgrain', 'Wilsonart', '7992-38',   'Select', 15, false),
+  laminate('lam-7993-38',  'Florence Walnut',    '#6b5440', 'tfl', 'woodgrain', 'Wilsonart', '7993-38',   'Select', 15, false),
+  laminate('lam-7949K-18', 'Asian Night',        '#2a1f18', 'tfl', 'woodgrain', 'Wilsonart', '7949K-18',  'Select', 10, true),
+  laminate('lam-7964K-12', 'Skyline Walnut',     '#3d3028', 'tfl', 'woodgrain', 'Wilsonart', '7964K-12',  'Select', 10, true),
+  laminate('lam-7985-38',  'Morelia Mango',      '#9a6a40', 'tfl', 'woodgrain', 'Wilsonart', '7985-38',   'Select', 15, false),
+  laminate('lam-7937-38',  'River Cherry',       '#8b4a33', 'tfl', 'woodgrain', 'Wilsonart', '7937-38',   'Select', 15, true),
+  laminate('lam-7909-60',  'Fusion Maple',       '#d4a87d', 'tfl', 'woodgrain', 'Wilsonart', '7909-60',   'Select', 10, true),
+  laminate('lam-7990-38',  'Mission Maple',      '#a88560', 'tfl', 'woodgrain', 'Wilsonart', '7990-38',   'Select', 15, false),
+  laminate('lam-7995-38',  'Sterling Ash',       '#a09790', 'tfl', 'woodgrain', 'Wilsonart', '7995-38',   'Select', 15, false),
+  laminate('lam-7933K-07', 'Cafelle',            '#8a6850', 'tfl', 'woodgrain', 'Wilsonart', '7933K-07',  'Select', 15, false),
+  laminate('lam-7981K-12', 'Landmark Wood',      '#5d3f2a', 'tfl', 'woodgrain', 'Wilsonart', '7981K-12',  'Luxe',   35, false),
+  laminate('lam-8208K-16', 'Fawn Cypress',       '#b8a082', 'tfl', 'woodgrain', 'Wilsonart', '8208K-16',  'Luxe',   20, true),
+  laminate('lam-7952K-18', 'Asian Sand',         '#b89870', 'tfl', 'woodgrain', 'Wilsonart', '7952K-18',  'Luxe',   35, false),
+  laminate('lam-8210K-28', 'Portico Teak',       '#7a5638', 'tfl', 'woodgrain', 'Wilsonart', '8210K-28',  'Luxe',   30, true),
+  laminate('lam-8209K-28', 'Veranla Teak',       '#8a7056', 'tfl', 'woodgrain', 'Wilsonart', '8209K-28',  'Luxe',   35, false),
+  laminate('lam-7970K-18', 'High Line',          '#6a553e', 'tfl', 'woodgrain', 'Wilsonart', '7970K-18',  'Luxe',   35, true),
+  laminate('lam-8212K-28', 'Phantom Ecru',       '#c8b89e', 'tfl', 'woodgrain', 'Wilsonart', '8212K-28',  'Luxe',   30, true),
 ];
 
-// ---------------------------------------------------------------------------
-// TFL (Thermally Fused Laminate) — wood tones for tops
-// ---------------------------------------------------------------------------
-export const tflFinishes: FinishOption[] = [
-  { id: 'tfl-natural-maple', name: 'Natural Maple', category: 'tfl', hex: '#d4a76a', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/maple-color.webp', normalMapUrl: '/textures/tfl/maple-normal.png' },
-  { id: 'tfl-honey-oak', name: 'Honey Oak', category: 'tfl', hex: '#c08840', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/oak-color.webp', normalMapUrl: '/textures/tfl/oak-normal.png' },
-  { id: 'tfl-cherry', name: 'Cherry', category: 'tfl', hex: '#8b4513', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/cherry-color.webp', normalMapUrl: '/textures/tfl/cherry-normal.png' },
-  { id: 'tfl-walnut', name: 'Walnut', category: 'tfl', hex: '#5c4033', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/walnut-color.webp', normalMapUrl: '/textures/tfl/walnut-normal.png' },
-  { id: 'tfl-espresso', name: 'Espresso', category: 'tfl', hex: '#3c2415', roughness: 0.7, metalness: 0, textureUrl: '/textures/tfl/espresso-color.webp', normalMapUrl: '/textures/tfl/espresso-normal.png' },
+// ----- SOLIDS (15) + PATTERNS (23) → hplFinishes -----
+export const hplFinishes: FinishOption[] = [
+  // Solids
+  laminate('lam-D354-60',   'Designer White',              '#f0eee8', 'hpl', 'solid', 'Wilsonart', 'D354-60',  'Core',   0,  true),
+  laminate('lam-15501-31',  'White Velvet — Traceless',    '#f5f5f3', 'hpl', 'solid', 'Wilsonart', '15501-31', 'Custom', 0,  false),
+  laminate('lam-1573-60',   'Frosty White',                '#ffffff', 'hpl', 'solid', 'Wilsonart', '1573-60',  'Core',   0,  true),
+  laminate('lam-D439-60',   'Wallaby',                     '#a89b88', 'hpl', 'solid', 'Wilsonart', 'D439-60',  'Core',   0,  true),
+  laminate('lam-D327-60',   'Pepperdust',                  '#968878', 'hpl', 'solid', 'Wilsonart', 'D327-60',  'Core',   0,  true),
+  laminate('lam-D381-60',   'Fashion Grey',                '#8e8882', 'hpl', 'solid', 'Wilsonart', 'D381-60',  'Core',   0,  true),
+  laminate('lam-D315-60',   'Platinum Grey',               '#b8b4ae', 'hpl', 'solid', 'Wilsonart', 'D315-60',  'Core',   0,  true),
+  laminate('lam-D504-60',   'Fossil Shale',                '#6a6058', 'hpl', 'solid', 'Wilsonart', 'D504-60',  'Core',   0,  true),
+  laminate('lam-15504-31',  'Charcoal Velvet — Traceless', '#3a3a3a', 'hpl', 'solid', 'Wilsonart', '15504-31', 'Custom', 0,  false),
+  laminate('lam-D91-60',    'Slate Grey',                  '#4a4a4e', 'hpl', 'solid', 'Wilsonart', 'D91-60',   'Core',   0,  true),
+  laminate('lam-1595-60',   'Black',                       '#1a1a1a', 'hpl', 'solid', 'Wilsonart', '1595-60',  'Core',   0,  true),
+  laminate('lam-D321-60',   'Brittany Blue',               '#1e3a5f', 'hpl', 'solid', 'Wilsonart', 'D321-60',  'Select', 15, false),
+  laminate('lam-D25-60',    'Atlantis',                    '#1e5a6f', 'hpl', 'solid', 'Wilsonart', 'D25-60',   'Select', 15, false),
+  laminate('lam-D505-60',   'Midnight',                    '#0e0f18', 'hpl', 'solid', 'Wilsonart', 'D505-60',  'Select', 15, false),
+  laminate('lam-15505-31',  'Black — Traceless',           '#1a1a1a', 'hpl', 'solid', 'Wilsonart', '15505-31', 'Custom', 0,  false),
+
+  // Patterns
+  laminate('lam-4779-60',   'Pewter Brush',      '#7a7874', 'hpl', 'pattern', 'Wilsonart', '4779-60',  'Core',   0,  false),
+  laminate('lam-4669-60',   'Natural Tigris',    '#a89680', 'hpl', 'pattern', 'Wilsonart', '4669-60',  'Core',   0,  false),
+  laminate('lam-4674-60',   'Evening Tigris',    '#4a4038', 'hpl', 'pattern', 'Wilsonart', '4674-60',  'Core',   0,  false),
+  laminate('lam-4783-60',   'White Tigris',      '#d8d0c4', 'hpl', 'pattern', 'Wilsonart', '4783-60',  'Core',   0,  false),
+  laminate('lam-4623-60',   'Graphite Nebula',   '#3a3a3e', 'hpl', 'pattern', 'Wilsonart', '4623-60',  'Core',   0,  false),
+  laminate('lam-4622-60',   'Grey Nebula',       '#8a8a8e', 'hpl', 'pattern', 'Wilsonart', '4622-60',  'Core',   0,  false),
+  laminate('lam-4621-60',   'White Nebula',      '#dcd8d4', 'hpl', 'pattern', 'Wilsonart', '4621-60',  'Core',   0,  false),
+  laminate('lam-5035-38',   'Handspun Slate',    '#6a6a6c', 'hpl', 'pattern', 'Wilsonart', '5035-38',  'Core',   0,  false),
+  laminate('lam-5034-38',   'Handspun Dove',     '#a8a8aa', 'hpl', 'pattern', 'Wilsonart', '5034-38',  'Core',   0,  false),
+  laminate('lam-5036-38',   'Handspun Chestnut', '#7a5a40', 'hpl', 'pattern', 'Wilsonart', '5036-38',  'Core',   0,  false),
+  laminate('lam-5033-38',   'Handspun Pearl',    '#e8e4de', 'hpl', 'pattern', 'Wilsonart', '5033-38',  'Core',   0,  false),
+  laminate('lam-5016-38',   'French Linen',      '#c4b8a0', 'hpl', 'pattern', 'Wilsonart', '5016-38',  'Core',   0,  false),
+  laminate('lam-4991-38',   'Pressed Linen',     '#b8ac98', 'hpl', 'pattern', 'Wilsonart', '4991-38',  'Core',   0,  false),
+  laminate('lam-5015-38',   'Nordic Linen',      '#b4b0a4', 'hpl', 'pattern', 'Wilsonart', '5015-38',  'Core',   0,  false),
+  laminate('lam-4942-38',   'Crisp Linen',       '#d4c8b0', 'hpl', 'pattern', 'Wilsonart', '4942-38',  'Core',   0,  true),
+  laminate('lam-4944-38',   'Casual Linen',      '#c0b498', 'hpl', 'pattern', 'Wilsonart', '4944-38',  'Core',   0,  false),
+  laminate('lam-4996-38',   'Flax Linen',        '#c8ba90', 'hpl', 'pattern', 'Wilsonart', '4996-38',  'Core',   0,  false),
+  laminate('lam-4943-38',   'Classic Linen',     '#bbb094', 'hpl', 'pattern', 'Wilsonart', '4943-38',  'Core',   0,  false),
+  laminate('lam-4941K-18',  'Cosmic Strandz',    '#3e3834', 'hpl', 'pattern', 'Wilsonart', '4941K-18', 'Luxe',   20, false),
+  laminate('lam-4940K-18',  'Astro Strandz',     '#6a6460', 'hpl', 'pattern', 'Wilsonart', '4940K-18', 'Luxe',   20, false),
+  laminate('lam-4939K-18',  'Vapor Strandz',     '#a8a4a0', 'hpl', 'pattern', 'Wilsonart', '4939K-18', 'Luxe',   20, false),
+  laminate('lam-5023K-19',  'Nightfall',         '#1a1a20', 'hpl', 'pattern', 'Wilsonart', '5023K-19', 'Luxe',   20, false),
+  laminate('lam-5024K-19',  'Blackbird',         '#232326', 'hpl', 'pattern', 'Wilsonart', '5024K-19', 'Luxe',   20, false),
 ];
+
+/** All 2026 TableX laminates (66 colors: 28 woodgrain + 15 solid + 23 pattern). */
+export const laminateCatalog: FinishOption[] = [...tflFinishes, ...hplFinishes];
 
 // ---------------------------------------------------------------------------
 // Solid Surface
@@ -168,6 +281,14 @@ export function getFinishById(id: string): FinishOption | undefined {
 
 export function getFinishesByCategory(category: FinishOption['category']): FinishOption[] {
   return allFinishes.filter((f) => f.category === category);
+}
+
+export function getLaminatesBySubCategory(subCategory: LaminateSubCategory): FinishOption[] {
+  return laminateCatalog.filter((f) => f.subCategory === subCategory);
+}
+
+export function getLaminatesByPriceTier(tier: LaminatePriceTier): FinishOption[] {
+  return laminateCatalog.filter((f) => f.priceTier === tier);
 }
 
 export function getDefaultFinish(): FinishOption {

@@ -9,6 +9,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
+  Library,
   Workflow,
   Route,
   ScanBarcode,
@@ -39,6 +40,7 @@ import {
   ListChecks,
   Server,
   Crosshair,
+  Fingerprint,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -71,6 +73,7 @@ const analyticsNavGroups = [
       { name: "Customer Journey", href: "/customer-journey", icon: Route },
       { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
       { name: "Site Architecture", href: "/site-architecture", icon: Network },
+      { name: "Product Library", href: "/product-library", icon: Library },
       { name: "Catalog", href: "/catalog", icon: Package },
       { name: "Configurator", href: "/configurator", icon: Box },
     ],
@@ -78,6 +81,7 @@ const analyticsNavGroups = [
   {
     label: "Business Intelligence",
     items: [
+      { name: "TableX DNA", href: "/tablex-dna", icon: Fingerprint },
       { name: "SKU Decoder", href: "/sku-decoder", icon: ScanBarcode },
       { name: "Pricing", href: "/pricing", icon: DollarSign },
       { name: "Queue", href: "/queue", icon: ClipboardList },

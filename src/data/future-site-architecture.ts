@@ -130,9 +130,8 @@ export const architectureSections: ArchSection[] = [
       { id: "spaces-training", label: "Training & Classroom" },
       { id: "spaces-conference", label: "Conference & Meeting" },
       { id: "spaces-collab", label: "Collaborative" },
-      { id: "spaces-cafe", label: "Cafe & Break" },
-      { id: "spaces-height", label: "Height Adjustable" },
-      { id: "spaces-nesting", label: "Nesting & Folding" },
+      { id: "spaces-cafe", label: "Cafe & Hospitality" },
+      { id: "spaces-healthcare", label: "Healthcare" },
     ],
   },
   {

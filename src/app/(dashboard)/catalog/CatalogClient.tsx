@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import LaminatesTab from "@/components/catalog/LaminatesTab";
 import { formatCurrency } from "@/lib/utils";
 import { Search, X, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import {
@@ -108,6 +110,7 @@ interface CatalogClientProps {
 }
 
 export default function CatalogClient({ catalogData }: CatalogClientProps) {
+  const [activeTab, setActiveTab] = useState<"skus" | "laminates">("skus");
   const [search, setSearch] = useState("");
   const [seriesFilter, setSeriesFilter] = useState<string[]>([]);
   const [shapeFilter, setShapeFilter] = useState<string[]>([]);
@@ -158,15 +161,27 @@ export default function CatalogClient({ catalogData }: CatalogClientProps) {
 
   const hasFilters = search || seriesFilter.length > 0 || shapeFilter.length > 0;
 
+  const subtitle =
+    activeTab === "laminates"
+      ? "66 laminate colors — 2026 Wilsonart + Formica catalog"
+      : `${filteredData.length.toLocaleString()} of ${catalogData.length.toLocaleString()} products`;
+
   return (
     <div>
-      <Header
-        title="Product Catalog"
-        subtitle={`${filteredData.length.toLocaleString()} of ${catalogData.length.toLocaleString()} products`}
-      />
+      <Header title="Product Catalog" subtitle={subtitle} />
 
-      {/* Filters */}
-      <Card className="mb-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setActiveTab(v as "skus" | "laminates")}
+      >
+        <TabsList className="mb-4">
+          <TabsTrigger value="skus">SKUs</TabsTrigger>
+          <TabsTrigger value="laminates">Laminates</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="skus">
+          {/* Filters */}
+          <Card className="mb-6">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
@@ -302,6 +317,12 @@ export default function CatalogClient({ catalogData }: CatalogClientProps) {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="laminates">
+          <LaminatesTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
