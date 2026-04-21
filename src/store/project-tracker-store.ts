@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
@@ -368,10 +369,16 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
 
 // ─── Derived selectors / hooks ────────────────────────────────────────────────
 
+// IMPORTANT: selectors passed to useProjectTrackerStore must return stable
+// references — returning a fresh array/object every call triggers an infinite
+// render loop (React error #185). Read the raw slice and derive with useMemo.
+
 /** Flat array of team members, sorted alphabetically by name. */
 export function useTeam(): TeamMember[] {
-  return useProjectTrackerStore((s) =>
-    Object.values(s.teamMembers).sort((a, b) => a.name.localeCompare(b.name))
+  const map = useProjectTrackerStore((s) => s.teamMembers);
+  return useMemo(
+    () => Object.values(map).sort((a, b) => a.name.localeCompare(b.name)),
+    [map],
   );
 }
 
