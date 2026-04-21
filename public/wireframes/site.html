@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>TableX · Wireframes · Self-Service CPQ</title>
+<link rel="stylesheet" href="wireframe.css">
+<style>
+  .wf-main { display: flex; flex-direction: column; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Hero skeletons */
+  .hero-block { height: 420px; background: #1a1a1a; color:#fff; padding: 40px; display:flex; flex-direction:column; justify-content:space-between; position:relative; }
+  .hero-block .ph { position:absolute; inset:0; background: var(--wf-hatch); border: none; color:#666; }
+  .hero-block > * { position: relative; }
+
+  .stripe { padding: 28px 32px; background:#fff; border: 1.5px solid #111; display:flex; flex-direction:column; gap:14px; }
+  .stripe.dark { background:#111; color:#fff; }
+  .stripe-head { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; }
+  .stripe-head .eye { font-family: var(--wf-mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #95ff00; }
+
+  .seg { display:inline-flex; border:1px solid #111; }
+  .seg > * { padding: 6px 12px; font-family: var(--wf-mono); font-size: 10px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-right:1px solid #111;}
+  .seg > *:last-child{border-right:none}
+  .seg > .on { background:#111; color:#fff; }
+
+  .chip-row { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { padding:4px 10px; border:1px solid #111; font-family: var(--wf-mono); font-size:10px; letter-spacing: .08em; text-transform: uppercase; background:#fff; }
+  .chip.on { background:#111; color:#fff; }
+
+  .swatch-grid { display:grid; grid-template-columns: repeat(10, 1fr); gap:6px; }
+  .sw { aspect-ratio: 1/1; border: 1px solid #111; }
+
+  .spec-table { border: 1px solid #111; }
+  .spec-table .row { display:grid; grid-template-columns: 180px 1fr; border-bottom:1px solid #ccc; padding: 8px 12px; gap: 12px; font-size: 12px; }
+  .spec-table .row:last-child { border-bottom:none; }
+  .spec-table .row b { font-family: var(--wf-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color:#555; font-weight:600; }
+
+  /* Spec studio layout */
+  .studio-grid { display: grid; grid-template-columns: 280px 1fr 340px; gap:0; border: 1.5px solid #111; min-height: 560px; }
+  .studio-col { border-right: 1px solid #111; padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .studio-col:last-child { border-right: none; }
+  .studio-col h5 { font-family: var(--wf-mono); font-size:10px; letter-spacing: .12em; text-transform: uppercase; margin:0; color:#555;}
+  .studio-canvas { background: #f1efe7; display:flex; align-items:center; justify-content:center; position:relative; }
+  .studio-canvas .ph { border:none; background: var(--wf-hatch); position:absolute; inset:0; }
+  .studio-canvas .overlay { position:absolute; bottom:12px; left:12px; right:12px; display:flex; justify-content:space-between; font-family:var(--wf-mono); font-size:10px; background:rgba(255,255,255,.9); padding:6px 10px; border:1px solid #111; }
+
+  /* Dealer portal */
+  .portal-kpis { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+  .kpi { border:1.5px solid #111; background:#fff; padding:14px; }
+  .kpi .n { font-size:28px; font-weight:500; letter-spacing:-0.02em; }
+  .kpi .l { font-family: var(--wf-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#555; }
+
+  /* Map */
+  .map-ph { height: 420px; background: var(--wf-hatch); border:1.5px solid #111; position:relative; }
+  .map-pin { position:absolute; width:18px; height:18px; border-radius:50%; background:#95ff00; border:2px solid #111; }
+
+  /* Rep card */
+  .rep-card { border: 1.5px solid #111; background:#fff; padding: 18px; display:flex; flex-direction:column; gap:10px; }
+  .rep-card .head { display:flex; gap:12px; align-items:center; }
+  .rep-card .avatar { width:54px; height:54px; background: var(--wf-hatch); border: 1px dashed #888; }
+
+  /* CPQ summary bar */
+  .cpq-summary { position: sticky; bottom: 0; background:#111; color:#fff; padding:14px 22px; display:flex; justify-content:space-between; align-items:center; font-family: var(--wf-mono); font-size:12px; }
+
+  .tabbar { display:flex; gap:6px; flex-wrap:wrap; padding: 10px 22px; background:#fff; border-bottom:1px solid #ccc; position:sticky; top: 42px; z-index: 4;}
+  .tabbar a { padding: 6px 10px; font-family: var(--wf-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; border:1px solid #ccc; color:#555; cursor:pointer; background:#fff; }
+  .tabbar a.on { background:#111; color:#fff; border-color:#111; }
+</style>
+</head>
+<body data-page="home">
+<div class="wf-shell">
+
+<aside class="wf-rail">
+  <h1>TableX · Wireframes</h1>
+  <div class="sub">Self-Service CPQ · Apr 2026</div>
+
+  <div class="grp">P1 · Marketing + Discovery</div>
+  <a href="#home"              data-p="home">Home</a>
+  <a href="#products"          data-p="products">Products (hub)</a>
+  <a href="#spec-studio"       data-p="spec-studio">Spec Studio</a>
+  <a href="#collections"       data-p="collections">Collections index</a>
+  <a href="#collection-app"    data-p="collection-app">Collection · App</a>
+  <a href="#product-ultra"     data-p="product-ultra">Product · Ultra</a>
+  <a href="#browse-all"        data-p="browse-all">Browse All</a>
+  <a href="#compare"           data-p="compare">Compare Products</a>
+  <a href="#spaces"            data-p="spaces">Spaces hub</a>
+  <a href="#spaces-training"   data-p="spaces-training">Spaces · Training</a>
+  <a href="#finishes"          data-p="finishes">Finishes hub</a>
+  <a href="#finishes-powder"   data-p="finishes-powder">Finishes · Powder</a>
+  <a href="#about"             data-p="about">About · Our Story</a>
+
+  <div class="grp">P1 · Action + Portals</div>
+  <a href="#get-a-quote"       data-p="get-a-quote">Get a Quote (CPQ)</a>
+  <a href="#find-rep"          data-p="find-rep">Find Your Rep</a>
+  <a href="#dealer-portal"     data-p="dealer-portal">Dealer Portal</a>
+  <a href="#rep-portal"        data-p="rep-portal">Rep Portal</a>
+
+  <div class="grp">Legend</div>
+  <div style="font-family:var(--wf-mono);font-size:10px;color:#888;line-height:1.8">
+    <span class="persona dealer">D</span> Dealer (60%)<br/>
+    <span class="persona rep">R</span> Rep (30%)<br/>
+    <span class="persona buyer">B</span> Buyer (10%)
+  </div>
+</aside>
+
+<div class="wf-main">
+  <div class="wf-topbar">
+    <div class="crumb"><b id="bc">Home</b> <span>· wireframe · desktop 1280 / tablet 820</span></div>
+    <div class="bp" id="bp"><a class="on" data-bp="desktop">Desktop</a><a data-bp="tablet">Tablet</a><a data-bp="both">Both</a></div>
+  </div>
+
+<!-- ============ HOME ============ -->
+<section id="home" class="page">
+  <div class="wf-page-title">
+    <h2>Home</h2>
+    <div class="meta">Audience-aware above the fold · three persona paths · design-principle proof-points below</div>
+  </div>
+  <div class="wf-canvas">
+    <div class="device desktop"><div class="device-header"><span>Home · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack" style="padding:0">
+
+      <div class="nav-wf"><div class="logo">TableX</div>
+        <div class="links"><span>Products</span><span>Spaces</span><span>Finishes</span><span>Resources</span><span>About</span></div>
+        <div class="util"><span>🔍</span><span>Login</span><span>Contact</span><span>🛒</span></div>
+      </div>
+
+      <div class="hero-block">
+        <div class="ph"></div>
+        <div class="hint" style="color:#95ff00;font-family:var(--wf-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase">H1 · Brand value prop</div>
+        <div>
+          <div class="h-bar" style="width:60%;background:#fff;height:40px"></div>
+          <div class="h-bar sm" style="width:40%;background:#ccc;height:14px;margin-top:10px"></div>
+          <div class="row" style="margin-top:18px;gap:10px"><div class="btn-wf primary">get a quote</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">explore products</div></div>
+        </div>
+        <div class="callout" data-n="1" style="background:#fff;border-color:#ad9a3d;align-self:flex-start;max-width:420px">Hero photography: architectural / in-situ table in a real commercial space. Full-bleed, 40/60 dark gradient for legibility.</div>
+      </div>
+
+      <div class="stripe">
+        <div class="stripe-head"><div class="eye">Audience-Aware Paths · primary IA entry</div><span class="hint">§ Principle #1</span></div>
+        <div class="three-col">
+          <div class="box panel"><span class="label">Path A</span><span class="persona dealer">Dealer (60%)</span><div class="title">I'm specifying for a client</div><div class="note">→ Spec Studio · Tiered pricing · Quote pipeline · CAD downloads. CTA: "open Spec Studio"</div></div>
+          <div class="box panel"><span class="label">Path B</span><span class="persona rep">Rep (30%)</span><div class="title">I'm demoing in the field</div><div class="note">→ Tablet-optimized catalog · Territory dashboard · Commission. CTA: "open Rep Portal"</div></div>
+          <div class="box panel"><span class="label">Path C</span><span class="persona buyer">Buyer (10%)</span><div class="title">I need tables for my space</div><div class="note">→ Browse by Space · Collections · Quick Ship · Cart for 1–10. CTA: "browse by space"</div></div>
+        </div>
+        <div class="callout" data-n="2">Each path sets a persistent audience preference (cookie) that re-orders secondary nav + resurfaces the matching CTA sitewide.</div>
+      </div>
+
+      <div class="stripe">
+        <div class="stripe-head"><div class="eye">Featured Collections · 3-up · hover reveal</div><a class="btn-wf sm">view all collections</a></div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">App</div><div class="note">Work-from-anywhere small tables</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">Solo</div><div class="note">Individual focus stations</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">Outdoor</div><div class="note">Weather-rated for patios + campuses</div></div>
+        </div>
+      </div>
+
+      <div class="stripe dark">
+        <div class="stripe-head"><div class="eye">Spec Studio teaser · the 3D configurator</div></div>
+        <div class="two-col">
+          <div class="ph dark" style="aspect-ratio:16/10"></div>
+          <div class="stack">
+            <div class="h-bar" style="background:#fff;width:70%"></div>
+            <div class="p-stack"><div class="p-bar" style="background:#444"></div><div class="p-bar short" style="background:#444"></div><div class="p-bar short" style="background:#444"></div></div>
+            <div class="chip-row" style="margin-top:8px">
+              <span class="chip" style="background:#222;color:#fff;border-color:#555">Base style</span>
+              <span class="chip" style="background:#222;color:#fff;border-color:#555">Top shape</span>
+              <span class="chip" style="background:#222;color:#fff;border-color:#555">Edge band</span>
+              <span class="chip" style="background:#222;color:#fff;border-color:#555">Finish</span>
+              <span class="chip" style="background:#222;color:#fff;border-color:#555">Accessories</span>
+            </div>
+            <div class="row"><div class="btn-wf primary">open Spec Studio</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">watch 60s demo</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stripe">
+        <div class="stripe-head"><div class="eye">Proof points · principle #3 · self-service</div></div>
+        <div class="four-col">
+          <div class="box"><div class="h-bar sm" style="height:30px;width:40%"></div><div class="title" style="font-size:14px">617 hrs/yr saved</div><div class="note">No more manual quote re-entry</div></div>
+          <div class="box"><div class="h-bar sm" style="height:30px;width:40%"></div><div class="title" style="font-size:14px">Made in USA</div><div class="note">Midwest manufacturing since 1998</div></div>
+          <div class="box"><div class="h-bar sm" style="height:30px;width:40%"></div><div class="title" style="font-size:14px">50-year warranty</div><div class="note">Industry-leading coverage</div></div>
+          <div class="box"><div class="h-bar sm" style="height:30px;width:40%"></div><div class="title" style="font-size:14px">17 series · 31 paints · 8 edges</div><div class="note">Real inventory, not placeholders</div></div>
+        </div>
+      </div>
+
+      <div class="stripe">
+        <div class="stripe-head"><div class="eye">Browse by Space · buyer + A&D path</div></div>
+        <div class="grid-1x5">
+          <div class="box" style="padding:12px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Training</div></div>
+          <div class="box" style="padding:12px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Conference</div></div>
+          <div class="box" style="padding:12px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Collaborative</div></div>
+          <div class="box" style="padding:12px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Café</div></div>
+          <div class="box" style="padding:12px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Height Adj.</div></div>
+        </div>
+      </div>
+
+      <div class="stripe">
+        <div class="two-col">
+          <div class="box accent"><span class="label">Action</span><div class="title">Get a Quote</div><div class="note">Configure → Price → Quote → Track. All online. Dealer login unlocks tiered pricing.</div><div class="row"><div class="btn-wf primary">start a quote</div></div></div>
+          <div class="box"><span class="label">Action</span><div class="title">Find Your Rep</div><div class="note">Zip-based territory map. Geo-aware: pre-filled if location detected.</div><div class="row"><div class="btn-wf">enter zip</div></div></div>
+        </div>
+      </div>
+
+      <div class="footer-wf">
+        <div><div style="font-weight:600;font-size:18px">TableX</div><div style="font-size:11px;color:#888;margin-top:6px">Midwest USA · Since 1998</div></div>
+        <div class="cols">
+          <div><h5>Products</h5><ul><li>Spec Studio</li><li>Collections</li><li>Quick Ship</li><li>Compare</li></ul></div>
+          <div><h5>Resources</h5><ul><li>CAD</li><li>Brochures</li><li>Case studies</li><li>Sustainability</li></ul></div>
+          <div><h5>Portals</h5><ul><li>Dealer</li><li>Rep</li><li>Track quote</li></ul></div>
+          <div><h5>Company</h5><ul><li>About</li><li>Warranty</li><li>TIPS/Contracts</li><li>Careers</li></ul></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ PRODUCTS HUB ============ -->
+<section id="products" class="page">
+  <div class="wf-page-title"><h2>Products hub</h2><div class="meta">Gateway to Spec Studio · Collections · Browse All · Compare · Accessories · Quick Ship</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Products · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">Products</span><span>Spaces</span><span>Finishes</span><span>Resources</span><span>About</span></div><div class="util"><span>Login</span><span>🛒</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Intro</div></div><div class="h-bar" style="width:50%;height:30px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div></div>
+      <div class="stripe">
+        <div class="stripe-head"><div class="eye">6 entry points · persona-ranked</div></div>
+        <div class="two-col">
+          <div class="box accent"><span class="label">Hero entry · dealer/rep</span><div class="title">Spec Studio</div><div class="note">3D configurator · base style · top shape · edge · finish · accessories · live price (v2)</div><div class="btn-wf primary">open studio →</div></div>
+          <div class="box"><span class="label">Hero entry · A&D + buyer</span><div class="title">Collections</div><div class="note">Curated groupings: App · Solo · Outdoor · Occasional · Dining</div><div class="btn-wf">view all collections →</div></div>
+        </div>
+        <div class="four-col">
+          <div class="box"><div class="title" style="font-size:16px">Browse All</div><div class="note">Filterable grid · 17 series</div></div>
+          <div class="box"><div class="title" style="font-size:16px">Compare</div><div class="note">Up to 3 side-by-side</div></div>
+          <div class="box"><div class="title" style="font-size:16px">Accessories</div><div class="note">Power · screens · casters</div></div>
+          <div class="box"><div class="title" style="font-size:16px">Quick Ship</div><div class="note">TableXpress — 2 weeks</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">All 17 series · logo grid</div></div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+          <div class="box" style="padding:10px;aspect-ratio:3/2"><div class="hint">Ultra</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Foundation</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Fundamental</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Trig</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Stretch</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Elite</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Revel</div></div>
+          <div class="box" style="padding:10px"><div class="hint">App</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Element</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Justice</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Artisan</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Primary</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Puddle</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Exclaim</div></div>
+          <div class="box" style="padding:10px"><div class="hint">VertiGo</div></div>
+          <div class="box" style="padding:10px"><div class="hint">Surge</div></div>
+          <div class="box" style="padding:10px;border-color:#95ff00"><div class="hint">TableXpress QS</div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SPEC STUDIO ============ -->
+<section id="spec-studio" class="page">
+  <div class="wf-page-title"><h2>Spec Studio</h2><div class="meta">3D configurator · landing + in-configurator views · desktop + tablet (rep demo)</div></div>
+  <div class="tabbar"><a class="on" data-sub="ss-landing">Landing</a><a data-sub="ss-config">In-Configurator</a><a data-sub="ss-tablet">Tablet view</a></div>
+  <div class="wf-canvas">
+
+  <div id="ss-landing" class="ss-view">
+    <div class="device desktop"><div class="device-header"><span>Spec Studio · Landing · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">Spec Studio</span><span>Collections</span><span>Browse</span><span>Compare</span></div><div class="util"><span>Login</span></div></div>
+      <div class="hero-block" style="height:320px">
+        <div class="ph"></div>
+        <div class="hint" style="color:#95ff00">Hero · 3D preview loop</div>
+        <div><div class="h-bar" style="background:#fff;width:55%;height:34px"></div><div class="p-bar" style="background:#888;margin-top:12px"></div>
+          <div class="row" style="margin-top:14px"><div class="btn-wf primary">start a configuration</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">load saved</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Choose a base style · 6 families</div></div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">T-leg</div><div class="note">Ultra · Foundation · Justice</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Pedestal</div><div class="note">App · Solo · Revel</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Flip-top nesting</div><div class="note">Trig · Element · Surge</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Height-adjustable</div><div class="note">Stretch · VertiGo</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Trestle</div><div class="note">Artisan · Primary</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Occasional</div><div class="note">Puddle · Exclaim</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">How Spec Studio works · 4-step</div></div>
+        <div class="four-col">
+          <div class="box"><div class="hint">STEP 01</div><div class="title">Pick a base</div><div class="note">6 families above</div></div>
+          <div class="box"><div class="hint">STEP 02</div><div class="title">Shape + size the top</div><div class="note">Rect / round / racetrack · 14 sizes</div></div>
+          <div class="box"><div class="hint">STEP 03</div><div class="title">Finishes + edge</div><div class="note">31 paints · HPL/TFL · 8 edges</div></div>
+          <div class="box"><div class="hint">STEP 04</div><div class="title">Accessories + price</div><div class="note">Power · screens · ganging · live price</div></div>
+        </div>
+      </div>
+      <div class="callout" data-n="$">Pricing-visibility decision is open: live in-configurator · tiered MSRP/dealer ranges · hidden + quote-back. Resolve during design phase.</div>
+    </div></div>
+  </div>
+
+  <div id="ss-config" class="ss-view" style="display:none">
+    <div class="device desktop"><div class="device-header"><span>Spec Studio · In-Configurator · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport" style="padding:0">
+      <div class="nav-wf" style="border-left:none;border-right:none;border-top:none"><div class="logo">TableX / Spec Studio</div><div class="util"><span>Save</span><span>Share</span><span>Reset</span></div></div>
+      <div class="studio-grid">
+        <div class="studio-col">
+          <h5>Step · 2/4 · Top shape + size</h5>
+          <div class="chip-row"><span class="chip on">Rectangle</span><span class="chip">Round</span><span class="chip">Racetrack</span><span class="chip">D-end</span></div>
+          <div class="hr soft"></div>
+          <h5>Dimensions</h5>
+          <div class="row"><div class="chip">60"</div><div class="chip on">72"</div><div class="chip">84"</div><div class="chip">96"</div></div>
+          <div class="row"><div class="chip">30"</div><div class="chip on">36"</div><div class="chip">42"</div></div>
+          <div class="hr soft"></div>
+          <h5>Steps</h5>
+          <div class="stack">
+            <div class="chip" style="text-align:left">1 · Base · <b>Ultra T-leg ✓</b></div>
+            <div class="chip on" style="text-align:left">2 · Top · <b>72×36 rect</b></div>
+            <div class="chip" style="text-align:left">3 · Finishes · pending</div>
+            <div class="chip" style="text-align:left">4 · Accessories · pending</div>
+          </div>
+        </div>
+
+        <div class="studio-canvas">
+          <div class="ph"></div>
+          <div style="position:absolute;top:10px;left:10px;font-family:var(--wf-mono);font-size:10px;background:#fff;border:1px solid #111;padding:4px 8px">3D viewport · drag to rotate · scroll to zoom</div>
+          <div style="position:absolute;top:10px;right:10px;display:flex;gap:4px">
+            <div class="chip">2D</div><div class="chip on">3D</div><div class="chip">AR</div>
+          </div>
+          <div class="overlay">
+            <span>Ultra · 72×36 · rectangle · edge/finish pending</span>
+            <span>SKU preview: UL-72-36-R-___-___</span>
+          </div>
+        </div>
+
+        <div class="studio-col">
+          <h5>Summary</h5>
+          <div class="spec-table" style="border-color:#ccc">
+            <div class="row"><b>Series</b><span>Ultra</span></div>
+            <div class="row"><b>Base</b><span>T-leg, 29" H</span></div>
+            <div class="row"><b>Top</b><span>72 × 36 rect</span></div>
+            <div class="row"><b>Edge</b><span>— choose —</span></div>
+            <div class="row"><b>Finish</b><span>— choose —</span></div>
+            <div class="row"><b>Accessories</b><span>— none —</span></div>
+          </div>
+          <div class="hr"></div>
+          <h5>Estimated unit price <span class="hint" style="color:#95ff00">live</span></h5>
+          <div style="font-size:28px;font-weight:500">$ ____</div>
+          <div class="note">Log in as dealer to see tiered pricing.</div>
+          <div class="chip-row"><span class="chip">Qty 1</span><span class="chip">10</span><span class="chip">25</span><span class="chip">50</span></div>
+          <div class="hr"></div>
+          <div class="stack">
+            <div class="btn-wf primary">save to quote</div>
+            <div class="btn-wf">add to compare</div>
+            <div class="btn-wf">download CAD (DWG · Revit)</div>
+          </div>
+        </div>
+      </div>
+      <div class="cpq-summary"><span>Quote #Q-2026-0412 · 1 item · $ ____</span><span>→ Review &amp; send</span></div>
+    </div></div>
+  </div>
+
+  <div id="ss-tablet" class="ss-view" style="display:none">
+    <div class="device tablet"><div class="device-header"><span>Spec Studio · Tablet · 820 · Rep demo</span><span>TABLET</span></div>
+    <div class="viewport" style="padding:0">
+      <div class="nav-wf"><div class="logo">TableX / Studio</div><div class="util"><span>Save</span></div></div>
+      <div style="display:grid;grid-template-columns:1fr 260px;border:1.5px solid #111;min-height:480px">
+        <div class="studio-canvas" style="border-right:1px solid #111"><div class="ph"></div>
+          <div style="position:absolute;top:10px;left:10px;display:flex;gap:4px"><div class="chip on">3D</div><div class="chip">AR</div></div>
+          <div class="overlay"><span>Ultra · 72×36</span><span>UL-72-36-R</span></div>
+        </div>
+        <div class="studio-col" style="border-right:none">
+          <h5>Rep demo mode</h5>
+          <div class="chip-row"><span class="chip on">Base</span><span class="chip">Top</span><span class="chip">Finish</span><span class="chip">Acc</span></div>
+          <div class="callout" data-n="T" style="font-size:10px">Larger tap targets · swipe-through base styles · "present to client" full-screen toggle.</div>
+          <div class="stack"><div class="btn-wf primary">add to demo quote</div><div class="btn-wf">hand off to client</div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="callout" data-n="3">Tablet variant keeps the same step flow but collapses side-rail into a sticky bottom bar on smaller landscape; big swatches for thumb reach during in-showroom demos.</div>
+
+  </div>
+</section>
+
+<!-- ============ COLLECTIONS INDEX ============ -->
+<section id="collections" class="page">
+  <div class="wf-page-title"><h2>Collections index</h2><div class="meta">Curated groupings · App · Solo · Outdoor · Occasional · Dining</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Collections · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products</span><span>Spaces</span></div></div>
+      <div class="hero-block" style="height:260px"><div class="ph"></div><div class="hint" style="color:#95ff00">Editorial hero</div><div><div class="h-bar" style="background:#fff;width:55%;height:30px"></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">5 collections · editorial tiles</div></div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">App</div><div class="note">Huddle + training rooms · 4 series</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">Solo</div><div class="note">Individual focus · 3 series</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">Outdoor</div><div class="note">Patios + campuses · 2 series</div></div>
+        </div>
+        <div class="two-col">
+          <div class="box"><div class="ph" style="aspect-ratio:5/3"></div><div class="title">Occasional</div><div class="note">Lobby, lounge, side · 3 series</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:5/3"></div><div class="title">Dining</div><div class="note">Café + hospitality · 3 series</div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ COLLECTION APP ============ -->
+<section id="collection-app" class="page">
+  <div class="wf-page-title"><h2>Collection · App</h2><div class="meta">Template; Solo/Outdoor/Occasional/Dining inherit layout</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Collection · App · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Collections / App</span></div></div>
+      <div class="hero-block" style="height:340px"><div class="ph"></div><div class="hint" style="color:#95ff00">Editorial hero · App in-situ</div>
+        <div><div class="h-bar" style="background:#fff;width:30%;height:36px"></div><div class="p-bar" style="background:#888;margin-top:10px;width:60%"></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Collection story · editorial</div></div>
+        <div class="two-col"><div class="stack"><div class="h-bar" style="width:60%"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar"></div><div class="p-bar short"></div></div></div><div class="ph" style="aspect-ratio:4/3"></div></div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Series in this collection · 4</div><a class="btn-wf sm">compare all</a></div>
+        <div class="four-col">
+          <div class="box"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:15px">App</div><div class="note">Signature huddle. Flip-top.</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:15px">Element</div><div class="note">Modular nesting.</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:15px">Revel</div><div class="note">Pedestal small-space.</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:15px">Exclaim</div><div class="note">Whiteboard-top variant.</div></div>
+        </div>
+      </div>
+      <div class="stripe dark"><div class="stripe-head"><div class="eye">Finish moments · swatch strip</div></div><div class="swatch-grid"><div class="sw" style="background:#222"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div><div class="sw" style="background:#f8f7ec"></div><div class="sw" style="background:#95ff00"></div><div class="sw" style="background:#2a3d5c"></div><div class="sw" style="background:#750028"></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Case studies using App</div></div><div class="three-col">
+        <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">Indiana Tech</div><div class="note">Classrooms · Trig + App</div></div>
+        <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">Cummins HQ</div><div class="note">Huddle rooms · App</div></div>
+        <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">IU Health</div><div class="note">Training · App + Stretch</div></div>
+      </div></div>
+      <div class="stripe accent" style="background:#f6ffe3"><div class="stripe-head"><div class="eye">CTA band · dual path</div></div><div class="row" style="gap:16px"><div class="btn-wf primary">configure App in Spec Studio</div><div class="btn-wf">find your rep</div></div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ PRODUCT ULTRA (2 VARIANTS) ============ -->
+<section id="product-ultra" class="page">
+  <div class="wf-page-title"><h2>Product · Ultra</h2><div class="meta">Two rep-card variants: (a) sidebar module · (b) mid-page band after specs</div></div>
+  <div class="tabbar"><a class="on" data-pd="pd-side">Variant A · Sidebar rep card</a><a data-pd="pd-band">Variant B · Mid-page rep band</a><a data-pd="pd-tablet">Tablet · Variant A</a></div>
+  <div class="wf-canvas">
+
+  <div id="pd-side" class="pd-view">
+    <div class="device desktop"><div class="device-header"><span>Product · Ultra · Variant A (sidebar) · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products / Ultra</span></div></div>
+      <div class="sidebar-col">
+        <div class="stack">
+          <div class="box"><span class="label">Hero · 2-up</span>
+            <div class="two-col">
+              <div class="ph" style="aspect-ratio:1/1"></div>
+              <div class="stack">
+                <div class="hint">SERIES · flagship</div>
+                <div class="h-bar" style="width:40%;height:30px">Ultra</div>
+                <div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div>
+                <div class="chip-row"><span class="chip">T-leg</span><span class="chip">14 sizes</span><span class="chip">Rect · Round · D-end</span></div>
+                <div class="row"><div class="btn-wf primary">configure in Spec Studio</div><div class="btn-wf">add to compare</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="box"><span class="label">Gallery · 5 thumbs</span><div class="grid-1x5"><div class="ph" style="aspect-ratio:1/1"></div><div class="ph" style="aspect-ratio:1/1"></div><div class="ph" style="aspect-ratio:1/1"></div><div class="ph" style="aspect-ratio:1/1"></div><div class="ph" style="aspect-ratio:1/1"></div></div></div>
+          <div class="box"><span class="label">Specs table</span>
+            <div class="spec-table">
+              <div class="row"><b>Base style</b><span>T-leg, welded steel</span></div>
+              <div class="row"><b>Heights</b><span>28.5" · 36" · 42" · 46" (bar)</span></div>
+              <div class="row"><b>Top shapes</b><span>Rect · Round · D-end · Racetrack</span></div>
+              <div class="row"><b>Top sizes</b><span>14 configurations · 24×48 to 48×120</span></div>
+              <div class="row"><b>Edges</b><span>8 cross-sections</span></div>
+              <div class="row"><b>Finishes</b><span>31 powdercoats · HPL/TFL · solid surface</span></div>
+              <div class="row"><b>Power</b><span>Optional grommet + routing</span></div>
+              <div class="row"><b>Weight cap</b><span>300 lb evenly distributed</span></div>
+              <div class="row"><b>Warranty</b><span>50-year structural</span></div>
+              <div class="row"><b>Certifications</b><span>BIFMA · GREENGUARD Gold · SCS</span></div>
+            </div>
+          </div>
+          <div class="box"><span class="label">Downloads</span>
+            <div class="four-col">
+              <div class="box" style="padding:10px"><div class="hint">DWG</div></div>
+              <div class="box" style="padding:10px"><div class="hint">Revit (RFA)</div></div>
+              <div class="box" style="padding:10px"><div class="hint">Spec sheet PDF</div></div>
+              <div class="box" style="padding:10px"><div class="hint">Price list · dealer</div></div>
+            </div>
+          </div>
+          <div class="box"><span class="label">In these Collections + Spaces</span><div class="chip-row"><span class="chip">App</span><span class="chip">Solo</span><span class="chip">Training</span><span class="chip">Conference</span><span class="chip">Height-Adj</span></div></div>
+          <div class="box"><span class="label">Related series</span>
+            <div class="three-col"><div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Foundation</div></div><div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Justice</div></div><div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="hint">Stretch</div></div></div>
+          </div>
+        </div>
+
+        <div class="stack" style="position:sticky;top:120px;align-self:start">
+          <div class="rep-card"><span class="label" style="position:static;background:none;padding:0">GEO-AWARE REP · auto-detected</span>
+            <div class="head"><div class="avatar"></div><div><div style="font-weight:600">Maren Castillo</div><div class="hint">Northeast · Parallel Contract Group</div></div></div>
+            <div class="p-stack"><div class="p-bar xs"></div><div class="p-bar xs"></div></div>
+            <div class="chip-row"><span class="chip">Serving: zip 11211 ✓</span></div>
+            <div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">schedule a visit</div><div class="btn-wf sm">change location</div></div>
+          </div>
+          <div class="box"><span class="label">Buy 1–10 direct</span><span class="persona buyer">Buyer</span><div class="note">Configure in Spec Studio · add to cart · ship in 2 weeks (Quick Ship SKUs only).</div><div class="btn-wf">see Quick Ship Ultras</div></div>
+          <div class="box accent"><span class="label">Dealer? Log in</span><span class="persona dealer">Dealer</span><div class="note">Tiered pricing unlocks on Spec Studio + CAD bundles + quote pipeline.</div><div class="btn-wf">dealer login</div></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="callout" data-n="A">Variant A: rep card pinned to sidebar, always in view. Strong for long product pages · signals "help available" throughout scroll.</div>
+  </div>
+
+  <div id="pd-band" class="pd-view" style="display:none">
+    <div class="device desktop"><div class="device-header"><span>Product · Ultra · Variant B (mid-page band) · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products / Ultra</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Hero · full-width</div></div>
+        <div class="two-col"><div class="ph" style="aspect-ratio:4/3"></div><div class="stack"><div class="hint">SERIES · flagship</div><div class="h-bar" style="width:30%;height:40px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div><div class="row"><div class="btn-wf primary">configure in Spec Studio</div><div class="btn-wf">compare</div></div></div></div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Specs · full-width table</div></div>
+        <div class="spec-table">
+          <div class="row"><b>Base</b><span>T-leg, welded steel</span></div>
+          <div class="row"><b>Heights</b><span>28.5" · 36" · 42" · 46"</span></div>
+          <div class="row"><b>Top shapes</b><span>Rect · Round · D-end · Racetrack</span></div>
+          <div class="row"><b>Top sizes</b><span>14 configurations</span></div>
+          <div class="row"><b>Edges</b><span>8 cross-sections</span></div>
+          <div class="row"><b>Finishes</b><span>31 powdercoats · HPL/TFL · solid surface</span></div>
+          <div class="row"><b>Warranty</b><span>50-year structural</span></div>
+        </div>
+      </div>
+      <div class="stripe dark" style="background:#111"><div class="stripe-head"><div class="eye" style="color:#95ff00">Geo-aware rep card · mid-page band</div></div>
+        <div class="two-col">
+          <div class="stack"><div class="h-bar" style="width:60%;background:#fff;height:28px"></div><div class="p-stack"><div class="p-bar" style="background:#444"></div><div class="p-bar short" style="background:#444"></div></div><div class="note" style="color:#a8a8a8">"Talk to the rep who knows your market." Auto-surface based on IP / zip fallback.</div></div>
+          <div class="rep-card" style="background:#fff;color:#111;border:none">
+            <div class="head"><div class="avatar"></div><div><div style="font-weight:600">Maren Castillo</div><div class="hint">Northeast · Parallel Contract Group</div></div></div>
+            <div class="chip-row"><span class="chip">Serving zip 11211 ✓</span></div>
+            <div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">schedule a visit</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Downloads + related</div></div>
+        <div class="four-col"><div class="box" style="padding:10px"><div class="hint">DWG</div></div><div class="box" style="padding:10px"><div class="hint">Revit</div></div><div class="box" style="padding:10px"><div class="hint">PDF spec</div></div><div class="box" style="padding:10px"><div class="hint">Price list · dealer</div></div></div>
+      </div>
+    </div></div>
+    <div class="callout" data-n="B">Variant B: rep band commits one full section to the hand-off · cleaner on smaller viewports · maps to "dealer invited" moment after facts are known.</div>
+  </div>
+
+  <div id="pd-tablet" class="pd-view" style="display:none">
+    <div class="device tablet"><div class="device-header"><span>Product · Ultra · Tablet · Variant A</span><span>TABLET</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="util"><span>☰</span></div></div>
+      <div class="stripe"><div class="ph" style="aspect-ratio:4/3"></div><div class="h-bar" style="width:40%;height:30px"></div><div class="row"><div class="btn-wf primary">configure</div><div class="btn-wf">compare</div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Rep card · collapsed to top sticky</div></div><div class="rep-card"><div class="head"><div class="avatar"></div><div><div style="font-weight:600">Maren Castillo</div><div class="hint">Northeast rep</div></div></div><div class="row"><div class="btn-wf primary sm">quote</div><div class="btn-wf sm">call</div></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Specs</div></div><div class="spec-table"><div class="row"><b>Base</b><span>T-leg</span></div><div class="row"><b>Heights</b><span>28.5 – 46"</span></div><div class="row"><b>Finishes</b><span>31 paints</span></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Downloads</div></div><div class="two-col"><div class="box" style="padding:10px"><div class="hint">DWG</div></div><div class="box" style="padding:10px"><div class="hint">Revit</div></div></div></div>
+    </div></div>
+  </div>
+
+  </div>
+</section>
+
+<!-- ============ BROWSE ALL ============ -->
+<section id="browse-all" class="page">
+  <div class="wf-page-title"><h2>Browse All</h2><div class="meta">Filterable grid · 17 series × all shapes</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Browse All · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport" style="padding:0">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products / Browse All</span></div></div>
+      <div style="display:grid;grid-template-columns:260px 1fr;border:1.5px solid #111">
+        <div style="border-right:1px solid #111;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <h5 class="hint">Filters</h5>
+          <div class="stack"><div class="hint">Collection</div><div class="chip-row"><span class="chip on">All</span><span class="chip">App</span><span class="chip">Solo</span><span class="chip">Outdoor</span><span class="chip">Dining</span></div></div>
+          <div class="stack"><div class="hint">Space</div><div class="chip-row"><span class="chip">Training</span><span class="chip">Conf.</span><span class="chip">Café</span><span class="chip">Collab</span></div></div>
+          <div class="stack"><div class="hint">Height</div><div class="chip-row"><span class="chip">Seated</span><span class="chip">Counter</span><span class="chip">Bar</span><span class="chip">Adjustable</span></div></div>
+          <div class="stack"><div class="hint">Top shape</div><div class="chip-row"><span class="chip">Rect</span><span class="chip">Round</span><span class="chip">D-end</span></div></div>
+          <div class="stack"><div class="hint">Features</div><div class="chip-row"><span class="chip">Flip-top</span><span class="chip">Nesting</span><span class="chip">Power</span><span class="chip">Casters</span></div></div>
+          <div class="stack"><div class="hint">Quick Ship</div><div class="chip-row"><span class="chip">QS only</span></div></div>
+          <div class="btn-wf sm">clear all</div>
+        </div>
+        <div style="padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div class="row" style="justify-content:space-between"><div class="hint">17 series · 142 configurations</div><div class="row"><span class="chip">Sort · featured</span><span class="chip">Grid</span><span class="chip">List</span></div></div>
+          <div class="four-col">
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Ultra</div><div class="note">T-leg · 14 sizes</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Foundation</div><div class="note">T-leg · basic</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Trig</div><div class="note">Flip-top nesting</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Stretch</div><div class="note">Height adjustable</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Elite</div><div class="note">Premium conf.</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Revel</div><div class="note">Pedestal</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">App</div><div class="note">Huddle</div></div>
+            <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Element</div><div class="note">Nesting modular</div></div>
+            <div class="box" style="padding:10px;border-color:#95ff00"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">TableXpress</div><div class="note">Quick Ship · 2wk</div></div>
+          </div>
+          <div class="hint">+ 8 more · pagination</div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ COMPARE ============ -->
+<section id="compare" class="page">
+  <div class="wf-page-title"><h2>Compare Products</h2><div class="meta">Up to 3 side-by-side · dealer-focused decision tool</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Compare · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products / Compare</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">3-column compare · sticky header on scroll</div></div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Ultra</div><div class="hint">T-leg · flagship</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Foundation</div><div class="hint">T-leg · value</div></div>
+          <div class="box" style="background:#f7f6f2;border-style:dashed"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="color:#888">+ add series</div></div>
+        </div>
+        <div class="spec-table" style="margin-top:14px">
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Heights</b><span>28.5 / 36 / 42 / 46</span><span>28.5 / 36</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Top shapes</b><span>Rect · Round · D-end · Racetrack</span><span>Rect · Round</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Top sizes</b><span>14</span><span>8</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Edges</b><span>8</span><span>4</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Finishes</b><span>31 paints + HPL + SS</span><span>24 paints + HPL</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Power</b><span>Optional</span><span>—</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Weight cap</b><span>300 lb</span><span>250 lb</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Warranty</b><span>50-yr</span><span>50-yr</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Price range</b><span>$$$</span><span>$$</span><span>—</span></div>
+          <div class="row" style="grid-template-columns:160px 1fr 1fr 1fr"><b>Quick Ship</b><span>Limited SKUs</span><span>Yes</span><span>—</span></div>
+        </div>
+      </div>
+      <div class="stripe accent"><div class="stripe-head"><div class="eye">Actions</div></div><div class="row"><div class="btn-wf primary">send compare sheet (PDF)</div><div class="btn-wf">configure Ultra</div><div class="btn-wf">configure Foundation</div></div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SPACES HUB ============ -->
+<section id="spaces" class="page">
+  <div class="wf-page-title"><h2>Spaces hub</h2><div class="meta">Use-case entry · primary buyer path</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Spaces · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Spaces</span></div></div>
+      <div class="hero-block" style="height:260px"><div class="ph"></div><div class="hint" style="color:#95ff00">Editorial</div><div><div class="h-bar" style="background:#fff;width:40%;height:30px"></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">6 spaces · editorial tiles</div></div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Training &amp; Classroom</div><div class="note">Flip-top nesting · gang · casters</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Conference &amp; Meeting</div><div class="note">Power · cable · boat shape</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Collaborative</div><div class="note">Huddle · mobile · whiteboard tops</div></div>
+        </div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Café &amp; Break</div><div class="note">Counter + bar · round · café</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Height Adjustable</div><div class="note">Pneumatic · electric</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Nesting &amp; Folding</div><div class="note">Stack · cart · nest</div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SPACES · TRAINING ============ -->
+<section id="spaces-training" class="page">
+  <div class="wf-page-title"><h2>Spaces · Training &amp; Classroom</h2></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Spaces/Training · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Spaces / Training</span></div></div>
+      <div class="hero-block" style="height:340px"><div class="ph"></div><div class="hint" style="color:#95ff00">In-situ classroom imagery</div><div><div class="h-bar" style="background:#fff;width:45%;height:34px"></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">What makes a training table</div></div>
+        <div class="four-col">
+          <div class="box"><div class="title" style="font-size:15px">Flip-top</div><div class="note">Nest away when unused</div></div>
+          <div class="box"><div class="title" style="font-size:15px">Ganging</div><div class="note">Connect rows for long-line setups</div></div>
+          <div class="box"><div class="title" style="font-size:15px">Casters</div><div class="note">Mobile · lockable</div></div>
+          <div class="box"><div class="title" style="font-size:15px">Power/data</div><div class="note">Optional grommet</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Recommended series · 5</div></div>
+        <div class="grid-1x5">
+          <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:13px">Trig</div></div>
+          <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:13px">Element</div></div>
+          <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:13px">Stretch</div></div>
+          <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:13px">Surge</div></div>
+          <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:13px">App</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Configuration recipes · pre-set layouts</div></div>
+        <div class="two-col">
+          <div class="box"><div class="ph" style="aspect-ratio:16/9"></div><div class="title" style="font-size:15px">Classroom · 24 students</div><div class="note">6 × Trig 72×24 · nested ganged rows</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:16/9"></div><div class="title" style="font-size:15px">Training lab · 12 stations</div><div class="note">12 × Ultra 60×30 · power grommets</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Case studies</div></div><div class="three-col"><div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="note">Indiana Tech · Trig + App</div></div><div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="note">IU Health · Stretch</div></div><div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="note">Butler U · Ultra</div></div></div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ FINISHES HUB ============ -->
+<section id="finishes" class="page">
+  <div class="wf-page-title"><h2>Finishes hub</h2><div class="meta">Powder · Laminate · Edge · Solid Surface · Butcher Block · Custom</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Finishes · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Finishes</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">6 categories</div></div>
+        <div class="three-col">
+          <div class="box"><div class="swatch-grid" style="grid-template-columns:repeat(5,1fr)"><div class="sw" style="background:#111"></div><div class="sw" style="background:#555"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#95ff00"></div><div class="sw" style="background:#750028"></div></div><div class="title">Powder coats</div><div class="note">31 colors · paint</div></div>
+          <div class="box"><div class="swatch-grid" style="grid-template-columns:repeat(5,1fr)"><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div><div class="sw" style="background:#d9d1b6"></div><div class="sw" style="background:#2a3d5c"></div><div class="sw" style="background:#f8f7ec"></div></div><div class="title">Laminates · HPL + TFL</div><div class="note">Wood · solids · textures</div></div>
+          <div class="box"><div class="row"><div class="ph" style="width:60px;height:20px"></div><div class="ph" style="width:60px;height:20px;border-radius:2px"></div><div class="ph" style="width:60px;height:20px;border-radius:10px"></div></div><div class="title">Edge bands</div><div class="note">8 cross-sections</div></div>
+        </div>
+        <div class="three-col">
+          <div class="box"><div class="ph" style="aspect-ratio:5/2"></div><div class="title">Solid surface</div><div class="note">Corian-style</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:5/2"></div><div class="title">Butcher block</div><div class="note">Hardwood</div></div>
+          <div class="box"><div class="ph" style="aspect-ratio:5/2"></div><div class="title">Custom branded tops</div><div class="note">Logos · graphics</div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ FINISHES · POWDER ============ -->
+<section id="finishes-powder" class="page">
+  <div class="wf-page-title"><h2>Finishes · Powder Coats</h2><div class="meta">31-color palette explorer</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Powder · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Finishes / Powder</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">31 paints · filter + compare</div></div>
+        <div class="row"><span class="chip on">All 31</span><span class="chip">Neutrals</span><span class="chip">Warms</span><span class="chip">Cools</span><span class="chip">Brights</span><span class="chip">Metallic</span></div>
+        <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:8px">
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#111"></div><div class="hint">Onyx</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#555"></div><div class="hint">Pewter</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#918966"></div><div class="hint">Kraft</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#d9d1b6"></div><div class="hint">Linen</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#f8f7ec"></div><div class="hint">Cream</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#fff"></div><div class="hint">Chalk</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#cd9866"></div><div class="hint">Oak</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#62391b"></div><div class="hint">Walnut</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#750028"></div><div class="hint">Brick</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#2a3d5c"></div><div class="hint">Navy</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#05553a"></div><div class="hint">Forest</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#95ff00"></div><div class="hint">Volt</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#ffd59e"></div><div class="hint">Butter</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#ff5700"></div><div class="hint">Signal</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#e1001b"></div><div class="hint">Scarlet</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#6c82a0"></div><div class="hint">Slate</div></div>
+        </div>
+        <div class="hint">+ 15 more · click swatch to open detail pane with name, code, applies-to series, request a chip sample</div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Selected swatch detail</div></div>
+        <div class="two-col">
+          <div class="box" style="background:#918966;color:#fff"><div class="hint" style="color:#fff">KRAFT · PC-412</div><div class="title" style="color:#fff">Kraft</div><div class="note" style="color:#eee">Warm neutral · paint finish · RAL 8001 equivalent</div></div>
+          <div class="stack"><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div><div class="row"><div class="btn-wf primary">request a chip sample</div><div class="btn-wf">see series using Kraft</div></div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ GET A QUOTE ============ -->
+<section id="get-a-quote" class="page">
+  <div class="wf-page-title"><h2>Get a Quote · Configure &amp; Price</h2><div class="meta">live CPQ · dealer tier unlocks</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>CPQ · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Get a Quote</span></div><div class="util"><span class="persona dealer">Dealer</span><span>Logged in: Aileron Office</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Progress · 4 steps</div></div>
+        <div class="row"><div class="chip on">1 · Configure</div><div class="chip on">2 · Review</div><div class="chip">3 · Contact</div><div class="chip">4 · Submit</div></div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Step 2 · Review line items</div><a class="btn-wf sm">+ add item</a></div>
+        <div class="spec-table">
+          <div class="row" style="grid-template-columns:120px 2fr 100px 100px 140px 80px"><b>Image</b><b>Configuration</b><b>Qty</b><b>Unit</b><b>Extended</b><b></b></div>
+          <div class="row" style="grid-template-columns:120px 2fr 100px 100px 140px 80px"><div class="ph" style="width:90px;height:60px"></div><div><div class="title" style="font-size:14px">Ultra · 72×36 · rect · edge E3 · Kraft PC-412</div><div class="hint">SKU UL-72-36-R-E3-PC412</div></div><div>12</div><div>$ 612</div><div>$ 7,344</div><div><div class="btn-wf sm">edit</div></div></div>
+          <div class="row" style="grid-template-columns:120px 2fr 100px 100px 140px 80px"><div class="ph" style="width:90px;height:60px"></div><div><div class="title" style="font-size:14px">Trig · 60×24 · flip-top · HPL · Onyx</div><div class="hint">SKU TG-60-24-F-HPL-ONY</div></div><div>24</div><div>$ 498</div><div>$ 11,952</div><div><div class="btn-wf sm">edit</div></div></div>
+        </div>
+        <div class="two-col" style="grid-template-columns:2fr 1fr">
+          <div class="stack"><div class="hint">Notes to rep · optional</div><div class="ph" style="height:70px;background:#f7f6f2;border-style:solid"></div></div>
+          <div class="box" style="background:#f7f6f2"><div class="spec-table" style="border-color:#ccc">
+            <div class="row"><b>Subtotal</b><span>$ 19,296</span></div>
+            <div class="row"><b>Dealer discount (tier 3)</b><span>− $ 5,788</span></div>
+            <div class="row"><b>Estimated freight</b><span>$ 920</span></div>
+            <div class="row" style="background:#111;color:#fff"><b style="color:#95ff00">Quote total</b><span>$ 14,428</span></div>
+          </div></div>
+        </div>
+      </div>
+      <div class="stripe accent"><div class="row"><div class="btn-wf primary">send to TableX</div><div class="btn-wf">save + send to my rep</div><div class="btn-wf">export PDF</div><div class="btn-wf">save as template</div></div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ FIND YOUR REP ============ -->
+<section id="find-rep" class="page">
+  <div class="wf-page-title"><h2>Find Your Rep</h2><div class="meta">Zip / state search · territory map · rep profiles</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Find Rep · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Find Your Rep</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Search</div></div>
+        <div class="row"><div class="ph" style="height:48px;width:360px;background:#fff;border-style:solid">[ enter zip or state ]</div><div class="btn-wf primary">find rep</div><div class="hint">or auto-detect location</div></div>
+      </div>
+      <div class="stripe"><div class="sidebar-col">
+        <div class="map-ph">
+          <div class="map-pin" style="top:24%;left:28%"></div>
+          <div class="map-pin" style="top:32%;left:48%"></div>
+          <div class="map-pin" style="top:22%;left:72%;background:#111;border-color:#95ff00"></div>
+          <div class="map-pin" style="top:58%;left:62%"></div>
+          <div class="map-pin" style="top:48%;left:30%"></div>
+          <div class="map-pin" style="top:70%;left:78%"></div>
+          <div style="position:absolute;bottom:10px;left:10px;font-family:var(--wf-mono);font-size:10px;background:#fff;border:1px solid #111;padding:4px 8px">Territory map · 14 regions</div>
+        </div>
+        <div class="stack">
+          <div class="hint">Your territory · Northeast</div>
+          <div class="rep-card" style="border-color:#95ff00"><div class="head"><div class="avatar"></div><div><div style="font-weight:600">Maren Castillo</div><div class="hint">Parallel Contract Group</div></div></div><div class="note">Serves: NY · NJ · CT · eastern PA. Dealer + A&amp;D contact.</div><div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">email Maren</div><div class="btn-wf">schedule visit</div></div></div>
+          <div class="box"><span class="label">Neighboring</span><div class="stack"><div class="note">Mid-Atlantic · Jordan Okafor</div><div class="note">New England · Pat Deery</div></div></div>
+        </div>
+      </div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">All reps · sortable table</div></div>
+        <div class="spec-table"><div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><b>Territory</b><b>Rep firm</b><b>Lead</b><b>Contact</b></div><div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><span>Northeast</span><span>Parallel Contract Group</span><span>Maren Castillo</span><span>maren@pcg · 917-555-0144</span></div><div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><span>Mid-Atlantic</span><span>Keystone Reps</span><span>Jordan Okafor</span><span>jordan@keystone</span></div><div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><span>Southeast</span><span>Magnolia Contract</span><span>Beatrice Lam</span><span>bea@magnolia</span></div></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="page">
+  <div class="wf-page-title"><h2>About · Our Story</h2></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>About · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>About / Our Story</span></div></div>
+      <div class="hero-block" style="height:380px"><div class="ph"></div><div class="hint" style="color:#95ff00">Shop floor · hands at work</div><div><div class="h-bar" style="background:#fff;width:60%;height:40px"></div><div class="p-bar" style="background:#ccc;margin-top:10px;width:50%"></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Three pillars · repeat from home</div></div><div class="three-col"><div class="box"><div class="title" style="font-size:16px">Modern craft</div><div class="note">Hands + machines · current practice not legacy claim</div></div><div class="box"><div class="title" style="font-size:16px">Speed to ship</div><div class="note">Quick Ship program · 2 weeks</div></div><div class="box"><div class="title" style="font-size:16px">Design-forward</div><div class="note">Built to be seen in great spaces</div></div></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Timeline · 1998 → today</div></div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">1998</div><div class="note" style="font-size:11px">Founded · Jasper, IN</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2005</div><div class="note" style="font-size:11px">First dealer network</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2012</div><div class="note" style="font-size:11px">Quick Ship launched</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2018</div><div class="note" style="font-size:11px">50-yr warranty</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2024</div><div class="note" style="font-size:11px">Spec Studio launched</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%;background:#95ff00;color:#111">2026</div><div class="note" style="font-size:11px">Site + CPQ relaunch</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Manufacturing · Made in USA</div></div>
+        <div class="two-col"><div class="ph" style="aspect-ratio:4/3"></div><div class="stack"><div class="h-bar" style="width:50%"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar"></div><div class="p-bar short"></div></div><div class="chip-row"><span class="chip">BIFMA</span><span class="chip">GREENGUARD Gold</span><span class="chip">SCS</span><span class="chip">Buy American Act</span></div></div></div>
+      </div>
+      <div class="stripe accent"><div class="row"><div class="btn-wf primary">50-year warranty</div><div class="btn-wf">TIPS &amp; contracts</div><div class="btn-wf">careers</div></div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ DEALER PORTAL ============ -->
+<section id="dealer-portal" class="page">
+  <div class="wf-page-title"><h2>Dealer Portal · Landing</h2><div class="meta">Logged-in view · desktop + tablet · stub for auth app</div></div>
+  <div class="tabbar"><a class="on" data-dp="dp-desktop">Desktop</a><a data-dp="dp-tablet">Tablet</a><a data-dp="dp-login">Logged-out (login)</a></div>
+  <div class="wf-canvas">
+  <div id="dp-desktop" class="dp-view">
+    <div class="device desktop"><div class="device-header"><span>Dealer Portal · Desktop · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX · Dealer</div><div class="util"><span class="persona dealer">Dealer</span><span>Aileron Office · Chicago</span><span>Log out</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Welcome back · Sam Ortiz</div><span class="hint">Tier 3 pricing unlocked</span></div>
+        <div class="portal-kpis">
+          <div class="kpi"><div class="l">Active quotes</div><div class="n">14</div></div>
+          <div class="kpi"><div class="l">In production</div><div class="n">6</div></div>
+          <div class="kpi"><div class="l">Shipped YTD</div><div class="n">$ 284k</div></div>
+          <div class="kpi"><div class="l">Dealer tier</div><div class="n">3</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">My Quotes · 4 most recent</div><a class="btn-wf sm">all quotes →</a></div>
+        <div class="spec-table"><div class="row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr 100px"><b>#</b><b>Client</b><b>Items</b><b>Total</b><b>Status</b><b></b></div>
+          <div class="row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr 100px"><span>Q-0412</span><span>Newfield Hospital</span><span>38 tables</span><span>$42,110</span><span>In production</span><div><div class="btn-wf sm">view</div></div></div>
+          <div class="row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr 100px"><span>Q-0409</span><span>Butler University</span><span>72 tables</span><span>$68,400</span><span>Approved</span><div><div class="btn-wf sm">view</div></div></div>
+          <div class="row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr 100px"><span>Q-0404</span><span>First Merchants Bank</span><span>12 tables</span><span>$14,428</span><span>Sent to rep</span><div><div class="btn-wf sm">view</div></div></div>
+          <div class="row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr 100px"><span>Q-0402</span><span>IU Health</span><span>24 tables</span><span>$28,960</span><span>Draft</span><div><div class="btn-wf sm">edit</div></div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Quick actions · role-specific</div></div>
+        <div class="four-col"><div class="box"><div class="title" style="font-size:15px">Configure &amp; Price</div><div class="btn-wf sm primary">open Spec Studio</div></div><div class="box"><div class="title" style="font-size:15px">Download dealer price list</div><div class="btn-wf sm">PDF / XLSX</div></div><div class="box"><div class="title" style="font-size:15px">CAD bundle</div><div class="btn-wf sm">all series · ZIP</div></div><div class="box"><div class="title" style="font-size:15px">My reps</div><div class="btn-wf sm">contact my rep</div></div></div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">My Orders · in production</div></div>
+        <div class="spec-table"><div class="row" style="grid-template-columns:120px 1fr 1fr 1fr 1fr"><b>PO</b><b>Client</b><b>Ship date</b><b>Tracking</b><b>Status</b></div>
+          <div class="row" style="grid-template-columns:120px 1fr 1fr 1fr 1fr"><span>PO-8841</span><span>Newfield Hospital</span><span>May 2, 2026</span><span>ABF · pending</span><span>Finishing</span></div>
+          <div class="row" style="grid-template-columns:120px 1fr 1fr 1fr 1fr"><span>PO-8829</span><span>Ivy Tech</span><span>Apr 22, 2026</span><span>YRC 7H88-2</span><span>On truck</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+  <div id="dp-tablet" class="dp-view" style="display:none">
+    <div class="device tablet"><div class="device-header"><span>Dealer Portal · Tablet</span><span>TABLET</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX · Dealer</div><div class="util"><span>☰</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Sam Ortiz · Tier 3</div></div>
+        <div class="two-col"><div class="kpi"><div class="l">Active quotes</div><div class="n">14</div></div><div class="kpi"><div class="l">In production</div><div class="n">6</div></div></div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Quotes · swipeable</div></div><div class="stack"><div class="box"><div class="hint">Q-0412 · Newfield</div><div class="note">$42,110 · In production</div></div><div class="box"><div class="hint">Q-0409 · Butler U</div><div class="note">$68,400 · Approved</div></div></div></div>
+      <div class="stripe"><div class="two-col"><div class="btn-wf primary">open Spec Studio</div><div class="btn-wf">price list</div></div></div>
+    </div></div>
+    <div class="callout" data-n="T">Dealer tablet: condensed KPIs, swipe quotes list, giant-tap Spec Studio — matches rep "in showroom on tablet" principle extended to dealer visits.</div>
+  </div>
+  <div id="dp-login" class="dp-view" style="display:none">
+    <div class="device desktop"><div class="device-header"><span>Dealer login · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX · Dealer</div></div>
+      <div class="stripe"><div class="two-col" style="gap:40px">
+        <div class="stack"><div class="h-bar" style="height:36px;width:45%">Dealer login</div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div>
+          <div class="box" style="background:#fff;padding:20px"><div class="stack"><div class="ph" style="height:40px;background:#fff;border-style:solid">email</div><div class="ph" style="height:40px;background:#fff;border-style:solid">password</div><div class="btn-wf primary">sign in</div><div class="hint">forgot password?</div></div></div>
+          <div class="note">Not a dealer yet? <u>Apply for dealer account</u></div>
+        </div>
+        <div class="stack"><div class="hint">Why log in?</div><div class="stack"><div class="box"><div class="title" style="font-size:14px">Tiered dealer pricing</div></div><div class="box"><div class="title" style="font-size:14px">Full CPQ + quote pipeline</div></div><div class="box"><div class="title" style="font-size:14px">CAD bundles · DWG · Revit</div></div><div class="box"><div class="title" style="font-size:14px">Order tracking</div></div></div></div>
+      </div></div>
+    </div></div>
+  </div>
+  </div>
+</section>
+
+<!-- ============ REP PORTAL ============ -->
+<section id="rep-portal" class="page">
+  <div class="wf-page-title"><h2>Rep Portal · Landing</h2><div class="meta">Territory dashboard · pipeline · commission · sales tools</div></div>
+  <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Rep Portal · 1280</span><span>DESKTOP</span></div>
+    <div class="viewport stack">
+      <div class="nav-wf"><div class="logo">TableX · Rep</div><div class="util"><span class="persona rep">Rep</span><span>Maren Castillo · Parallel CG</span><span>Log out</span></div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Territory · Northeast · Q2 2026</div></div>
+        <div class="portal-kpis">
+          <div class="kpi"><div class="l">Pipeline value</div><div class="n">$ 1.42m</div></div>
+          <div class="kpi"><div class="l">Closed YTD</div><div class="n">$ 386k</div></div>
+          <div class="kpi"><div class="l">Commission YTD</div><div class="n">$ 23.4k</div></div>
+          <div class="kpi"><div class="l">Active dealers</div><div class="n">18</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Quote pipeline · by stage</div></div>
+        <div class="four-col">
+          <div class="box"><div class="hint">DRAFT</div><div class="n" style="font-size:22px">7</div><div class="note">$ 128k</div></div>
+          <div class="box"><div class="hint">SENT</div><div class="n" style="font-size:22px">12</div><div class="note">$ 420k</div></div>
+          <div class="box"><div class="hint">APPROVED</div><div class="n" style="font-size:22px">5</div><div class="note">$ 612k</div></div>
+          <div class="box" style="border-color:#95ff00"><div class="hint">IN PRODUCTION</div><div class="n" style="font-size:22px">4</div><div class="note">$ 260k</div></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Dealers in my territory · 18</div><a class="btn-wf sm">add dealer</a></div>
+        <div class="spec-table"><div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><b>Dealer</b><b>City</b><b>Open quotes</b><b>YTD</b></div>
+          <div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><span>Aileron Office</span><span>Chicago</span><span>14</span><span>$ 284k</span></div>
+          <div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><span>Fieldworks NYC</span><span>New York</span><span>7</span><span>$ 91k</span></div>
+          <div class="row" style="grid-template-columns:1fr 1fr 1fr 1fr"><span>Keelside Contract</span><span>Boston</span><span>3</span><span>$ 42k</span></div>
+        </div>
+      </div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">Sales tools &amp; training</div></div>
+        <div class="four-col"><div class="box"><div class="title" style="font-size:14px">Product knowledge · video</div></div><div class="box"><div class="title" style="font-size:14px">Finishes sample kit request</div></div><div class="box"><div class="title" style="font-size:14px">Spec Studio demo · tablet</div><div class="btn-wf sm primary">launch demo</div></div><div class="box"><div class="title" style="font-size:14px">Pricing &amp; margin calculator</div></div></div>
+      </div>
+      <div class="callout" data-n="R">Rep persona is 30% of traffic and 100% of in-showroom demos — notice the "launch demo" CTA targets the tablet view of Spec Studio, which is where rep value is created.</div>
+    </div></div>
+  </div>
+</section>
+
+</div><!-- wf-main -->
+</div><!-- wf-shell -->
+
+<script>
+  // Sidebar page switching
+  var pages = document.querySelectorAll('.page');
+  var rails = document.querySelectorAll('.wf-rail a[data-p]');
+  var bc = document.getElementById('bc');
+  function go(id) {
+    pages.forEach(p => p.classList.toggle('active', p.id === id));
+    rails.forEach(a => a.classList.toggle('active', a.dataset.p === id));
+    var active = document.querySelector('.wf-rail a[data-p="'+id+'"]');
+    if (active && bc) bc.textContent = active.textContent;
+    try { localStorage.setItem('tablex_wf_page', id); } catch(e){}
+    window.scrollTo({top:0});
+  }
+  rails.forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(a.dataset.p); location.hash = a.dataset.p; }));
+  var initial = (location.hash && location.hash.slice(1)) || localStorage.getItem('tablex_wf_page') || 'home';
+  go(initial);
+
+  // Sub-tabs within Spec Studio + Product + Dealer
+  document.querySelectorAll('.tabbar').forEach(bar => {
+    bar.querySelectorAll('a').forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      bar.querySelectorAll('a').forEach(x => x.classList.remove('on'));
+      a.classList.add('on');
+      var key = a.dataset.sub || a.dataset.pd || a.dataset.dp;
+      if (!key) return;
+      // hide siblings in the same page
+      var page = bar.closest('.page');
+      var viewClass = a.dataset.sub ? '.ss-view' : a.dataset.pd ? '.pd-view' : '.dp-view';
+      page.querySelectorAll(viewClass).forEach(v => v.style.display = 'none');
+      var show = page.querySelector('#'+key);
+      if (show) show.style.display = '';
+    }));
+  });
+
+  // Breakpoint toggle (visual cue)
+  document.querySelectorAll('#bp a').forEach(b => b.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('#bp a').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    var mode = b.dataset.bp;
+    document.querySelectorAll('.device').forEach(d => {
+      if (mode === 'desktop') d.style.display = d.classList.contains('tablet') ? 'none' : '';
+      else if (mode === 'tablet') d.style.display = d.classList.contains('desktop') ? 'none' : '';
+      else d.style.display = '';
+    });
+  }));
+</script>
+</body></html>
