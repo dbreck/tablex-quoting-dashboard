@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TableX ↔ Monday — Sync Wireframe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0a0a0a;
+    color: #e5e5e5;
+    padding: 48px 64px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 28px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+  h2 { font-size: 20px; font-weight: 600; margin: 48px 0 16px; color: #8dc63f; }
+  h3 { font-size: 15px; font-weight: 600; margin: 24px 0 12px; color: #fff; }
+  .muted { color: #888; font-size: 14px; }
+  .card {
+    background: #141414;
+    border: 1px solid #262626;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .legend { display: flex; gap: 20px; font-size: 13px; color: #aaa; margin: 12px 0 24px; }
+  .legend span::before {
+    content: ""; display: inline-block; width: 10px; height: 10px;
+    margin-right: 6px; border-radius: 2px; vertical-align: middle;
+  }
+  .l-group::before { background: #3b82f6; }
+  .l-item::before { background: #8dc63f; }
+  .l-subitem::before { background: #a78bfa; }
+
+  /* Board mockup */
+  .board { border: 1px solid #262626; border-radius: 8px; overflow: hidden; }
+  .group {
+    background: #141414;
+    border-bottom: 1px solid #262626;
+  }
+  .group:last-child { border-bottom: none; }
+  .group-header {
+    background: #1a2438;
+    padding: 10px 16px;
+    font-weight: 600;
+    color: #93c5fd;
+    border-left: 4px solid #3b82f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+  }
+  .group-header .count { color: #666; font-weight: 400; font-size: 12px; }
+
+  .col-headers {
+    display: grid;
+    grid-template-columns: 32px 2fr 120px 70px 70px 70px 90px 120px 110px;
+    gap: 0;
+    padding: 8px 16px;
+    background: #0f0f0f;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #666;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #1f1f1f;
+  }
+  .col-headers > div { padding: 0 6px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 32px 2fr 120px 70px 70px 70px 90px 120px 110px;
+    padding: 10px 16px;
+    align-items: center;
+    font-size: 13px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .row:last-child { border-bottom: none; }
+  .row.item { background: #141414; }
+  .row.item .title { color: #d4d4d4; font-weight: 500; }
+  .row.subitem { background: #0d0d0d; padding-left: 48px; font-size: 12px; }
+  .row.subitem .title { color: #a0a0a0; }
+  .row > div { padding: 0 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .chevron { color: #555; font-size: 11px; }
+  .item-icon { color: #8dc63f; font-size: 11px; }
+  .subitem-icon { color: #a78bfa; font-size: 10px; }
+
+  .status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #000;
+  }
+  .s-working { background: #fdab3d; }
+  .s-done { background: #00c875; color: #fff; }
+  .s-stuck { background: #df2f4a; color: #fff; }
+  .s-notstarted { background: #c4c4c4; color: #333; }
+  .s-review { background: #a78bfa; color: #fff; }
+
+  .person {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .p-d { background: #8dc63f; }
+  .p-r { background: #3b82f6; color: #fff; }
+  .p-b { background: #f59e0b; }
+
+  .numeric { color: #d4d4d4; font-variant-numeric: tabular-nums; }
+  .variance-good { color: #00c875; }
+  .variance-warn { color: #fdab3d; }
+  .rationale { color: #888; font-style: italic; font-size: 12px; }
+
+  /* Sync diagram */
+  .sync-diagram {
+    display: grid;
+    grid-template-columns: 1fr 200px 1fr;
+    gap: 24px;
+    align-items: center;
+    margin: 24px 0;
+  }
+  .sync-box {
+    background: #141414;
+    border: 1px solid #262626;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+  }
+  .sync-box.tablex { border-color: #8dc63f44; }
+  .sync-box.monday { border-color: #ff3d5744; }
+  .sync-box h3 { margin: 0 0 6px; font-size: 16px; }
+  .sync-box .sublabel { font-size: 12px; color: #888; }
+  .sync-arrows { text-align: center; font-family: monospace; color: #8dc63f; font-size: 13px; line-height: 2; }
+  .sync-arrows div:nth-child(2) { color: #ff3d57; }
+
+  .scenario {
+    background: #141414;
+    border: 1px solid #262626;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .scenario-title { font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #fff; }
+  .scenario-body { font-size: 13px; color: #aaa; line-height: 1.6; }
+  .scenario-body .win { color: #00c875; font-weight: 600; }
+  .scenario-body .lose { color: #df2f4a; text-decoration: line-through; }
+
+  .callout {
+    background: #1a2438;
+    border-left: 3px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #bfd4f2;
+    margin: 12px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>TableX ↔ Monday — Sync Wireframe</h1>
+<p class="muted">Board: <a href="https://clear-ph-design.monday.com/boards/18409604004" style="color:#8dc63f;">clear-ph-design.monday.com/boards/18409604004</a></p>
+
+<h2>1. How the Monday board would look</h2>
+<p class="muted">Three levels: Workstreams become groups · Deliverables become items · Tasks become subitems.</p>
+
+<div class="legend">
+  <span class="l-group">Group = Workstream</span>
+  <span class="l-item">Item = Deliverable</span>
+  <span class="l-subitem">Subitem = Task</span>
+</div>
+
+<div class="board">
+
+  <!-- GROUP 1: WEBSITE -->
+  <div class="group">
+    <div class="group-header">
+      <span>▼ Website</span>
+      <span class="count">4 deliverables · 160h · 20 days</span>
+    </div>
+
+    <div class="col-headers">
+      <div></div>
+      <div>Name</div>
+      <div>Status</div>
+      <div>Hours</div>
+      <div>Days</div>
+      <div>Baseline</div>
+      <div>Variance</div>
+      <div>Rationale</div>
+      <div>Assignee · Due</div>
+    </div>
+
+    <!-- Item 1 -->
+    <div class="row item">
+      <div class="chevron">▼</div>
+      <div class="title">📦 Web Style Guide &amp; Site Design</div>
+      <div><span class="status s-working">Working on it</span></div>
+      <div class="numeric">24</div>
+      <div class="numeric">3.0</div>
+      <div class="numeric">3.0</div>
+      <div class="variance-good">0%</div>
+      <div class="rationale">—</div>
+      <div><span class="person p-d">D</span> Apr 28</div>
+    </div>
+    <div class="row subitem">
+      <div class="subitem-icon">▸</div>
+      <div class="title">Typography audit</div>
+      <div><span class="status s-done">Done</span></div>
+      <div></div><div></div><div></div><div></div><div></div>
+      <div><span class="person p-d">D</span> Apr 24</div>
+    </div>
+    <div class="row subitem">
+      <div class="subitem-icon">▸</div>
+      <div class="title">Color palette decisions</div>
+      <div><span class="status s-working">Working on it</span></div>
+      <div></div><div></div><div></div><div></div><div></div>
+      <div><span class="person p-r">R</span> Apr 25</div>
+    </div>
+    <div class="row subitem">
+      <div class="subitem-icon">▸</div>
+      <div class="title">Grid system</div>
+      <div><span class="status s-notstarted">Not Started</span></div>
+      <div></div><div></div><div></div><div></div><div></div>
+      <div><span class="person p-d">D</span> Apr 28</div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="row item">
+      <div class="chevron">▸</div>
+      <div class="title">📦 Web Feature Design</div>
+      <div><span class="status s-notstarted">Not Started</span></div>
+      <div class="numeric">16</div>
+      <div class="numeric">2.0</div>
+      <div class="numeric">2.0</div>
+      <div class="variance-good">0%</div>
+      <div class="rationale">—</div>
+      <div><span class="person p-d">D</span> May 6</div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="row item">
+      <div class="chevron">▸</div>
+      <div class="title">📦 3D Configurator Design</div>
+      <div><span class="status s-notstarted">Not Started</span></div>
+      <div class="numeric">16</div>
+      <div class="numeric">2.0</div>
+      <div class="numeric">2.0</div>
+      <div class="variance-good">0%</div>
+      <div class="rationale">—</div>
+      <div><span class="person p-d">D</span> May 8</div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="row item">
+      <div class="chevron">▸</div>
+      <div class="title">📦 Frontend Build</div>
+      <div><span class="status s-notstarted">Not Started</span></div>
+      <div class="numeric">104</div>
+      <div class="numeric">13.0</div>
+      <div class="numeric">13.0</div>
+      <div class="variance-good">0%</div>
+      <div class="rationale">—</div>
+      <div><span class="person p-b">B</span> Jun 4</div>
+    </div>
+  </div>
+
+  <!-- GROUP 2: DEALER/REP PORTAL -->
+  <div class="group">
+    <div class="group-header">
+      <span>▼ Dealer / Rep Portal</span>
+      <span class="count">3 deliverables · 48h · 6 days</span>
+    </div>
+    <div class="col-headers">
+      <div></div><div>Name</div><div>Status</div><div>Hours</div><div>Days</div>
+      <div>Baseline</div><div>Variance</div><div>Rationale</div><div>Assignee · Due</div>
+    </div>
+    <div class="row item">
+      <div class="chevron">▸</div>
+      <div class="title">📦 Auth + Role System</div>
+      <div><span class="status s-review">Review</span></div>
+      <div class="numeric">20</div>
+      <div class="numeric">2.5</div>
+      <div class="numeric">2.0</div>
+      <div class="variance-warn">+25%</div>
+      <div class="rationale">SSO scope grew</div>
+      <div><span class="person p-b">B</span> May 12</div>
+    </div>
+    <div class="row item">
+      <div class="chevron">▸</div>
+      <div class="title">📦 Dealer Dashboard</div>
+      <div><span class="status s-notstarted">Not Started</span></div>
+      <div class="numeric">18</div>
+      <div class="numeric">2.0</div>
+      <div class="numeric">2.0</div>
+      <div class="variance-good">0%</div>
+      <div class="rationale">—</div>
+      <div><span class="person p-d">D</span> May 18</div>
+    </div>
+    <div class="row item">
+      <div class="chevron">▸</div>
+      <div class="title">📦 Rep Order Placement</div>
+      <div><span class="status s-stuck">Stuck</span></div>
+      <div class="numeric">10</div>
+      <div class="numeric">1.5</div>
+      <div class="numeric">1.0</div>
+      <div class="variance-warn">+50%</div>
+      <div class="rationale">Waiting on Xero map</div>
+      <div><span class="person p-r">R</span> May 20</div>
+    </div>
+  </div>
+
+  <!-- GROUP 3: CRM -->
+  <div class="group">
+    <div class="group-header">
+      <span>▶ CRM</span>
+      <span class="count">3 deliverables · 53h · 7 days</span>
+    </div>
+  </div>
+
+  <!-- GROUP 4: CPQ -->
+  <div class="group">
+    <div class="group-header">
+      <span>▶ CPQ (Spec Studio)</span>
+      <span class="count">4 deliverables · 103h · 13 days</span>
+    </div>
+  </div>
+
+  <!-- GROUP 5: XERO -->
+  <div class="group">
+    <div class="group-header">
+      <span>▶ Xero Integration</span>
+      <span class="count">2 deliverables · 47h · 6 days</span>
+    </div>
+  </div>
+</div>
+
+<div class="callout">
+  <strong>Notice:</strong> The Website group is expanded with one deliverable drilled open (Web Style Guide) so you can see the three levels stacked. The other 4 workstreams are collapsed to a one-liner with rollup counts. In Monday this is the default "item view" — everything collapses and expands naturally.
+</div>
+
+<h2>2. How the sync flows</h2>
+<p class="muted">Both sides can edit anything. A sync job reconciles every few minutes (plus a "Refresh" button for on-demand).</p>
+
+<div class="sync-diagram">
+  <div class="sync-box tablex">
+    <h3>TableX App</h3>
+    <div class="sublabel">Project Tracker · Scope page · Tasks board</div>
+  </div>
+  <div class="sync-arrows">
+    <div>───── push ─────▶</div>
+    <div>◀───── pull ─────</div>
+    <div style="color:#666; font-size:11px; margin-top:8px;">every ~5 min<br/>+ manual refresh</div>
+  </div>
+  <div class="sync-box monday">
+    <h3>Monday.com</h3>
+    <div class="sublabel">Board 18409604004 · Groups/Items/Subitems</div>
+  </div>
+</div>
+
+<h2>3. What happens when both sides edit the same field?</h2>
+<p class="muted">Last-write-wins, per field. Every field carries a timestamp. Newer stamp beats older stamp.</p>
+
+<div class="scenario">
+  <div class="scenario-title">Scenario A — No conflict (99% of edits)</div>
+  <div class="scenario-body">
+    Danny updates <em>hours</em> in TableX Scope page at 9:00 AM.<br/>
+    Brian marks the task <em>Done</em> in Monday at 9:15 AM.<br/>
+    Different fields → both edits <span class="win">win</span>. Sync pushes hours to Monday, pulls status to TableX. Done.
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="scenario-title">Scenario B — Same field, different times</div>
+  <div class="scenario-body">
+    Richie changes a deliverable's status to <em>Review</em> in Monday at 2:00 PM.<br/>
+    Danny changes the same deliverable's status to <em>Done</em> in TableX at 2:03 PM.<br/>
+    Next sync runs at 2:05 PM → <span class="win">Done wins</span> (newer). <span class="lose">Review is overwritten.</span> A small toast in TableX says "Richie's earlier Monday edit was overridden." No silent data loss.
+  </div>
+</div>
+
+<div class="scenario">
+  <div class="scenario-title">Scenario C — "Updated in Monday 2m ago" indicator</div>
+  <div class="scenario-body">
+    Before someone edits a field in TableX, the UI shows a subtle "Updated in Monday 2m ago" badge if Monday's version is newer than what TableX last saw. Encourages a refresh before editing. Prevents most conflicts without needing a heavy locking system.
+  </div>
+</div>
+
+<h2>4. What gets synced (field map)</h2>
+
+<table style="width:100%; border-collapse: collapse; font-size: 13px; margin-top: 8px;">
+  <thead>
+    <tr style="background:#141414; border-bottom: 1px solid #262626;">
+      <th style="text-align:left; padding:10px; color:#8dc63f;">TableX field</th>
+      <th style="text-align:left; padding:10px; color:#8dc63f;">Monday column</th>
+      <th style="text-align:left; padding:10px; color:#8dc63f;">Direction</th>
+      <th style="text-align:left; padding:10px; color:#8dc63f;">Notes</th>
+    </tr>
+  </thead>
+  <tbody style="color:#ccc;">
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Deliverable.status</td><td style="padding:10px;">Status</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Label map needed (TableX has 5 states, Monday has 3 by default — we'd add two)</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Deliverable.hours</td><td style="padding:10px;">Hours (numeric)</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Canonical in TableX; Monday shows for visibility</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Deliverable.baselineDays</td><td style="padding:10px;">Baseline (numeric)</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Locked once baselined; edits trigger confirm</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Deliverable.rationale</td><td style="padding:10px;">Rationale (long text)</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Free-form</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Task.status</td><td style="padding:10px;">Subitem Status</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Most-edited field</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Task.assignee</td><td style="padding:10px;">Subitem Person</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Team members mapped by email</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Task.dueDate</td><td style="padding:10px;">Subitem Date</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">ISO YYYY-MM-DD</td></tr>
+    <tr style="border-bottom:1px solid #1a1a1a;"><td style="padding:10px;">Task.priority</td><td style="padding:10px;">Subitem Priority (new col)</td><td style="padding:10px;">↔</td><td style="padding:10px; color:#888;">Low/Med/High/Urgent</td></tr>
+    <tr><td style="padding:10px;">Task.subtasks</td><td style="padding:10px;">—</td><td style="padding:10px;">TableX only</td><td style="padding:10px; color:#888;">Monday can't nest 3 deep</td></tr>
+  </tbody>
+</table>
+
+<p class="muted" style="margin-top: 48px; padding-top: 16px; border-top: 1px solid #262626;">
+  Wireframe — TableX Quoting Dashboard · 2026-04-21
+</p>
+
+</body>
+</html>

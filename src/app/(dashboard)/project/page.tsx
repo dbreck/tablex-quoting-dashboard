@@ -6,7 +6,7 @@ import { ProgressSummary } from "@/components/project/ProgressSummary";
 import { DELIVERABLES, WORKSTREAMS } from "@/data/project-phase2";
 import { computeDeliverableStatus, COLUMNS } from "@/data/project-tracker";
 import Link from "next/link";
-import { ArrowRight, KanbanSquare, GanttChart, ListChecks, Server } from "lucide-react";
+import { ArrowRight, KanbanSquare, GanttChart, ListChecks, Server, FileText, ExternalLink } from "lucide-react";
 
 export default function ProjectDashboard() {
   const { isInitialized, initializeFromDeliverables, tasks } = useProjectTrackerStore();
@@ -40,6 +40,23 @@ export default function ProjectDashboard() {
         <QuickLink href="/project/timeline" icon={GanttChart} label="Timeline" desc="Gantt chart" />
         <QuickLink href="/project/scope" icon={ListChecks} label="Scope" desc="Deliverables" />
         <QuickLink href="/project/infrastructure" icon={Server} label="Infra Setup" desc="Service tracker" />
+      </div>
+
+      {/* Design docs */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Design Docs</h3>
+        <div className="space-y-2">
+          <a
+            href="/monday-sync-wireframe.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 text-sm text-gray-700 hover:text-brand-green transition-colors group"
+          >
+            <FileText className="h-4 w-4 text-gray-400 group-hover:text-brand-green transition-colors shrink-0" />
+            <span className="flex-1">Monday.com Sync — board structure &amp; sync model</span>
+            <ExternalLink className="h-3 w-3 text-gray-400" />
+          </a>
+        </div>
       </div>
 
       {/* Recent activity */}
