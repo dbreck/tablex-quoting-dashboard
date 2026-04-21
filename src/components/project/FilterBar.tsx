@@ -1,12 +1,13 @@
 "use client";
 
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
-import { TEAM_MEMBERS, COLUMNS } from "@/data/project-tracker";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
+import { COLUMNS } from "@/data/project-tracker";
 import { WORKSTREAMS } from "@/data/project-phase2";
 import { Search, X } from "lucide-react";
 
 export function FilterBar() {
   const { filters, setFilter, resetFilters } = useProjectTrackerStore();
+  const team = useTeam();
   const hasFilters = filters.assignee !== "all" || filters.workstream !== "all" || filters.priority !== "all" || filters.search !== "";
 
   return (
@@ -30,7 +31,7 @@ export function FilterBar() {
         className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
       >
         <option value="all">All Members</option>
-        {TEAM_MEMBERS.map((m) => (
+        {team.map((m) => (
           <option key={m.id} value={m.id}>{m.name} ({m.role})</option>
         ))}
       </select>

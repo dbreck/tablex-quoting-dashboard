@@ -7,6 +7,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 
 const tabs = [
   { name: "Users", href: "/admin/users" },
+  { name: "Team", href: "/admin/team" },
   { name: "Scope", href: "/admin/scope" },
   { name: "Timeline", href: "/admin/timeline" },
   { name: "Estimate", href: "/admin/estimate" },

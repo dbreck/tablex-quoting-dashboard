@@ -287,6 +287,7 @@ export const useQuoteStore = create<QuoteStore>()(
     }),
     {
       name: "tablex-quote-builder",
+      version: 1,
       // Only persist draft quote to localStorage, not quotes array
       partialize: (state) => ({
         draftQuote: state.draftQuote,

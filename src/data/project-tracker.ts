@@ -8,7 +8,19 @@ import { DELIVERABLES, WORKSTREAMS, type Deliverable } from "./project-phase2";
 
 export type KanbanColumn = "backlog" | "in-progress" | "in-review" | "done";
 export type Priority = "low" | "medium" | "high" | "critical";
-export type TeamMember = "danny" | "kayla" | "arabella";
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  initials: string;
+  color: string;
+  company?: string;
+  title?: string;
+  email?: string;
+  phone?: string;
+  notes?: string;
+}
 
 export interface Task {
   id: string;
@@ -17,7 +29,8 @@ export interface Task {
   description?: string;
   column: KanbanColumn;
   priority: Priority;
-  assignee: TeamMember | null;
+  /** TeamMember id. Null when unassigned. */
+  assignee: string | null;
   labels: string[];
   subtasks: Subtask[];
   /** ISO date (YYYY-MM-DD) */
@@ -34,13 +47,59 @@ export interface Subtask {
   completed: boolean;
 }
 
+/**
+ * User-editable overrides for a static Deliverable from project-phase2.
+ * Fixed facts (name, description, hourlyRate, phase, dates) stay in the
+ * source file. Only fields that drift from the quote live here — baseline,
+ * rationale, optional days override, manual status.
+ */
+export interface DeliverableOverride {
+  deliverableId: string;
+  /** Snapshot of "as quoted" days. Null until explicitly baselined. */
+  baselineDays?: number | null;
+  /** One-line explanation: "how did we arrive at this estimate?" */
+  rationale?: string;
+  /** Override the derived days (from hoursToDays). Optional — undefined means "use derived". */
+  daysOverride?: number;
+  /** Manual status override. When set, takes precedence over the static status. */
+  manualStatus?: "planned" | "in-progress" | "complete" | null;
+}
+
+export type ScopeStatus = "planned" | "in-progress" | "complete";
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-export const TEAM_MEMBERS: { id: TeamMember; name: string; role: string; initials: string; color: string }[] = [
-  { id: "danny", name: "Danny", role: "Developer", initials: "DB", color: "#3b82f6" },
-  { id: "kayla", name: "Kayla", role: "Designer", initials: "KS", color: "#ec4899" },
-  { id: "arabella", name: "Arabella", role: "PM", initials: "AH", color: "#f59e0b" },
-];
+/** 10-color palette for team member avatars. */
+export const TEAM_COLORS = [
+  "#3b82f6", // blue
+  "#ec4899", // pink
+  "#f59e0b", // amber
+  "#10b981", // emerald
+  "#8b5cf6", // violet
+  "#ef4444", // red
+  "#06b6d4", // cyan
+  "#f97316", // orange
+  "#84cc16", // lime
+  "#64748b", // slate
+] as const;
+
+/** Compute initials from a full name. Handles single names, multi-part names. */
+export function computeInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+/** Seed team keyed by id. Used by the store's backfill-on-hydrate path. */
+export const DEFAULT_TEAM_MEMBERS: Record<string, TeamMember> = {
+  danny: { id: "danny", name: "Danny", role: "Developer", initials: "DB", color: "#3b82f6" },
+  kayla: { id: "kayla", name: "Kayla", role: "Designer", initials: "KS", color: "#ec4899" },
+  arabella: { id: "arabella", name: "Arabella", role: "PM", initials: "AH", color: "#f59e0b" },
+};
+
+/** Back-compat: flat array view of the seed team. New consumers should use `useTeam()`. */
+export const TEAM_MEMBERS: TeamMember[] = Object.values(DEFAULT_TEAM_MEMBERS);
 
 export const LABELS = [
   { id: "frontend", name: "Frontend", color: "#3b82f6" },
@@ -79,8 +138,8 @@ function inferLabels(d: Deliverable): string[] {
   return labels;
 }
 
-/** Infer default assignee from deliverable phase */
-function inferAssignee(d: Deliverable): TeamMember | null {
+/** Infer default assignee from deliverable phase. Returns a TeamMember id. */
+function inferAssignee(d: Deliverable): string | null {
   if (d.phase === "design" && d.hourlyRate === 150) return "kayla";
   if (d.phase === "build") return "danny";
   if (d.phase === "discovery") return null; // shared
@@ -180,7 +239,8 @@ export type DueStatus = "overdue" | "due-soon" | "upcoming" | "none";
 
 export function getDueStatus(task: Pick<Task, "dueDate" | "column">): DueStatus {
   if (!task.dueDate) return "none";
-  if (task.column === "done") return "upcoming";
+  // Completed tasks don't show a due chip — reduces visual noise on done rows.
+  if (task.column === "done") return "none";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const due = new Date(task.dueDate + "T00:00:00");
@@ -188,6 +248,61 @@ export function getDueStatus(task: Pick<Task, "dueDate" | "column">): DueStatus 
   if (diffDays < 0) return "overdue";
   if (diffDays <= 3) return "due-soon";
   return "upcoming";
+}
+
+/** 8 hours = 1 billable day. Days display is rounded to 0.5. */
+export function hoursToDays(hours: number): number {
+  return Math.round((hours / 8) * 2) / 2;
+}
+
+/** Inverse of hoursToDays. */
+export function daysToHours(days: number): number {
+  return days * 8;
+}
+
+/**
+ * Effective days for a deliverable — respects `daysOverride` if set,
+ * otherwise derives from `estimatedHours`.
+ */
+export function getDeliverableDays(
+  deliverable: { estimatedHours: number },
+  override?: DeliverableOverride
+): number {
+  if (override?.daysOverride !== undefined) return override.daysOverride;
+  return hoursToDays(deliverable.estimatedHours);
+}
+
+/**
+ * Scope-layer status for a deliverable. Reads the manual override first,
+ * falls back to the static status from project-phase2. Does NOT read tasks —
+ * that's the working-reality layer (see `computeDeliverableStatus`).
+ */
+export function getScopeStatus(
+  deliverable: { status: ScopeStatus },
+  override?: DeliverableOverride
+): ScopeStatus {
+  if (override?.manualStatus) return override.manualStatus;
+  return deliverable.status;
+}
+
+/**
+ * Baseline variance classification for visual styling.
+ * - `neutral` — no baseline, or within ±10% of baseline
+ * - `over` — current days ≥ 10% over baseline
+ * - `under` — current days ≤ 10% under baseline
+ */
+export type VarianceTone = "neutral" | "over" | "under";
+
+export function getVariance(
+  currentDays: number,
+  baselineDays: number | null | undefined
+): { tone: VarianceTone; percent: number | null } {
+  if (baselineDays == null || baselineDays === 0) return { tone: "neutral", percent: null };
+  const diff = currentDays - baselineDays;
+  const percent = Math.round((diff / baselineDays) * 100);
+  if (percent >= 10) return { tone: "over", percent };
+  if (percent <= -10) return { tone: "under", percent };
+  return { tone: "neutral", percent };
 }
 
 /** Short display format for due dates (e.g. "May 15" or "May 15 '27" if not this year) */

@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import {
   type KanbanColumn,
   type Priority,
-  type TeamMember,
-  TEAM_MEMBERS,
   COLUMNS,
 } from "@/data/project-tracker";
 import { DELIVERABLES, WORKSTREAMS } from "@/data/project-phase2";
@@ -21,11 +19,12 @@ interface TaskCreateDialogProps {
 
 export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", defaultDeliverableId }: TaskCreateDialogProps) {
   const { addTask } = useProjectTrackerStore();
+  const team = useTeam();
   const [title, setTitle] = useState("");
   const [deliverableId, setDeliverableId] = useState(defaultDeliverableId ?? "");
   const [column, setColumn] = useState<KanbanColumn>(defaultColumn);
   const [priority, setPriority] = useState<Priority>("medium");
-  const [assignee, setAssignee] = useState<TeamMember | "">("");
+  const [assignee, setAssignee] = useState<string>("");
   const [dueDate, setDueDate] = useState("");
 
   if (!open) return null;
@@ -141,11 +140,11 @@ export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", def
                 <label className="text-xs font-medium text-gray-500 mb-1 block">Assignee</label>
                 <select
                   value={assignee}
-                  onChange={(e) => setAssignee(e.target.value as TeamMember | "")}
+                  onChange={(e) => setAssignee(e.target.value)}
                   className="w-full text-sm border border-gray-200 rounded-lg px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
                 >
                   <option value="">None</option>
-                  {TEAM_MEMBERS.map((m) => (
+                  {team.map((m) => (
                     <option key={m.id} value={m.id}>{m.name}</option>
                   ))}
                 </select>

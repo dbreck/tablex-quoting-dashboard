@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import {
   type Task,
   type KanbanColumn,
   type Priority,
-  type TeamMember,
-  TEAM_MEMBERS,
   LABELS,
   COLUMNS,
   getWorkstreamForDeliverable,
@@ -30,6 +28,7 @@ interface TaskDetailSheetProps {
 
 export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const { updateTask, deleteTask, addSubtask, toggleSubtask, removeSubtask } = useProjectTrackerStore();
+  const team = useTeam();
   const [newSubtask, setNewSubtask] = useState("");
 
   if (!task) return null;
@@ -151,11 +150,11 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 block">Assignee</label>
               <select
                 value={task.assignee ?? ""}
-                onChange={(e) => updateTask(task.id, { assignee: (e.target.value || null) as TeamMember | null })}
+                onChange={(e) => updateTask(task.id, { assignee: e.target.value || null })}
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
               >
                 <option value="">Unassigned</option>
-                {TEAM_MEMBERS.map((m) => (
+                {team.map((m) => (
                   <option key={m.id} value={m.id}>{m.name} — {m.role}</option>
                 ))}
               </select>

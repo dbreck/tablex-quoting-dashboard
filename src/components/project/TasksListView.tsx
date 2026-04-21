@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
-import { type Task, filterTasks, COLUMNS, TEAM_MEMBERS } from "@/data/project-tracker";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
+import { type Task, filterTasks, COLUMNS } from "@/data/project-tracker";
 import { WORKSTREAMS, DELIVERABLES, getDeliverablesByWorkstream } from "@/data/project-phase2";
 import { type GroupBy } from "./TasksToolbar";
 import { WorkstreamGroup } from "./WorkstreamGroup";
@@ -27,6 +27,7 @@ export function TasksListView({
   onToggleGroup,
 }: TasksListViewProps) {
   const { tasks, filters } = useProjectTrackerStore();
+  const team = useTeam();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
@@ -124,7 +125,7 @@ export function TasksListView({
 
   const groups = useMemo(() => {
     if (groupBy === "assignee") {
-      const memberGroups = TEAM_MEMBERS.map((m) => ({
+      const memberGroups = team.map((m) => ({
         id: m.id,
         label: `${m.name} — ${m.role}`,
         color: m.color,
@@ -159,7 +160,7 @@ export function TasksListView({
       ...p,
       tasks: filteredTasks.filter((t) => t.priority === p.id),
     })).filter((g) => g.tasks.length > 0);
-  }, [groupBy, filteredTasks]);
+  }, [groupBy, filteredTasks, team]);
 
   return (
     <>

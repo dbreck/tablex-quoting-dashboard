@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import {
   type Task,
   type KanbanColumn,
-  type TeamMember,
-  TEAM_MEMBERS,
   LABELS,
   COLUMNS,
   getWorkstreamForDeliverable,
@@ -40,10 +38,11 @@ interface TaskRowProps {
 
 export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream }: TaskRowProps) {
   const { updateTask } = useProjectTrackerStore();
+  const team = useTeam();
   const [expanded, setExpanded] = useState(false);
   const isDone = task.column === "done";
   const workstream = showWorkstream ? getWorkstreamForDeliverable(task.deliverableId) : null;
-  const assignee = TEAM_MEMBERS.find((m) => m.id === task.assignee);
+  const assignee = team.find((m) => m.id === task.assignee);
   const completedSubtasks = task.subtasks.filter((s) => s.completed).length;
   const totalSubtasks = task.subtasks.length;
 
@@ -131,8 +130,8 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
           </span>
         )}
 
-        {/* Due date chip */}
-        {task.dueDate && (
+        {/* Due date chip — hidden for done tasks and tasks with no due date */}
+        {task.dueDate && getDueStatus(task) !== "none" && (
           <span
             className={cn(
               "flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border shrink-0",
@@ -175,13 +174,13 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
           value={task.assignee ?? ""}
           onChange={(e) => {
             e.stopPropagation();
-            updateTask(task.id, { assignee: (e.target.value || null) as TeamMember | null });
+            updateTask(task.id, { assignee: e.target.value || null });
           }}
           onClick={(e) => e.stopPropagation()}
           className="text-[10px] border border-gray-200 rounded px-1.5 py-0.5 bg-white text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-green/50 shrink-0 w-20"
         >
           <option value="">—</option>
-          {TEAM_MEMBERS.map((m) => (
+          {team.map((m) => (
             <option key={m.id} value={m.id}>{m.name}</option>
           ))}
         </select>

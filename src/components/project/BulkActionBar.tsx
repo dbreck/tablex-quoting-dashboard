@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
-import { type KanbanColumn, type TeamMember, COLUMNS, TEAM_MEMBERS } from "@/data/project-tracker";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
+import { type KanbanColumn, COLUMNS } from "@/data/project-tracker";
 import { X, Trash2 } from "lucide-react";
 
 interface BulkActionBarProps {
@@ -12,6 +12,7 @@ interface BulkActionBarProps {
 
 export function BulkActionBar({ selectedIds, onClearSelection }: BulkActionBarProps) {
   const { bulkUpdateTasks, deleteTask } = useProjectTrackerStore();
+  const team = useTeam();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const count = selectedIds.size;
 
@@ -27,7 +28,7 @@ export function BulkActionBar({ selectedIds, onClearSelection }: BulkActionBarPr
     onClearSelection();
   };
 
-  const handleAssign = (assignee: TeamMember | null) => {
+  const handleAssign = (assignee: string | null) => {
     bulkUpdateTasks(ids, { assignee });
     onClearSelection();
   };
@@ -67,14 +68,14 @@ export function BulkActionBar({ selectedIds, onClearSelection }: BulkActionBarPr
       <select
         defaultValue=""
         onChange={(e) => {
-          handleAssign(e.target.value ? (e.target.value as TeamMember) : null);
+          handleAssign(e.target.value || null);
           e.target.value = "";
         }}
         className="text-xs bg-white/10 border border-white/20 rounded-lg px-2 py-1.5 text-white focus:outline-none"
       >
         <option value="" disabled>Assign to...</option>
         <option value="" className="text-gray-900">Unassigned</option>
-        {TEAM_MEMBERS.map((m) => (
+        {team.map((m) => (
           <option key={m.id} value={m.id} className="text-gray-900">{m.name}</option>
         ))}
       </select>

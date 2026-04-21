@@ -1,13 +1,14 @@
 "use client";
 
-import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import { WORKSTREAMS, DELIVERABLES } from "@/data/project-phase2";
-import { computeDeliverableStatus, TEAM_MEMBERS } from "@/data/project-tracker";
+import { computeDeliverableStatus } from "@/data/project-tracker";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Clock, Circle, TrendingUp } from "lucide-react";
 
 export function ProgressSummary() {
   const { tasks } = useProjectTrackerStore();
+  const team = useTeam();
 
   // Overall stats
   const totalTasks = tasks.length;
@@ -26,7 +27,7 @@ export function ProgressSummary() {
   });
 
   // Per-member task counts
-  const memberStats = TEAM_MEMBERS.map((m) => {
+  const memberStats = team.map((m) => {
     const memberTasks = tasks.filter((t) => t.assignee === m.id);
     const active = memberTasks.filter((t) => t.column === "in-progress" || t.column === "in-review").length;
     const done = memberTasks.filter((t) => t.column === "done").length;

@@ -2,12 +2,12 @@
 
 import {
   type Task,
-  TEAM_MEMBERS,
   LABELS,
   getWorkstreamForDeliverable,
   getDueStatus,
   formatDueDate,
 } from "@/data/project-tracker";
+import { useTeam } from "@/store/project-tracker-store";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, GripVertical, MessageSquare, Calendar } from "lucide-react";
 
@@ -31,8 +31,9 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onClick, isDragging }: TaskCardProps) {
+  const team = useTeam();
   const workstream = getWorkstreamForDeliverable(task.deliverableId);
-  const assignee = TEAM_MEMBERS.find((m) => m.id === task.assignee);
+  const assignee = team.find((m) => m.id === task.assignee);
   const completedSubtasks = task.subtasks.filter((s) => s.completed).length;
   const totalSubtasks = task.subtasks.length;
 
@@ -94,8 +95,8 @@ export function TaskCard({ task, onClick, isDragging }: TaskCardProps) {
             </span>
           )}
 
-          {/* Due date chip */}
-          {task.dueDate && (
+          {/* Due date chip — hidden for done tasks and tasks with no due date */}
+          {task.dueDate && getDueStatus(task) !== "none" && (
             <span
               className={cn(
                 "flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border",

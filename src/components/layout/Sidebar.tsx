@@ -57,10 +57,10 @@ const modes = [
 
 const projectNavItems = [
   { name: "Dashboard", href: "/project", icon: LayoutDashboard, exact: true },
-  { name: "Board", href: "/project/board", icon: KanbanSquare },
-  { name: "Tasks", href: "/project/tasks", icon: ListChecks },
-  { name: "Timeline", href: "/project/timeline", icon: GanttChart },
   { name: "Scope", href: "/project/scope", icon: ClipboardList },
+  { name: "Timeline", href: "/project/timeline", icon: GanttChart },
+  { name: "Tasks", href: "/project/tasks", icon: ListChecks },
+  { name: "Board", href: "/project/board", icon: KanbanSquare },
   { name: "Infra Setup", href: "/project/infrastructure", icon: Server },
 ];
 

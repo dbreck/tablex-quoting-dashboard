@@ -1,6 +1,7 @@
 "use client";
 
-import { type Task, getDeliverableProgress, TEAM_MEMBERS } from "@/data/project-tracker";
+import { type Task, getDeliverableProgress } from "@/data/project-tracker";
+import { useTeam } from "@/store/project-tracker-store";
 import { type Deliverable, PROJECT_PHASES } from "@/data/project-phase2";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -32,10 +33,11 @@ export function DeliverableGroup({
 }: DeliverableGroupProps) {
   const progress = getDeliverableProgress(allTasks, deliverable.id);
   const phase = PROJECT_PHASES.find((p) => p.id === deliverable.phase);
+  const team = useTeam();
 
   // Unique assignees on this deliverable's tasks
   const assigneeIds = [...new Set(tasks.filter((t) => t.assignee).map((t) => t.assignee!))];
-  const assignees = assigneeIds.map((id) => TEAM_MEMBERS.find((m) => m.id === id)).filter(Boolean);
+  const assignees = assigneeIds.map((id) => team.find((m) => m.id === id)).filter(Boolean);
 
   return (
     <div className="ml-4">
