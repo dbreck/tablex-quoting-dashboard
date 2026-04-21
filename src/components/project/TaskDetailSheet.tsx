@@ -145,19 +145,43 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
             </div>
           </div>
 
-          {/* Assignee */}
-          <div>
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 block">Assignee</label>
-            <select
-              value={task.assignee ?? ""}
-              onChange={(e) => updateTask(task.id, { assignee: (e.target.value || null) as TeamMember | null })}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
-            >
-              <option value="">Unassigned</option>
-              {TEAM_MEMBERS.map((m) => (
-                <option key={m.id} value={m.id}>{m.name} — {m.role}</option>
-              ))}
-            </select>
+          {/* Assignee / Due Date */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 block">Assignee</label>
+              <select
+                value={task.assignee ?? ""}
+                onChange={(e) => updateTask(task.id, { assignee: (e.target.value || null) as TeamMember | null })}
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+              >
+                <option value="">Unassigned</option>
+                {TEAM_MEMBERS.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name} — {m.role}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 block">Due date</label>
+              <div className="flex items-center gap-1">
+                <input
+                  type="date"
+                  value={task.dueDate ?? ""}
+                  onChange={(e) => updateTask(task.id, { dueDate: e.target.value || undefined })}
+                  className="flex-1 min-w-0 text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+                />
+                {task.dueDate && (
+                  <button
+                    type="button"
+                    onClick={() => updateTask(task.id, { dueDate: undefined })}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                    title="Clear due date"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Labels */}

@@ -10,9 +10,11 @@ import {
   LABELS,
   COLUMNS,
   getWorkstreamForDeliverable,
+  getDueStatus,
+  formatDueDate,
 } from "@/data/project-tracker";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, ChevronDown, ChevronRight, GripVertical } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, ChevronRight, GripVertical, Calendar } from "lucide-react";
 import { TaskRowExpanded } from "./TaskRowExpanded";
 
 const priorityDot: Record<string, string> = {
@@ -20,6 +22,12 @@ const priorityDot: Record<string, string> = {
   high: "bg-orange-400",
   medium: "bg-yellow-400",
   low: "bg-gray-300",
+};
+
+const dueChipStyle: Record<string, string> = {
+  overdue: "bg-red-50 text-red-600 border-red-200",
+  "due-soon": "bg-amber-50 text-amber-700 border-amber-200",
+  upcoming: "bg-gray-50 text-gray-500 border-gray-200",
 };
 
 interface TaskRowProps {
@@ -120,6 +128,20 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
           <span className="flex items-center gap-0.5 text-[10px] text-gray-400 shrink-0">
             <CheckCircle2 className="h-3 w-3" />
             {completedSubtasks}/{totalSubtasks}
+          </span>
+        )}
+
+        {/* Due date chip */}
+        {task.dueDate && (
+          <span
+            className={cn(
+              "flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border shrink-0",
+              dueChipStyle[getDueStatus(task)]
+            )}
+            title={`Due ${formatDueDate(task.dueDate)}`}
+          >
+            <Calendar className="h-2.5 w-2.5" />
+            {formatDueDate(task.dueDate)}
           </span>
         )}
 

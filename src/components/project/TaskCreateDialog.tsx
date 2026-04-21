@@ -26,6 +26,7 @@ export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", def
   const [column, setColumn] = useState<KanbanColumn>(defaultColumn);
   const [priority, setPriority] = useState<Priority>("medium");
   const [assignee, setAssignee] = useState<TeamMember | "">("");
+  const [dueDate, setDueDate] = useState("");
 
   if (!open) return null;
 
@@ -40,6 +41,7 @@ export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", def
       assignee: assignee || null,
       labels: [],
       subtasks: [],
+      dueDate: dueDate || undefined,
     });
     // Reset
     setTitle("");
@@ -47,6 +49,7 @@ export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", def
     setColumn(defaultColumn);
     setPriority("medium");
     setAssignee("");
+    setDueDate("");
     onClose();
   };
 
@@ -147,6 +150,17 @@ export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", def
                   ))}
                 </select>
               </div>
+            </div>
+
+            {/* Due date */}
+            <div>
+              <label className="text-xs font-medium text-gray-500 mb-1 block">Due date</label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+              />
             </div>
           </div>
 

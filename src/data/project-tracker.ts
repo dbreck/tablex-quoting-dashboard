@@ -20,6 +20,8 @@ export interface Task {
   assignee: TeamMember | null;
   labels: string[];
   subtasks: Subtask[];
+  /** ISO date (YYYY-MM-DD) */
+  dueDate?: string;
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
@@ -171,6 +173,31 @@ export function filterTasks(
     }
     return true;
   });
+}
+
+/** Classify a due date relative to today */
+export type DueStatus = "overdue" | "due-soon" | "upcoming" | "none";
+
+export function getDueStatus(task: Pick<Task, "dueDate" | "column">): DueStatus {
+  if (!task.dueDate) return "none";
+  if (task.column === "done") return "upcoming";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(task.dueDate + "T00:00:00");
+  const diffDays = Math.round((due.getTime() - today.getTime()) / 86_400_000);
+  if (diffDays < 0) return "overdue";
+  if (diffDays <= 3) return "due-soon";
+  return "upcoming";
+}
+
+/** Short display format for due dates (e.g. "May 15" or "May 15 '27" if not this year) */
+export function formatDueDate(dueDate: string): string {
+  const date = new Date(dueDate + "T00:00:00");
+  const now = new Date();
+  if (date.getFullYear() !== now.getFullYear()) {
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" });
+  }
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 /** Get progress stats for a deliverable's tasks */
