@@ -28,10 +28,17 @@ interface Filters {
   search: string;
 }
 
+export interface SyncLink {
+  mondayItemId: string | null;
+  lastSyncedAt: string | null;
+  lastMondayUpdatedAt: string | null;
+}
+
 interface ProjectTrackerStore {
   tasks: Task[];
   teamMembers: Record<string, TeamMember>;
   deliverableOverrides: Record<string, DeliverableOverride>;
+  syncState: Record<string, SyncLink>;
   baselinedAt: string | null;
   isInitialized: boolean;
 
@@ -66,6 +73,10 @@ interface ProjectTrackerStore {
   saveAllBaselines: () => void;
   clearAllBaselines: () => void;
 
+  // Monday.com sync links
+  setSyncLink: (tableXId: string, mondayItemId: string) => void;
+  recordSync: (tableXId: string, mondayUpdatedAt: string | null) => void;
+
   // Filters (transient)
   filters: Filters;
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
@@ -89,6 +100,7 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
       tasks: [],
       teamMembers: {},
       deliverableOverrides: {},
+      syncState: {},
       baselinedAt: null,
       isInitialized: false,
       filters: { ...defaultFilters },
@@ -112,6 +124,10 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
 
         if (!state.deliverableOverrides) {
           updates.deliverableOverrides = {};
+        }
+
+        if (!state.syncState) {
+          updates.syncState = {};
         }
 
         if (Object.keys(updates).length > 0) {
@@ -339,6 +355,44 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
         set({ deliverableOverrides: overrides, baselinedAt: null });
       },
 
+      setSyncLink: (tableXId, mondayItemId) => {
+        const syncState = get().syncState;
+        const current = syncState[tableXId] ?? {
+          mondayItemId: null,
+          lastSyncedAt: null,
+          lastMondayUpdatedAt: null,
+        };
+        set({
+          syncState: {
+            ...syncState,
+            [tableXId]: {
+              ...current,
+              mondayItemId,
+              lastSyncedAt: new Date().toISOString(),
+            },
+          },
+        });
+      },
+
+      recordSync: (tableXId, mondayUpdatedAt) => {
+        const syncState = get().syncState;
+        const current = syncState[tableXId] ?? {
+          mondayItemId: null,
+          lastSyncedAt: null,
+          lastMondayUpdatedAt: null,
+        };
+        set({
+          syncState: {
+            ...syncState,
+            [tableXId]: {
+              ...current,
+              lastSyncedAt: new Date().toISOString(),
+              lastMondayUpdatedAt: mondayUpdatedAt,
+            },
+          },
+        });
+      },
+
       setFilter: (key, value) => {
         set({ filters: { ...get().filters, [key]: value } });
       },
@@ -349,11 +403,12 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
     }),
     {
       name: "tablex-project-tracker-v1",
-      version: 3,
+      version: 4,
       partialize: (state) => ({
         tasks: state.tasks,
         teamMembers: state.teamMembers,
         deliverableOverrides: state.deliverableOverrides,
+        syncState: state.syncState,
         baselinedAt: state.baselinedAt,
         isInitialized: state.isInitialized,
       }),

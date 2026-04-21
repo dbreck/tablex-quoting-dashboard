@@ -12,6 +12,7 @@ const tabs = [
   { name: "Timeline", href: "/admin/timeline" },
   { name: "Estimate", href: "/admin/estimate" },
   { name: "Infrastructure", href: "/admin/infrastructure" },
+  { name: "Integrations", href: "/admin/integrations/monday" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
