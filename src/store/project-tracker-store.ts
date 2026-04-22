@@ -34,11 +34,53 @@ export interface SyncLink {
   lastMondayUpdatedAt: string | null;
 }
 
+export interface SyncLogEntry {
+  at: string;
+  direction: "pulled" | "pushed" | "linked" | "skipped" | "error";
+  kind: "task" | "deliverable";
+  tableXId: string;
+  detail?: string;
+}
+
+export type SyncStatus = "idle" | "syncing" | "saved" | "error";
+
+export interface SyncStatusState {
+  status: SyncStatus;
+  lastSyncedAt: string | null;
+  lastError: string | null;
+  lastSummary: { pulled: number; pushed: number; errors: number } | null;
+}
+
+export interface ApplySyncPatchesArgs {
+  syncedAt: string;
+  taskPatches: Array<{
+    taskId: string;
+    patch: Partial<Task>;
+    mondayItemId: string;
+    mondayUpdatedAt: string;
+  }>;
+  overridePatches: Array<{
+    deliverableId: string;
+    patch: Partial<DeliverableOverride>;
+    mondayItemId: string;
+    mondayUpdatedAt: string;
+  }>;
+  pushedTaskIds: string[];
+  pushedDeliverableIds: string[];
+  linkUpdates: Array<{
+    tableXId: string;
+    mondayItemId: string;
+    mondayUpdatedAt: string | null;
+  }>;
+}
+
 interface ProjectTrackerStore {
   tasks: Task[];
   teamMembers: Record<string, TeamMember>;
   deliverableOverrides: Record<string, DeliverableOverride>;
   syncState: Record<string, SyncLink>;
+  syncStatus: SyncStatusState;
+  syncLog: SyncLogEntry[];
   baselinedAt: string | null;
   isInitialized: boolean;
 
@@ -73,9 +115,12 @@ interface ProjectTrackerStore {
   saveAllBaselines: () => void;
   clearAllBaselines: () => void;
 
-  // Monday.com sync links
+  // Monday.com sync links + status
   setSyncLink: (tableXId: string, mondayItemId: string) => void;
   recordSync: (tableXId: string, mondayUpdatedAt: string | null) => void;
+  applySyncPatches: (args: ApplySyncPatchesArgs) => void;
+  setSyncStatus: (updates: Partial<SyncStatusState>) => void;
+  appendSyncLog: (entries: SyncLogEntry[]) => void;
 
   // Filters (transient)
   filters: Filters;
@@ -101,6 +146,13 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
       teamMembers: {},
       deliverableOverrides: {},
       syncState: {},
+      syncStatus: {
+        status: "idle",
+        lastSyncedAt: null,
+        lastError: null,
+        lastSummary: null,
+      },
+      syncLog: [],
       baselinedAt: null,
       isInitialized: false,
       filters: { ...defaultFilters },
@@ -128,6 +180,19 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
 
         if (!state.syncState) {
           updates.syncState = {};
+        }
+
+        if (!state.syncLog) {
+          updates.syncLog = [];
+        }
+
+        if (!state.syncStatus) {
+          updates.syncStatus = {
+            status: "idle",
+            lastSyncedAt: null,
+            lastError: null,
+            lastSummary: null,
+          };
         }
 
         if (Object.keys(updates).length > 0) {
@@ -374,6 +439,91 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
         });
       },
 
+      applySyncPatches: ({
+        syncedAt,
+        taskPatches,
+        overridePatches,
+        pushedTaskIds,
+        pushedDeliverableIds,
+        linkUpdates,
+      }) => {
+        const state = get();
+
+        // Apply pulled task patches WITHOUT bumping updatedAt to "now" — use
+        // syncedAt so the next reconcile sees the task as already in sync.
+        const tasksById = new Map(state.tasks.map((t) => [t.id, t]));
+        for (const { taskId, patch } of taskPatches) {
+          const current = tasksById.get(taskId);
+          if (!current) continue;
+          tasksById.set(taskId, { ...current, ...patch, updatedAt: syncedAt });
+        }
+        const tasks = Array.from(tasksById.values());
+
+        // Apply pulled override patches.
+        const overrides = { ...state.deliverableOverrides };
+        for (const { deliverableId, patch } of overridePatches) {
+          const current = overrides[deliverableId] ?? { deliverableId };
+          overrides[deliverableId] = { ...current, ...patch };
+        }
+
+        // Build the merged syncState. Touch every record we either pulled,
+        // pushed, or just linked — set lastSyncedAt to syncedAt and
+        // lastMondayUpdatedAt to whatever we just observed.
+        const syncState = { ...state.syncState };
+        const touch = (
+          tableXId: string,
+          mondayItemId: string,
+          mondayUpdatedAt: string | null,
+        ) => {
+          const current = syncState[tableXId] ?? {
+            mondayItemId: null,
+            lastSyncedAt: null,
+            lastMondayUpdatedAt: null,
+          };
+          syncState[tableXId] = {
+            ...current,
+            mondayItemId,
+            lastSyncedAt: syncedAt,
+            lastMondayUpdatedAt:
+              mondayUpdatedAt ?? current.lastMondayUpdatedAt ?? syncedAt,
+          };
+        };
+
+        for (const p of taskPatches) {
+          touch(p.taskId, p.mondayItemId, p.mondayUpdatedAt);
+        }
+        for (const p of overridePatches) {
+          touch(p.deliverableId, p.mondayItemId, p.mondayUpdatedAt);
+        }
+        for (const l of linkUpdates) {
+          touch(l.tableXId, l.mondayItemId, l.mondayUpdatedAt);
+        }
+        // Pushed records: we don't have a fresh Monday updated_at without a
+        // re-fetch, so approximate with syncedAt. Next pull aligns it.
+        for (const taskId of pushedTaskIds) {
+          const link = syncState[taskId];
+          if (link?.mondayItemId) touch(taskId, link.mondayItemId, syncedAt);
+        }
+        for (const deliverableId of pushedDeliverableIds) {
+          const link = syncState[deliverableId];
+          if (link?.mondayItemId) {
+            touch(deliverableId, link.mondayItemId, syncedAt);
+          }
+        }
+
+        set({ tasks, deliverableOverrides: overrides, syncState });
+      },
+
+      setSyncStatus: (updates) => {
+        set({ syncStatus: { ...get().syncStatus, ...updates } });
+      },
+
+      appendSyncLog: (entries) => {
+        if (entries.length === 0) return;
+        const merged = [...entries, ...get().syncLog].slice(0, 50);
+        set({ syncLog: merged });
+      },
+
       recordSync: (tableXId, mondayUpdatedAt) => {
         const syncState = get().syncState;
         const current = syncState[tableXId] ?? {
@@ -403,14 +553,16 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
     }),
     {
       name: "tablex-project-tracker-v1",
-      version: 4,
+      version: 5,
       partialize: (state) => ({
         tasks: state.tasks,
         teamMembers: state.teamMembers,
         deliverableOverrides: state.deliverableOverrides,
         syncState: state.syncState,
+        syncLog: state.syncLog,
         baselinedAt: state.baselinedAt,
         isInitialized: state.isInitialized,
+        // syncStatus is intentionally NOT persisted — transient UI state.
       }),
       migrate: (persistedState, _version) => {
         // Shape-preserving migration. New slices are seeded by the backfill-on-hydrate
