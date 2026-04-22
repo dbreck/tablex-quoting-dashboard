@@ -1,7 +1,6 @@
 // Project Tracker — Task/Story layer on top of Deliverables
 // Tasks reference deliverableId from project-phase2.ts
 
-import { nanoid } from "nanoid";
 import { DELIVERABLES, WORKSTREAMS, type Deliverable } from "./project-phase2";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -162,6 +161,16 @@ function statusToColumn(d: Deliverable): KanbanColumn {
   return "backlog";
 }
 
+/**
+ * Deterministic id for a seeded task. Matches the server-side Monday seed
+ * id scheme (src/lib/monday/seed.ts → buildSeedTasks). Keeping both sides
+ * on the same scheme means the External ID column on Monday lines up with
+ * task.id from day one — no title-matching needed to bridge.
+ */
+export function seedTaskId(deliverableId: string, requirementIndex: number): string {
+  return `${deliverableId}-r${requirementIndex}`;
+}
+
 /** Generate initial tasks from deliverable requirements */
 export function generateInitialTasks(): Task[] {
   const now = new Date().toISOString();
@@ -169,10 +178,10 @@ export function generateInitialTasks(): Task[] {
   let sortOrder = 0;
 
   for (const d of DELIVERABLES) {
-    // Create one task per requirement
-    for (const req of d.requirements) {
+    // One task per requirement, id = deterministic pattern matching seed.
+    d.requirements.forEach((req, idx) => {
       tasks.push({
-        id: nanoid(10),
+        id: seedTaskId(d.id, idx),
         deliverableId: d.id,
         title: req,
         column: statusToColumn(d),
@@ -185,7 +194,7 @@ export function generateInitialTasks(): Task[] {
         completedAt: d.status === "complete" ? now : undefined,
         sortOrder: sortOrder++,
       });
-    }
+    });
   }
 
   return tasks;

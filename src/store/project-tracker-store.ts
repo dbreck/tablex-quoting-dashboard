@@ -16,6 +16,7 @@ import {
   generateInitialTasks,
   hoursToDays,
   getDeliverableDays,
+  seedTaskId,
 } from "@/data/project-tracker";
 import { DELIVERABLES } from "@/data/project-phase2";
 
@@ -553,7 +554,7 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
     }),
     {
       name: "tablex-project-tracker-v1",
-      version: 5,
+      version: 6,
       partialize: (state) => ({
         tasks: state.tasks,
         teamMembers: state.teamMembers,
@@ -564,11 +565,48 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()(
         isInitialized: state.isInitialized,
         // syncStatus is intentionally NOT persisted — transient UI state.
       }),
-      migrate: (persistedState, _version) => {
-        // Shape-preserving migration. New slices are seeded by the backfill-on-hydrate
-        // path in initializeFromDeliverables — migrate is only for renaming or
-        // transforming existing fields.
-        return persistedState;
+      migrate: (persistedState, version) => {
+        // Shape-preserving migrations. Zustand types persistedState loosely
+        // because older shapes may differ; we mutate known fields in place
+        // and hand it back.
+        // v5 → v6: rewrite initial-seed task ids from nanoid to the
+        // deterministic ${deliverableId}-r${idx} scheme so the External ID
+        // column on Monday lines up with task.id. Tasks whose title no
+        // longer matches any requirement (user renamed them or they're
+        // user-created) keep their existing id. syncState keys are
+        // rewritten in lock-step so sync links survive.
+        if (version < 6 && persistedState && typeof persistedState === "object") {
+          const s = persistedState as {
+            tasks?: Task[];
+            syncState?: Record<string, SyncLink>;
+          };
+          if (Array.isArray(s.tasks)) {
+            const idRewrites = new Map<string, string>();
+            s.tasks = s.tasks.map((task) => {
+              const deliverable = DELIVERABLES.find(
+                (d) => d.id === task.deliverableId,
+              );
+              if (!deliverable) return task;
+              const idx = deliverable.requirements.indexOf(task.title);
+              if (idx === -1) return task;
+              const newId = seedTaskId(deliverable.id, idx);
+              if (newId === task.id) return task;
+              idRewrites.set(task.id, newId);
+              return { ...task, id: newId };
+            });
+
+            if (idRewrites.size > 0 && s.syncState) {
+              const rewrittenSync: Record<string, SyncLink> = {};
+              for (const [oldId, link] of Object.entries(s.syncState)) {
+                rewrittenSync[idRewrites.get(oldId) ?? oldId] = link;
+              }
+              s.syncState = rewrittenSync;
+            }
+          }
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return persistedState as any;
       },
     }
   )
