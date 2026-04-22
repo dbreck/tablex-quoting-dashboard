@@ -60,7 +60,7 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg transition-colors group cursor-pointer",
           selected ? "bg-blue-50 border border-blue-200" : "hover:bg-gray-50 border border-transparent",
-          isDone && "opacity-60"
+          isDone && "opacity-90"
         )}
         onClick={(e) => {
           if (onSelect) {
