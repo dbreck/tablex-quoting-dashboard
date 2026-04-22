@@ -155,10 +155,6 @@ export function taskToMondayColumnValues(
 }
 
 // ─── Pull: Monday → TableX ───────────────────────────────────────────────────
-//
-// Stage 2 will add the full pull/reconcile pipeline (see
-// plan-away-async-starfish.md). Only the column-lookup helper ships now;
-// the patch-producers will land with pull.ts / reconcile.ts next to this file.
 
 /** Read helper: find a column value on a Monday item by column id. */
 export function findColumnValue(
@@ -169,10 +165,134 @@ export function findColumnValue(
   return cv ? { text: cv.text, value: cv.value } : null;
 }
 
-// Referenced so the imports stay live for the Stage 2 patch-producers below.
+/** Read the External ID column off a Monday item or subitem. */
+export function readExternalIdValue(
+  columnValues: Array<{ id: string; text: string | null }> | undefined,
+  columnsByTitle: ColumnsByTitle,
+  titleKey: string,
+): string | null {
+  const colId = columnsByTitle[titleKey];
+  if (!colId || !columnValues) return null;
+  const cv = columnValues.find((c) => c.id === colId);
+  return cv?.text?.trim() || null;
+}
+
+/**
+ * Compute a patch of TableX Task fields from a Monday subitem. Returns only
+ * the fields that the subitem expresses (status, dueDate, priority, labels) —
+ * the caller merges over the existing task. Returns null if no recognizable
+ * column values are present.
+ */
+export function mondaySubitemToTaskPatch(
+  subitem: {
+    name: string;
+    column_values?: Array<{ id: string; text: string | null; value: string | null }>;
+  },
+  columnsByTitle: ColumnsByTitle,
+): Partial<Task> {
+  const patch: Partial<Task> = {};
+  const cvs = subitem.column_values ?? [];
+
+  // Title (subitem name).
+  if (subitem.name) {
+    patch.title = subitem.name;
+  }
+
+  const statusId = columnsByTitle[SUBITEM_COLUMN_TITLES.status];
+  if (statusId) {
+    const cv = cvs.find((c) => c.id === statusId);
+    const label = cv?.text?.trim();
+    if (label && MONDAY_STATUS_TO_TASKCOLUMN[label]) {
+      patch.column = MONDAY_STATUS_TO_TASKCOLUMN[label];
+    }
+  }
+
+  const dueId = columnsByTitle[SUBITEM_COLUMN_TITLES.due];
+  if (dueId) {
+    const cv = cvs.find((c) => c.id === dueId);
+    const text = cv?.text?.trim();
+    // Monday's date column text is YYYY-MM-DD when set, empty when cleared.
+    if (text) {
+      patch.dueDate = text;
+    } else if (cv) {
+      // Explicit clear in Monday → drop the dueDate.
+      patch.dueDate = undefined;
+    }
+  }
+
+  const priorityId = columnsByTitle[SUBITEM_COLUMN_TITLES.priority];
+  if (priorityId) {
+    const cv = cvs.find((c) => c.id === priorityId);
+    const label = cv?.text?.trim();
+    if (label && MONDAY_LABEL_TO_PRIORITY[label]) {
+      patch.priority = MONDAY_LABEL_TO_PRIORITY[label];
+    }
+  }
+
+  const labelsId = columnsByTitle[SUBITEM_COLUMN_TITLES.labels];
+  if (labelsId) {
+    const cv = cvs.find((c) => c.id === labelsId);
+    const text = cv?.text?.trim() ?? "";
+    // Monday returns labels comma-joined in `text`; empty string means "no labels".
+    patch.labels = text ? text.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  }
+
+  return patch;
+}
+
+/**
+ * Compute a patch of DeliverableOverride fields from a Monday item. Mirrors
+ * the forward path in `deliverableToMondayColumnValues`: maps Status →
+ * manualStatus, Rationale → rationale, Days → daysOverride, Baseline Days →
+ * baselineDays.
+ */
+export function mondayItemToOverridePatch(
+  item: {
+    column_values?: Array<{ id: string; text: string | null; value: string | null }>;
+  },
+  columnsByTitle: ColumnsByTitle,
+): Partial<DeliverableOverride> {
+  const patch: Partial<DeliverableOverride> = {};
+  const cvs = item.column_values ?? [];
+
+  const statusId = columnsByTitle[DELIVERABLE_COLUMN_TITLES.status];
+  if (statusId) {
+    const cv = cvs.find((c) => c.id === statusId);
+    const label = cv?.text?.trim();
+    if (label && MONDAY_LABEL_TO_SCOPE_STATUS[label]) {
+      patch.manualStatus = MONDAY_LABEL_TO_SCOPE_STATUS[label];
+    }
+  }
+
+  const rationaleId = columnsByTitle[DELIVERABLE_COLUMN_TITLES.rationale];
+  if (rationaleId) {
+    const cv = cvs.find((c) => c.id === rationaleId);
+    const text = cv?.text?.trim();
+    patch.rationale = text || undefined;
+  }
+
+  const daysId = columnsByTitle[DELIVERABLE_COLUMN_TITLES.days];
+  if (daysId) {
+    const cv = cvs.find((c) => c.id === daysId);
+    const num = cv?.text ? Number(cv.text) : null;
+    if (num != null && Number.isFinite(num)) {
+      patch.daysOverride = num;
+    }
+  }
+
+  const baselineId = columnsByTitle[DELIVERABLE_COLUMN_TITLES.baselineDays];
+  if (baselineId) {
+    const cv = cvs.find((c) => c.id === baselineId);
+    const text = cv?.text?.trim();
+    if (text === "" || text == null) {
+      patch.baselineDays = null;
+    } else {
+      const num = Number(text);
+      if (Number.isFinite(num)) patch.baselineDays = num;
+    }
+  }
+
+  return patch;
+}
+
 void hoursToDays;
-void MONDAY_STATUS_TO_TASKCOLUMN;
-void MONDAY_LABEL_TO_SCOPE_STATUS;
-void MONDAY_LABEL_TO_PRIORITY;
-void ({} as Task);
-void ({} as DeliverableOverride);
