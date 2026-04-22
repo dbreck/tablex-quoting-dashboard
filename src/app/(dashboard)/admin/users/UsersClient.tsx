@@ -513,8 +513,7 @@ export default function UsersClient() {
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            title="Set password"
-                            disabled={isCurrentUser}
+                            title={isCurrentUser ? "Set your password" : "Set password"}
                             onClick={() => setPasswordUser(u)}
                           >
                             <KeyRound className="h-4 w-4 text-slate-500" />
