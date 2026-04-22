@@ -343,24 +343,62 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
   // Track subitem ids that have been claimed by a TableX task in this pass,
   // so the title-match fallback doesn't double-link.
   const claimedSubitemIds = new Set<string>();
-  for (const sub of snapshot.subitemsByExternalId.values()) {
-    // Subitems already keyed by external id and matched below should still
-    // be claimable — skip pre-claiming. We'll add to claimed only on actual
-    // match.
-    void sub;
-  }
 
   for (const task of req.tasks) {
-    let mondayRecord = snapshot.subitemsByExternalId.get(task.id);
+    // Resolve the Monday subitem in priority order: stored sync link →
+    // external_id match → title match under parent. If the stored link is
+    // stale (target no longer exists), fall through to the other strategies
+    // and treat this as a fresh first-link.
+    let mondayRecord:
+      | {
+          mondaySubitemId: string;
+          parentMondayItemId: string;
+          externalId: string;
+          name: string;
+          mondayUpdatedAt: string | null;
+          raw: MondaySubitem;
+        }
+      | undefined;
+    let link: SyncLink | undefined = req.syncState[task.id];
     let titleMatched = false;
 
-    // Title-match fallback for first-link: if no subitem has our external_id
-    // (e.g., seed used deterministic ids and this is a nanoid task), look for
-    // an unlinked subitem with our title under the parent deliverable item.
-    if (!mondayRecord) {
-      const link = req.syncState[task.id];
+    // Priority 1: resolve via stored sync link (survives external_id changes
+    // on the Monday side).
+    if (link?.mondayItemId) {
       const parent = snapshot.itemsByExternalId.get(task.deliverableId);
-      if (!link?.mondayItemId && parent) {
+      const raw = parent?.raw.subitems?.find(
+        (s) => s.id === link!.mondayItemId,
+      );
+      if (parent && raw) {
+        mondayRecord = {
+          mondaySubitemId: raw.id,
+          parentMondayItemId: parent.mondayItemId,
+          externalId: task.id,
+          name: raw.name,
+          mondayUpdatedAt: raw.updated_at ?? null,
+          raw,
+        };
+        claimedSubitemIds.add(raw.id);
+      } else {
+        // Stale link (e.g., re-seed deleted the subitem). Reset and retry.
+        link = undefined;
+      }
+    }
+
+    // Priority 2: match by external_id column on Monday.
+    if (!mondayRecord) {
+      const byExt = snapshot.subitemsByExternalId.get(task.id);
+      if (byExt) {
+        mondayRecord = byExt;
+        claimedSubitemIds.add(byExt.mondaySubitemId);
+      }
+    }
+
+    // Priority 3: title match under the parent deliverable (bridges the
+    // seed's deterministic ids to client nanoid task ids).
+    if (!mondayRecord) {
+      const parent = snapshot.itemsByExternalId.get(task.deliverableId);
+      if (parent) {
         const candidate = findUnclaimedSubitemByTitle(
           parent.raw,
           task.title,
@@ -379,20 +417,10 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
           titleMatched = true;
         }
       }
-    } else {
-      claimedSubitemIds.add(mondayRecord.mondaySubitemId);
     }
 
+    // No match any way → auto-create on Monday under the parent.
     if (!mondayRecord) {
-      const link = req.syncState[task.id];
-      if (link?.mondayItemId) {
-        result.errors.push(
-          `Task ${task.id} has a sync link but no Monday subitem — likely deleted on Monday.`,
-        );
-        continue;
-      }
-
-      // No subitem, no link, no title match. Auto-create.
       const parent = snapshot.itemsByExternalId.get(task.deliverableId);
       if (!parent) {
         result.errors.push(
@@ -435,8 +463,7 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
       continue;
     }
 
-    const link = req.syncState[task.id] ?? emptyLink();
-    const isFirstLink = !link.mondayItemId;
+    const isFirstLink = !link;
 
     // First-link policy for tasks: TableX wins. Push our state to the
     // matched Monday subitem. This rewrites the subitem's external_id to
@@ -480,11 +507,13 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
       continue;
     }
 
-    // Already linked — decide direction by timestamp.
+    // Already linked — decide direction by timestamp. (Link is guaranteed
+    // defined here: isFirstLink is `!link`, and isFirstLink=true took the
+    // branch above.)
     const dir = decideDirection({
       tableXUpdatedAtMs: tsMs(task.updatedAt),
       mondayUpdatedAtMs: tsMs(mondayRecord.mondayUpdatedAt),
-      link,
+      link: link!,
     });
 
     if (dir === "pull") {
