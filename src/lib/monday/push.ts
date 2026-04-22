@@ -4,12 +4,17 @@
 // to push.
 
 import type { Deliverable } from "@/data/project-phase2";
-import type { DeliverableOverride, Task } from "@/data/project-tracker";
+import type {
+  DeliverableOverride,
+  ScopeStatus,
+  Task,
+} from "@/data/project-tracker";
 import { mondayQuery } from "./client";
 import {
   deliverableToMondayColumnValues,
   taskToMondayColumnValues,
   type ColumnsByTitle,
+  type UserMaps,
 } from "./normalize";
 import { MONDAY_BOARD_ID } from "./schema";
 
@@ -46,11 +51,14 @@ export async function pushDeliverableToMonday(args: {
   mondayItemId: string;
   itemColumnsByTitle: ColumnsByTitle;
   itemName?: string;
+  /** Override the status (used by reconcile to push the rollup value). */
+  statusOverride?: ScopeStatus;
 }): Promise<void> {
   const values = deliverableToMondayColumnValues(
     args.deliverable,
     args.override,
     args.itemColumnsByTitle,
+    { statusOverride: args.statusOverride },
   );
 
   const payload: Record<string, unknown> = { ...values };
@@ -72,8 +80,13 @@ export async function pushTaskToMonday(args: {
   subitemBoardId: string;
   subitemColumnsByTitle: ColumnsByTitle;
   subitemName?: string;
+  userMaps?: UserMaps;
 }): Promise<void> {
-  const values = taskToMondayColumnValues(args.task, args.subitemColumnsByTitle);
+  const values = taskToMondayColumnValues(
+    args.task,
+    args.subitemColumnsByTitle,
+    args.userMaps,
+  );
 
   const payload: Record<string, unknown> = { ...values };
   if (args.subitemName !== args.task.title) {
@@ -95,8 +108,13 @@ export async function createTaskOnMonday(args: {
   task: Task;
   parentMondayItemId: string;
   subitemColumnsByTitle: ColumnsByTitle;
+  userMaps?: UserMaps;
 }): Promise<{ id: string }> {
-  const values = taskToMondayColumnValues(args.task, args.subitemColumnsByTitle);
+  const values = taskToMondayColumnValues(
+    args.task,
+    args.subitemColumnsByTitle,
+    args.userMaps,
+  );
   const data = await mondayQuery<{ create_subitem: { id: string; board: { id: string } } }>(
     M_CREATE_SUBITEM,
     {

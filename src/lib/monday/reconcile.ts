@@ -9,18 +9,39 @@
 // newer timestamp wins entirely for that record. If timestamps are within
 // the no-op window (1 second), nothing happens.
 //
-// Records are matched two ways:
+// Records are matched in priority order:
 //   1. By stored sync link (syncState[tableXId].mondayItemId)
-//   2. By External ID column on Monday → for first-time linking
-// New records on the Monday side without an external_id we recognize are
-// ignored (we don't auto-create TableX records from Monday yet).
+//   2. By External ID column on Monday (first-link via id match)
+//   3. By {parent deliverable, title} for tasks (first-link via title match —
+//      the seed creates subitems with deterministic IDs that don't match the
+//      client's nanoid task IDs; this is the bridge)
+//
+// First-link policy:
+//   - Tasks: TableX wins (push). The user's local edits are the truth.
+//     Title-matched seed subitems get their external_id rewritten to the
+//     TableX nanoid so future syncs match by id.
+//   - Deliverables: Monday wins (pull) when Monday has populated overrides.
+//     Otherwise no-op. Deliverable overrides are sparse and we'd rather
+//     pick up Monday-side rationale/baseline than overwrite them.
+//
+// Item status rollup: deliverable Item status is computed from its child
+// task columns (computeDeliverableStatus). Manual override on the
+// deliverable wins over the rollup.
 
 import { DELIVERABLES } from "@/data/project-phase2";
-import type { DeliverableOverride, Task } from "@/data/project-tracker";
 import {
+  type DeliverableOverride,
+  type ScopeStatus,
+  type Task,
+  type TeamMember,
+  computeDeliverableStatus,
+} from "@/data/project-tracker";
+import {
+  buildUserMaps,
   deliverableToMondayColumnValues,
   mondayItemToOverridePatch,
   mondaySubitemToTaskPatch,
+  type UserMaps,
 } from "./normalize";
 import { snapshotMonday, type MondaySnapshot } from "./pull";
 import {
@@ -28,7 +49,9 @@ import {
   pushDeliverableToMonday,
   pushTaskToMonday,
 } from "./push";
+import { fetchMondayUsers } from "./users";
 import type { SyncLink } from "@/store/project-tracker-store";
+import type { MondayItem, MondaySubitem } from "./types";
 
 const NO_OP_WINDOW_MS = 1_000;
 
@@ -38,6 +61,8 @@ export interface SyncRequest {
   tasks: Task[];
   deliverableOverrides: Record<string, DeliverableOverride>;
   syncState: Record<string, SyncLink>;
+  /** Used for Owner column mapping by email. Optional — sync still works without it. */
+  teamMembers?: Record<string, TeamMember>;
 }
 
 // ─── Outputs the client applies ──────────────────────────────────────────────
@@ -74,14 +99,11 @@ export interface SyncResult {
   syncedAt: string;
   taskPatches: TaskPatch[];
   overridePatches: OverridePatch[];
-  /** Push successes — client should set lastSyncedAt for these. */
   pushedTaskIds: string[];
   pushedDeliverableIds: string[];
-  /** Newly-linked records (no field changes, just record the mondayItemId). */
   linkUpdates: LinkUpdate[];
   log: SyncLogEntry[];
   errors: string[];
-  /** Subitem board id — surfaced for diagnostics. */
   subitemBoardId: string | null;
 }
 
@@ -101,8 +123,6 @@ function emptyLink(): SyncLink {
   return { mondayItemId: null, lastSyncedAt: null, lastMondayUpdatedAt: null };
 }
 
-// ─── Per-record decision ─────────────────────────────────────────────────────
-
 type Direction = "push" | "pull" | "noop";
 
 function decideDirection(args: {
@@ -121,11 +141,23 @@ function decideDirection(args: {
   if (tableXChanged && !mondayChanged) return "push";
   if (!tableXChanged && mondayChanged) return "pull";
 
-  // Both changed. Newer wins.
   if (within(tableXUpdatedAtMs, mondayUpdatedAtMs, NO_OP_WINDOW_MS)) {
     return "noop";
   }
   return tableXUpdatedAtMs > mondayUpdatedAtMs ? "push" : "pull";
+}
+
+/** Find an unclaimed subitem under `parent` with matching title. */
+function findUnclaimedSubitemByTitle(
+  parent: MondayItem,
+  title: string,
+  claimed: Set<string>,
+): MondaySubitem | null {
+  for (const sub of parent.subitems ?? []) {
+    if (claimed.has(sub.id)) continue;
+    if (sub.name === title) return sub;
+  }
+  return null;
 }
 
 // ─── Main entry ──────────────────────────────────────────────────────────────
@@ -144,26 +176,31 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
     subitemBoardId: null,
   };
 
+  // Fetch board snapshot + Monday users in parallel.
   let snapshot: MondaySnapshot;
+  let userMaps: UserMaps;
   try {
-    snapshot = await snapshotMonday();
+    const [snap, mondayUsers] = await Promise.all([
+      snapshotMonday(),
+      fetchMondayUsers().catch((err) => {
+        // Non-fatal — Owner mapping just won't work.
+        result.errors.push(`User fetch failed (Owner mapping disabled): ${(err as Error).message}`);
+        return [];
+      }),
+    ]);
+    snapshot = snap;
+    userMaps = buildUserMaps(req.teamMembers ?? {}, mondayUsers);
   } catch (err) {
-    const msg = (err as Error).message;
-    result.errors.push(`Snapshot failed: ${msg}`);
+    result.errors.push(`Snapshot failed: ${(err as Error).message}`);
     return result;
   }
   result.subitemBoardId = snapshot.subitemBoardId;
 
-  // ── Deliverable overrides ──────────────────────────────────────────────────
-  // Iterate every Monday-known deliverable + every TableX override-bearing
-  // record. We iterate DELIVERABLES (the static set) because that's the
-  // canonical list.
+  // ── Deliverable overrides + status rollup ────────────────────────────────────
 
   for (const deliverable of DELIVERABLES) {
     const mondayRecord = snapshot.itemsByExternalId.get(deliverable.id);
     if (!mondayRecord) {
-      // Not seeded yet — skip. Surfaced as an error if syncState says we
-      // expected it.
       const link = req.syncState[deliverable.id];
       if (link?.mondayItemId) {
         result.errors.push(
@@ -177,15 +214,15 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
     const isFirstLink = !link.mondayItemId;
     const override = req.deliverableOverrides[deliverable.id];
 
-    if (isFirstLink) {
-      // First-time linking. Pull whatever Monday has into the override (only
-      // values that are actually populated will land — patch is sparse).
-      const patch = mondayItemToOverridePatch(
-        mondayRecord.raw,
-        snapshot.itemColumnsByTitle,
-      );
-      const meaningful = Object.keys(patch).length > 0;
-      if (meaningful) {
+    // Pull side: if Monday changed since we last saw it, prefer Monday's state.
+    if (!isFirstLink) {
+      const mondayMs = tsMs(mondayRecord.mondayUpdatedAt);
+      const lastMondayMs = tsMs(link.lastMondayUpdatedAt);
+      if (mondayMs > lastMondayMs) {
+        const patch = mondayItemToOverridePatch(
+          mondayRecord.raw,
+          snapshot.itemColumnsByTitle,
+        );
         result.overridePatches.push({
           deliverableId: deliverable.id,
           patch,
@@ -194,10 +231,27 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
         });
         result.log.push({
           at: syncedAt,
-          direction: "linked",
+          direction: "pulled",
           kind: "deliverable",
           tableXId: deliverable.id,
-          detail: `First link → pulled ${Object.keys(patch).join(", ")}`,
+        });
+        continue;
+      }
+    }
+
+    // First-link with no Monday-side data → just record the link, prefer
+    // pulling any populated Monday fields into the override.
+    if (isFirstLink) {
+      const patch = mondayItemToOverridePatch(
+        mondayRecord.raw,
+        snapshot.itemColumnsByTitle,
+      );
+      if (Object.keys(patch).length > 0) {
+        result.overridePatches.push({
+          deliverableId: deliverable.id,
+          patch,
+          mondayItemId: mondayRecord.mondayItemId,
+          mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? syncedAt,
         });
       } else {
         result.linkUpdates.push({
@@ -205,113 +259,80 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
           mondayItemId: mondayRecord.mondayItemId,
           mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? null,
         });
-        result.log.push({
-          at: syncedAt,
-          direction: "linked",
-          kind: "deliverable",
-          tableXId: deliverable.id,
-          detail: "First link",
-        });
       }
-      continue;
-    }
-
-    // Already linked — decide direction.
-    // Deliverable overrides don't have an updatedAt; treat them as "synced
-    // recently" if no override exists, otherwise we need a proxy. We use the
-    // store's lastSyncedAt as the lower bound: if the override exists and the
-    // user just edited it via setManualStatus etc., we have no timestamp on
-    // it. To keep this safe, we only push deliverable-side changes when the
-    // user explicitly clicks Sync Now AND the override has been edited since
-    // the link's lastSyncedAt. We approximate by always evaluating against
-    // the Monday timestamp: if Monday changed, pull. If Monday is unchanged
-    // but override exists, push. Tie → push (TableX wins as default for
-    // deliverables since the user likely just edited).
-    const mondayMs = tsMs(mondayRecord.mondayUpdatedAt);
-    const lastMondayMs = tsMs(link.lastMondayUpdatedAt);
-    const mondayChanged = mondayMs > lastMondayMs;
-
-    if (mondayChanged) {
-      const patch = mondayItemToOverridePatch(
-        mondayRecord.raw,
-        snapshot.itemColumnsByTitle,
-      );
-      result.overridePatches.push({
-        deliverableId: deliverable.id,
-        patch,
-        mondayItemId: mondayRecord.mondayItemId,
-        mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? syncedAt,
-      });
       result.log.push({
         at: syncedAt,
-        direction: "pulled",
+        direction: "linked",
         kind: "deliverable",
         tableXId: deliverable.id,
       });
+      // Fall through into the push-rollup check below — we still want to
+      // assert the rollup status if it differs from Monday.
+    }
+
+    // Push side: compute desired Monday status (manual override > rollup),
+    // build the column_values payload, compare to what Monday currently
+    // expresses, push if different.
+    const computedStatus: ScopeStatus =
+      override?.manualStatus ??
+      computeDeliverableStatus(deliverable.id, req.tasks);
+
+    const wouldPush = deliverableToMondayColumnValues(
+      deliverable,
+      override,
+      snapshot.itemColumnsByTitle,
+      { statusOverride: computedStatus },
+    );
+    // Monday's current-state equivalent: feed Monday's column values back
+    // through the same normalize path, using Monday's status as the override.
+    const currentMondayPatch = mondayItemToOverridePatch(
+      mondayRecord.raw,
+      snapshot.itemColumnsByTitle,
+    );
+    const mondayActual = deliverableToMondayColumnValues(
+      deliverable,
+      { deliverableId: deliverable.id, ...currentMondayPatch },
+      snapshot.itemColumnsByTitle,
+      { statusOverride: currentMondayPatch.manualStatus ?? undefined },
+    );
+    if (JSON.stringify(wouldPush) === JSON.stringify(mondayActual)) {
       continue;
     }
 
-    // Monday unchanged. Push the current TableX override if one exists AND
-    // it would actually change Monday's state. Without an updatedAt on
-    // overrides, we use byte-equivalence on the column_values payload to
-    // avoid pushing the same value every poll.
-    if (override) {
-      const wouldPush = deliverableToMondayColumnValues(
+    try {
+      await pushDeliverableToMonday({
         deliverable,
         override,
-        snapshot.itemColumnsByTitle,
+        mondayItemId: mondayRecord.mondayItemId,
+        itemColumnsByTitle: snapshot.itemColumnsByTitle,
+        itemName: mondayRecord.name,
+        statusOverride: computedStatus,
+      });
+      result.pushedDeliverableIds.push(deliverable.id);
+      result.log.push({
+        at: syncedAt,
+        direction: "pushed",
+        kind: "deliverable",
+        tableXId: deliverable.id,
+        detail: `Status: ${computedStatus}`,
+      });
+    } catch (err) {
+      result.errors.push(
+        `Push deliverable ${deliverable.id} failed: ${(err as Error).message}`,
       );
-      const currentMondayPatch = mondayItemToOverridePatch(
-        mondayRecord.raw,
-        snapshot.itemColumnsByTitle,
-      );
-      const wouldPushFromMondaySide = deliverableToMondayColumnValues(
-        deliverable,
-        { deliverableId: deliverable.id, ...currentMondayPatch },
-        snapshot.itemColumnsByTitle,
-      );
-
-      if (
-        JSON.stringify(wouldPush) === JSON.stringify(wouldPushFromMondaySide)
-      ) {
-        // Already in sync — skip silently.
-        continue;
-      }
-
-      try {
-        await pushDeliverableToMonday({
-          deliverable,
-          override,
-          mondayItemId: mondayRecord.mondayItemId,
-          itemColumnsByTitle: snapshot.itemColumnsByTitle,
-          itemName: mondayRecord.name,
-        });
-        result.pushedDeliverableIds.push(deliverable.id);
-        result.log.push({
-          at: syncedAt,
-          direction: "pushed",
-          kind: "deliverable",
-          tableXId: deliverable.id,
-        });
-      } catch (err) {
-        result.errors.push(
-          `Push deliverable ${deliverable.id} failed: ${(err as Error).message}`,
-        );
-        result.log.push({
-          at: syncedAt,
-          direction: "error",
-          kind: "deliverable",
-          tableXId: deliverable.id,
-          detail: (err as Error).message,
-        });
-      }
+      result.log.push({
+        at: syncedAt,
+        direction: "error",
+        kind: "deliverable",
+        tableXId: deliverable.id,
+        detail: (err as Error).message,
+      });
     }
   }
 
   // ── Tasks ───────────────────────────────────────────────────────────────────
 
   if (!result.subitemBoardId) {
-    // Surface, but don't fail the whole reconcile — deliverables still synced.
     result.errors.push(
       "Subitem board id unresolved — task subitems were not reconciled.",
     );
@@ -319,22 +340,59 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
   }
   const subitemBoardId = result.subitemBoardId;
 
-  // Walk every TableX task. For each, find or link the Monday subitem,
-  // creating it on Monday if it doesn't exist yet.
+  // Track subitem ids that have been claimed by a TableX task in this pass,
+  // so the title-match fallback doesn't double-link.
+  const claimedSubitemIds = new Set<string>();
+  for (const sub of snapshot.subitemsByExternalId.values()) {
+    // Subitems already keyed by external id and matched below should still
+    // be claimable — skip pre-claiming. We'll add to claimed only on actual
+    // match.
+    void sub;
+  }
+
   for (const task of req.tasks) {
-    const mondayRecord = snapshot.subitemsByExternalId.get(task.id);
+    let mondayRecord = snapshot.subitemsByExternalId.get(task.id);
+    let titleMatched = false;
+
+    // Title-match fallback for first-link: if no subitem has our external_id
+    // (e.g., seed used deterministic ids and this is a nanoid task), look for
+    // an unlinked subitem with our title under the parent deliverable item.
+    if (!mondayRecord) {
+      const link = req.syncState[task.id];
+      const parent = snapshot.itemsByExternalId.get(task.deliverableId);
+      if (!link?.mondayItemId && parent) {
+        const candidate = findUnclaimedSubitemByTitle(
+          parent.raw,
+          task.title,
+          claimedSubitemIds,
+        );
+        if (candidate) {
+          mondayRecord = {
+            mondaySubitemId: candidate.id,
+            parentMondayItemId: parent.mondayItemId,
+            externalId: task.id,
+            name: candidate.name,
+            mondayUpdatedAt: candidate.updated_at ?? null,
+            raw: candidate,
+          };
+          claimedSubitemIds.add(candidate.id);
+          titleMatched = true;
+        }
+      }
+    } else {
+      claimedSubitemIds.add(mondayRecord.mondaySubitemId);
+    }
+
     if (!mondayRecord) {
       const link = req.syncState[task.id];
       if (link?.mondayItemId) {
-        // The link said there was one — Monday side likely deleted it. Don't
-        // resurrect; surface and skip.
         result.errors.push(
           `Task ${task.id} has a sync link but no Monday subitem — likely deleted on Monday.`,
         );
         continue;
       }
 
-      // No subitem and no link. Auto-create it under the parent deliverable.
+      // No subitem, no link, no title match. Auto-create.
       const parent = snapshot.itemsByExternalId.get(task.deliverableId);
       if (!parent) {
         result.errors.push(
@@ -347,6 +405,7 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
           task,
           parentMondayItemId: parent.mondayItemId,
           subitemColumnsByTitle: snapshot.subitemColumnsByTitle,
+          userMaps,
         });
         result.linkUpdates.push({
           tableXId: task.id,
@@ -379,37 +438,49 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
     const link = req.syncState[task.id] ?? emptyLink();
     const isFirstLink = !link.mondayItemId;
 
+    // First-link policy for tasks: TableX wins. Push our state to the
+    // matched Monday subitem. This rewrites the subitem's external_id to
+    // our nanoid (via taskToMondayColumnValues), so the next sync finds
+    // it by id and avoids any title-match work.
     if (isFirstLink) {
-      const patch = mondaySubitemToTaskPatch(
-        mondayRecord.raw,
-        snapshot.subitemColumnsByTitle,
-      );
-      // Filter out fields equal to the current task value to keep patch tight.
-      const trimmed = trimNoOpTaskPatch(task, patch);
-      if (Object.keys(trimmed).length > 0) {
-        result.taskPatches.push({
-          taskId: task.id,
-          patch: trimmed,
+      try {
+        await pushTaskToMonday({
+          task,
+          mondaySubitemId: mondayRecord.mondaySubitemId,
+          subitemBoardId,
+          subitemColumnsByTitle: snapshot.subitemColumnsByTitle,
+          subitemName: mondayRecord.name,
+          userMaps,
+        });
+        result.pushedTaskIds.push(task.id);
+        result.linkUpdates.push({
+          tableXId: task.id,
           mondayItemId: mondayRecord.mondaySubitemId,
-          mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? syncedAt,
+          mondayUpdatedAt: syncedAt,
         });
         result.log.push({
           at: syncedAt,
           direction: "linked",
           kind: "task",
           tableXId: task.id,
-          detail: `First link → pulled ${Object.keys(trimmed).join(", ")}`,
+          detail: titleMatched ? "Title-matched + pushed" : "ID-matched + pushed",
         });
-      } else {
-        result.linkUpdates.push({
+      } catch (err) {
+        result.errors.push(
+          `First-link push for task ${task.id} failed: ${(err as Error).message}`,
+        );
+        result.log.push({
+          at: syncedAt,
+          direction: "error",
+          kind: "task",
           tableXId: task.id,
-          mondayItemId: mondayRecord.mondaySubitemId,
-          mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? null,
+          detail: (err as Error).message,
         });
       }
       continue;
     }
 
+    // Already linked — decide direction by timestamp.
     const dir = decideDirection({
       tableXUpdatedAtMs: tsMs(task.updatedAt),
       mondayUpdatedAtMs: tsMs(mondayRecord.mondayUpdatedAt),
@@ -420,6 +491,7 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
       const patch = mondaySubitemToTaskPatch(
         mondayRecord.raw,
         snapshot.subitemColumnsByTitle,
+        userMaps,
       );
       const trimmed = trimNoOpTaskPatch(task, patch);
       if (Object.keys(trimmed).length > 0) {
@@ -448,6 +520,7 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
           subitemBoardId,
           subitemColumnsByTitle: snapshot.subitemColumnsByTitle,
           subitemName: mondayRecord.name,
+          userMaps,
         });
         result.pushedTaskIds.push(task.id);
         result.log.push({

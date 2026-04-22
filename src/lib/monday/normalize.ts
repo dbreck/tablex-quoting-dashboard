@@ -5,7 +5,9 @@
 import type { Deliverable } from "@/data/project-phase2";
 import {
   type DeliverableOverride,
+  type ScopeStatus,
   type Task,
+  type TeamMember,
   getDeliverableDays,
   hoursToDays,
   getScopeStatus,
@@ -21,6 +23,18 @@ import {
   SUBITEM_COLUMN_TITLES,
   TASKCOLUMN_TO_MONDAY_STATUS,
 } from "./schema";
+
+export interface UserMaps {
+  /** TableX assignee id → Monday numeric user id (resolved by email match). */
+  assigneeToMondayId: Map<string, number>;
+  /** Monday user id → TableX team member id (for pull). */
+  mondayIdToAssignee: Map<number, string>;
+}
+
+const EMPTY_USER_MAPS: UserMaps = {
+  assigneeToMondayId: new Map(),
+  mondayIdToAssignee: new Map(),
+};
 
 // ─── Column-id resolution ────────────────────────────────────────────────────
 
@@ -59,10 +73,14 @@ export function deliverableToMondayColumnValues(
   deliverable: Deliverable,
   override: DeliverableOverride | undefined,
   columnsByTitle: ColumnsByTitle,
+  options: {
+    /** When provided, wins over the static-or-override status (used for rollup). */
+    statusOverride?: ScopeStatus;
+  } = {},
 ): ColumnValuesInput {
   const values: ColumnValuesInput = {};
 
-  const scopeStatus = getScopeStatus(deliverable, override);
+  const scopeStatus = options.statusOverride ?? getScopeStatus(deliverable, override);
   setIfResolved(values, columnsByTitle, DELIVERABLE_COLUMN_TITLES.status, {
     label: SCOPE_STATUS_TO_MONDAY_LABEL[scopeStatus],
   });
@@ -115,12 +133,13 @@ export function deliverableToMondayColumnValues(
 }
 
 /**
- * Build the column_values payload for a task (subitem). Omits Owner for the
- * same reason as deliverables.
+ * Build the column_values payload for a task (subitem). Owner is set when
+ * the task's assignee maps to a Monday user via email (passed in `userMaps`).
  */
 export function taskToMondayColumnValues(
   task: Task,
   columnsByTitle: ColumnsByTitle,
+  userMaps: UserMaps = EMPTY_USER_MAPS,
 ): ColumnValuesInput {
   const values: ColumnValuesInput = {};
 
@@ -149,6 +168,16 @@ export function taskToMondayColumnValues(
     setIfResolved(values, columnsByTitle, SUBITEM_COLUMN_TITLES.labels, {
       labels: task.labels,
     });
+  }
+
+  // Owner — only set when we resolved a Monday user id for this assignee.
+  if (task.assignee) {
+    const mondayUserId = userMaps.assigneeToMondayId.get(task.assignee);
+    if (mondayUserId != null) {
+      setIfResolved(values, columnsByTitle, SUBITEM_COLUMN_TITLES.owner, {
+        personsAndTeams: [{ id: mondayUserId, kind: "person" }],
+      });
+    }
   }
 
   return values;
@@ -189,6 +218,7 @@ export function mondaySubitemToTaskPatch(
     column_values?: Array<{ id: string; text: string | null; value: string | null }>;
   },
   columnsByTitle: ColumnsByTitle,
+  userMaps: UserMaps = EMPTY_USER_MAPS,
 ): Partial<Task> {
   const patch: Partial<Task> = {};
   const cvs = subitem.column_values ?? [];
@@ -196,6 +226,30 @@ export function mondaySubitemToTaskPatch(
   // Title (subitem name).
   if (subitem.name) {
     patch.title = subitem.name;
+  }
+
+  const ownerId = columnsByTitle[SUBITEM_COLUMN_TITLES.owner];
+  if (ownerId) {
+    const cv = cvs.find((c) => c.id === ownerId);
+    // Monday people column: value is JSON like {"personsAndTeams":[{"id":12345,"kind":"person"}]}.
+    // text is the user's display name, less reliable for matching.
+    if (cv?.value) {
+      try {
+        const parsed = JSON.parse(cv.value) as {
+          personsAndTeams?: Array<{ id: number; kind: string }>;
+        };
+        const first = parsed.personsAndTeams?.find((p) => p.kind === "person");
+        if (first) {
+          const tableXAssignee = userMaps.mondayIdToAssignee.get(first.id);
+          if (tableXAssignee) patch.assignee = tableXAssignee;
+        } else {
+          // Empty array means "unassigned" → clear it.
+          patch.assignee = null;
+        }
+      } catch {
+        // Malformed value — leave assignee untouched.
+      }
+    }
   }
 
   const statusId = columnsByTitle[SUBITEM_COLUMN_TITLES.status];
@@ -293,6 +347,38 @@ export function mondayItemToOverridePatch(
   }
 
   return patch;
+}
+
+/**
+ * Build the UserMaps for a single reconcile pass. Matches each TableX
+ * team member's email (case-insensitive) against the Monday users list.
+ * Members without an email, or whose email doesn't match a Monday user,
+ * are silently skipped — they just won't have Owner pushed/pulled.
+ */
+export function buildUserMaps(
+  teamMembers: Record<string, TeamMember>,
+  mondayUsers: Array<{ id: string | number; email?: string | null; name?: string | null }>,
+): UserMaps {
+  const mondayByEmail = new Map<string, number>();
+  for (const u of mondayUsers) {
+    const email = (u.email ?? "").trim().toLowerCase();
+    if (!email) continue;
+    const numericId = typeof u.id === "string" ? Number(u.id) : u.id;
+    if (Number.isFinite(numericId)) mondayByEmail.set(email, numericId);
+  }
+
+  const assigneeToMondayId = new Map<string, number>();
+  const mondayIdToAssignee = new Map<number, string>();
+  for (const member of Object.values(teamMembers)) {
+    const email = member.email?.trim().toLowerCase();
+    if (!email) continue;
+    const mondayId = mondayByEmail.get(email);
+    if (mondayId == null) continue;
+    assigneeToMondayId.set(member.id, mondayId);
+    mondayIdToAssignee.set(mondayId, member.id);
+  }
+
+  return { assigneeToMondayId, mondayIdToAssignee };
 }
 
 void hoursToDays;

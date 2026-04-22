@@ -60,6 +60,8 @@ export function useMondaySync() {
           tasks: store.tasks,
           deliverableOverrides: store.deliverableOverrides,
           syncState: store.syncState,
+          // Sent for Owner column mapping (server resolves email → Monday user id).
+          teamMembers: store.teamMembers,
         }),
       });
 
