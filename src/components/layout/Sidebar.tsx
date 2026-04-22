@@ -48,9 +48,9 @@ import { UserMenu } from "./UserMenu";
 // ─── Mode definitions ────────────────────────────────────────────────────────
 
 const modes = [
-  { id: "project" as const, label: "Project", icon: Crosshair, subtitle: "Project Tracker" },
-  { id: "analytics" as const, label: "Analytics", icon: BarChart3, subtitle: "Quote Analytics" },
-  { id: "quote-builder" as const, label: "Quoting", icon: FilePlus2, subtitle: "Quoting" },
+  { id: "project" as const, label: "Project", icon: Crosshair, subtitle: "Project Tracker", dashboardHref: "/project" },
+  { id: "analytics" as const, label: "Analytics", icon: BarChart3, subtitle: "Quote Analytics", dashboardHref: "/overview" },
+  { id: "quote-builder" as const, label: "Quoting", icon: FilePlus2, subtitle: "Quoting", dashboardHref: "/how-quoting-works" },
 ];
 
 // ─── Nav groups per mode ─────────────────────────────────────────────────────
@@ -191,8 +191,9 @@ export function Sidebar() {
               const isActive = sidebarMode === mode.id;
               const Icon = mode.icon;
               return (
-                <button
+                <Link
                   key={mode.id}
+                  href={mode.dashboardHref}
                   onClick={() => setSidebarMode(mode.id)}
                   className={cn(
                     "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
@@ -205,7 +206,7 @@ export function Sidebar() {
                 >
                   <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-brand-green")} />
                   {sidebarOpen && <span>{mode.label}</span>}
-                </button>
+                </Link>
               );
             })}
           </div>
