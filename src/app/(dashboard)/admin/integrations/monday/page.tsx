@@ -5,6 +5,8 @@ import { Wifi, Database, RefreshCw, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import { useMondaySync } from "@/hooks/useMondaySync";
 
 interface PingResult {
   boardName: string;
@@ -32,6 +34,11 @@ export default function AdminMondayPage() {
   const [seedResult, setSeedResult] = useState<SeedResult | null>(null);
   const [seedError, setSeedError] = useState<string | null>(null);
   const [seedConfirming, setSeedConfirming] = useState(false);
+
+  const { syncNow } = useMondaySync();
+  const syncStatus = useProjectTrackerStore((s) => s.syncStatus);
+  const syncLog = useProjectTrackerStore((s) => s.syncLog);
+  const syncing = syncStatus.status === "syncing";
 
   const handlePing = async () => {
     setPinging(true);
@@ -113,12 +120,107 @@ export default function AdminMondayPage() {
           </Button>
         )}
 
-        {/* Sync Now — disabled until Stage 2 */}
-        <Button variant="outline" disabled title="Coming in Stage 2">
-          <RefreshCw className="h-4 w-4" />
+        {/* Sync Now — manual bidirectional reconcile */}
+        <Button
+          variant="outline"
+          onClick={() => syncNow()}
+          disabled={syncing}
+          title="Reconcile TableX ↔ Monday now"
+        >
+          {syncing ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="h-4 w-4" />
+          )}
           Sync Now
         </Button>
       </div>
+
+      {/* Sync status */}
+      {(syncStatus.lastSyncedAt || syncStatus.lastError || syncStatus.lastSummary) && (
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold text-gray-700">
+                Last Sync
+              </CardTitle>
+              {syncStatus.status === "error" && <Badge variant="error">Failed</Badge>}
+              {syncStatus.status === "saved" && <Badge variant="success">Saved</Badge>}
+              {syncStatus.status === "syncing" && <Badge>Syncing</Badge>}
+              {syncStatus.status === "idle" && syncStatus.lastSyncedAt && (
+                <Badge variant="success">Idle</Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {syncStatus.lastSummary && (
+              <dl className="grid grid-cols-3 gap-4 text-sm mb-3">
+                <div>
+                  <dt className="text-xs text-gray-500 uppercase tracking-wider">Pulled</dt>
+                  <dd className="mt-0.5 font-medium text-gray-900">
+                    {syncStatus.lastSummary.pulled}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500 uppercase tracking-wider">Pushed</dt>
+                  <dd className="mt-0.5 font-medium text-gray-900">
+                    {syncStatus.lastSummary.pushed}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500 uppercase tracking-wider">Errors</dt>
+                  <dd
+                    className={`mt-0.5 font-medium ${
+                      syncStatus.lastSummary.errors > 0 ? "text-red-700" : "text-gray-900"
+                    }`}
+                  >
+                    {syncStatus.lastSummary.errors}
+                  </dd>
+                </div>
+              </dl>
+            )}
+            {syncStatus.lastError && (
+              <p className="text-xs text-red-600 break-words">{syncStatus.lastError}</p>
+            )}
+            {syncLog.length > 0 && (
+              <details className="mt-3">
+                <summary className="text-xs font-medium text-gray-600 cursor-pointer hover:text-gray-900">
+                  Recent activity ({syncLog.length})
+                </summary>
+                <ul className="mt-2 space-y-1 max-h-64 overflow-y-auto">
+                  {syncLog.slice(0, 30).map((entry, idx) => (
+                    <li
+                      key={`${entry.at}-${entry.tableXId}-${idx}`}
+                      className="text-xs flex items-start gap-2 py-0.5"
+                    >
+                      <span
+                        className={`inline-block px-1.5 py-0.5 rounded font-mono text-[10px] uppercase ${
+                          entry.direction === "pulled"
+                            ? "bg-blue-100 text-blue-700"
+                            : entry.direction === "pushed"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : entry.direction === "linked"
+                                ? "bg-slate-100 text-slate-700"
+                                : entry.direction === "error"
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-amber-100 text-amber-700"
+                        }`}
+                      >
+                        {entry.direction}
+                      </span>
+                      <span className="text-gray-500">{entry.kind}</span>
+                      <span className="font-mono text-gray-900">{entry.tableXId}</span>
+                      {entry.detail && (
+                        <span className="text-gray-400 truncate">— {entry.detail}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Ping result */}
       {(pingResult || pingError) && (
