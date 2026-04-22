@@ -495,17 +495,33 @@ export async function seedBoard(): Promise<SeedResult> {
     const existing = itemsByExternalId.get(deliverable.id);
     if (existing) {
       deliverableItemIds.set(deliverable.id, existing.id);
-      // Include name in the update so a TableX rename propagates.
-      // change_multiple_column_values with a `name` key updates the item name.
-      const payload: Record<string, unknown> = { ...columnValues };
+      // CONSERVATIVE UPDATE: re-seed must not overwrite values the user has
+      // edited via sync (status, hours, days, baseline, rationale). Push only
+      // the structural fields that can change in the source-of-truth code:
+      //   - name (template rename)
+      //   - external_id (defensive — should already be set, but rewrite if missing)
+      // Status and other columns are the sync engine's job.
+      const updatePayload: Record<string, unknown> = {};
       if (existing.name !== deliverable.name) {
-        payload.name = deliverable.name;
+        updatePayload.name = deliverable.name;
       }
+      const externalIdColId =
+        itemColumnsByTitle[DELIVERABLE_COLUMN_TITLES.externalId];
+      if (externalIdColId) {
+        const currentExt = existing.column_values?.find(
+          (c) => c.id === externalIdColId,
+        )?.text;
+        if (!currentExt || currentExt.trim() !== deliverable.id) {
+          updatePayload[externalIdColId] = deliverable.id;
+        }
+      }
+      if (Object.keys(updatePayload).length === 0) continue;
+
       try {
         await mondayQuery(M_CHANGE_ITEM_VALUES, {
           boardId: MONDAY_BOARD_ID,
           itemId: existing.id,
-          columnValues: JSON.stringify(payload),
+          columnValues: JSON.stringify(updatePayload),
         });
         result.itemsUpdated++;
       } catch (err) {
@@ -638,11 +654,25 @@ export async function seedBoard(): Promise<SeedResult> {
       const existing = subitemsByExternalId.get(task.id);
 
       if (existing) {
+        // CONSERVATIVE UPDATE: leave status/priority/labels/etc. alone on
+        // re-seed — those belong to the sync engine. Only push external_id
+        // if it's missing or stale (the seed's job is to keep the link
+        // intact).
+        const externalIdColId =
+          subitemColumnsByTitle[SUBITEM_COLUMN_TITLES.externalId];
+        if (!externalIdColId) {
+          // External ID column doesn't exist on the subitem board — nothing
+          // structural to update. Skip silently; the subitem already exists.
+          return;
+        }
+        const updatePayload: Record<string, unknown> = {
+          [externalIdColId]: task.id,
+        };
         try {
           await mondayQuery(M_CHANGE_ITEM_VALUES, {
             boardId: subitemBoardId,
             itemId: existing.id,
-            columnValues: JSON.stringify(columnValues),
+            columnValues: JSON.stringify(updatePayload),
           });
           result.subitemsUpdated++;
         } catch (err) {
