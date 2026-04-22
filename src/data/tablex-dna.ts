@@ -99,11 +99,56 @@ export const brandReport = {
     },
   ],
 
+  // The four principles and their supporting phrases below were pulled directly
+  // from the April 9, 2026 brand-voice workshop output
+  // (tablex-workshop-data-2026-04-09.json → brandPrinciples.facilitator-F26B5E).
+  // Glosses come from clearph-brand-workshop/src/lib/brandPrinciples.ts.
+  // Order preserved as selected by the facilitator.
   brandPrinciples: [
-    { name: "Approachable", line: "We pick up the phone like neighbors, not vendors." },
-    { name: "Grounded", line: "Deep roots in practical craftsmanship." },
-    { name: "Crafted", line: "Details you’ll only notice five years in." },
-    { name: "Confident", line: "Transparency without hedging — desirability, not hype." },
+    {
+      name: "Crafted",
+      line: "Every edge is a small decision made on purpose.",
+      phrases: [
+        "Built like the maker has to live with it.",
+        "Quality you can feel before you can name it.",
+        "We sweat the details you’ll only notice five years in.",
+        "Heritage techniques, modern tools.",
+        "Slow enough to get it right, fast enough to ship.",
+      ],
+    },
+    {
+      name: "Confident",
+      line: "Quietly sure of the work.",
+      phrases: [
+        "We say what it is. We say what it isn’t.",
+        "The proof is in the grain, not the pitch deck.",
+        "We don’t oversell — the table does that on the install.",
+        "We stand behind every leg, every leaf, every joint.",
+        "Surefooted, never strutting.",
+      ],
+    },
+    {
+      name: "Grounded",
+      line: "Rooted in the shop floor, not the showroom.",
+      phrases: [
+        "We trust the work to do the talking.",
+        "Honest materials, honest pricing, honest answers.",
+        "Plain-spoken, even when the topic gets technical.",
+        "What you see is what you get — no filter, no front.",
+        "Built on shop-floor logic, not boardroom theory.",
+      ],
+    },
+    {
+      name: "Approachable",
+      line: "Neighbors, not vendors.",
+      phrases: [
+        "We pick up the phone like neighbors, not vendors.",
+        "Easy to spec, easier to live with.",
+        "No pretense, no jargon, no gatekeeping.",
+        "We’d rather be useful than impressive.",
+        "Furniture that invites you to put your feet up — and means it.",
+      ],
+    },
   ],
 };
 

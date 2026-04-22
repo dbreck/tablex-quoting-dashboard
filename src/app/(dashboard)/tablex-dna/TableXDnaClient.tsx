@@ -5,7 +5,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { brandReport, manifesto, type ArchetypeCloudBrand } from "@/data/tablex-dna";
-import { Download, Fingerprint, Quote, ScrollText, Sparkles } from "lucide-react";
+import {
+  Compass,
+  Download,
+  Fingerprint,
+  Hammer,
+  HeartHandshake,
+  Quote,
+  ScrollText,
+  Sparkles,
+  Sprout,
+  Star,
+  type LucideIcon,
+} from "lucide-react";
 
 export default function TableXDnaClient() {
   return (
@@ -81,24 +93,36 @@ function BrandReport() {
         </Card>
       </div>
 
+      {/* North Star — brand principles (moved above archetypes) */}
+      <NorthStar />
+
       {/* Archetypes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <ArchetypeBlock archetype={brandReport.archetypes.primary} />
         <ArchetypeBlock archetype={brandReport.archetypes.secondary} />
       </div>
 
-      {/* Section insights */}
-      <div className="space-y-4">
+      {/* Section insights — 2-col grid, read left-to-right top-to-bottom */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
         {brandReport.sectionInsights.map((section, idx) => (
-          <Card key={section.id}>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-xs font-bold text-slate-600">
-                  {idx + 1}
+          <Card key={section.id} className="h-full">
+            <CardContent className="p-6 h-full flex flex-col">
+              <div className="flex items-start gap-4 mb-4 pb-3 border-b border-slate-100">
+                <span
+                  aria-hidden
+                  className="font-black text-4xl md:text-5xl leading-[0.85] tracking-tight text-slate-900"
+                  style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <div className="flex-1 pt-1">
+                  <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-slate-400 mb-0.5">
+                    Insight {idx + 1} of {brandReport.sectionInsights.length}
+                  </p>
+                  <h3 className="text-lg font-semibold text-slate-900 leading-snug">
+                    {section.title}
+                  </h3>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 pt-0.5">
-                  {section.title}
-                </h3>
               </div>
               <p
                 className="text-sm text-slate-600 leading-relaxed [&_em]:italic [&_em]:text-slate-900 [&_em]:font-medium [&_strong]:font-semibold [&_strong]:text-slate-900"
@@ -108,36 +132,127 @@ function BrandReport() {
           </Card>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {/* Brand principles summary */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="mb-4">
-            <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">
+// ─── North Star ─────────────────────────────────────────────────────────────
+
+const PRINCIPLE_STYLES: Record<
+  string,
+  { icon: LucideIcon; accent: string; tint: string; border: string }
+> = {
+  Approachable: {
+    icon: HeartHandshake,
+    accent: "#d97706", // amber-600
+    tint: "#fffbeb", // amber-50
+    border: "#fde68a", // amber-200
+  },
+  Grounded: {
+    icon: Sprout,
+    accent: "#059669", // emerald-600
+    tint: "#ecfdf5", // emerald-50
+    border: "#a7f3d0", // emerald-200
+  },
+  Crafted: {
+    icon: Hammer,
+    accent: "#475569", // slate-600
+    tint: "#f8fafc", // slate-50
+    border: "#cbd5e1", // slate-300
+  },
+  Confident: {
+    icon: Compass,
+    accent: "#1e40af", // blue-800
+    tint: "#eff6ff", // blue-50
+    border: "#bfdbfe", // blue-200
+  },
+};
+
+function NorthStar() {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 md:p-8">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6 md:mb-8">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white">
+            <Star className="h-5 w-5" fill="currentColor" />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500 mb-1 font-semibold">
               North Star
             </p>
-            <h3 className="text-lg font-semibold text-slate-900">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
               Four Brand Principles
-            </h3>
+            </h2>
+            <p className="text-sm text-slate-600 mt-1.5 max-w-2xl">
+              The lens we hold up to every voice and design decision. Real,
+              skilled, approachable, and sure of itself.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {brandReport.brandPrinciples.map((principle) => (
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+        {brandReport.brandPrinciples.map((principle, idx) => {
+          const style =
+            PRINCIPLE_STYLES[principle.name] ?? PRINCIPLE_STYLES.Crafted;
+          const Icon = style.icon;
+          return (
+            <article
+              key={principle.name}
+              className="relative overflow-hidden rounded-xl border bg-white p-5 md:p-6 transition-shadow hover:shadow-md"
+              style={{ borderColor: style.border }}
+            >
               <div
-                key={principle.name}
-                className="rounded-lg border border-slate-200 bg-slate-50/50 p-4"
-              >
-                <p className="text-sm font-semibold text-slate-900 mb-1">
-                  {principle.name}
-                </p>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  {principle.line}
-                </p>
+                className="absolute inset-x-0 top-0 h-1"
+                style={{ backgroundColor: style.accent }}
+              />
+              <div className="flex items-start gap-4">
+                <div
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: style.tint, color: style.accent }}
+                >
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className="text-[10px] uppercase tracking-widest font-bold"
+                      style={{ color: style.accent }}
+                    >
+                      0{idx + 1}
+                    </span>
+                    <h3 className="text-xl font-bold text-slate-900">
+                      {principle.name}
+                    </h3>
+                  </div>
+                  <p
+                    className="mt-1 text-sm font-medium italic leading-snug"
+                    style={{ color: style.accent }}
+                  >
+                    “{principle.line}”
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+              <ul className="mt-5 space-y-2.5">
+                {principle.phrases.map((phrase) => (
+                  <li
+                    key={phrase}
+                    className="flex items-start gap-2.5 text-sm text-slate-700 leading-snug"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: style.accent }}
+                    />
+                    <span>{phrase}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
