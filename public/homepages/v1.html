@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TableX — Modern American tablemaker</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  :root {
+    --page-gutter: 80px;
+    --rule: rgba(10,10,10,0.12);
+    --rule-on-dark: rgba(255,255,255,0.18);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; color: var(--tx-ink); font-family: var(--font-sans); font-weight: 500; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+  img, svg { display: block; }
+
+  /* ============ NAV (overlay on hero) ============ */
+  .nav {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 26px var(--page-gutter) 20px;
+    color: #fff;
+  }
+  .nav .mark { display: inline-flex; align-items: center; gap: 14px; color: #fff; }
+  .nav .mark img { height: 30px; width: auto; }
+  .nav .mark .wm { font-size: 24px; letter-spacing: -0.02em; font-weight: 500; }
+  .nav .primary {
+    display: flex; gap: 44px;
+    font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .nav .primary a { opacity: 0.92; transition: opacity .2s; }
+  .nav .primary a:hover { opacity: 0.55; }
+  .nav .util { display: flex; align-items: center; gap: 14px; font-size: 13px; letter-spacing: 0.04em; }
+  .nav .util .sep { opacity: 0.35; }
+  .nav .util a { opacity: 0.9; }
+  .nav .util .cart { width: 22px; height: 22px; }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative; min-height: 860px; background: #0a0a0a; color: #fff;
+    padding: 160px var(--page-gutter) 80px;
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: 80px; align-items: end;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0 55% 0 0;
+    background:
+      radial-gradient(ellipse 80% 80% at 20% 100%, rgba(149,255,0,0.06) 0, transparent 60%),
+      #0a0a0a;
+  }
+  .hero .col-copy { position: relative; z-index: 2; }
+  .hero .eyebrow {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--tx-volt); margin-bottom: 36px;
+  }
+  .hero .eyebrow .dot { width: 7px; height: 7px; background: var(--tx-volt); border-radius: 50%; }
+  .hero .eyebrow .meta { color: rgba(255,255,255,0.55); letter-spacing: 0.14em; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 500; font-size: clamp(64px, 7vw, 116px);
+    line-height: 0.96; letter-spacing: -0.03em;
+    margin: 0 0 36px;
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; font-weight: 700; }
+  .hero .lead {
+    font-size: 20px; line-height: 1.55; letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.78); max-width: 540px;
+    margin: 0 0 44px;
+  }
+  .hero .cta-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+
+  /* pill buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 18px 32px 20px; border-radius: 999px;
+    font-size: 17px; font-weight: 500; letter-spacing: 0.02em; text-transform: lowercase;
+    transition: all .22s cubic-bezier(.25,1,.5,1); cursor: pointer;
+    border: 1.5px solid transparent;
+  }
+  .btn.volt { background: var(--tx-volt); color: var(--tx-ink); border-color: var(--tx-volt); }
+  .btn.volt:hover { background: var(--tx-volt-deep); border-color: var(--tx-volt-deep); }
+  .btn.dark { background: var(--tx-ink); color: #fff; border-color: var(--tx-ink); }
+  .btn.dark:hover { background: #2a2a2a; border-color: #2a2a2a; }
+  .btn.ghost-light { background: transparent; color: #fff; border-color: rgba(255,255,255,0.4); }
+  .btn.ghost-light:hover { background: #fff; color: var(--tx-ink); border-color: #fff; }
+  .btn.ghost-dark { background: transparent; color: var(--tx-ink); border-color: var(--tx-ink); }
+  .btn.ghost-dark:hover { background: var(--tx-ink); color: #fff; }
+  .btn .arrow { display: inline-block; transition: transform .22s; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  /* hero image column — full-bleed tall portrait that bleeds off-screen top+right */
+  .hero .col-image {
+    position: relative; z-index: 1;
+    height: 720px;
+    background: url("assets/conference-room-hero.jpg") center 30%/cover no-repeat;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 60px 120px -40px rgba(0,0,0,.5);
+  }
+  .hero .col-image::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
+  }
+  .hero .image-caption {
+    position: absolute; bottom: 28px; left: 28px; right: 28px; z-index: 2;
+    display: flex; justify-content: space-between; align-items: flex-end; color: #fff;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero .image-caption .loc { opacity: 0.85; }
+  .hero .image-caption .ser { opacity: 0.95; font-weight: 700; }
+
+  /* hero lower rail — stats across bottom */
+  .hero-rail {
+    position: relative; z-index: 2;
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    padding: 40px 0 0;
+    border-top: 1px solid var(--rule-on-dark);
+    margin-top: 60px;
+  }
+  .hero-rail .cell {
+    padding-right: 40px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .hero-rail .cell + .cell { border-left: 1px solid var(--rule-on-dark); padding-left: 40px; }
+  .hero-rail .k { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+  .hero-rail .v { font-family: var(--font-display); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; color: #fff; }
+  .hero-rail .v .sub { font-size: 15px; letter-spacing: 0; color: rgba(255,255,255,0.6); font-weight: 500; }
+
+  /* ============ MARQUEE ============ */
+  .marquee {
+    background: #fff; color: var(--tx-ink);
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    padding: 26px 0;
+    overflow: hidden; position: relative;
+  }
+  .marquee-track {
+    display: flex; gap: 64px; white-space: nowrap;
+    animation: marquee 45s linear infinite;
+    font-family: var(--font-display);
+    font-size: 44px; font-weight: 500; letter-spacing: -0.02em;
+  }
+  .marquee-track span { display: inline-flex; align-items: center; gap: 64px; }
+  .marquee-track .dot {
+    width: 10px; height: 10px; background: var(--tx-volt); border-radius: 50%; display: inline-block;
+  }
+  .marquee-track em { font-style: normal; font-weight: 700; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ============ COLLECTIONS BAND ============ */
+  .collections {
+    background: var(--tx-ink); color: #fff;
+    padding: 140px var(--page-gutter) 160px;
+  }
+  .collections-head {
+    display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: end;
+    margin-bottom: 80px;
+  }
+  .collections-head .k {
+    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--tx-volt); margin-bottom: 22px;
+  }
+  .collections-head h2 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 76px; letter-spacing: -0.025em; line-height: 1.02;
+    margin: 0; text-wrap: balance;
+  }
+  .collections-head h2 em { font-style: normal; font-weight: 700; }
+  .collections-head .browseall {
+    font-size: 14px; letter-spacing: 0.16em;
+    border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 6px;
+    text-transform: lowercase;
+  }
+  .collections-head .browseall:hover { border-bottom-color: var(--tx-volt); color: var(--tx-volt); }
+
+  .collections-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px;
+  }
+  .series-card { display: flex; flex-direction: column; gap: 20px; color: #fff; }
+  .series-card .ph {
+    aspect-ratio: 3/4; border-radius: 20px; overflow: hidden; position: relative;
+    background-size: cover; background-position: center;
+    transition: transform .5s cubic-bezier(.16,1,.3,1);
+  }
+  .series-card:hover .ph { transform: translateY(-6px); }
+  .series-card .ph::after {
+    content: attr(data-index); position: absolute; top: 22px; left: 24px;
+    font-size: 12px; letter-spacing: 0.18em; color: #fff;
+    background: rgba(0,0,0,0.35); backdrop-filter: blur(6px);
+    padding: 5px 10px; border-radius: 999px;
+  }
+  .series-card .rule { width: 40px; height: 1px; background: #fff; margin-top: 4px; }
+  .series-card h3 {
+    font-family: var(--font-display); font-weight: 500; font-size: 34px;
+    letter-spacing: -0.02em; margin: 0; line-height: 1;
+  }
+  .series-card h3 .ser { color: rgba(255,255,255,0.55); font-weight: 500; }
+  .series-card p {
+    font-size: 16px; line-height: 1.55; letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.72); margin: 0; max-width: 380px;
+  }
+  .series-card .tags {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); margin-top: 4px;
+  }
+  .series-card .tags span {
+    padding: 5px 10px; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px;
+  }
+
+  /* ============ DETAIL SPOTLIGHT (diptych) ============ */
+  .spotlight {
+    display: grid; grid-template-columns: 1fr 1fr; min-height: 780px;
+    background: var(--tx-cream);
+  }
+  .spotlight .pic { background: url("assets/table-abstract-02.jpg") center/cover no-repeat; }
+  .spotlight .txt {
+    padding: 120px 100px; display: flex; flex-direction: column; justify-content: center;
+    max-width: 720px;
+  }
+  .spotlight .k { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tx-stone-500); }
+  .spotlight .num {
+    display: flex; align-items: baseline; gap: 16px; margin: 28px 0 24px;
+  }
+  .spotlight .num .big {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 160px; line-height: 0.9; letter-spacing: -0.03em;
+  }
+  .spotlight .num .unit { font-size: 20px; color: var(--tx-stone-500); letter-spacing: 0.02em; }
+  .spotlight h2 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 60px; line-height: 1.02; letter-spacing: -0.025em;
+    margin: 0 0 28px; text-wrap: balance;
+  }
+  .spotlight h2 em { font-style: normal; font-weight: 700; }
+  .spotlight p { font-size: 19px; line-height: 1.55; letter-spacing: -0.01em; color: var(--tx-stone-600); margin: 0 0 44px; max-width: 560px; }
+  .spotlight .specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px 40px; margin-bottom: 44px; }
+  .spotlight .specs .s { display: flex; flex-direction: column; gap: 4px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  .spotlight .specs .s .sk { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tx-stone-500); }
+  .spotlight .specs .s .sv { font-size: 17px; letter-spacing: -0.01em; }
+  .spotlight .cta-row { display: flex; gap: 14px; }
+
+  /* ============ PROCESS STRIP ============ */
+  .process {
+    padding: 140px var(--page-gutter);
+    background: #fff;
+  }
+  .process-head {
+    display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: end;
+    margin-bottom: 72px;
+  }
+  .process-head .k { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tx-stone-500); margin-bottom: 20px; }
+  .process-head h2 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 72px; letter-spacing: -0.025em; line-height: 1.02; margin: 0;
+    max-width: 900px; text-wrap: balance;
+  }
+  .process-head h2 em { font-style: normal; font-weight: 700; }
+  .process-head .aside { font-size: 16px; max-width: 320px; color: var(--tx-stone-600); line-height: 1.5; }
+
+  .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .p-tile { display: flex; flex-direction: column; gap: 24px; }
+  .p-tile .ph { aspect-ratio: 4/5; border-radius: 20px; background-size: cover; background-position: center; }
+  .p-tile .cap {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+    padding: 0 6px;
+  }
+  .p-tile .cap .n {
+    font-family: var(--font-display); font-weight: 500; font-size: 13px;
+    letter-spacing: 0.14em; color: var(--tx-stone-500);
+  }
+  .p-tile .cap .ttl {
+    font-family: var(--font-display); font-weight: 500; font-size: 30px;
+    letter-spacing: -0.02em; line-height: 1.05; margin: 0;
+  }
+  .p-tile .cap .ttl em { font-style: normal; font-weight: 700; }
+  .p-tile .cap .body { font-size: 15px; color: var(--tx-stone-600); line-height: 1.5; max-width: 320px; margin-top: 8px; }
+
+  /* ============ SPEED BAND ============ */
+  .speed {
+    padding: 140px var(--page-gutter);
+    background: var(--tx-cream);
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; align-items: center;
+  }
+  .speed .k { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tx-stone-500); margin-bottom: 22px; }
+  .speed h2 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 72px; letter-spacing: -0.025em; line-height: 1.02; margin: 0 0 28px;
+    text-wrap: balance;
+  }
+  .speed h2 em { font-style: normal; font-weight: 700; }
+  .speed p { font-size: 18px; line-height: 1.55; letter-spacing: -0.01em; color: var(--tx-stone-600); margin: 0 0 40px; max-width: 500px; }
+  .timeline {
+    background: #fff; border: 1px solid var(--rule); border-radius: 20px;
+    padding: 32px 40px;
+  }
+  .timeline .row {
+    display: grid; grid-template-columns: 90px 1fr auto;
+    align-items: center; gap: 24px;
+    padding: 22px 0;
+  }
+  .timeline .row + .row { border-top: 1px solid var(--rule); }
+  .timeline .row .day { font-family: var(--font-display); font-weight: 500; font-size: 28px; letter-spacing: -0.02em; }
+  .timeline .row .label { font-size: 17px; letter-spacing: -0.01em; }
+  .timeline .row .mark { width: 10px; height: 10px; border-radius: 50%; background: var(--tx-ink); }
+  .timeline .row.first .mark { background: var(--tx-volt); box-shadow: 0 0 0 4px rgba(149,255,0,0.18); }
+  .timeline .row.last .label { font-weight: 700; }
+  .timeline .foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    margin-top: 20px; padding-top: 22px; border-top: 1px solid var(--rule);
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tx-stone-500);
+  }
+  .timeline .foot b { color: var(--tx-ink); letter-spacing: 0.1em; font-weight: 700; }
+
+  /* ============ FULL-BLEED TYPE STATEMENT ============ */
+  .statement {
+    background: #000; color: #fff;
+    padding: 180px var(--page-gutter);
+    text-align: left; position: relative; overflow: hidden;
+  }
+  .statement::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: url("assets/bg-abstract.jpg") center/cover no-repeat;
+    opacity: 0.22; filter: grayscale(1);
+  }
+  .statement-inner { position: relative; z-index: 2; }
+  .statement h2 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: clamp(72px, 9.5vw, 180px); line-height: 0.92; letter-spacing: -0.035em;
+    margin: 0; text-wrap: balance;
+  }
+  .statement h2 .l2 { display: block; padding-left: 16vw; }
+  .statement h2 em { font-style: normal; font-weight: 700; }
+  .statement .sig {
+    margin-top: 64px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+    border-top: 1px solid rgba(255,255,255,0.2); padding-top: 48px;
+  }
+  .statement .sig .left { display: flex; gap: 32px; align-items: center; }
+  .statement .sig .left img { width: 80px; height: 80px; filter: brightness(1.1) contrast(1.05); }
+  .statement .sig .left .copy { font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.75); line-height: 1.5; }
+  .statement .sig .left .copy b { color: #fff; display: block; font-weight: 700; letter-spacing: 0.12em; font-size: 16px; }
+  .statement .sig .right { font-size: 19px; line-height: 1.55; letter-spacing: -0.01em; color: rgba(255,255,255,0.72); max-width: 520px; }
+  .statement .sig .right .cta-row { margin-top: 28px; display: flex; gap: 12px; }
+
+  /* ============ STATS TICKER ============ */
+  .stats {
+    padding: 120px var(--page-gutter);
+    background: #fff;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .stats .c {
+    padding: 0 40px; display: flex; flex-direction: column; gap: 18px;
+  }
+  .stats .c + .c { border-left: 1px solid var(--rule); }
+  .stats .v {
+    font-family: var(--font-display); font-weight: 500; font-size: 148px;
+    line-height: 0.9; letter-spacing: -0.04em;
+  }
+  .stats .bar { width: 48px; height: 1px; background: var(--tx-ink); }
+  .stats .k { font-size: 14px; letter-spacing: 0.02em; color: var(--tx-stone-600); line-height: 1.3; }
+  .stats .k b { color: var(--tx-ink); font-weight: 700; display: block; }
+
+  /* ============ FIND A REP ============ */
+  .rep {
+    padding: 140px var(--page-gutter);
+    background: #fff;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
+  }
+  .rep .k { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tx-stone-500); margin-bottom: 22px; }
+  .rep h2 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 68px; letter-spacing: -0.025em; line-height: 1.02; margin: 0 0 28px;
+    text-wrap: balance;
+  }
+  .rep h2 em { font-style: normal; font-weight: 700; }
+  .rep p { font-size: 18px; line-height: 1.55; color: var(--tx-stone-600); margin: 0 0 36px; max-width: 480px; }
+  .rep .locator {
+    background: var(--tx-cream); border: 1px solid var(--rule); border-radius: 20px;
+    padding: 40px;
+  }
+  .rep .locator .lbl { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tx-stone-500); margin-bottom: 14px; }
+  .rep .locator .inp {
+    display: flex; gap: 10px; align-items: center;
+    background: #fff; border: 1px solid var(--rule); border-radius: 999px;
+    padding: 6px 6px 6px 24px; margin-bottom: 28px;
+  }
+  .rep .locator .inp input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-family: var(--font-sans); font-weight: 500; font-size: 17px; letter-spacing: -0.01em;
+    padding: 14px 0;
+  }
+  .rep .locator .inp .go {
+    padding: 14px 26px; background: var(--tx-ink); color: #fff; border-radius: 999px;
+    font-size: 15px; letter-spacing: 0.02em; text-transform: lowercase;
+  }
+  .rep .locator .inp .go:hover { background: #2a2a2a; }
+  .rep .locator .quick { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rep .locator .quick span {
+    padding: 8px 16px; border: 1px solid var(--rule); border-radius: 999px;
+    font-size: 13px; color: var(--tx-stone-600); cursor: pointer; transition: all .2s;
+  }
+  .rep .locator .quick span:hover { background: var(--tx-ink); color: #fff; border-color: var(--tx-ink); }
+  .rep .locator .help {
+    margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; letter-spacing: 0.02em; color: var(--tx-stone-600);
+  }
+  .rep .locator .help a { border-bottom: 1px solid var(--tx-ink); padding-bottom: 2px; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--tx-ink); color: #fff;
+    padding: 120px var(--page-gutter) 40px;
+  }
+  footer .top {
+    display: grid; grid-template-columns: 1.3fr 3fr; gap: 80px;
+    padding-bottom: 72px; border-bottom: 1px solid var(--rule-on-dark);
+  }
+  footer .brand-col { display: flex; flex-direction: column; gap: 26px; }
+  footer .wm img { height: 36px; width: auto; filter: brightness(1.05); }
+  footer .brand-col p { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.7); max-width: 340px; margin: 0; }
+  footer .mia {
+    display: flex; gap: 16px; align-items: center; padding: 20px 0;
+    border-top: 1px solid var(--rule-on-dark); border-bottom: 1px solid var(--rule-on-dark);
+    max-width: 340px;
+  }
+  footer .mia img { width: 56px; height: 56px; }
+  footer .mia .txt { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.72); line-height: 1.4; }
+  footer .mia .txt b { color: #fff; font-weight: 700; letter-spacing: 0.12em; font-size: 14px; display: block; margin-bottom: 2px; }
+
+  footer .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; }
+  footer .cols h5 { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tx-volt); font-weight: 700; margin: 0 0 20px; }
+  footer .cols ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  footer .cols ul a { font-size: 15px; color: rgba(255,255,255,0.82); }
+  footer .cols ul a:hover { color: #fff; }
+
+  footer .bottom {
+    display: flex; justify-content: space-between; align-items: center; gap: 40px;
+    padding-top: 32px;
+    font-size: 13px; color: rgba(255,255,255,0.5);
+  }
+  footer .bottom a:hover { color: #fff; }
+  footer .bottom .right { display: flex; gap: 24px; }
+
+  /* ============ UTILITY ============ */
+  .arrow-svg { width: 18px; height: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" data-screen-label="01 Hero">
+  <header class="nav">
+    <a href="#" class="mark">
+      <img src="assets/TableX-logomark.svg" alt="TableX">
+      <span class="wm">TableX</span>
+    </a>
+    <nav class="primary">
+      <a href="#">Product</a>
+      <a href="#">Spaces</a>
+      <a href="#">Finishes</a>
+      <a href="#">Resources</a>
+      <a href="#">About</a>
+    </nav>
+    <div class="util">
+      <a href="#">Login</a>
+      <span class="sep">|</span>
+      <a href="#">Find a rep</a>
+      <span class="sep">|</span>
+      <a href="#" class="cart" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="col-copy">
+    <div class="eyebrow">
+      <span class="dot"></span>
+      New from TableX
+      <span class="meta">Fall 2026 · TRIG series expansion</span>
+    </div>
+    <h1>Adaptive solutions<br>for <em>inspiring</em> spaces.</h1>
+    <p class="lead">
+      Beautifully-crafted commercial tables — conference, training, hospitality, outdoor — designed in Jasper, Indiana and on your floor in under two weeks.
+    </p>
+    <div class="cta-row">
+      <button class="btn volt">browse bestsellers <span class="arrow">→</span></button>
+      <button class="btn ghost-light">watch the shop film <span class="arrow">→</span></button>
+    </div>
+  </div>
+
+  <div class="col-image">
+    <div class="image-caption">
+      <span class="loc">Arcadia · Chicago IL</span>
+      <span class="ser">TRIG · round conference</span>
+    </div>
+  </div>
+
+  <div class="hero-rail">
+    <div class="cell">
+      <span class="k">Lead time</span>
+      <span class="v">14 <span class="sub">business days</span></span>
+    </div>
+    <div class="cell">
+      <span class="k">Made in</span>
+      <span class="v">Jasper, IN <span class="sub">est. 1998</span></span>
+    </div>
+    <div class="cell">
+      <span class="k">Series in line</span>
+      <span class="v">8 <span class="sub">+ custom</span></span>
+    </div>
+    <div class="cell">
+      <span class="k">Warranty</span>
+      <span class="v">50 <span class="sub">years</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MARQUEE ============================ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>
+      <span class="dot"></span>The <em>table</em> people
+      <span class="dot"></span>Made in Jasper, Indiana
+      <span class="dot"></span>Built to <em>adapt</em>
+      <span class="dot"></span>Shipped in 14 days
+      <span class="dot"></span>Since 1998
+      <span class="dot"></span>The <em>table</em> people
+      <span class="dot"></span>Made in Jasper, Indiana
+      <span class="dot"></span>Built to <em>adapt</em>
+      <span class="dot"></span>Shipped in 14 days
+      <span class="dot"></span>Since 1998
+    </span>
+  </div>
+</div>
+
+<!-- ============================ COLLECTIONS ============================ -->
+<section class="collections" data-screen-label="02 Collections">
+  <div class="collections-head">
+    <div>
+      <div class="k">Collections</div>
+      <h2>Built to adapt<br>as <em>spaces</em> change.</h2>
+    </div>
+    <a href="#" class="browseall">browse all 8 series →</a>
+  </div>
+  <div class="collections-grid">
+    <a href="#" class="series-card">
+      <div class="ph" data-index="01 / 08" style="background-image:url('assets/collection-1.jpg')"></div>
+      <div class="rule"></div>
+      <h3>FOUNDATION <span class="ser">series</span></h3>
+      <p>A tested and timeless fit. Flexible, stylish, and completely customizable to work with any space and budget.</p>
+      <div class="tags"><span>Conference</span><span>Training</span><span>Custom</span></div>
+    </a>
+    <a href="#" class="series-card">
+      <div class="ph" data-index="02 / 08" style="background-image:url('assets/collection-3.jpg')"></div>
+      <div class="rule"></div>
+      <h3>ARTISAN <span class="ser">series</span></h3>
+      <p>Hand-finished edges, solid hardwoods, and warm proportions — designed for rooms meant to be lingered in.</p>
+      <div class="tags"><span>Hospitality</span><span>Executive</span><span>Solid wood</span></div>
+    </a>
+    <a href="#" class="series-card">
+      <div class="ph" data-index="03 / 08" style="background-image:url('assets/collection-2.jpg')"></div>
+      <div class="rule"></div>
+      <h3>CAFE + HOSPITALITY <span class="ser">series</span></h3>
+      <p>Stylish and completely customizable to make any setting feel like home.</p>
+      <div class="tags"><span>Cafe</span><span>Lounge</span><span>Outdoor-rated</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ============================ SPOTLIGHT: TRIG ============================ -->
+<section class="spotlight" data-screen-label="03 TRIG spotlight">
+  <div class="pic" aria-label="TRIG series base detail"></div>
+  <div class="txt">
+    <div class="k">TRIG series · in focus</div>
+    <div class="num">
+      <span class="big">36</span>
+      <span class="unit">edge profiles · 40+ laminates · 30+ powdercoats</span>
+    </div>
+    <h2>One base. An <em>infinite</em> number of tables.</h2>
+    <p>
+      Our TRIG series was created from a consistent need for flexibility within a workspace. A single trestle base, specified nine ways — nesting, folding, fixed — with every top, edge, and finish in the TableX catalog.
+    </p>
+    <div class="specs">
+      <div class="s"><span class="sk">Base</span><span class="sv">Steel trestle, powdercoated</span></div>
+      <div class="s"><span class="sk">Top</span><span class="sv">HPL, veneer, solid surface, wood</span></div>
+      <div class="s"><span class="sk">Heights</span><span class="sv">28.5 · 36 · 42 in</span></div>
+      <div class="s"><span class="sk">Config</span><span class="sv">Fixed · Folding · Nesting</span></div>
+    </div>
+    <div class="cta-row">
+      <button class="btn dark">configure a TRIG <span class="arrow">→</span></button>
+      <button class="btn ghost-dark">download spec sheet</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PROCESS STRIP ============================ -->
+<section class="process" data-screen-label="04 Process">
+  <div class="process-head">
+    <div>
+      <div class="k">The shop floor</div>
+      <h2>Modern craft, practiced <em>daily</em>.</h2>
+    </div>
+    <p class="aside">
+      Every TableX is built by hand in Jasper, Indiana — by the same 42 people, on the same floor, since 1998.
+    </p>
+  </div>
+  <div class="process-grid">
+    <div class="p-tile">
+      <div class="ph" style="background-image:url('assets/bg-abstract.jpg')"></div>
+      <div class="cap">
+        <div>
+          <span class="n">01 · The shop</span>
+          <h3 class="ttl">Light, wood, <em>space</em>.</h3>
+          <p class="body">60,000 sq ft of production floor, tooled for short runs and custom specs.</p>
+        </div>
+      </div>
+    </div>
+    <div class="p-tile">
+      <div class="ph" style="background-image:url('assets/table-abstract-01.jpg')"></div>
+      <div class="cap">
+        <div>
+          <span class="n">02 · The joinery</span>
+          <h3 class="ttl">Steel, <em>squared</em>.</h3>
+          <p class="body">Welded trestle bases, powdercoated in a closed-loop finishing line.</p>
+        </div>
+      </div>
+    </div>
+    <div class="p-tile">
+      <div class="ph" style="background-image:url('assets/tables-on-green.jpg')"></div>
+      <div class="cap">
+        <div>
+          <span class="n">03 · The stage</span>
+          <h3 class="ttl">Finished, <em>photographed</em>, shipped.</h3>
+          <p class="body">Every table inspected and photographed before it leaves the loading dock.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SPEED BAND ============================ -->
+<section class="speed" data-screen-label="05 Speed">
+  <div>
+    <div class="k">Quick ship</div>
+    <h2>Crafted here.<br>On your floor <em>fast</em>.</h2>
+    <p>
+      Our quick-ship program puts 42 top-selling configurations on your floor in under two weeks — without compromising on the finishes, edges, or hardware that make a TableX a TableX.
+    </p>
+    <div class="cta-row">
+      <button class="btn dark">see the quick-ship catalog <span class="arrow">→</span></button>
+    </div>
+  </div>
+  <div class="timeline">
+    <div class="row first">
+      <span class="day">Day 1</span>
+      <span class="label">Order placed</span>
+      <span class="mark"></span>
+    </div>
+    <div class="row">
+      <span class="day">Day 3</span>
+      <span class="label">Finishes confirmed with dealer</span>
+      <span class="mark"></span>
+    </div>
+    <div class="row">
+      <span class="day">Day 7</span>
+      <span class="label">Build complete, QC &amp; photograph</span>
+      <span class="mark"></span>
+    </div>
+    <div class="row">
+      <span class="day">Day 10</span>
+      <span class="label">Packed + on the truck</span>
+      <span class="mark"></span>
+    </div>
+    <div class="row last">
+      <span class="day">Day 13</span>
+      <span class="label">Delivered to your site</span>
+      <span class="mark"></span>
+    </div>
+    <div class="foot">
+      <span>Average lead time</span>
+      <span><b>13 business days</b> · measured over 2025</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STATEMENT (full-bleed) ============================ -->
+<section class="statement" data-screen-label="06 Statement">
+  <div class="statement-inner">
+    <h2>
+      The table<br>
+      <span class="l2"><em>people</em>.</span>
+    </h2>
+    <div class="sig">
+      <div class="left">
+        <img src="assets/made-in-america.png" alt="Made in America">
+        <div class="copy">
+          <b>Made in America</b>
+          Jasper, Indiana · since 1998<br>
+          42 people, one shop floor
+        </div>
+      </div>
+      <div class="right">
+        We aren't the oldest, the biggest, or the cheapest. We're the tablemaker that figured out how to ship beautiful, built-to-order commercial tables in two weeks instead of twelve.
+        <div class="cta-row">
+          <button class="btn volt">get a quote <span class="arrow">→</span></button>
+          <button class="btn ghost-light">our story</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STATS ============================ -->
+<section class="stats" data-screen-label="07 Stats">
+  <div class="c">
+    <span class="v">36</span>
+    <span class="bar"></span>
+    <span class="k"><b>Edge profiles</b>Knife, bullnose, waterfall, beveled &amp; custom.</span>
+  </div>
+  <div class="c">
+    <span class="v">40+</span>
+    <span class="bar"></span>
+    <span class="k"><b>Standard laminates</b>HPL, TFL, compact laminate &amp; solid surface.</span>
+  </div>
+  <div class="c">
+    <span class="v">30+</span>
+    <span class="bar"></span>
+    <span class="k"><b>Powdercoat finishes</b>Matte, satin &amp; texture — applied in-house.</span>
+  </div>
+  <div class="c">
+    <span class="v">50</span>
+    <span class="bar"></span>
+    <span class="k"><b>Year warranty</b>On every table we build, against defects.</span>
+  </div>
+</section>
+
+<!-- ============================ FIND A REP ============================ -->
+<section class="rep" data-screen-label="08 Find a rep">
+  <div>
+    <div class="k">Find a rep</div>
+    <h2>We're local, <em>everywhere</em>.</h2>
+    <p>
+      124 dealers and 38 independent reps across North America. Drop in your ZIP and we'll hand you off to the one who knows your market.
+    </p>
+    <button class="btn ghost-dark">all dealers &amp; reps <span class="arrow">→</span></button>
+  </div>
+  <div class="locator">
+    <div class="lbl">Find a rep near you</div>
+    <div class="inp">
+      <input type="text" placeholder="ZIP or city" value="60607">
+      <button class="go">locate</button>
+    </div>
+    <div class="quick">
+      <span>Chicago IL</span>
+      <span>New York NY</span>
+      <span>Atlanta GA</span>
+      <span>Dallas TX</span>
+      <span>San Francisco CA</span>
+      <span>Toronto ON</span>
+    </div>
+    <div class="help">
+      <span>Dealer or rep already?</span>
+      <a href="#">Sign in to the portal</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer data-screen-label="09 Footer">
+  <div class="top">
+    <div class="brand-col">
+      <div class="wm"><img src="assets/wordmark.svg" alt="TableX"></div>
+      <p>Modern American tablemaker. Beautifully crafted, shipped in under two weeks. Sold through a national dealer + rep network.</p>
+      <div class="mia">
+        <img src="assets/made-in-america.png" alt="Made in America">
+        <div class="txt">
+          <b>Made in America</b>
+          Jasper, Indiana<br>Since 1998
+        </div>
+      </div>
+      <div style="font-size:13px; color:rgba(255,255,255,0.6); line-height:1.7">
+        1.877.481.1177<br>
+        sales@tablex.com<br>
+        555 Cathy Lane · Jasper, IN 47546
+      </div>
+    </div>
+    <div class="cols">
+      <div>
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#">Collections</a></li>
+          <li><a href="#">Spec Studio</a></li>
+          <li><a href="#">Quick Ship</a></li>
+          <li><a href="#">Compare</a></li>
+          <li><a href="#">Accessories</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Spaces</h5>
+        <ul>
+          <li><a href="#">Workplace</a></li>
+          <li><a href="#">Hospitality</a></li>
+          <li><a href="#">Healthcare</a></li>
+          <li><a href="#">Education</a></li>
+          <li><a href="#">Outdoor</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">CAD files</a></li>
+          <li><a href="#">Spec sheets</a></li>
+          <li><a href="#">Dealer portal</a></li>
+          <li><a href="#">Installation</a></li>
+          <li><a href="#">Warranty</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Process</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bottom">
+    <span>© 2026 TableX Furniture, Inc. · Jasper, Indiana</span>
+    <div class="right">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Accessibility</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TableX — tables, only tables, done better</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  :root {
+    --gutter: 80px;
+    --rule: rgba(10,10,10,0.12);
+    --rule-inv: rgba(255,255,255,0.14);
+    --ink: #0a0a0a;
+    --cream: #f5f1e8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--ink); color: #fff; font-family: var(--font-sans); font-weight: 500; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+  img, svg { display: block; }
+  em { font-style: italic; font-family: var(--font-serif); font-weight: 400; }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 18px 30px 20px; border-radius: 999px;
+    font-family: var(--font-sans); font-size: 16px; font-weight: 500;
+    letter-spacing: 0.01em; text-transform: lowercase;
+    transition: all .22s cubic-bezier(.25,1,.5,1); cursor: pointer;
+    border: 1.5px solid transparent;
+  }
+  .btn.volt { background: var(--tx-volt); color: var(--ink); border-color: var(--tx-volt); }
+  .btn.volt:hover { background: var(--tx-volt-deep); border-color: var(--tx-volt-deep); }
+  .btn.dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn.dark:hover { background: #2a2a2a; border-color: #2a2a2a; }
+  .btn.white { background: #fff; color: var(--ink); border-color: #fff; }
+  .btn.white:hover { background: var(--cream); border-color: var(--cream); }
+  .btn.ghost-light { background: transparent; color: #fff; border-color: rgba(255,255,255,0.5); }
+  .btn.ghost-light:hover { background: #fff; color: var(--ink); border-color: #fff; }
+  .btn.ghost-dark { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .btn.ghost-dark:hover { background: var(--ink); color: #fff; }
+  .btn .arrow { display: inline-block; transition: transform .22s; }
+  .btn:hover .arrow { transform: translateX(4px); }
+  .btn.sm { padding: 12px 22px 14px; font-size: 14px; }
+
+  /* ============ SECTION LABELS ============ */
+  .k { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 700; }
+  .k.dark { color: var(--tx-stone-500); }
+  .k.volt { color: var(--tx-volt); }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px var(--gutter) 20px;
+    color: #fff;
+  }
+  .nav .mark { display: inline-flex; align-items: center; gap: 12px; color: #fff; }
+  .nav .mark img { height: 28px; width: auto; filter: brightness(0) invert(1); }
+  .nav .mark .wm { font-size: 22px; letter-spacing: -0.02em; font-weight: 500; }
+  .nav .mark .wm em { color: var(--tx-volt); font-style: normal; font-family: inherit; }
+  .nav .primary {
+    display: flex; gap: 38px;
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .nav .primary a { opacity: 0.9; transition: opacity .2s; }
+  .nav .primary a:hover { opacity: 0.55; }
+  .nav .util { display: flex; align-items: center; gap: 14px; font-size: 13px; }
+  .nav .util .sep { opacity: 0.3; }
+  .nav .util a { opacity: 0.9; }
+  .nav .util svg { width: 20px; height: 20px; }
+
+  /* ============ HERO — DARK, DECLARATIVE ============ */
+  .hero {
+    position: relative; min-height: 900px; background: var(--ink); color: #fff;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url("assets/stage-cafe.jpg") center 28%/cover no-repeat;
+    opacity: 0.38;
+  }
+  .hero-bg::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.2) 35%, rgba(10,10,10,0.5) 70%, rgba(10,10,10,0.92) 100%);
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    padding: 170px var(--gutter) 64px;
+    min-height: 900px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .pre {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 44px;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.75);
+  }
+  .hero .pre .bar { width: 40px; height: 1px; background: var(--tx-volt); }
+  .hero .pre .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tx-volt); }
+  .hero h1 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(72px, 10vw, 176px);
+    line-height: 0.9; letter-spacing: -0.045em;
+    margin: 0 0 44px;
+    text-wrap: balance;
+  }
+  .hero h1 .strike { position: relative; display: inline-block; color: rgba(255,255,255,0.35); }
+  .hero h1 .strike::after {
+    content: ""; position: absolute; left: -4%; right: -4%; top: 52%;
+    height: 8px; background: var(--tx-volt); transform: rotate(-2deg);
+  }
+  .hero h1 .hl { color: var(--tx-volt); }
+  .hero .sub-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 80px; align-items: end;
+    padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.18);
+  }
+  .hero .lead {
+    font-size: 22px; line-height: 1.4; letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.82); max-width: 640px; margin: 0;
+  }
+  .hero .lead em { color: #fff; }
+  .hero .cta-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .hero .stat-strip {
+    position: absolute; top: 86px; right: var(--gutter); z-index: 3;
+    display: flex; gap: 32px;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+  .hero .stat-strip b { color: var(--tx-volt); font-weight: 700; letter-spacing: 0.06em; }
+
+  /* ============ BELIEF STRIP ============ */
+  .belief {
+    background: var(--ink); color: #fff;
+    padding: 120px var(--gutter);
+    border-top: 1px solid var(--rule-inv);
+  }
+  .belief .top {
+    display: grid; grid-template-columns: auto 1fr; gap: 120px; align-items: baseline;
+    margin-bottom: 72px;
+  }
+  .belief h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(48px, 5.4vw, 88px); letter-spacing: -0.035em; line-height: 1;
+    margin: 0; text-wrap: balance;
+  }
+  .belief h2 em { color: rgba(255,255,255,0.55); }
+  .belief h2 .mark-u { color: var(--tx-volt); }
+  .belief .cols {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px;
+    padding-top: 48px; border-top: 1px solid var(--rule-inv);
+  }
+  .belief .col .num {
+    font-family: var(--font-sans); font-weight: 500; font-size: 13px;
+    letter-spacing: 0.2em; color: var(--tx-volt); margin-bottom: 20px;
+  }
+  .belief .col h3 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 28px; line-height: 1.1; letter-spacing: -0.02em;
+    margin: 0 0 16px; text-wrap: balance;
+  }
+  .belief .col h3 em { color: rgba(255,255,255,0.55); }
+  .belief .col p {
+    font-size: 16px; line-height: 1.55; color: rgba(255,255,255,0.7); margin: 0;
+    max-width: 380px;
+  }
+
+  /* ============ SERIES GRID — typography forward, dashboard-style ============ */
+  .series {
+    background: var(--cream); color: var(--ink);
+    padding: 140px var(--gutter) 160px;
+  }
+  .series .head {
+    display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: end;
+    margin-bottom: 64px;
+  }
+  .series .head h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(56px, 6.4vw, 104px); letter-spacing: -0.035em; line-height: 0.98;
+    margin: 16px 0 0; text-wrap: balance; max-width: 1100px;
+  }
+  .series .head h2 em { color: var(--tx-stone-500); }
+  .series .head .side {
+    font-size: 14px; color: var(--tx-stone-600); max-width: 320px; line-height: 1.5;
+  }
+  .series .head .side b { color: var(--ink); }
+
+  .series-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .series-card {
+    background: #fff; border-radius: 14px; padding: 24px 24px 20px;
+    display: flex; flex-direction: column; min-height: 260px;
+    border-top: 4px solid var(--card-accent, var(--tx-volt-deep));
+    transition: transform .22s, box-shadow .22s;
+    cursor: pointer; color: var(--ink);
+  }
+  .series-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.25); }
+  .series-card .title {
+    font-family: var(--font-sans); font-weight: 500; font-size: 24px;
+    letter-spacing: -0.01em; line-height: 1; margin: 0 0 14px;
+  }
+  .series-card p {
+    font-size: 14px; line-height: 1.5; color: var(--tx-stone-600); margin: 0 0 18px;
+    letter-spacing: -0.005em; flex: 1;
+  }
+  .series-card .tags {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px;
+  }
+  .series-card .tags span {
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx-stone-500);
+    padding: 3px 8px; background: rgba(0,0,0,0.04); border-radius: 999px;
+  }
+  .series-card .cta {
+    font-size: 13px; font-weight: 500; color: var(--ink); letter-spacing: -0.005em;
+    display: inline-flex; align-items: center; gap: 6px; margin-top: auto;
+  }
+  .series-card .cta .a { transition: transform .22s; }
+  .series-card:hover .cta .a { transform: translateX(3px); }
+  .series-card.soon p { color: var(--tx-stone-500); }
+  .series-card.soon .cta { color: var(--tx-stone-500); }
+
+  /* ============ THE PROMISE (dark interlude) ============ */
+  .promise {
+    background: var(--ink); color: #fff;
+    padding: 150px var(--gutter);
+    text-align: center;
+    border-top: 1px solid var(--rule-inv);
+  }
+  .promise .k { margin-bottom: 48px; color: var(--tx-volt); }
+  .promise h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(60px, 7vw, 128px); line-height: 0.95; letter-spacing: -0.04em;
+    margin: 0 auto 48px; max-width: 1400px; text-wrap: balance;
+  }
+  .promise h2 em { color: rgba(255,255,255,0.55); }
+  .promise h2 .hl { color: var(--tx-volt); }
+  .promise .meta {
+    display: flex; justify-content: center; gap: 64px; padding-top: 40px;
+    border-top: 1px solid var(--rule-inv); max-width: 1200px; margin: 0 auto;
+  }
+  .promise .meta .c { text-align: left; }
+  .promise .meta .c .big {
+    font-family: var(--font-sans); font-weight: 500; font-size: 56px;
+    letter-spacing: -0.025em; line-height: 1; margin-bottom: 8px;
+  }
+  .promise .meta .c .big em { color: var(--tx-volt); }
+  .promise .meta .c .lb { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+
+  /* ============ SPEC STUDIO — dark ============ */
+  .studio {
+    background: #0a0a0a; color: #fff;
+    padding: 140px var(--gutter);
+    border-top: 1px solid var(--rule-inv);
+  }
+  .studio .top {
+    display: grid; grid-template-columns: 1fr auto; gap: 80px; align-items: end;
+    margin-bottom: 56px;
+  }
+  .studio .k { margin-bottom: 20px; }
+  .studio h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(56px, 6.2vw, 100px); line-height: 0.98; letter-spacing: -0.035em;
+    margin: 0 0 20px; text-wrap: balance;
+  }
+  .studio h2 em { color: rgba(255,255,255,0.55); }
+  .studio h2 .hl { color: var(--tx-volt); }
+  .studio .top p {
+    font-size: 18px; line-height: 1.55; color: rgba(255,255,255,0.75); max-width: 420px; margin: 0;
+  }
+  .spec-mock {
+    background: #141414; border: 1px solid var(--rule-inv); border-radius: 20px;
+    padding: 36px;
+    display: grid; grid-template-columns: 1fr 1.3fr; gap: 56px;
+  }
+  .spec-mock .step {
+    display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--rule-inv);
+  }
+  .spec-mock .step:last-of-type { border-bottom: none; }
+  .spec-mock .step .n {
+    width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);
+  }
+  .spec-mock .step.active .n { background: var(--tx-volt); color: var(--ink); }
+  .spec-mock .step.done .n { background: rgba(255,255,255,0.18); color: #fff; }
+  .spec-mock .step .t { font-size: 15px; letter-spacing: -0.005em; margin-bottom: 2px; }
+  .spec-mock .step .s { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.02em; }
+  .spec-mock .total {
+    margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--rule-inv);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .spec-mock .total .lbl { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+  .spec-mock .total .val { font-family: var(--font-sans); font-weight: 500; font-size: 34px; letter-spacing: -0.02em; }
+  .spec-mock .right .sub { font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
+  .spec-mock .shape-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .spec-mock .shape {
+    aspect-ratio: 1/1; border: 1.5px solid var(--rule-inv); border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+  }
+  .spec-mock .shape.sel { border-color: var(--tx-volt); background: rgba(149,255,0,0.06); }
+  .spec-mock .shape svg { opacity: 0.72; }
+  .spec-mock .shape.sel svg { opacity: 1; stroke: var(--tx-volt); }
+  .spec-mock .shape .lbl { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+  .spec-mock .shape.sel .lbl { color: var(--tx-volt); }
+  .spec-mock .results {
+    background: rgba(255,255,255,0.04); border-radius: 14px; padding: 18px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .spec-mock .results .r {
+    display: grid; grid-template-columns: 42px 1fr auto; gap: 14px; align-items: center;
+  }
+  .spec-mock .results .r .sw {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--tx-wood-oak), var(--tx-wood-walnut));
+  }
+  .spec-mock .results .r:nth-child(2) .sw { background: linear-gradient(135deg, #2a2a2a, #111); }
+  .spec-mock .results .r:nth-child(3) .sw { background: linear-gradient(135deg, #f0ebe0, #c9c2b0); }
+  .spec-mock .results .r .nm { font-size: 14px; font-weight: 500; letter-spacing: -0.005em; }
+  .spec-mock .results .r .sp { font-size: 11px; color: rgba(255,255,255,0.5); }
+  .spec-mock .results .r .price { font-size: 14px; color: rgba(255,255,255,0.85); }
+  .spec-mock .foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 20px;
+  }
+  .spec-mock .foot .hint { font-size: 12px; color: rgba(255,255,255,0.55); }
+  .spec-mock .foot .hint em { color: var(--tx-volt); }
+
+  /* ============ PERSONA TRIPTYCH — Outlaw-direct audience cards ============ */
+  .personas {
+    background: var(--cream); color: var(--ink);
+    padding: 140px var(--gutter);
+  }
+  .personas .head {
+    display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: end;
+    margin-bottom: 88px;
+  }
+  .personas h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(52px, 5.8vw, 96px); letter-spacing: -0.035em; line-height: 1.05;
+    margin: 16px 0 0; text-wrap: balance; max-width: 1100px; padding-bottom: 4px;
+  }
+  .personas h2 em { color: var(--tx-stone-500); }
+  .personas .side { font-size: 14px; color: var(--tx-stone-600); max-width: 320px; line-height: 1.5; }
+  .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .persona-card {
+    background: var(--ink); color: #fff; border-radius: 20px;
+    padding: 32px; display: flex; flex-direction: column;
+    min-height: 440px;
+    position: relative; overflow: hidden;
+  }
+  .persona-card.rep { background: var(--tx-volt); color: var(--ink); }
+  .persona-card.indiv { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
+  .persona-card .num { font-size: 12px; letter-spacing: 0.2em; font-weight: 700; margin-bottom: 28px; opacity: 0.6; }
+  .persona-card .audience { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 24px; opacity: 0.75; }
+  .persona-card blockquote {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 26px; line-height: 1.15; letter-spacing: -0.015em;
+    margin: 0 0 28px; text-wrap: balance;
+  }
+  .persona-card blockquote em { opacity: 0.6; }
+  .persona-card .who { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.65; margin-bottom: 6px; }
+  .persona-card .answer {
+    margin-top: auto; padding-top: 28px; border-top: 1px solid currentColor;
+    border-color: rgba(255,255,255,0.2);
+  }
+  .persona-card.rep .answer { border-color: rgba(0,0,0,0.22); }
+  .persona-card.indiv .answer { border-color: var(--rule); }
+  .persona-card .answer .lb { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.65; margin-bottom: 8px; }
+  .persona-card .answer .line { font-size: 17px; line-height: 1.4; letter-spacing: -0.005em; margin-bottom: 20px; }
+  .persona-card .answer a { font-size: 13px; letter-spacing: 0.04em; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+
+  /* ============ SPEED RAIL ============ */
+  .speed {
+    background: var(--ink); color: #fff;
+    padding: 140px var(--gutter);
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: 100px; align-items: center;
+  }
+  .speed .k { color: var(--tx-volt); margin-bottom: 28px; }
+  .speed h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(60px, 6.4vw, 108px); letter-spacing: -0.04em; line-height: 0.95;
+    margin: 0 0 32px; text-wrap: balance;
+  }
+  .speed h2 em { color: rgba(255,255,255,0.55); }
+  .speed h2 .hl { color: var(--tx-volt); }
+  .speed p { font-size: 19px; line-height: 1.55; color: rgba(255,255,255,0.78); margin: 0 0 36px; max-width: 480px; }
+  .timeline {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--rule-inv); border-radius: 24px;
+    padding: 36px 40px;
+  }
+  .timeline .r { display: grid; grid-template-columns: 82px 1fr auto; align-items: center; gap: 20px; padding: 20px 0; }
+  .timeline .r + .r { border-top: 1px solid var(--rule-inv); }
+  .timeline .r .day { font-family: var(--font-sans); font-weight: 500; font-size: 24px; letter-spacing: -0.02em; color: rgba(255,255,255,0.9); }
+  .timeline .r.last .day { color: var(--tx-volt); }
+  .timeline .r .label { font-size: 16px; letter-spacing: -0.005em; color: rgba(255,255,255,0.85); }
+  .timeline .r.last .label { font-weight: 700; color: #fff; }
+  .timeline .r .m { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .timeline .r.first .m { background: var(--tx-volt); box-shadow: 0 0 0 4px rgba(149,255,0,0.2); }
+  .timeline .r.last .m { background: var(--tx-volt); box-shadow: 0 0 0 4px rgba(149,255,0,0.2); }
+  .timeline .foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 22px; margin-top: 8px; border-top: 1px solid var(--rule-inv);
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.55);
+  }
+  .timeline .foot b { color: #fff; font-weight: 700; }
+
+  /* ============ CLOSER ============ */
+  .closer {
+    background: var(--tx-volt); color: var(--ink);
+    padding: 160px var(--gutter);
+    text-align: center;
+  }
+  .closer h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: clamp(72px, 9vw, 172px); line-height: 0.9; letter-spacing: -0.045em;
+    margin: 0 0 40px; text-wrap: balance;
+  }
+  .closer h2 em { color: rgba(10,10,10,0.5); }
+  .closer p {
+    font-size: 21px; line-height: 1.5; color: rgba(10,10,10,0.75);
+    max-width: 620px; margin: 0 auto 48px;
+  }
+  .closer .cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+  /* ============ FOOTER ============ */
+  footer { background: var(--ink); color: #fff; padding: 110px var(--gutter) 36px; }
+  footer .top { display: grid; grid-template-columns: 1.3fr 3fr; gap: 80px; padding-bottom: 64px; border-bottom: 1px solid var(--rule-inv); }
+  footer .brand-col { display: flex; flex-direction: column; gap: 22px; }
+  footer .wm img { height: 32px; width: auto; filter: brightness(0) invert(1); }
+  footer .brand-col p { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.7); max-width: 360px; margin: 0; }
+  footer .mia {
+    display: flex; gap: 14px; align-items: center; padding: 16px 0;
+    border-top: 1px solid var(--rule-inv); border-bottom: 1px solid var(--rule-inv); max-width: 360px;
+  }
+  footer .mia img { width: 44px; height: 44px; filter: brightness(1.1); }
+  footer .mia .txt { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.72); line-height: 1.4; }
+  footer .mia .txt b { color: #fff; font-weight: 700; letter-spacing: 0.1em; font-size: 13px; display: block; margin-bottom: 2px; }
+  footer .contact { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.7; }
+  footer .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  footer .cols h5 { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tx-volt); font-weight: 700; margin: 0 0 18px; }
+  footer .cols ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 11px; }
+  footer .cols ul a { font-size: 15px; color: rgba(255,255,255,0.82); }
+  footer .cols ul a:hover { color: #fff; }
+  footer .bottom { display: flex; justify-content: space-between; align-items: center; gap: 40px; padding-top: 28px; font-size: 13px; color: rgba(255,255,255,0.5); }
+  footer .bottom .right { display: flex; gap: 22px; }
+</style>
+</head>
+<body>
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" data-screen-label="01 Hero">
+  <div class="hero-bg"></div>
+  <header class="nav">
+    <a href="#" class="mark">
+      <img src="assets/TableX-logomark.svg" alt="TableX">
+      <span class="wm">Table<em>X</em></span>
+    </a>
+    <nav class="primary">
+      <a href="#">Series</a>
+      <a href="#">Spaces</a>
+      <a href="#">Finishes</a>
+      <a href="#">Spec Studio</a>
+      <a href="#">About</a>
+    </nav>
+    <div class="util">
+      <a href="#">Login</a>
+      <span class="sep">|</span>
+      <a href="#">Find a rep</a>
+      <span class="sep">|</span>
+      <a href="#" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="stat-strip">
+    <span><b>16</b> series</span>
+    <span><b>6,098</b> SKUs</span>
+    <span><b>14-day</b> quick ship</span>
+    <span><b>50-year</b> warranty</span>
+  </div>
+  <div class="hero-inner">
+    <div class="pre">
+      <span class="bar"></span>
+      <span>One category, zero compromises</span>
+      <span class="dot"></span>
+      <span>Est. 1998</span>
+    </div>
+    <h1>
+      We don't make<br>
+      <span class="strike">everything</span>.<br>
+      We make the <span class="hl">tables</span>.
+    </h1>
+    <div class="sub-row">
+      <p class="lead">
+        Most furniture companies sell chairs, lamps, rugs, and oh&mdash;by the way&mdash;tables. We don't. <em>Tables are the thing.</em> 16 series, 6,098 SKUs, and 27 years of figuring out how to do this one thing better than anyone else.
+      </p>
+      <div class="cta-row">
+        <button class="btn volt">browse the series <span class="arrow">→</span></button>
+        <button class="btn ghost-light">spec a table</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BELIEF STRIP ============================ -->
+<section class="belief" data-screen-label="02 Belief">
+  <div class="top">
+    <h2>Three things<br>we refuse to <em>hedge on</em>.</h2>
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="num">&mdash; 01 &mdash;</div>
+      <h3>No category, <em>no compromise</em>.</h3>
+      <p>Other makers divide attention across ten product lines. We've spent 27 years on one. That's not a limitation. It's the <em>whole point</em>.</p>
+    </div>
+    <div class="col">
+      <div class="num">&mdash; 02 &mdash;</div>
+      <h3>Quote in <em>minutes</em>, not days.</h3>
+      <p>Spec Studio shows every base that fits your top, every finish that pairs, and an instant quote. No call. No "I'll get back to you." Just answers.</p>
+    </div>
+    <div class="col">
+      <div class="num">&mdash; 03 &mdash;</div>
+      <h3>Ship in <em>14 days</em>. Every time.</h3>
+      <p>Most tablemakers quote 8&ndash;12 weeks. We run our most-specified 42 configurations on a two-week clock. Averaged 13.4 days across 8,400 orders last year.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SERIES GRID ============================ -->
+<section class="series" data-screen-label="03 Series">
+  <div class="head">
+    <div>
+      <div class="k dark">16 series &nbsp;·&nbsp; 6,098 SKUs</div>
+      <h2>Sixteen <em>specific</em> answers<br>to sixteen specific questions.</h2>
+    </div>
+    <div class="side">
+      Start with the series that matches your problem. <b>Foundation</b> for most training rooms. <b>Trig</b> for flip-nest-store. <b>Element</b> for outdoor. The rest&mdash;in between.
+    </div>
+  </div>
+  <div class="series-grid">
+    <a class="series-card" style="--card-accent:#0a0a0a">
+      <div class="title">ULTRA</div>
+      <p>Strong by design. Simple on purpose. Clean architecture, one structure you trust.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span><span>Hospitality</span></div>
+      <div class="cta">configure ultra <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#95FF00">
+      <div class="title">FOUNDATION</div>
+      <p>The one everything else is built around. Best-seller, 25+ years. Pedestal base, handles everything.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span><span>Hospitality</span><span>Healthcare</span></div>
+      <div class="cta">configure foundation <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#f5a623">
+      <div class="title">STRETCH</div>
+      <p>Not every space needs another straight line. Subtle arch softens rows without changing how it functions.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span><span>Hospitality</span></div>
+      <div class="cta">configure stretch <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#0a0a0a">
+      <div class="title">ELITE</div>
+      <p>There's a difference between looking precise and being precise. Laser-cut, fully welded, 8 base options.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span></div>
+      <div class="cta">configure elite <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#c85c3a">
+      <div class="title">REVEL</div>
+      <p>Refinement, with a little more freedom. Two-tone base finishes at no additional cost.</p>
+      <div class="tags"><span>Workplace</span><span>Hospitality</span></div>
+      <div class="cta">configure revel <span class="a">→</span></div>
+    </a>
+    <a class="series-card soon" style="--card-accent:rgba(0,0,0,0.15)">
+      <div class="title">APP</div>
+      <p>Work doesn't stay in one place. Neither should your table. Built for mobility.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span><span>Healthcare</span></div>
+      <div class="cta">awaiting product code</div>
+    </a>
+    <a class="series-card soon" style="--card-accent:rgba(0,0,0,0.15)">
+      <div class="title">ELEMENT</div>
+      <p>One table. More environments. Lightweight, mobile, outdoor-rated.</p>
+      <div class="tags"><span>Hospitality</span><span>Outdoor</span></div>
+      <div class="cta">awaiting product code</div>
+    </a>
+    <a class="series-card" style="--card-accent:#0a0a0a">
+      <div class="title">JUSTICE</div>
+      <p>Built to handle more. Rigid frame, square column legs, shrugs at abuse.</p>
+      <div class="tags"><span>Education</span><span>Healthcare</span></div>
+      <div class="cta">configure justice <span class="a">→</span></div>
+    </a>
+    <a class="series-card soon" style="--card-accent:rgba(0,0,0,0.15)">
+      <div class="title">ARTISAN</div>
+      <p>Not everything needs to feel manufactured. Butcher block &amp; laminate, maker-style warmth.</p>
+      <div class="tags"><span>Hospitality</span><span>Workplace</span></div>
+      <div class="cta">awaiting product code</div>
+    </a>
+    <a class="series-card" style="--card-accent:#0a0a0a">
+      <div class="title">PRIMARY</div>
+      <p>More options&mdash;without more complexity. Multiple coordinated bases, one spec sheet.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span><span>Hospitality</span></div>
+      <div class="cta">configure primary <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#95FF00">
+      <div class="title">PUDDLE</div>
+      <p>Less structure. More intention. Lounge to bar height, grounded presence.</p>
+      <div class="tags"><span>Hospitality</span><span>Workplace</span></div>
+      <div class="cta">configure puddle <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#0a0a0a">
+      <div class="title">EXCLAIM</div>
+      <p>Make the table part of the design&mdash;not an afterthought. Angled column bases.</p>
+      <div class="tags"><span>Hospitality</span><span>Workplace</span></div>
+      <div class="cta">configure exclaim <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#95FF00">
+      <div class="title">VERTIGO</div>
+      <p>Freedom to move shouldn't come with friction. Pneumatic, electric, or battery height adjust.</p>
+      <div class="tags"><span>Workplace</span><span>Healthcare</span><span>Education</span></div>
+      <div class="cta">configure vertigo <span class="a">→</span></div>
+    </a>
+    <a class="series-card" style="--card-accent:#0a0a0a">
+      <div class="title">SURGE</div>
+      <p>Light in profile. Strong in performance. Lounge to bistro height, flexible footprint.</p>
+      <div class="tags"><span>Workplace</span><span>Hospitality</span></div>
+      <div class="cta">configure surge <span class="a">→</span></div>
+    </a>
+    <a class="series-card soon" style="--card-accent:rgba(0,0,0,0.15)">
+      <div class="title">SOLO</div>
+      <p>Built for focus. Designed for movement. Individual; height adjust, tilt-lock.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span></div>
+      <div class="cta">awaiting product code</div>
+    </a>
+    <a class="series-card soon" style="--card-accent:rgba(0,0,0,0.15)">
+      <div class="title">TRIG</div>
+      <p>Most "flexible" tables aren't. This one is. Flip, nest, battery, tilt-lock&mdash;all of it.</p>
+      <div class="tags"><span>Workplace</span><span>Education</span></div>
+      <div class="cta">awaiting product code</div>
+    </a>
+  </div>
+</section>
+
+<!-- ============================ PROMISE ============================ -->
+<section class="promise" data-screen-label="04 Promise">
+  <div class="k">What you get when you buy a TableX</div>
+  <h2>A table that's still <span class="hl">there</span><br>when the building <em>isn't</em>.</h2>
+  <div class="meta">
+    <div class="c">
+      <div class="big"><em>50</em>yr</div>
+      <div class="lb">Warranty &mdash; every series</div>
+    </div>
+    <div class="c">
+      <div class="big">8,400</div>
+      <div class="lb">Orders shipped in 2025</div>
+    </div>
+    <div class="c">
+      <div class="big"><em>13.4</em>d</div>
+      <div class="lb">Avg. lead, quick-ship</div>
+    </div>
+    <div class="c">
+      <div class="big">27yr</div>
+      <div class="lb">Figuring this out</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SPEC STUDIO ============================ -->
+<section class="studio" data-screen-label="05 Spec Studio">
+  <div class="top">
+    <div>
+      <div class="k volt">Spec Studio</div>
+      <h2>Start with a <em>shape</em>.<br>End with a <span class="hl">quote</span>.</h2>
+    </div>
+    <p>Four minutes, start to finish. Pick your top, pick your base, pick your finish. Spec Studio filters every SKU in real time and spits out a quote your dealer can push straight to PO.</p>
+  </div>
+  <div class="spec-mock">
+    <div class="left">
+      <div class="step done"><div class="n">1</div><div><div class="t">Top shape &amp; size</div><div class="s">60" round · seats 6</div></div></div>
+      <div class="step done"><div class="n">2</div><div><div class="t">Base</div><div class="s">TRIG column · ink powdercoat</div></div></div>
+      <div class="step active"><div class="n">3</div><div><div class="t">Top finish</div><div class="s">select a material below</div></div></div>
+      <div class="step"><div class="n">4</div><div><div class="t">Edge profile</div><div class="s">8 options</div></div></div>
+      <div class="step"><div class="n">5</div><div><div class="t">Quantity &amp; ship</div><div class="s">add to quote</div></div></div>
+      <div class="total">
+        <div class="lbl">Running total</div>
+        <div class="val">$2,140 <span style="font-size:13px;color:rgba(255,255,255,0.5);">/ table</span></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="sub">Step 1 &mdash; start with what your client sent you.</div>
+      <div class="shape-row">
+        <div class="shape sel"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/></svg><div class="lbl">Round</div></div>
+        <div class="shape"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1.5"/></svg><div class="lbl">Square</div></div>
+        <div class="shape"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="6" width="20" height="12" rx="1.5"/></svg><div class="lbl">Rect</div></div>
+        <div class="shape"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="7" width="20" height="10" rx="5"/></svg><div class="lbl">Racetrack</div></div>
+      </div>
+      <div class="sub">Compatible bases &mdash; <em style="color:rgba(255,255,255,0.82)">shown in your powdercoat.</em></div>
+      <div class="results">
+        <div class="r"><div class="sw"></div><div><div class="nm">TRIG column</div><div class="sp">cast base · fixed</div></div><div class="price">$1,290</div></div>
+        <div class="r"><div class="sw"></div><div><div class="nm">FOUNDATION pedestal</div><div class="sp">4-prong · fixed</div></div><div class="price">$1,120</div></div>
+        <div class="r"><div class="sw"></div><div><div class="nm">ARTISAN X-base</div><div class="sp">wood · fixed</div></div><div class="price">$1,480</div></div>
+      </div>
+      <div class="foot">
+        <div class="hint"><em>quote-ready</em> · add to cart · export PDF</div>
+        <button class="btn volt sm">open spec studio <span class="arrow">→</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PERSONA TRIPTYCH ============================ -->
+<section class="personas" data-screen-label="06 Who we're for">
+  <div class="head">
+    <div>
+      <div class="k dark">Who we're for</div>
+      <h2>Three kinds of buyer.<br><em>One straight answer</em> each.</h2>
+    </div>
+    <div class="side">Each says something different out loud. Each means the same thing: <b>make this easier.</b></div>
+  </div>
+  <div class="persona-grid">
+    <div class="persona-card">
+      <div class="num">01 &mdash; Dealer &nbsp;·&nbsp; 60%</div>
+      <div class="audience">For the dealer</div>
+      <blockquote>"I need a manufacturer partner who makes my <em>job</em> easier."</blockquote>
+      <div class="answer">
+        <div class="lb">Our answer</div>
+        <div class="line">Fast pricing, clear specs, reliable delivery, and a rep who knows your market. One inbox, one named contact.</div>
+        <a href="#">dealer portal →</a>
+      </div>
+    </div>
+    <div class="persona-card rep">
+      <div class="num">02 &mdash; Rep &nbsp;·&nbsp; 30%</div>
+      <div class="audience">For the rep</div>
+      <blockquote>"The easier TableX is to work with, the more I'll <em>push it</em>."</blockquote>
+      <div class="answer">
+        <div class="lb">Our answer</div>
+        <div class="line">Spec Studio on your tablet. Live pricing. Quote on the spot, in front of the dealer. We'll do the rest.</div>
+        <a href="#">rep dashboard →</a>
+      </div>
+    </div>
+    <div class="persona-card indiv">
+      <div class="num">03 &mdash; End user &nbsp;·&nbsp; 10%</div>
+      <div class="audience">For the individual</div>
+      <blockquote>"I just want to know how <em>much</em> it costs and how to buy it."</blockquote>
+      <div class="answer">
+        <div class="lb">Our answer</div>
+        <div class="line">Real prices. Real lead times. Buy 1&ndash;10 tables without routing through a dealer. Configure, check out, done.</div>
+        <a href="#">quick configure →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SPEED ============================ -->
+<section class="speed" data-screen-label="07 Speed">
+  <div>
+    <div class="k">Quick ship</div>
+    <h2>Two weeks.<br><span class="hl">Not</span> <em>twelve</em>.</h2>
+    <p>Most tablemakers will quote you 8&ndash;12 weeks and call that "standard." We've spent 27 years figuring out the supply chain that everyone else swears can't be shortened. <em>Here's the clock.</em></p>
+    <button class="btn volt">see the quick-ship catalog <span class="arrow">→</span></button>
+  </div>
+  <div class="timeline">
+    <div class="r first"><span class="day">Day 1</span><span class="label">PO received</span><span class="m"></span></div>
+    <div class="r"><span class="day">Day 3</span><span class="label">Finishes confirmed with dealer</span><span class="m"></span></div>
+    <div class="r"><span class="day">Day 7</span><span class="label">Top &amp; base paired, QC'd, packed</span><span class="m"></span></div>
+    <div class="r"><span class="day">Day 10</span><span class="label">On the truck</span><span class="m"></span></div>
+    <div class="r last"><span class="day">Day 14</span><span class="label">On your floor</span><span class="m"></span></div>
+    <div class="foot">
+      <span>Average, 2025</span>
+      <span><b>13.4 business days</b> &nbsp;·&nbsp; across 8,400 orders</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CLOSER ============================ -->
+<section class="closer" data-screen-label="08 Closer">
+  <h2>Pick a shape.<br><em>We'll take it from there.</em></h2>
+  <p>Spec Studio is open. No login. No "request a quote." No waiting. Just the table you came here for.</p>
+  <div class="cta-row">
+    <button class="btn dark">open spec studio <span class="arrow">→</span></button>
+    <button class="btn ghost-dark">find a rep</button>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer data-screen-label="09 Footer">
+  <div class="top">
+    <div class="brand-col">
+      <div class="wm"><img src="assets/wordmark.svg" alt="TableX"></div>
+      <p>Tables. Only tables. Done better than anyone else, for 27 years and counting.</p>
+      <div class="mia">
+        <img src="assets/made-in-america.png" alt="Made in America">
+        <div class="txt">
+          <b>Made in Jasper, Indiana</b>
+          Midwest craft · since 1998
+        </div>
+      </div>
+      <div class="contact">
+        877.481.1177<br>
+        sales@tablex.com<br>
+        555 Cathy Lane · Jasper, IN 47546
+      </div>
+    </div>
+    <div class="cols">
+      <div>
+        <h5>Series</h5>
+        <ul>
+          <li><a href="#">Foundation</a></li>
+          <li><a href="#">Ultra</a></li>
+          <li><a href="#">Trig</a></li>
+          <li><a href="#">Vertigo</a></li>
+          <li><a href="#">All 16 series</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Spaces</h5>
+        <ul>
+          <li><a href="#">Workplace</a></li>
+          <li><a href="#">Education</a></li>
+          <li><a href="#">Hospitality</a></li>
+          <li><a href="#">Healthcare</a></li>
+          <li><a href="#">Outdoor</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Tools</h5>
+        <ul>
+          <li><a href="#">Spec Studio</a></li>
+          <li><a href="#">Sample kits</a></li>
+          <li><a href="#">CAD &amp; 3D files</a></li>
+          <li><a href="#">Quick-ship catalog</a></li>
+          <li><a href="#">Dealer portal</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">Our story</a></li>
+          <li><a href="#">Manufacturing</a></li>
+          <li><a href="#">50-year warranty</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bottom">
+    <span>© 2026 TableX Furniture, Inc. · Jasper, Indiana</span>
+    <div class="right">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Accessibility</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

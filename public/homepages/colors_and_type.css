@@ -1,0 +1,233 @@
+/* =========================================================================
+   TableX · Colors & Type
+   The modern American tablemaker — crafted, fast, design-forward.
+   ========================================================================= */
+
+/* ---------- Webfonts ----------
+   Primary sans: FreightSans Pro (licensed, self-hosted from /fonts).
+   Primary serif: FreightText Pro (licensed, self-hosted from /fonts) —
+     used as the editorial accent (Outlaw archetype italic voice).
+   Weights available:
+     FreightSans Pro  — 500 (Medium), 700 (Bold)
+     FreightText Pro  — 400 (Book), 400 Italic, 700 (Bold), 700 Italic,
+                        plus a default weight from freight_text_pro.ttf
+--------------------------------- */
+@font-face {
+  font-family: 'FreightSans Pro';
+  src: url('fonts/freight-sans-pro_normal_500.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FreightSans Pro';
+  src: url('fonts/freight-sans-pro_normal_700.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FreightText Pro';
+  src: url('fonts/freight-text-pro_normal_400.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FreightText Pro';
+  src: url('fonts/freight-text-pro_400_italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FreightText Pro';
+  src: url('fonts/freight-text-pro_normal_700.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FreightText Pro';
+  src: url('fonts/freight-text-pro_700_italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FreightText Pro Regular';
+  src: url('fonts/freight_text_pro.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ============ CORE PALETTE ============ */
+  /* White + Ink — the page */
+  --tx-white:        #ffffff;
+  --tx-paper:        #fafaf7;   /* off-white card / section bg */
+  --tx-bone:         #f5f4ee;   /* warm neutral panel */
+  --tx-cream:        #f8f7ec;   /* from Figma rgb(248,247,236) */
+  --tx-ink:          #0a0a0a;   /* near-black for text */
+  --tx-black:        #000000;
+  --tx-shop:         #282828;   /* Figma rgb(40,40,40) — secondary dark */
+  --tx-graphite:     #1e1e1e;
+
+  /* Neutrals — warm, derived from shop floor + kraft paper */
+  --tx-stone-100:    #eeede6;
+  --tx-stone-200:    #d9d7cd;
+  --tx-stone-300:    #b8b4a6;
+  --tx-stone-400:    #918966;   /* Figma rgb(145,137,102) — khaki/warm */
+  --tx-stone-500:    #6c6b6b;   /* Figma rgb(108,107,107) */
+  --tx-stone-600:    #4b4b4b;
+  --tx-stone-700:    #2e2e2e;
+
+  /* Accent — the signal color. Lime voltage. */
+  --tx-volt:         #95ff00;   /* Figma rgb(149,255,0) — primary accent */
+  --tx-volt-deep:    #7ad900;
+  --tx-volt-soft:    #e9ffcf;
+
+  /* Wood tones (for swatches / finishes) */
+  --tx-wood-walnut:  #62391b;   /* rgb(98,57,27) */
+  --tx-wood-oak:     #cd9866;   /* rgb(205,152,102) */
+  --tx-wood-natural: #d9d1b6;
+
+  /* Semantic */
+  --tx-success:      #275f37;   /* rgb(39,95,55) */
+  --tx-warn:         #ff5700;
+  --tx-error:        #d60035;
+  --tx-info:         #0b3d60;
+
+  /* ============ SEMANTIC SURFACES ============ */
+  --bg:              var(--tx-white);
+  --bg-alt:          var(--tx-paper);
+  --bg-panel:        var(--tx-bone);
+  --bg-inverse:      var(--tx-shop);
+  --bg-black:        var(--tx-black);
+
+  --fg:              var(--tx-ink);
+  --fg-1:            var(--tx-ink);
+  --fg-2:            var(--tx-stone-600);
+  --fg-3:            var(--tx-stone-500);
+  --fg-muted:        var(--tx-stone-400);
+  --fg-inverse:      var(--tx-white);
+
+  --border:          rgba(10,10,10,0.12);
+  --border-strong:   rgba(10,10,10,0.28);
+  --border-inverse:  rgba(255,255,255,0.20);
+  --border-hair:     rgba(10,10,10,0.08);
+
+  --accent:          var(--tx-volt);
+  --accent-ink:      var(--tx-shop);     /* text on volt */
+  --accent-deep:     var(--tx-volt-deep);
+
+  /* ============ TYPE ============ */
+  --font-sans:       'FreightSans Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font-display:    'FreightSans Pro', -apple-system, sans-serif;
+  --font-serif:      'FreightText Pro', 'Georgia', serif; /* editorial accent — Outlaw voice */
+  --font-mono:       ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Note: FreightSans Pro available in 500 + 700 only in this license.
+     Display headings use 500 Medium; emphasis uses 700 Bold.
+     Book (400) lives in the serif (FreightText Pro). */
+  --fw-book:         400;   /* serif only */
+  --fw-medium:       500;   /* sans default */
+  --fw-bold:         700;
+
+  /* Type scale — matches Figma specimens */
+  --fs-hero:         150px;   /* stat display, light */
+  --fs-display:      96px;
+  --fs-h1:           70px;
+  --fs-h2:           60px;
+  --fs-h3:           34px;
+  --fs-h4:           24px;
+  --fs-lead:         24px;
+  --fs-body:         18px;
+  --fs-body-sm:      16px;
+  --fs-eyebrow:      14px;
+  --fs-caption:      13px;
+
+  --lh-tight:        1.05;
+  --lh-heading:      1.15;
+  --lh-body:         1.55;
+  --lh-loose:        1.7;
+
+  --tr-tight:        -0.02em;  /* headings */
+  --tr-normal:       0;
+  --tr-wide:         0.02em;
+  --tr-button:       0.15em;   /* pill button labels */
+  --tr-nav:          0.1em;    /* nav */
+  --tr-eyebrow:      0.18em;
+
+  /* ============ SPACING / GEOMETRY ============ */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+  --space-11: 160px;
+
+  --radius-none: 0;
+  --radius-sm:   2px;
+  --radius-md:   8px;
+  --radius-lg:   20px;    /* image cards — from Figma */
+  --radius-pill: 999px;   /* CTA buttons */
+
+  --border-w-hair: 1px;
+  --border-w:      2px;
+
+  /* Shadows — used sparingly; we prefer rules + weight over elevation */
+  --shadow-hair:  0 0 0 1px var(--border-hair);
+  --shadow-1:     0 1px 2px rgba(10,10,10,0.04), 0 2px 8px rgba(10,10,10,0.04);
+  --shadow-2:     0 4px 14px rgba(10,10,10,0.06), 0 10px 30px rgba(10,10,10,0.08);
+  --shadow-lift:  0 24px 60px rgba(10,10,10,0.14);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(.16,1,.3,1);
+  --ease-out-quart: cubic-bezier(.25,1,.5,1);
+  --ease-in-out:   cubic-bezier(.65,0,.35,1);
+  --dur-xs:   120ms;
+  --dur-sm:   220ms;
+  --dur-md:   420ms;
+  --dur-lg:   700ms;
+
+  /* Layout */
+  --page-max:    1920px;
+  --content-max: 1640px;
+  --gutter-x:    140px;   /* desktop side gutter from Figma */
+}
+
+/* ============ SEMANTIC TYPE ROLES ============ */
+html, body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
+body { font-size: var(--fs-body); line-height: var(--lh-body); -webkit-font-smoothing: antialiased; }
+
+.tx-hero      { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-hero); line-height: var(--lh-tight); letter-spacing: var(--tr-tight); }
+.tx-display   { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-display); line-height: var(--lh-tight); letter-spacing: var(--tr-tight); }
+.tx-h1, h1    { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h1); line-height: var(--lh-heading); letter-spacing: var(--tr-tight); }
+.tx-h2, h2    { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tr-tight); }
+.tx-h3, h3    { font-family: var(--font-sans);    font-weight: var(--fw-medium); font-size: var(--fs-h3); line-height: 1.25; letter-spacing: var(--tr-tight); }
+.tx-h4, h4    { font-family: var(--font-sans);    font-weight: var(--fw-medium); font-size: var(--fs-h4); line-height: 1.3; letter-spacing: 0; }
+
+.tx-lead      { font-family: var(--font-serif); font-weight: var(--fw-book); font-style: italic; font-size: var(--fs-lead); line-height: 1.5; letter-spacing: 0; }
+.tx-body, p   { font-family: var(--font-sans); font-weight: var(--fw-medium); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--tr-tight); }
+.tx-body-sm   { font-size: var(--fs-body-sm); line-height: 1.5; }
+
+.tx-eyebrow   { font-family: var(--font-sans); font-weight: var(--fw-medium); font-size: var(--fs-eyebrow); letter-spacing: var(--tr-eyebrow); text-transform: uppercase; }
+.tx-nav       { font-family: var(--font-sans); font-weight: var(--fw-medium); font-size: 20px; letter-spacing: var(--tr-nav); text-transform: uppercase; }
+.tx-button    { font-family: var(--font-sans); font-weight: var(--fw-medium); font-size: 24px; letter-spacing: var(--tr-button); text-transform: lowercase; }
+
+.tx-mono      { font-family: var(--font-mono); font-size: var(--fs-body-sm); letter-spacing: 0; }
+.tx-serif     { font-family: var(--font-serif); font-weight: 400; font-style: italic; }
+.tx-serif-roman { font-family: var(--font-serif); font-weight: 400; font-style: normal; }
+.tx-serif-bold  { font-family: var(--font-serif); font-weight: 700; font-style: normal; }
+
+/* Links */
+a { color: inherit; text-decoration: none; }
+a.tx-link { border-bottom: 1px solid currentColor; padding-bottom: 2px; transition: opacity var(--dur-sm) var(--ease-out-quart); }
+a.tx-link:hover { opacity: 0.6; }
