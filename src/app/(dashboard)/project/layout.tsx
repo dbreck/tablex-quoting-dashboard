@@ -10,7 +10,9 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <div className="absolute top-6 right-8 z-10">
+      {/* Fixed to the viewport so it aligns with the comment toggle (which is
+          also fixed top-4 right-4 z-50). Sits to its left with a small gap. */}
+      <div className="fixed top-5 right-16 z-40">
         <MondaySyncIndicator />
       </div>
       {children}
