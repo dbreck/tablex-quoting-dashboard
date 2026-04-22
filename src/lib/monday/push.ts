@@ -53,12 +53,19 @@ export async function pushDeliverableToMonday(args: {
   itemName?: string;
   /** Override the status (used by reconcile to push the rollup value). */
   statusOverride?: ScopeStatus;
+  /** TableX assignee id for the Owner column (majority-assignee rollup). */
+  ownerAssigneeId?: string | null;
+  userMaps?: UserMaps;
 }): Promise<void> {
   const values = deliverableToMondayColumnValues(
     args.deliverable,
     args.override,
     args.itemColumnsByTitle,
-    { statusOverride: args.statusOverride },
+    {
+      statusOverride: args.statusOverride,
+      ownerAssigneeId: args.ownerAssigneeId,
+      userMaps: args.userMaps,
+    },
   );
 
   const payload: Record<string, unknown> = { ...values };

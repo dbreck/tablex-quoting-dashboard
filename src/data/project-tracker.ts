@@ -90,9 +90,23 @@ export function computeInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-/** Seed team keyed by id. Used by the store's backfill-on-hydrate path. */
+/**
+ * Seed team keyed by id. Used by the store's backfill-on-hydrate path.
+ *
+ * The `email` field is how Monday Owner mapping resolves TableX assignees to
+ * Monday workspace users — add an email to each member whose email is known
+ * on the Monday side. Members without an email simply don't get mapped
+ * (their sub-tasks will have Monday Owner blank; syncs stay non-destructive).
+ */
 export const DEFAULT_TEAM_MEMBERS: Record<string, TeamMember> = {
-  danny: { id: "danny", name: "Danny", role: "Developer", initials: "DB", color: "#3b82f6" },
+  danny: {
+    id: "danny",
+    name: "Danny",
+    role: "Developer",
+    initials: "DB",
+    color: "#3b82f6",
+    email: "danny@clearph.com",
+  },
   kayla: { id: "kayla", name: "Kayla", role: "Designer", initials: "KS", color: "#ec4899" },
   arabella: { id: "arabella", name: "Arabella", role: "PM", initials: "AH", color: "#f59e0b" },
 };
@@ -198,6 +212,34 @@ export function generateInitialTasks(): Task[] {
   }
 
   return tasks;
+}
+
+/**
+ * Compute the "majority assignee" for a deliverable from its child tasks —
+ * used to populate the Item-level Owner column on Monday. Returns the
+ * assignee id with the most task assignments under this deliverable, or
+ * null if no tasks are assigned. Ties break on first-seen order so the
+ * result is stable across unchanged inputs.
+ */
+export function computeDeliverableAssignee(
+  deliverableId: string,
+  tasks: Task[],
+): string | null {
+  const counts = new Map<string, number>();
+  for (const t of tasks) {
+    if (t.deliverableId !== deliverableId) continue;
+    if (!t.assignee) continue;
+    counts.set(t.assignee, (counts.get(t.assignee) ?? 0) + 1);
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [id, n] of counts) {
+    if (n > bestCount) {
+      best = id;
+      bestCount = n;
+    }
+  }
+  return best;
 }
 
 /** Compute deliverable status from its tasks */

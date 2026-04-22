@@ -76,6 +76,10 @@ export function deliverableToMondayColumnValues(
   options: {
     /** When provided, wins over the static-or-override status (used for rollup). */
     statusOverride?: ScopeStatus;
+    /** TableX assignee id to resolve into the Owner column (via userMaps). */
+    ownerAssigneeId?: string | null;
+    /** Required to resolve ownerAssigneeId into a Monday user id. */
+    userMaps?: UserMaps;
   } = {},
 ): ColumnValuesInput {
   const values: ColumnValuesInput = {};
@@ -84,6 +88,18 @@ export function deliverableToMondayColumnValues(
   setIfResolved(values, columnsByTitle, DELIVERABLE_COLUMN_TITLES.status, {
     label: SCOPE_STATUS_TO_MONDAY_LABEL[scopeStatus],
   });
+
+  // Owner — push when we resolved the owning assignee to a Monday user.
+  if (options.ownerAssigneeId && options.userMaps) {
+    const mondayUserId = options.userMaps.assigneeToMondayId.get(
+      options.ownerAssigneeId,
+    );
+    if (mondayUserId != null) {
+      setIfResolved(values, columnsByTitle, DELIVERABLE_COLUMN_TITLES.owner, {
+        personsAndTeams: [{ id: mondayUserId, kind: "person" }],
+      });
+    }
+  }
 
   // Phase-2 deliverables use week numbers, not dates. For the Dates column we
   // leave the value blank on seed — dates will be back-filled from timeline
@@ -184,6 +200,34 @@ export function taskToMondayColumnValues(
 }
 
 // ─── Pull: Monday → TableX ───────────────────────────────────────────────────
+
+/**
+ * Read the Owner column off a Monday item and resolve it to a TableX
+ * assignee id via the user maps. Returns null when the column is empty,
+ * malformed, or the Monday user doesn't match any team member's email.
+ */
+export function readItemOwnerAsAssignee(
+  item: {
+    column_values?: Array<{ id: string; text: string | null; value: string | null }>;
+  },
+  columnsByTitle: ColumnsByTitle,
+  userMaps: UserMaps = EMPTY_USER_MAPS,
+): string | null {
+  const ownerId = columnsByTitle[DELIVERABLE_COLUMN_TITLES.owner];
+  if (!ownerId) return null;
+  const cv = item.column_values?.find((c) => c.id === ownerId);
+  if (!cv?.value) return null;
+  try {
+    const parsed = JSON.parse(cv.value) as {
+      personsAndTeams?: Array<{ id: number; kind: string }>;
+    };
+    const first = parsed.personsAndTeams?.find((p) => p.kind === "person");
+    if (!first) return null;
+    return userMaps.mondayIdToAssignee.get(first.id) ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /** Read helper: find a column value on a Monday item by column id. */
 export function findColumnValue(

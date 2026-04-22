@@ -32,6 +32,7 @@ import {
   type ScopeStatus,
   type Task,
   type TeamMember,
+  computeDeliverableAssignee,
   computeDeliverableStatus,
 } from "@/data/project-tracker";
 import {
@@ -39,6 +40,7 @@ import {
   deliverableToMondayColumnValues,
   mondayItemToOverridePatch,
   mondaySubitemToTaskPatch,
+  readItemOwnerAsAssignee,
   type UserMaps,
 } from "./normalize";
 import { snapshotMonday, type MondaySnapshot } from "./pull";
@@ -255,30 +257,51 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
       // assert the rollup status if it differs from Monday.
     }
 
-    // Push side: compute desired Monday status (manual override > rollup),
-    // build the column_values payload, compare to what Monday currently
-    // expresses, push if different.
+    // Push side: compute desired Monday state (status rollup + Item owner
+    // from the majority of child task assignees), build the column_values
+    // payload, compare to what Monday currently expresses, push if different.
     const computedStatus: ScopeStatus =
       override?.manualStatus ??
       computeDeliverableStatus(deliverable.id, req.tasks);
+    const computedOwner = computeDeliverableAssignee(
+      deliverable.id,
+      req.tasks,
+    );
 
     const wouldPush = deliverableToMondayColumnValues(
       deliverable,
       override,
       snapshot.itemColumnsByTitle,
-      { statusOverride: computedStatus },
+      {
+        statusOverride: computedStatus,
+        ownerAssigneeId: computedOwner,
+        userMaps,
+      },
     );
     // Monday's current-state equivalent: feed Monday's column values back
     // through the same normalize path, using Monday's status as the override.
+    // The Owner side of the comparison is handled via raw column_value
+    // text — we compare payloads, not structural parity, so an unchanged
+    // Owner won't trigger a push. (For a brand-new push, wouldPush has an
+    // Owner key and mondayActual doesn't, so JSON differs and we push.)
     const currentMondayPatch = mondayItemToOverridePatch(
       mondayRecord.raw,
       snapshot.itemColumnsByTitle,
+    );
+    const mondayCurrentOwner = readItemOwnerAsAssignee(
+      mondayRecord.raw,
+      snapshot.itemColumnsByTitle,
+      userMaps,
     );
     const mondayActual = deliverableToMondayColumnValues(
       deliverable,
       { deliverableId: deliverable.id, ...currentMondayPatch },
       snapshot.itemColumnsByTitle,
-      { statusOverride: currentMondayPatch.manualStatus ?? undefined },
+      {
+        statusOverride: currentMondayPatch.manualStatus ?? undefined,
+        ownerAssigneeId: mondayCurrentOwner,
+        userMaps,
+      },
     );
     if (JSON.stringify(wouldPush) === JSON.stringify(mondayActual)) {
       continue;
@@ -292,6 +315,8 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
         itemColumnsByTitle: snapshot.itemColumnsByTitle,
         itemName: mondayRecord.name,
         statusOverride: computedStatus,
+        ownerAssigneeId: computedOwner,
+        userMaps,
       });
       result.pushedDeliverableIds.push(deliverable.id);
       result.log.push({
