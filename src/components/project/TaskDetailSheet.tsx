@@ -193,7 +193,7 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
               onChange={(e) => updateTask(task.id, { description: e.target.value })}
               placeholder="Add a description..."
               rows={3}
-              className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+              className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-y [field-sizing:content] min-h-[5.25rem] focus:outline-none focus:ring-2 focus:ring-brand-green/50"
             />
           </div>
 

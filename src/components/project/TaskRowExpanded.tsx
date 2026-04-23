@@ -45,8 +45,8 @@ export function TaskRowExpanded({ task }: TaskRowExpandedProps) {
           value={task.description ?? ""}
           onChange={(e) => updateTask(task.id, { description: e.target.value })}
           placeholder="Add a description..."
-          rows={2}
-          className="w-full text-xs text-gray-700 border border-gray-200 rounded-md px-2.5 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-brand-green/50 bg-white"
+          rows={3}
+          className="w-full text-xs text-gray-700 border border-gray-200 rounded-md px-2.5 py-1.5 resize-y [field-sizing:content] min-h-[4.5rem] focus:outline-none focus:ring-1 focus:ring-brand-green/50 bg-white"
         />
       </div>
 
