@@ -4,11 +4,15 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { MondaySyncIndicator } from "@/components/project/MondaySyncIndicator";
 import { useTrackerHydration } from "@/hooks/useTrackerHydration";
 import { useTrackerRealtime } from "@/hooks/useTrackerRealtime";
+import { useSprintHydration } from "@/hooks/useSprintHydration";
+import { useSprintRealtime } from "@/hooks/useSprintRealtime";
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
   const { isInitialized, error } = useTrackerHydration();
   useTrackerRealtime();
+  useSprintHydration();
+  useSprintRealtime();
 
   if (!profile?.can_access_proposal) return null;
 

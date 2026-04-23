@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import { type Task, filterTasks, COLUMNS } from "@/data/project-tracker";
 import { WORKSTREAMS, DELIVERABLES, getDeliverablesByWorkstream } from "@/data/project-phase2";
+import { useSprints } from "@/store/sprint-store";
 import { type GroupBy } from "./TasksToolbar";
 import { WorkstreamGroup } from "./WorkstreamGroup";
 import { DeliverableGroup } from "./DeliverableGroup";
@@ -28,6 +29,7 @@ export function TasksListView({
 }: TasksListViewProps) {
   const { tasks, filters } = useProjectTrackerStore();
   const team = useTeam();
+  const sprints = useSprints();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
@@ -149,6 +151,27 @@ export function TasksListView({
       })).filter((g) => g.tasks.length > 0);
     }
 
+    if (groupBy === "sprint") {
+      const sprintColor: Record<string, string> = {
+        active: "#10b981",
+        upcoming: "#3b82f6",
+        complete: "#9ca3af",
+      };
+      const sprintGroups = sprints.map((s) => ({
+        id: s.id,
+        label: `${s.name}${s.goal ? ` — ${s.goal}` : ""}`,
+        color: sprintColor[s.status] ?? "#6b7280",
+        tasks: filteredTasks.filter((t) => t.sprintId === s.id),
+      }));
+      const noSprint = {
+        id: "no-sprint",
+        label: "No sprint",
+        color: "#9ca3af",
+        tasks: filteredTasks.filter((t) => !t.sprintId),
+      };
+      return [...sprintGroups, noSprint].filter((g) => g.tasks.length > 0);
+    }
+
     // priority
     const priorityOrder = [
       { id: "critical", label: "Critical", color: "#ef4444" },
@@ -160,7 +183,7 @@ export function TasksListView({
       ...p,
       tasks: filteredTasks.filter((t) => t.priority === p.id),
     })).filter((g) => g.tasks.length > 0);
-  }, [groupBy, filteredTasks, team]);
+  }, [groupBy, filteredTasks, team, sprints]);
 
   return (
     <>

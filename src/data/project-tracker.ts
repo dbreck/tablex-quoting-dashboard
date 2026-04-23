@@ -30,6 +30,8 @@ export interface Task {
   priority: Priority;
   /** TeamMember id. Null when unassigned. */
   assignee: string | null;
+  /** Sprint id. Null/undefined when not in a sprint (backlog). */
+  sprintId?: string | null;
   labels: string[];
   subtasks: Subtask[];
   /** ISO date (YYYY-MM-DD) */
@@ -265,10 +267,10 @@ export function getWorkstreamForDeliverable(deliverableId: string) {
   return WORKSTREAMS.find((ws) => ws.id === d.workstream) ?? null;
 }
 
-/** Filter tasks by assignee, workstream, priority, and search */
+/** Filter tasks by assignee, workstream, priority, sprint, and search */
 export function filterTasks(
   tasks: Task[],
-  filters: { assignee: string; workstream: string; priority: string; search: string }
+  filters: { assignee: string; workstream: string; priority: string; sprint?: string; search: string }
 ): Task[] {
   return tasks.filter((t) => {
     if (filters.assignee !== "all" && t.assignee !== filters.assignee) return false;
@@ -276,6 +278,11 @@ export function filterTasks(
     if (filters.workstream !== "all") {
       const deliverable = DELIVERABLES.find((d) => d.id === t.deliverableId);
       if (deliverable?.workstream !== filters.workstream) return false;
+    }
+    if (filters.sprint && filters.sprint !== "all") {
+      if (filters.sprint === "none") {
+        if (t.sprintId) return false;
+      } else if (t.sprintId !== filters.sprint) return false;
     }
     if (filters.search) {
       const search = filters.search.toLowerCase();

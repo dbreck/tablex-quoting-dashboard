@@ -38,6 +38,7 @@ import {
   KanbanSquare,
   GanttChart,
   ListChecks,
+  Calendar,
   Server,
   Crosshair,
   Fingerprint,
@@ -60,6 +61,7 @@ const projectNavItems = [
   { name: "Scope", href: "/project/scope", icon: ClipboardList },
   { name: "Timeline", href: "/project/timeline", icon: GanttChart },
   { name: "Tasks", href: "/project/tasks", icon: ListChecks },
+  { name: "Sprints", href: "/project/sprints", icon: Calendar },
   { name: "Board", href: "/project/board", icon: KanbanSquare },
   { name: "Infra Setup", href: "/project/infrastructure", icon: Server },
 ];

@@ -2,8 +2,10 @@
 
 import { cn } from "@/lib/utils";
 import { ChevronsDownUp, ChevronsUpDown, Eye, EyeOff } from "lucide-react";
+import { useProjectTrackerStore } from "@/store/project-tracker-store";
+import { useSprints } from "@/store/sprint-store";
 
-export type GroupBy = "workstream" | "assignee" | "status" | "priority";
+export type GroupBy = "workstream" | "assignee" | "status" | "priority" | "sprint";
 
 interface TasksToolbarProps {
   groupBy: GroupBy;
@@ -26,6 +28,9 @@ export function TasksToolbar({
   taskCount,
   doneCount,
 }: TasksToolbarProps) {
+  const { filters, setFilter } = useProjectTrackerStore();
+  const sprints = useSprints();
+
   return (
     <div className="flex items-center gap-3 flex-wrap">
       {/* Group by */}
@@ -40,6 +45,25 @@ export function TasksToolbar({
           <option value="assignee">Assignee</option>
           <option value="status">Status</option>
           <option value="priority">Priority</option>
+          <option value="sprint">Sprint</option>
+        </select>
+      </div>
+
+      {/* Sprint filter */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-gray-500">Sprint</span>
+        <select
+          value={filters.sprint}
+          onChange={(e) => setFilter("sprint", e.target.value as typeof filters.sprint)}
+          className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+        >
+          <option value="all">All sprints</option>
+          <option value="none">Unassigned</option>
+          {sprints.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
         </select>
       </div>
 

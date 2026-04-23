@@ -40,6 +40,7 @@ export interface TaskRow {
   column: KanbanColumn;
   priority: Priority;
   assignee: string | null;
+  sprint_id: string | null;
   labels: string[];
   subtasks: Subtask[];
   due_date: string | null;
@@ -107,6 +108,7 @@ export function rowToTask(row: TaskRow): Task {
     column: row.column,
     priority: row.priority,
     assignee: row.assignee,
+    sprintId: row.sprint_id ?? null,
     labels: row.labels ?? [],
     subtasks: row.subtasks ?? [],
     dueDate: row.due_date ?? undefined,
@@ -179,6 +181,7 @@ export function taskToInsertRow(task: Task): Omit<TaskRow, "created_at" | "updat
     column: task.column,
     priority: task.priority,
     assignee: task.assignee,
+    sprint_id: task.sprintId ?? null,
     labels: task.labels ?? [],
     subtasks: task.subtasks ?? [],
     due_date: task.dueDate ?? null,
@@ -203,6 +206,7 @@ export function taskUpdatesToRow(
   if (updates.column !== undefined) row.column = updates.column;
   if (updates.priority !== undefined) row.priority = updates.priority;
   if (updates.assignee !== undefined) row.assignee = updates.assignee;
+  if (updates.sprintId !== undefined) row.sprint_id = updates.sprintId ?? null;
   if (updates.labels !== undefined) row.labels = updates.labels;
   if (updates.subtasks !== undefined) row.subtasks = updates.subtasks;
   if (updates.dueDate !== undefined) row.due_date = updates.dueDate ?? null;

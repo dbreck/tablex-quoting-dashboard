@@ -10,6 +10,7 @@ import {
 import { useTeam } from "@/store/project-tracker-store";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, GripVertical, MessageSquare, Calendar } from "lucide-react";
+import { SprintBadge } from "./SprintBadge";
 
 const priorityDot: Record<string, string> = {
   critical: "bg-red-500",
@@ -94,6 +95,9 @@ export function TaskCard({ task, onClick, isDragging }: TaskCardProps) {
               {completedSubtasks}/{totalSubtasks}
             </span>
           )}
+
+          {/* Sprint badge */}
+          <SprintBadge sprintId={task.sprintId} />
 
           {/* Due date chip — hidden for done tasks and tasks with no due date */}
           {task.dueDate && getDueStatus(task) !== "none" && (

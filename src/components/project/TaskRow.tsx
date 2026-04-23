@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Circle, ChevronDown, ChevronRight, GripVertical, Calendar } from "lucide-react";
 import { TaskRowExpanded } from "./TaskRowExpanded";
+import { SprintBadge } from "./SprintBadge";
 
 const priorityDot: Record<string, string> = {
   critical: "bg-red-500",
@@ -129,6 +130,9 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
             {completedSubtasks}/{totalSubtasks}
           </span>
         )}
+
+        {/* Sprint badge — hidden for tasks not in a sprint */}
+        <SprintBadge sprintId={task.sprintId} />
 
         {/* Due date chip — hidden for done tasks and tasks with no due date */}
         {task.dueDate && getDueStatus(task) !== "none" && (

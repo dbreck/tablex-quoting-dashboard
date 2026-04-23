@@ -11,6 +11,7 @@ import {
   getWorkstreamForDeliverable,
 } from "@/data/project-tracker";
 import { DELIVERABLES } from "@/data/project-phase2";
+import { useSprints } from "@/store/sprint-store";
 import { cn } from "@/lib/utils";
 import {
   X,
@@ -29,6 +30,7 @@ interface TaskDetailSheetProps {
 export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const { updateTask, deleteTask, addSubtask, toggleSubtask, removeSubtask } = useProjectTrackerStore();
   const team = useTeam();
+  const sprints = useSprints();
   const [newSubtask, setNewSubtask] = useState("");
 
   if (!task) return null;
@@ -181,6 +183,23 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Sprint */}
+          <div>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 block">Sprint</label>
+            <select
+              value={task.sprintId ?? ""}
+              onChange={(e) => updateTask(task.id, { sprintId: e.target.value || null })}
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+            >
+              <option value="">No sprint</option>
+              {sprints.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({s.status})
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Labels */}

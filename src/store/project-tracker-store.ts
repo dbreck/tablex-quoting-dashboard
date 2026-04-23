@@ -38,6 +38,8 @@ interface Filters {
   assignee: string | "all";
   workstream: string | "all";
   priority: Priority | "all";
+  /** "all" | sprint id | "none" (tasks without a sprint) */
+  sprint: string | "all" | "none";
   search: string;
 }
 
@@ -160,6 +162,7 @@ const defaultFilters: Filters = {
   assignee: "all",
   workstream: "all",
   priority: "all",
+  sprint: "all",
   search: "",
 };
 
