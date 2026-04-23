@@ -37,6 +37,11 @@ export interface Task {
   acceptanceCriteria: AcceptanceCriterion[];
   /** ISO date (YYYY-MM-DD) */
   dueDate?: string;
+  /**
+   * ISO timestamp of the first transition out of "backlog". Never overwritten
+   * once set. Used by the sprint timeline to draw Gantt bars. Not user-editable.
+   */
+  startedAt?: string;
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
@@ -213,6 +218,7 @@ export function generateInitialTasks(): Task[] {
         labels: inferLabels(d),
         subtasks: [],
         acceptanceCriteria: [],
+        startedAt: d.status !== "planned" ? now : undefined,
         createdAt: now,
         updatedAt: now,
         completedAt: d.status === "complete" ? now : undefined,
@@ -381,6 +387,25 @@ export function getVariance(
   if (percent >= 10) return { tone: "over", percent };
   if (percent <= -10) return { tone: "under", percent };
   return { tone: "neutral", percent };
+}
+
+/**
+ * Derived "start date" for a task for Gantt-style rendering:
+ *
+ * - No sprint → null (task shouldn't appear on any sprint timeline)
+ * - In sprint, still in backlog → the sprint's start date
+ * - In sprint, ever left backlog → the stamped `startedAt` timestamp
+ *
+ * Returns an ISO YYYY-MM-DD date, or null. Does NOT clamp; callers should
+ * clamp to their display window as needed.
+ */
+export function getTaskStartDate(
+  task: Pick<Task, "sprintId" | "startedAt" | "column">,
+  sprintStartDate: string | null | undefined,
+): string | null {
+  if (!task.sprintId || !sprintStartDate) return null;
+  if (task.startedAt) return task.startedAt.slice(0, 10);
+  return sprintStartDate;
 }
 
 /** Short display format for due dates (e.g. "May 15" or "May 15 '27" if not this year) */

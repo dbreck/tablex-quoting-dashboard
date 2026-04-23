@@ -13,6 +13,7 @@ import {
   Trash2,
   ChevronDown,
   ChevronRight,
+  BarChart3,
 } from "lucide-react";
 import {
   LineChart,
@@ -267,6 +268,12 @@ function SprintHeader({
         </div>
 
         <div className="flex items-center gap-2">
+          <Link href={`/project/sprints/${sprint.id}/timeline`}>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <BarChart3 className="h-3.5 w-3.5" />
+              Timeline
+            </Button>
+          </Link>
           {sprint.status !== "active" && (
             <Button
               variant="outline"

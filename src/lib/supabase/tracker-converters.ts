@@ -47,6 +47,7 @@ export interface TaskRow {
   acceptance_criteria: AcceptanceCriterion[];
   due_date: string | null;
   sort_order: number;
+  started_at: string | null;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -115,6 +116,7 @@ export function rowToTask(row: TaskRow): Task {
     subtasks: row.subtasks ?? [],
     acceptanceCriteria: row.acceptance_criteria ?? [],
     dueDate: row.due_date ?? undefined,
+    startedAt: row.started_at ?? undefined,
     sortOrder: row.sort_order,
     completedAt: row.completed_at ?? undefined,
     createdAt: row.created_at,
@@ -189,6 +191,7 @@ export function taskToInsertRow(task: Task): Omit<TaskRow, "created_at" | "updat
     subtasks: task.subtasks ?? [],
     acceptance_criteria: task.acceptanceCriteria ?? [],
     due_date: task.dueDate ?? null,
+    started_at: task.startedAt ?? null,
     sort_order: task.sortOrder,
     completed_at: task.completedAt ?? null,
     created_at: task.createdAt,
@@ -216,6 +219,7 @@ export function taskUpdatesToRow(
   if (updates.acceptanceCriteria !== undefined)
     row.acceptance_criteria = updates.acceptanceCriteria;
   if (updates.dueDate !== undefined) row.due_date = updates.dueDate ?? null;
+  if (updates.startedAt !== undefined) row.started_at = updates.startedAt ?? null;
   if (updates.sortOrder !== undefined) row.sort_order = updates.sortOrder;
   if (updates.completedAt !== undefined) row.completed_at = updates.completedAt ?? null;
   return row;

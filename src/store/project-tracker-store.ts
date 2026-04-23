@@ -360,12 +360,22 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()((set, get) =
 
   updateTask: (id, updates) => {
     const now = new Date().toISOString();
+    const current = get().tasks.find((t) => t.id === id);
+    // Auto-stamp startedAt on the first transition out of "backlog".
+    const effective: Partial<Omit<Task, "id" | "createdAt">> =
+      current &&
+      updates.column &&
+      updates.column !== "backlog" &&
+      current.column === "backlog" &&
+      !current.startedAt
+        ? { ...updates, startedAt: now }
+        : updates;
     set({
       tasks: get().tasks.map((t) =>
-        t.id === id ? { ...t, ...updates, updatedAt: now } : t,
+        t.id === id ? { ...t, ...effective, updatedAt: now } : t,
       ),
     });
-    fireAndForget("updateTask", trackerClient.updateTask(id, updates));
+    fireAndForget("updateTask", trackerClient.updateTask(id, effective));
   },
 
   deleteTask: (id) => {
@@ -399,11 +409,21 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()((set, get) =
 
   moveTask: (taskId, toColumn, newSortOrder) => {
     const now = new Date().toISOString();
+    const current = get().tasks.find((t) => t.id === taskId);
     const updates: Partial<Task> = {
       column: toColumn,
       sortOrder: newSortOrder,
       completedAt: toColumn === "done" ? now : undefined,
     };
+    // Auto-stamp startedAt on the first transition out of "backlog".
+    if (
+      current &&
+      toColumn !== "backlog" &&
+      current.column === "backlog" &&
+      !current.startedAt
+    ) {
+      updates.startedAt = now;
+    }
     set({
       tasks: get().tasks.map((t) =>
         t.id === taskId ? { ...t, ...updates, updatedAt: now } : t,
