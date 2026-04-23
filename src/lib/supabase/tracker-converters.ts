@@ -7,6 +7,7 @@
 import type {
   Task,
   Subtask,
+  AcceptanceCriterion,
   KanbanColumn,
   Priority,
   TeamMember,
@@ -43,6 +44,7 @@ export interface TaskRow {
   sprint_id: string | null;
   labels: string[];
   subtasks: Subtask[];
+  acceptance_criteria: AcceptanceCriterion[];
   due_date: string | null;
   sort_order: number;
   completed_at: string | null;
@@ -111,6 +113,7 @@ export function rowToTask(row: TaskRow): Task {
     sprintId: row.sprint_id ?? null,
     labels: row.labels ?? [],
     subtasks: row.subtasks ?? [],
+    acceptanceCriteria: row.acceptance_criteria ?? [],
     dueDate: row.due_date ?? undefined,
     sortOrder: row.sort_order,
     completedAt: row.completed_at ?? undefined,
@@ -184,6 +187,7 @@ export function taskToInsertRow(task: Task): Omit<TaskRow, "created_at" | "updat
     sprint_id: task.sprintId ?? null,
     labels: task.labels ?? [],
     subtasks: task.subtasks ?? [],
+    acceptance_criteria: task.acceptanceCriteria ?? [],
     due_date: task.dueDate ?? null,
     sort_order: task.sortOrder,
     completed_at: task.completedAt ?? null,
@@ -209,6 +213,8 @@ export function taskUpdatesToRow(
   if (updates.sprintId !== undefined) row.sprint_id = updates.sprintId ?? null;
   if (updates.labels !== undefined) row.labels = updates.labels;
   if (updates.subtasks !== undefined) row.subtasks = updates.subtasks;
+  if (updates.acceptanceCriteria !== undefined)
+    row.acceptance_criteria = updates.acceptanceCriteria;
   if (updates.dueDate !== undefined) row.due_date = updates.dueDate ?? null;
   if (updates.sortOrder !== undefined) row.sort_order = updates.sortOrder;
   if (updates.completedAt !== undefined) row.completed_at = updates.completedAt ?? null;

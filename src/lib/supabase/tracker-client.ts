@@ -186,6 +186,20 @@ export async function persistSubtasks(
   if (error) throw error;
 }
 
+// ─── Acceptance criteria (inline jsonb on the parent task row) ───────────────
+
+export async function persistAcceptanceCriteria(
+  taskId: string,
+  acceptanceCriteria: Task["acceptanceCriteria"],
+): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("project_tasks")
+    .update({ acceptance_criteria: acceptanceCriteria })
+    .eq("id", taskId);
+  if (error) throw error;
+}
+
 // ─── Deliverable overrides ───────────────────────────────────────────────────
 
 export async function upsertOverride(override: DeliverableOverride): Promise<void> {

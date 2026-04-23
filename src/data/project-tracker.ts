@@ -34,6 +34,7 @@ export interface Task {
   sprintId?: string | null;
   labels: string[];
   subtasks: Subtask[];
+  acceptanceCriteria: AcceptanceCriterion[];
   /** ISO date (YYYY-MM-DD) */
   dueDate?: string;
   createdAt: string;
@@ -45,6 +46,12 @@ export interface Task {
 export interface Subtask {
   id: string;
   title: string;
+  completed: boolean;
+}
+
+export interface AcceptanceCriterion {
+  id: string;
+  label: string;
   completed: boolean;
 }
 
@@ -205,6 +212,7 @@ export function generateInitialTasks(): Task[] {
         assignee: inferAssignee(d),
         labels: inferLabels(d),
         subtasks: [],
+        acceptanceCriteria: [],
         createdAt: now,
         updatedAt: now,
         completedAt: d.status === "complete" ? now : undefined,

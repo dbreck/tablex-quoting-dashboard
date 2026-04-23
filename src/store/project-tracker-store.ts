@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import {
   type Task,
   type Subtask,
+  type AcceptanceCriterion,
   type KanbanColumn,
   type Priority,
   type TeamMember,
@@ -125,6 +126,11 @@ interface ProjectTrackerStore {
   addSubtask: (taskId: string, title: string) => void;
   toggleSubtask: (taskId: string, subtaskId: string) => void;
   removeSubtask: (taskId: string, subtaskId: string) => void;
+
+  // Acceptance criteria operations
+  addAcceptanceCriterion: (taskId: string, label: string) => void;
+  toggleAcceptanceCriterion: (taskId: string, criterionId: string) => void;
+  removeAcceptanceCriterion: (taskId: string, criterionId: string) => void;
 
   // Bulk operations
   bulkUpdateTasks: (ids: string[], updates: Partial<Omit<Task, "id" | "createdAt">>) => void;
@@ -429,6 +435,57 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()((set, get) =
     fireAndForget(
       "removeSubtask",
       trackerClient.persistSubtasks(taskId, nextSubtasks),
+    );
+  },
+
+  addAcceptanceCriterion: (taskId, label) => {
+    const criterion: AcceptanceCriterion = { id: nanoid(8), label, completed: false };
+    const now = new Date().toISOString();
+    let next: AcceptanceCriterion[] = [];
+    set({
+      tasks: get().tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        next = [...(t.acceptanceCriteria ?? []), criterion];
+        return { ...t, acceptanceCriteria: next, updatedAt: now };
+      }),
+    });
+    fireAndForget(
+      "addAcceptanceCriterion",
+      trackerClient.persistAcceptanceCriteria(taskId, next),
+    );
+  },
+
+  toggleAcceptanceCriterion: (taskId, criterionId) => {
+    const now = new Date().toISOString();
+    let next: AcceptanceCriterion[] = [];
+    set({
+      tasks: get().tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        next = (t.acceptanceCriteria ?? []).map((c) =>
+          c.id === criterionId ? { ...c, completed: !c.completed } : c,
+        );
+        return { ...t, acceptanceCriteria: next, updatedAt: now };
+      }),
+    });
+    fireAndForget(
+      "toggleAcceptanceCriterion",
+      trackerClient.persistAcceptanceCriteria(taskId, next),
+    );
+  },
+
+  removeAcceptanceCriterion: (taskId, criterionId) => {
+    const now = new Date().toISOString();
+    let next: AcceptanceCriterion[] = [];
+    set({
+      tasks: get().tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        next = (t.acceptanceCriteria ?? []).filter((c) => c.id !== criterionId);
+        return { ...t, acceptanceCriteria: next, updatedAt: now };
+      }),
+    });
+    fireAndForget(
+      "removeAcceptanceCriterion",
+      trackerClient.persistAcceptanceCriteria(taskId, next),
     );
   },
 

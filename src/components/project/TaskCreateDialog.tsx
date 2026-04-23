@@ -40,6 +40,7 @@ export function TaskCreateDialog({ open, onClose, defaultColumn = "backlog", def
       assignee: assignee || null,
       labels: [],
       subtasks: [],
+      acceptanceCriteria: [],
       dueDate: dueDate || undefined,
     });
     // Reset

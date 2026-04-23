@@ -11,13 +11,30 @@ interface TaskRowExpandedProps {
 }
 
 export function TaskRowExpanded({ task }: TaskRowExpandedProps) {
-  const { updateTask, addSubtask, toggleSubtask, removeSubtask } = useProjectTrackerStore();
+  const {
+    updateTask,
+    addSubtask,
+    toggleSubtask,
+    removeSubtask,
+    addAcceptanceCriterion,
+    toggleAcceptanceCriterion,
+    removeAcceptanceCriterion,
+  } = useProjectTrackerStore();
   const [newSubtask, setNewSubtask] = useState("");
+  const [newCriterion, setNewCriterion] = useState("");
+
+  const criteria = task.acceptanceCriteria ?? [];
 
   const handleAddSubtask = () => {
     if (!newSubtask.trim()) return;
     addSubtask(task.id, newSubtask.trim());
     setNewSubtask("");
+  };
+
+  const handleAddCriterion = () => {
+    if (!newCriterion.trim()) return;
+    addAcceptanceCriterion(task.id, newCriterion.trim());
+    setNewCriterion("");
   };
 
   return (
@@ -31,6 +48,52 @@ export function TaskRowExpanded({ task }: TaskRowExpandedProps) {
           rows={2}
           className="w-full text-xs text-gray-700 border border-gray-200 rounded-md px-2.5 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-brand-green/50 bg-white"
         />
+      </div>
+
+      {/* Acceptance criteria */}
+      <div>
+        <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+          Acceptance criteria ({criteria.filter((c) => c.completed).length}/{criteria.length})
+        </p>
+        <div className="space-y-1">
+          {criteria.map((c) => (
+            <div key={c.id} className="flex items-center gap-2 group/ac">
+              <button onClick={() => toggleAcceptanceCriterion(task.id, c.id)} className="shrink-0">
+                {c.completed ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-brand-green" />
+                ) : (
+                  <Circle className="h-3.5 w-3.5 text-gray-300 group-hover/ac:text-gray-400" />
+                )}
+              </button>
+              <span className={cn("text-xs flex-1", c.completed && "line-through text-gray-400")}>
+                {c.label}
+              </span>
+              <button
+                onClick={() => removeAcceptanceCriterion(task.id, c.id)}
+                className="opacity-0 group-hover/ac:opacity-100 p-0.5 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition-all"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-1.5 mt-1.5">
+          <input
+            type="text"
+            value={newCriterion}
+            onChange={(e) => setNewCriterion(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddCriterion()}
+            placeholder="Add criterion..."
+            className="flex-1 text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-green/50 bg-white"
+          />
+          <button
+            onClick={handleAddCriterion}
+            disabled={!newCriterion.trim()}
+            className="p-1 rounded bg-brand-green/10 text-brand-green hover:bg-brand-green/20 disabled:opacity-30 transition-colors"
+          >
+            <Plus className="h-3 w-3" />
+          </button>
+        </div>
       </div>
 
       {/* Subtasks */}

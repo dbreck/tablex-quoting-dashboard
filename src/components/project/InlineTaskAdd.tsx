@@ -23,6 +23,7 @@ export function InlineTaskAdd({ deliverableId }: InlineTaskAddProps) {
       assignee: null,
       labels: [],
       subtasks: [],
+      acceptanceCriteria: [],
     });
     setValue("");
     // Keep focus for rapid entry

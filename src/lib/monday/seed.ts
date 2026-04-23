@@ -195,6 +195,7 @@ function buildSeedTasks(): Task[] {
         assignee: null,
         labels: [],
         subtasks: [],
+        acceptanceCriteria: [],
         createdAt: now,
         updatedAt: now,
         sortOrder: sortOrder++,

@@ -28,20 +28,37 @@ interface TaskDetailSheetProps {
 }
 
 export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
-  const { updateTask, deleteTask, addSubtask, toggleSubtask, removeSubtask } = useProjectTrackerStore();
+  const {
+    updateTask,
+    deleteTask,
+    addSubtask,
+    toggleSubtask,
+    removeSubtask,
+    addAcceptanceCriterion,
+    toggleAcceptanceCriterion,
+    removeAcceptanceCriterion,
+  } = useProjectTrackerStore();
   const team = useTeam();
   const sprints = useSprints();
   const [newSubtask, setNewSubtask] = useState("");
+  const [newCriterion, setNewCriterion] = useState("");
 
   if (!task) return null;
 
   const workstream = getWorkstreamForDeliverable(task.deliverableId);
   const deliverable = DELIVERABLES.find((d) => d.id === task.deliverableId);
+  const criteria = task.acceptanceCriteria ?? [];
 
   const handleAddSubtask = () => {
     if (!newSubtask.trim()) return;
     addSubtask(task.id, newSubtask.trim());
     setNewSubtask("");
+  };
+
+  const handleAddCriterion = () => {
+    if (!newCriterion.trim()) return;
+    addAcceptanceCriterion(task.id, newCriterion.trim());
+    setNewCriterion("");
   };
 
   const handleDelete = () => {
@@ -229,6 +246,52 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Acceptance criteria */}
+          <div>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">
+              Acceptance criteria ({criteria.filter((c) => c.completed).length}/{criteria.length})
+            </label>
+            <div className="space-y-1.5">
+              {criteria.map((c) => (
+                <div key={c.id} className="flex items-center gap-2 group">
+                  <button onClick={() => toggleAcceptanceCriterion(task.id, c.id)}>
+                    {c.completed ? (
+                      <CheckCircle2 className="h-4 w-4 text-brand-green" />
+                    ) : (
+                      <Circle className="h-4 w-4 text-gray-300 group-hover:text-gray-400" />
+                    )}
+                  </button>
+                  <span className={cn("text-sm flex-1", c.completed && "line-through text-gray-400")}>
+                    {c.label}
+                  </span>
+                  <button
+                    onClick={() => removeAcceptanceCriterion(task.id, c.id)}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition-all"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                type="text"
+                value={newCriterion}
+                onChange={(e) => setNewCriterion(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddCriterion()}
+                placeholder="Add criterion..."
+                className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+              />
+              <button
+                onClick={handleAddCriterion}
+                disabled={!newCriterion.trim()}
+                className="p-1.5 rounded-lg bg-brand-green/10 text-brand-green hover:bg-brand-green/20 disabled:opacity-30 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
