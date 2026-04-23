@@ -3,12 +3,19 @@
 import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import { COLUMNS } from "@/data/project-tracker";
 import { WORKSTREAMS } from "@/data/project-phase2";
+import { useSprints } from "@/store/sprint-store";
 import { Search, X } from "lucide-react";
 
 export function FilterBar() {
   const { filters, setFilter, resetFilters } = useProjectTrackerStore();
   const team = useTeam();
-  const hasFilters = filters.assignee !== "all" || filters.workstream !== "all" || filters.priority !== "all" || filters.search !== "";
+  const sprints = useSprints();
+  const hasFilters =
+    filters.assignee !== "all" ||
+    filters.workstream !== "all" ||
+    filters.priority !== "all" ||
+    filters.sprint !== "all" ||
+    filters.search !== "";
 
   return (
     <div className="flex items-center gap-3 flex-wrap">
@@ -59,6 +66,21 @@ export function FilterBar() {
         <option value="high">High</option>
         <option value="medium">Medium</option>
         <option value="low">Low</option>
+      </select>
+
+      {/* Sprint */}
+      <select
+        value={filters.sprint}
+        onChange={(e) => setFilter("sprint", e.target.value as typeof filters.sprint)}
+        className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+      >
+        <option value="all">All Sprints</option>
+        <option value="none">Unassigned</option>
+        {sprints.map((s) => (
+          <option key={s.id} value={s.id}>
+            {s.name}
+          </option>
+        ))}
       </select>
 
       {/* Clear filters */}
