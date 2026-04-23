@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
 import { ProgressSummary } from "@/components/project/ProgressSummary";
 import { DELIVERABLES, WORKSTREAMS } from "@/data/project-phase2";
@@ -9,11 +8,9 @@ import Link from "next/link";
 import { ArrowRight, KanbanSquare, GanttChart, ListChecks, Server, FileText, ExternalLink } from "lucide-react";
 
 export default function ProjectDashboard() {
-  const { isInitialized, initializeFromDeliverables, tasks } = useProjectTrackerStore();
-
-  useEffect(() => {
-    if (!isInitialized) initializeFromDeliverables();
-  }, [isInitialized, initializeFromDeliverables]);
+  // Hydration is handled by the project layout — by the time this renders,
+  // the store is populated from Supabase.
+  const tasks = useProjectTrackerStore((s) => s.tasks);
 
   // Recent activity — last 5 tasks updated
   const recentTasks = [...tasks]

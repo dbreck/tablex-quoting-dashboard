@@ -50,7 +50,7 @@ import {
   pushTaskToMonday,
 } from "./push";
 import { fetchMondayUsers } from "./users";
-import type { SyncLink } from "@/store/project-tracker-store";
+import type { SyncLink } from "@/lib/supabase/tracker-converters";
 import type { MondaySubitem } from "./types";
 
 const NO_OP_WINDOW_MS = 1_000;

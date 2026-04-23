@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
 import { type Task } from "@/data/project-tracker";
 import { WORKSTREAMS, DELIVERABLES } from "@/data/project-phase2";
@@ -10,15 +10,11 @@ import { TasksListView } from "@/components/project/TasksListView";
 import { TaskDetailSheet } from "@/components/project/TaskDetailSheet";
 
 export default function TasksPage() {
-  const { isInitialized, initializeFromDeliverables, tasks } = useProjectTrackerStore();
+  const tasks = useProjectTrackerStore((s) => s.tasks);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [groupBy, setGroupBy] = useState<GroupBy>("workstream");
   const [showCompleted, setShowCompleted] = useState(true);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (!isInitialized) initializeFromDeliverables();
-  }, [isInitialized, initializeFromDeliverables]);
 
   const handleToggleGroup = useCallback((id: string) => {
     setCollapsedGroups((prev) => {

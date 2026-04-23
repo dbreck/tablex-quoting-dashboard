@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import {
   type Task,
@@ -10,15 +9,28 @@ import {
   type TeamMember,
   type DeliverableOverride,
   type ScopeStatus,
-  DEFAULT_TEAM_MEMBERS,
   TEAM_COLORS,
   computeInitials,
-  generateInitialTasks,
-  hoursToDays,
   getDeliverableDays,
-  seedTaskId,
 } from "@/data/project-tracker";
 import { DELIVERABLES } from "@/data/project-phase2";
+import * as trackerClient from "@/lib/supabase/tracker-client";
+import {
+  rowToTask,
+  rowToTeamMember,
+  rowToOverride,
+  rowToSyncLink,
+  type TaskRow,
+  type TeamMemberRow,
+  type DeliverableOverrideRow,
+  type SyncLinkRow,
+  type SyncLink,
+  type SyncLogEntry,
+} from "@/lib/supabase/tracker-converters";
+
+// Re-export for backwards compatibility — historical consumers import these
+// from the store. Source of truth is `tracker-converters.ts`.
+export type { SyncLink, SyncLogEntry };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,20 +39,6 @@ interface Filters {
   workstream: string | "all";
   priority: Priority | "all";
   search: string;
-}
-
-export interface SyncLink {
-  mondayItemId: string | null;
-  lastSyncedAt: string | null;
-  lastMondayUpdatedAt: string | null;
-}
-
-export interface SyncLogEntry {
-  at: string;
-  direction: "pulled" | "pushed" | "linked" | "skipped" | "error";
-  kind: "task" | "deliverable";
-  tableXId: string;
-  detail?: string;
 }
 
 export type SyncStatus = "idle" | "syncing" | "saved" | "error";
@@ -75,6 +73,26 @@ export interface ApplySyncPatchesArgs {
   }>;
 }
 
+/** Snapshot from the Supabase fetch — passed to `hydrate()`. */
+export interface TrackerHydrationSnapshot {
+  tasks: Task[];
+  teamMembers: Record<string, TeamMember>;
+  deliverableOverrides: Record<string, DeliverableOverride>;
+  syncLinks: Record<string, SyncLink>;
+  syncLog: SyncLogEntry[];
+  baselinedAt: string | null;
+}
+
+/** Tables that emit Realtime postgres_changes events for the tracker. */
+export type RealtimeTable =
+  | "project_tasks"
+  | "deliverable_overrides"
+  | "team_members"
+  | "sync_links"
+  | "tracker_meta";
+
+export type RealtimeEventType = "INSERT" | "UPDATE" | "DELETE";
+
 interface ProjectTrackerStore {
   tasks: Task[];
   teamMembers: Record<string, TeamMember>;
@@ -85,8 +103,15 @@ interface ProjectTrackerStore {
   baselinedAt: string | null;
   isInitialized: boolean;
 
-  // Initialization
-  initializeFromDeliverables: () => void;
+  // Hydration / Realtime / lifecycle
+  hydrate: (snapshot: TrackerHydrationSnapshot) => void;
+  mergeRealtimeChange: (
+    table: RealtimeTable,
+    eventType: RealtimeEventType,
+    row: Record<string, unknown> | null,
+    oldRow?: Record<string, unknown> | null,
+  ) => void;
+  clearLocal: () => void;
 
   // Task CRUD
   addTask: (task: Omit<Task, "id" | "createdAt" | "updatedAt" | "sortOrder">) => void;
@@ -138,479 +163,565 @@ const defaultFilters: Filters = {
   search: "",
 };
 
+// ─── Write-through error handler ──────────────────────────────────────────────
+
+/**
+ * Fire-and-forget wrapper used by every write-through mutation. Logs the
+ * error and lets the next Realtime event or explicit refetch reconcile the
+ * local state. We intentionally don't propagate failures to callers — the
+ * action signatures stay synchronous-looking so existing components don't
+ * change.
+ */
+function fireAndForget(label: string, p: Promise<unknown>): void {
+  void p.catch((err) => {
+    console.error(`[tracker-store] ${label} failed`, err);
+  });
+}
+
 // ─── Store ────────────────────────────────────────────────────────────────────
 
-export const useProjectTrackerStore = create<ProjectTrackerStore>()(
-  persist(
-    (set, get) => ({
+export const useProjectTrackerStore = create<ProjectTrackerStore>()((set, get) => ({
+  tasks: [],
+  teamMembers: {},
+  deliverableOverrides: {},
+  syncState: {},
+  syncStatus: {
+    status: "idle",
+    lastSyncedAt: null,
+    lastError: null,
+    lastSummary: null,
+  },
+  syncLog: [],
+  baselinedAt: null,
+  isInitialized: false,
+  filters: { ...defaultFilters },
+
+  hydrate: (snapshot) => {
+    set({
+      tasks: snapshot.tasks,
+      teamMembers: snapshot.teamMembers,
+      deliverableOverrides: snapshot.deliverableOverrides,
+      syncState: snapshot.syncLinks,
+      syncLog: snapshot.syncLog,
+      baselinedAt: snapshot.baselinedAt,
+      isInitialized: true,
+    });
+  },
+
+  mergeRealtimeChange: (table, eventType, row, oldRow) => {
+    const state = get();
+
+    if (table === "project_tasks") {
+      const id =
+        (row?.id as string | undefined) ??
+        (oldRow?.id as string | undefined);
+      if (!id) return;
+      if (eventType === "DELETE") {
+        set({ tasks: state.tasks.filter((t) => t.id !== id) });
+        return;
+      }
+      if (!row) return;
+      const incoming = rowToTask(row as unknown as TaskRow);
+      const existing = state.tasks.find((t) => t.id === id);
+      // If our local copy is newer (we just wrote), don't clobber.
+      if (existing && existing.updatedAt && incoming.updatedAt) {
+        if (Date.parse(existing.updatedAt) > Date.parse(incoming.updatedAt)) {
+          return;
+        }
+      }
+      if (existing) {
+        set({
+          tasks: state.tasks.map((t) => (t.id === id ? incoming : t)),
+        });
+      } else {
+        set({ tasks: [...state.tasks, incoming] });
+      }
+      return;
+    }
+
+    if (table === "deliverable_overrides") {
+      const deliverableId =
+        (row?.deliverable_id as string | undefined) ??
+        (oldRow?.deliverable_id as string | undefined);
+      if (!deliverableId) return;
+      const overrides = { ...state.deliverableOverrides };
+      if (eventType === "DELETE") {
+        delete overrides[deliverableId];
+        set({ deliverableOverrides: overrides });
+        return;
+      }
+      if (!row) return;
+      overrides[deliverableId] = rowToOverride(
+        row as unknown as DeliverableOverrideRow,
+      );
+      set({ deliverableOverrides: overrides });
+      return;
+    }
+
+    if (table === "team_members") {
+      const id =
+        (row?.id as string | undefined) ??
+        (oldRow?.id as string | undefined);
+      if (!id) return;
+      const members = { ...state.teamMembers };
+      if (eventType === "DELETE") {
+        delete members[id];
+        set({
+          teamMembers: members,
+          // Postgres SET NULL handles the FK on the DB side; mirror in memory.
+          tasks: state.tasks.map((t) =>
+            t.assignee === id ? { ...t, assignee: null } : t,
+          ),
+        });
+        return;
+      }
+      if (!row) return;
+      members[id] = rowToTeamMember(row as unknown as TeamMemberRow);
+      set({ teamMembers: members });
+      return;
+    }
+
+    if (table === "sync_links") {
+      const tableXId =
+        (row?.table_x_id as string | undefined) ??
+        (oldRow?.table_x_id as string | undefined);
+      if (!tableXId) return;
+      const links = { ...state.syncState };
+      if (eventType === "DELETE") {
+        delete links[tableXId];
+        set({ syncState: links });
+        return;
+      }
+      if (!row) return;
+      links[tableXId] = rowToSyncLink(row as unknown as SyncLinkRow);
+      set({ syncState: links });
+      return;
+    }
+
+    if (table === "tracker_meta") {
+      const key = (row?.key as string | undefined) ?? null;
+      if (!key) return;
+      if (key === "baselinedAt") {
+        if (eventType === "DELETE") {
+          set({ baselinedAt: null });
+        } else {
+          const value = row?.value;
+          set({
+            baselinedAt: typeof value === "string" ? (value as string) : null,
+          });
+        }
+      }
+      return;
+    }
+  },
+
+  clearLocal: () => {
+    set({
       tasks: [],
       teamMembers: {},
       deliverableOverrides: {},
       syncState: {},
+      syncLog: [],
+      baselinedAt: null,
+      isInitialized: false,
       syncStatus: {
         status: "idle",
         lastSyncedAt: null,
         lastError: null,
         lastSummary: null,
       },
-      syncLog: [],
-      baselinedAt: null,
-      isInitialized: false,
-      filters: { ...defaultFilters },
+    });
+  },
 
-      initializeFromDeliverables: () => {
-        // Backfill-on-hydrate: runs on every call, seeds only missing top-level
-        // slices. Returning users keep their edits; new slices introduced in
-        // later versions (teamMembers, deliverableOverrides) can be seeded here
-        // without tripping the full reset path.
-        const state = get();
-        const updates: Partial<ProjectTrackerStore> = {};
+  addTask: (taskData) => {
+    const now = new Date().toISOString();
+    const tasks = get().tasks;
+    const maxSort = tasks.reduce((max, t) => Math.max(max, t.sortOrder), 0);
+    const task: Task = {
+      ...taskData,
+      id: nanoid(10),
+      createdAt: now,
+      updatedAt: now,
+      sortOrder: maxSort + 1,
+    };
+    set({ tasks: [...tasks, task] });
+    fireAndForget("insertTask", trackerClient.insertTask(task));
+  },
 
-        if (!state.isInitialized) {
-          updates.tasks = generateInitialTasks();
-          updates.isInitialized = true;
-        }
+  updateTask: (id, updates) => {
+    const now = new Date().toISOString();
+    set({
+      tasks: get().tasks.map((t) =>
+        t.id === id ? { ...t, ...updates, updatedAt: now } : t,
+      ),
+    });
+    fireAndForget("updateTask", trackerClient.updateTask(id, updates));
+  },
 
-        if (!state.teamMembers || Object.keys(state.teamMembers).length === 0) {
-          updates.teamMembers = { ...DEFAULT_TEAM_MEMBERS };
-        }
+  deleteTask: (id) => {
+    set({ tasks: get().tasks.filter((t) => t.id !== id) });
+    fireAndForget("deleteTask", trackerClient.deleteTask(id));
+  },
 
-        if (!state.deliverableOverrides) {
-          updates.deliverableOverrides = {};
-        }
+  moveTask: (taskId, toColumn, newSortOrder) => {
+    const now = new Date().toISOString();
+    const updates: Partial<Task> = {
+      column: toColumn,
+      sortOrder: newSortOrder,
+      completedAt: toColumn === "done" ? now : undefined,
+    };
+    set({
+      tasks: get().tasks.map((t) =>
+        t.id === taskId ? { ...t, ...updates, updatedAt: now } : t,
+      ),
+    });
+    fireAndForget("moveTask", trackerClient.updateTask(taskId, updates));
+  },
 
-        if (!state.syncState) {
-          updates.syncState = {};
-        }
-
-        if (!state.syncLog) {
-          updates.syncLog = [];
-        }
-
-        if (!state.syncStatus) {
-          updates.syncStatus = {
-            status: "idle",
-            lastSyncedAt: null,
-            lastError: null,
-            lastSummary: null,
-          };
-        }
-
-        if (Object.keys(updates).length > 0) {
-          set(updates);
-        }
-      },
-
-      addTask: (taskData) => {
-        const now = new Date().toISOString();
-        const tasks = get().tasks;
-        const maxSort = tasks.reduce((max, t) => Math.max(max, t.sortOrder), 0);
-        const task: Task = {
-          ...taskData,
-          id: nanoid(10),
-          createdAt: now,
-          updatedAt: now,
-          sortOrder: maxSort + 1,
-        };
-        set({ tasks: [...tasks, task] });
-      },
-
-      updateTask: (id, updates) => {
-        set({
-          tasks: get().tasks.map((t) =>
-            t.id === id
-              ? { ...t, ...updates, updatedAt: new Date().toISOString() }
-              : t
-          ),
-        });
-      },
-
-      deleteTask: (id) => {
-        set({ tasks: get().tasks.filter((t) => t.id !== id) });
-      },
-
-      moveTask: (taskId, toColumn, newSortOrder) => {
-        const now = new Date().toISOString();
-        set({
-          tasks: get().tasks.map((t) =>
-            t.id === taskId
-              ? {
-                  ...t,
-                  column: toColumn,
-                  sortOrder: newSortOrder,
-                  updatedAt: now,
-                  completedAt: toColumn === "done" ? now : undefined,
-                }
-              : t
-          ),
-        });
-      },
-
-      addSubtask: (taskId, title) => {
-        const subtask: Subtask = { id: nanoid(8), title, completed: false };
-        set({
-          tasks: get().tasks.map((t) =>
-            t.id === taskId
-              ? { ...t, subtasks: [...t.subtasks, subtask], updatedAt: new Date().toISOString() }
-              : t
-          ),
-        });
-      },
-
-      toggleSubtask: (taskId, subtaskId) => {
-        set({
-          tasks: get().tasks.map((t) =>
-            t.id === taskId
-              ? {
-                  ...t,
-                  subtasks: t.subtasks.map((s) =>
-                    s.id === subtaskId ? { ...s, completed: !s.completed } : s
-                  ),
-                  updatedAt: new Date().toISOString(),
-                }
-              : t
-          ),
-        });
-      },
-
-      removeSubtask: (taskId, subtaskId) => {
-        set({
-          tasks: get().tasks.map((t) =>
-            t.id === taskId
-              ? {
-                  ...t,
-                  subtasks: t.subtasks.filter((s) => s.id !== subtaskId),
-                  updatedAt: new Date().toISOString(),
-                }
-              : t
-          ),
-        });
-      },
-
-      bulkUpdateTasks: (ids, updates) => {
-        const now = new Date().toISOString();
-        set({
-          tasks: get().tasks.map((t) =>
-            ids.includes(t.id) ? { ...t, ...updates, updatedAt: now } : t
-          ),
-        });
-      },
-
-      addTeamMember: (partial) => {
-        const id = nanoid(8);
-        const existing = Object.values(get().teamMembers);
-        const usedColors = new Set(existing.map((m) => m.color));
-        const nextColor =
-          partial.color ??
-          TEAM_COLORS.find((c) => !usedColors.has(c)) ??
-          TEAM_COLORS[existing.length % TEAM_COLORS.length];
-        const member: TeamMember = {
-          id,
-          name: partial.name,
-          role: partial.role,
-          initials: partial.initials ?? computeInitials(partial.name),
-          color: nextColor,
-          company: partial.company,
-          title: partial.title,
-          email: partial.email,
-          phone: partial.phone,
-          notes: partial.notes,
-        };
-        set({ teamMembers: { ...get().teamMembers, [id]: member } });
-        return id;
-      },
-
-      updateTeamMember: (id, updates) => {
-        const current = get().teamMembers[id];
-        if (!current) return;
-        // Auto-update initials if name changed and initials weren't manually set.
-        const next: TeamMember = { ...current, ...updates };
-        if (updates.name && !updates.initials && current.initials === computeInitials(current.name)) {
-          next.initials = computeInitials(updates.name);
-        }
-        set({ teamMembers: { ...get().teamMembers, [id]: next } });
-      },
-
-      deleteTeamMember: (id) => {
-        // Cascade: unassign any task referencing this member.
-        const now = new Date().toISOString();
-        const { [id]: _removed, ...remainingMembers } = get().teamMembers;
-        set({
-          teamMembers: remainingMembers,
-          tasks: get().tasks.map((t) =>
-            t.assignee === id ? { ...t, assignee: null, updatedAt: now } : t
-          ),
-        });
-      },
-
-      setRationale: (deliverableId, rationale) => {
-        const overrides = get().deliverableOverrides;
-        const current = overrides[deliverableId] ?? { deliverableId };
-        set({
-          deliverableOverrides: {
-            ...overrides,
-            [deliverableId]: { ...current, rationale: rationale.trim() || undefined },
-          },
-        });
-      },
-
-      setDaysOverride: (deliverableId, days) => {
-        const overrides = get().deliverableOverrides;
-        const current = overrides[deliverableId] ?? { deliverableId };
-        set({
-          deliverableOverrides: {
-            ...overrides,
-            [deliverableId]: { ...current, daysOverride: days },
-          },
-        });
-      },
-
-      setManualStatus: (deliverableId, status) => {
-        const overrides = get().deliverableOverrides;
-        const current = overrides[deliverableId] ?? { deliverableId };
-        set({
-          deliverableOverrides: {
-            ...overrides,
-            [deliverableId]: { ...current, manualStatus: status ?? undefined },
-          },
-        });
-      },
-
-      setBaseline: (deliverableId, days) => {
-        const overrides = get().deliverableOverrides;
-        const current = overrides[deliverableId] ?? { deliverableId };
-        set({
-          deliverableOverrides: {
-            ...overrides,
-            [deliverableId]: { ...current, baselineDays: days },
-          },
-        });
-      },
-
-      clearBaseline: (deliverableId) => {
-        const overrides = get().deliverableOverrides;
-        const current = overrides[deliverableId];
-        if (!current) return;
-        set({
-          deliverableOverrides: {
-            ...overrides,
-            [deliverableId]: { ...current, baselineDays: null },
-          },
-        });
-      },
-
-      saveAllBaselines: () => {
-        const state = get();
-        const overrides = { ...state.deliverableOverrides };
-        for (const d of DELIVERABLES) {
-          const override = overrides[d.id] ?? { deliverableId: d.id };
-          const days = getDeliverableDays(d, override);
-          overrides[d.id] = { ...override, baselineDays: days };
-        }
-        set({
-          deliverableOverrides: overrides,
-          baselinedAt: new Date().toISOString(),
-        });
-      },
-
-      clearAllBaselines: () => {
-        const overrides = { ...get().deliverableOverrides };
-        for (const id of Object.keys(overrides)) {
-          overrides[id] = { ...overrides[id], baselineDays: null };
-        }
-        set({ deliverableOverrides: overrides, baselinedAt: null });
-      },
-
-      setSyncLink: (tableXId, mondayItemId) => {
-        const syncState = get().syncState;
-        const current = syncState[tableXId] ?? {
-          mondayItemId: null,
-          lastSyncedAt: null,
-          lastMondayUpdatedAt: null,
-        };
-        set({
-          syncState: {
-            ...syncState,
-            [tableXId]: {
-              ...current,
-              mondayItemId,
-              lastSyncedAt: new Date().toISOString(),
-            },
-          },
-        });
-      },
-
-      applySyncPatches: ({
-        syncedAt,
-        taskPatches,
-        overridePatches,
-        pushedTaskIds,
-        pushedDeliverableIds,
-        linkUpdates,
-      }) => {
-        const state = get();
-
-        // Apply pulled task patches WITHOUT bumping updatedAt to "now" — use
-        // syncedAt so the next reconcile sees the task as already in sync.
-        const tasksById = new Map(state.tasks.map((t) => [t.id, t]));
-        for (const { taskId, patch } of taskPatches) {
-          const current = tasksById.get(taskId);
-          if (!current) continue;
-          tasksById.set(taskId, { ...current, ...patch, updatedAt: syncedAt });
-        }
-        const tasks = Array.from(tasksById.values());
-
-        // Apply pulled override patches.
-        const overrides = { ...state.deliverableOverrides };
-        for (const { deliverableId, patch } of overridePatches) {
-          const current = overrides[deliverableId] ?? { deliverableId };
-          overrides[deliverableId] = { ...current, ...patch };
-        }
-
-        // Build the merged syncState. Touch every record we either pulled,
-        // pushed, or just linked — set lastSyncedAt to syncedAt and
-        // lastMondayUpdatedAt to whatever we just observed.
-        const syncState = { ...state.syncState };
-        const touch = (
-          tableXId: string,
-          mondayItemId: string,
-          mondayUpdatedAt: string | null,
-        ) => {
-          const current = syncState[tableXId] ?? {
-            mondayItemId: null,
-            lastSyncedAt: null,
-            lastMondayUpdatedAt: null,
-          };
-          syncState[tableXId] = {
-            ...current,
-            mondayItemId,
-            lastSyncedAt: syncedAt,
-            lastMondayUpdatedAt:
-              mondayUpdatedAt ?? current.lastMondayUpdatedAt ?? syncedAt,
-          };
-        };
-
-        for (const p of taskPatches) {
-          touch(p.taskId, p.mondayItemId, p.mondayUpdatedAt);
-        }
-        for (const p of overridePatches) {
-          touch(p.deliverableId, p.mondayItemId, p.mondayUpdatedAt);
-        }
-        for (const l of linkUpdates) {
-          touch(l.tableXId, l.mondayItemId, l.mondayUpdatedAt);
-        }
-        // Pushed records: we don't have a fresh Monday updated_at without a
-        // re-fetch, so approximate with syncedAt. Next pull aligns it.
-        for (const taskId of pushedTaskIds) {
-          const link = syncState[taskId];
-          if (link?.mondayItemId) touch(taskId, link.mondayItemId, syncedAt);
-        }
-        for (const deliverableId of pushedDeliverableIds) {
-          const link = syncState[deliverableId];
-          if (link?.mondayItemId) {
-            touch(deliverableId, link.mondayItemId, syncedAt);
-          }
-        }
-
-        set({ tasks, deliverableOverrides: overrides, syncState });
-      },
-
-      setSyncStatus: (updates) => {
-        set({ syncStatus: { ...get().syncStatus, ...updates } });
-      },
-
-      appendSyncLog: (entries) => {
-        if (entries.length === 0) return;
-        const merged = [...entries, ...get().syncLog].slice(0, 50);
-        set({ syncLog: merged });
-      },
-
-      recordSync: (tableXId, mondayUpdatedAt) => {
-        const syncState = get().syncState;
-        const current = syncState[tableXId] ?? {
-          mondayItemId: null,
-          lastSyncedAt: null,
-          lastMondayUpdatedAt: null,
-        };
-        set({
-          syncState: {
-            ...syncState,
-            [tableXId]: {
-              ...current,
-              lastSyncedAt: new Date().toISOString(),
-              lastMondayUpdatedAt: mondayUpdatedAt,
-            },
-          },
-        });
-      },
-
-      setFilter: (key, value) => {
-        set({ filters: { ...get().filters, [key]: value } });
-      },
-
-      resetFilters: () => {
-        set({ filters: { ...defaultFilters } });
-      },
-    }),
-    {
-      name: "tablex-project-tracker-v1",
-      version: 6,
-      partialize: (state) => ({
-        tasks: state.tasks,
-        teamMembers: state.teamMembers,
-        deliverableOverrides: state.deliverableOverrides,
-        syncState: state.syncState,
-        syncLog: state.syncLog,
-        baselinedAt: state.baselinedAt,
-        isInitialized: state.isInitialized,
-        // syncStatus is intentionally NOT persisted — transient UI state.
+  addSubtask: (taskId, title) => {
+    const subtask: Subtask = { id: nanoid(8), title, completed: false };
+    const now = new Date().toISOString();
+    let nextSubtasks: Subtask[] = [];
+    set({
+      tasks: get().tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        nextSubtasks = [...t.subtasks, subtask];
+        return { ...t, subtasks: nextSubtasks, updatedAt: now };
       }),
-      migrate: (persistedState, version) => {
-        // Shape-preserving migrations. Zustand types persistedState loosely
-        // because older shapes may differ; we mutate known fields in place
-        // and hand it back.
-        // v5 → v6: rewrite initial-seed task ids from nanoid to the
-        // deterministic ${deliverableId}-r${idx} scheme so the External ID
-        // column on Monday lines up with task.id. Tasks whose title no
-        // longer matches any requirement (user renamed them or they're
-        // user-created) keep their existing id. syncState keys are
-        // rewritten in lock-step so sync links survive.
-        if (version < 6 && persistedState && typeof persistedState === "object") {
-          const s = persistedState as {
-            tasks?: Task[];
-            syncState?: Record<string, SyncLink>;
-          };
-          if (Array.isArray(s.tasks)) {
-            const idRewrites = new Map<string, string>();
-            s.tasks = s.tasks.map((task) => {
-              const deliverable = DELIVERABLES.find(
-                (d) => d.id === task.deliverableId,
-              );
-              if (!deliverable) return task;
-              const idx = deliverable.requirements.indexOf(task.title);
-              if (idx === -1) return task;
-              const newId = seedTaskId(deliverable.id, idx);
-              if (newId === task.id) return task;
-              idRewrites.set(task.id, newId);
-              return { ...task, id: newId };
-            });
+    });
+    fireAndForget(
+      "addSubtask",
+      trackerClient.persistSubtasks(taskId, nextSubtasks),
+    );
+  },
 
-            if (idRewrites.size > 0 && s.syncState) {
-              const rewrittenSync: Record<string, SyncLink> = {};
-              for (const [oldId, link] of Object.entries(s.syncState)) {
-                rewrittenSync[idRewrites.get(oldId) ?? oldId] = link;
-              }
-              s.syncState = rewrittenSync;
-            }
-          }
-        }
+  toggleSubtask: (taskId, subtaskId) => {
+    const now = new Date().toISOString();
+    let nextSubtasks: Subtask[] = [];
+    set({
+      tasks: get().tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        nextSubtasks = t.subtasks.map((s) =>
+          s.id === subtaskId ? { ...s, completed: !s.completed } : s,
+        );
+        return { ...t, subtasks: nextSubtasks, updatedAt: now };
+      }),
+    });
+    fireAndForget(
+      "toggleSubtask",
+      trackerClient.persistSubtasks(taskId, nextSubtasks),
+    );
+  },
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return persistedState as any;
-      },
+  removeSubtask: (taskId, subtaskId) => {
+    const now = new Date().toISOString();
+    let nextSubtasks: Subtask[] = [];
+    set({
+      tasks: get().tasks.map((t) => {
+        if (t.id !== taskId) return t;
+        nextSubtasks = t.subtasks.filter((s) => s.id !== subtaskId);
+        return { ...t, subtasks: nextSubtasks, updatedAt: now };
+      }),
+    });
+    fireAndForget(
+      "removeSubtask",
+      trackerClient.persistSubtasks(taskId, nextSubtasks),
+    );
+  },
+
+  bulkUpdateTasks: (ids, updates) => {
+    const now = new Date().toISOString();
+    set({
+      tasks: get().tasks.map((t) =>
+        ids.includes(t.id) ? { ...t, ...updates, updatedAt: now } : t,
+      ),
+    });
+    fireAndForget(
+      "bulkUpdateTasks",
+      trackerClient.bulkUpdateTasks(ids, updates),
+    );
+  },
+
+  addTeamMember: (partial) => {
+    const id = nanoid(8);
+    const existing = Object.values(get().teamMembers);
+    const usedColors = new Set(existing.map((m) => m.color));
+    const nextColor =
+      partial.color ??
+      TEAM_COLORS.find((c) => !usedColors.has(c)) ??
+      TEAM_COLORS[existing.length % TEAM_COLORS.length];
+    const member: TeamMember = {
+      id,
+      name: partial.name,
+      role: partial.role,
+      initials: partial.initials ?? computeInitials(partial.name),
+      color: nextColor,
+      company: partial.company,
+      title: partial.title,
+      email: partial.email,
+      phone: partial.phone,
+      notes: partial.notes,
+    };
+    set({ teamMembers: { ...get().teamMembers, [id]: member } });
+    fireAndForget("addTeamMember", trackerClient.addTeamMember(member));
+    return id;
+  },
+
+  updateTeamMember: (id, updates) => {
+    const current = get().teamMembers[id];
+    if (!current) return;
+    const next: TeamMember = { ...current, ...updates };
+    if (updates.name && !updates.initials && current.initials === computeInitials(current.name)) {
+      next.initials = computeInitials(updates.name);
     }
-  )
-);
+    set({ teamMembers: { ...get().teamMembers, [id]: next } });
+    // Send the same delta we set locally (initials may have been auto-derived).
+    const persistedUpdates: Partial<Omit<TeamMember, "id">> = { ...updates };
+    if (next.initials !== current.initials && updates.initials === undefined) {
+      persistedUpdates.initials = next.initials;
+    }
+    fireAndForget(
+      "updateTeamMember",
+      trackerClient.updateTeamMember(id, persistedUpdates),
+    );
+  },
+
+  deleteTeamMember: (id) => {
+    // Cascade: unassign any task referencing this member. Postgres mirrors
+    // this server-side via ON DELETE SET NULL on the assignee FK.
+    const now = new Date().toISOString();
+    const { [id]: _removed, ...remainingMembers } = get().teamMembers;
+    void _removed;
+    set({
+      teamMembers: remainingMembers,
+      tasks: get().tasks.map((t) =>
+        t.assignee === id ? { ...t, assignee: null, updatedAt: now } : t,
+      ),
+    });
+    fireAndForget("deleteTeamMember", trackerClient.deleteTeamMember(id));
+  },
+
+  setRationale: (deliverableId, rationale) => {
+    const overrides = get().deliverableOverrides;
+    const current = overrides[deliverableId] ?? { deliverableId };
+    const next = { ...current, rationale: rationale.trim() || undefined };
+    set({
+      deliverableOverrides: { ...overrides, [deliverableId]: next },
+    });
+    fireAndForget("setRationale", trackerClient.upsertOverride(next));
+  },
+
+  setDaysOverride: (deliverableId, days) => {
+    const overrides = get().deliverableOverrides;
+    const current = overrides[deliverableId] ?? { deliverableId };
+    const next = { ...current, daysOverride: days };
+    set({
+      deliverableOverrides: { ...overrides, [deliverableId]: next },
+    });
+    fireAndForget("setDaysOverride", trackerClient.upsertOverride(next));
+  },
+
+  setManualStatus: (deliverableId, status) => {
+    const overrides = get().deliverableOverrides;
+    const current = overrides[deliverableId] ?? { deliverableId };
+    const next = { ...current, manualStatus: status ?? undefined };
+    set({
+      deliverableOverrides: { ...overrides, [deliverableId]: next },
+    });
+    fireAndForget("setManualStatus", trackerClient.upsertOverride(next));
+  },
+
+  setBaseline: (deliverableId, days) => {
+    const overrides = get().deliverableOverrides;
+    const current = overrides[deliverableId] ?? { deliverableId };
+    const next = { ...current, baselineDays: days };
+    set({
+      deliverableOverrides: { ...overrides, [deliverableId]: next },
+    });
+    fireAndForget("setBaseline", trackerClient.upsertOverride(next));
+  },
+
+  clearBaseline: (deliverableId) => {
+    const overrides = get().deliverableOverrides;
+    const current = overrides[deliverableId];
+    if (!current) return;
+    const next = { ...current, baselineDays: null };
+    set({
+      deliverableOverrides: { ...overrides, [deliverableId]: next },
+    });
+    fireAndForget("clearBaseline", trackerClient.upsertOverride(next));
+  },
+
+  saveAllBaselines: () => {
+    const state = get();
+    const overrides = { ...state.deliverableOverrides };
+    const baselinedAt = new Date().toISOString();
+    const updated: DeliverableOverride[] = [];
+    for (const d of DELIVERABLES) {
+      const override = overrides[d.id] ?? { deliverableId: d.id };
+      const days = getDeliverableDays(d, override);
+      const next = { ...override, baselineDays: days };
+      overrides[d.id] = next;
+      updated.push(next);
+    }
+    set({ deliverableOverrides: overrides, baselinedAt });
+    fireAndForget(
+      "saveAllBaselines",
+      Promise.all([
+        trackerClient.bulkUpsertOverrides(updated),
+        trackerClient.setMeta("baselinedAt", baselinedAt),
+      ]),
+    );
+  },
+
+  clearAllBaselines: () => {
+    const overrides = { ...get().deliverableOverrides };
+    for (const id of Object.keys(overrides)) {
+      overrides[id] = { ...overrides[id], baselineDays: null };
+    }
+    set({ deliverableOverrides: overrides, baselinedAt: null });
+    fireAndForget(
+      "clearAllBaselines",
+      Promise.all([
+        trackerClient.clearAllBaselines(),
+        trackerClient.setMeta("baselinedAt", null),
+      ]),
+    );
+  },
+
+  setSyncLink: (tableXId, mondayItemId) => {
+    const syncState = get().syncState;
+    const current = syncState[tableXId] ?? {
+      mondayItemId: null,
+      lastSyncedAt: null,
+      lastMondayUpdatedAt: null,
+    };
+    const next: SyncLink = {
+      ...current,
+      mondayItemId,
+      lastSyncedAt: new Date().toISOString(),
+    };
+    set({
+      syncState: { ...syncState, [tableXId]: next },
+    });
+    fireAndForget("setSyncLink", trackerClient.upsertSyncLink(tableXId, next));
+  },
+
+  applySyncPatches: ({
+    syncedAt,
+    taskPatches,
+    overridePatches,
+    pushedTaskIds,
+    pushedDeliverableIds,
+    linkUpdates,
+  }) => {
+    const state = get();
+
+    // Apply pulled task patches WITHOUT bumping updatedAt to "now" — use
+    // syncedAt so the next reconcile sees the task as already in sync.
+    const tasksById = new Map(state.tasks.map((t) => [t.id, t]));
+    for (const { taskId, patch } of taskPatches) {
+      const current = tasksById.get(taskId);
+      if (!current) continue;
+      tasksById.set(taskId, { ...current, ...patch, updatedAt: syncedAt });
+    }
+    const tasks = Array.from(tasksById.values());
+
+    // Apply pulled override patches.
+    const overrides = { ...state.deliverableOverrides };
+    for (const { deliverableId, patch } of overridePatches) {
+      const current = overrides[deliverableId] ?? { deliverableId };
+      overrides[deliverableId] = { ...current, ...patch };
+    }
+
+    // Build the merged syncState. Touch every record we either pulled,
+    // pushed, or just linked — set lastSyncedAt to syncedAt and
+    // lastMondayUpdatedAt to whatever we just observed.
+    const syncState = { ...state.syncState };
+    const touch = (
+      tableXId: string,
+      mondayItemId: string,
+      mondayUpdatedAt: string | null,
+    ) => {
+      const current = syncState[tableXId] ?? {
+        mondayItemId: null,
+        lastSyncedAt: null,
+        lastMondayUpdatedAt: null,
+      };
+      syncState[tableXId] = {
+        ...current,
+        mondayItemId,
+        lastSyncedAt: syncedAt,
+        lastMondayUpdatedAt:
+          mondayUpdatedAt ?? current.lastMondayUpdatedAt ?? syncedAt,
+      };
+    };
+
+    for (const p of taskPatches) {
+      touch(p.taskId, p.mondayItemId, p.mondayUpdatedAt);
+    }
+    for (const p of overridePatches) {
+      touch(p.deliverableId, p.mondayItemId, p.mondayUpdatedAt);
+    }
+    for (const l of linkUpdates) {
+      touch(l.tableXId, l.mondayItemId, l.mondayUpdatedAt);
+    }
+    for (const taskId of pushedTaskIds) {
+      const link = syncState[taskId];
+      if (link?.mondayItemId) touch(taskId, link.mondayItemId, syncedAt);
+    }
+    for (const deliverableId of pushedDeliverableIds) {
+      const link = syncState[deliverableId];
+      if (link?.mondayItemId) {
+        touch(deliverableId, link.mondayItemId, syncedAt);
+      }
+    }
+
+    set({ tasks, deliverableOverrides: overrides, syncState });
+
+    // Note: we don't write-through to Supabase from here — the new
+    // server-driven sync route (task #1, owned by `sync` teammate) writes
+    // patches/overrides/links/log entries directly via the admin client.
+    // This action stays as the local-state applier for the in-flight client
+    // (matching today's behavior). Realtime backfills any drift.
+  },
+
+  setSyncStatus: (updates) => {
+    set({ syncStatus: { ...get().syncStatus, ...updates } });
+  },
+
+  appendSyncLog: (entries) => {
+    if (entries.length === 0) return;
+    const merged = [...entries, ...get().syncLog].slice(0, 50);
+    set({ syncLog: merged });
+  },
+
+  recordSync: (tableXId, mondayUpdatedAt) => {
+    const syncState = get().syncState;
+    const current = syncState[tableXId] ?? {
+      mondayItemId: null,
+      lastSyncedAt: null,
+      lastMondayUpdatedAt: null,
+    };
+    const next: SyncLink = {
+      ...current,
+      lastSyncedAt: new Date().toISOString(),
+      lastMondayUpdatedAt: mondayUpdatedAt,
+    };
+    set({
+      syncState: { ...syncState, [tableXId]: next },
+    });
+    fireAndForget("recordSync", trackerClient.upsertSyncLink(tableXId, next));
+  },
+
+  setFilter: (key, value) => {
+    set({ filters: { ...get().filters, [key]: value } });
+  },
+
+  resetFilters: () => {
+    set({ filters: { ...defaultFilters } });
+  },
+}));
 
 // ─── Derived selectors / hooks ────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
 import { type Task, type KanbanColumn } from "@/data/project-tracker";
 import { KanbanBoard } from "@/components/project/KanbanBoard";
@@ -10,14 +10,10 @@ import { TaskCreateDialog } from "@/components/project/TaskCreateDialog";
 import { Plus } from "lucide-react";
 
 export default function BoardPage() {
-  const { isInitialized, initializeFromDeliverables } = useProjectTrackerStore();
+  const tasks = useProjectTrackerStore((s) => s.tasks);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [createColumn, setCreateColumn] = useState<KanbanColumn>("backlog");
-
-  useEffect(() => {
-    if (!isInitialized) initializeFromDeliverables();
-  }, [isInitialized, initializeFromDeliverables]);
 
   const handleAddTask = (columnId: KanbanColumn) => {
     setCreateColumn(columnId);
@@ -25,7 +21,6 @@ export default function BoardPage() {
   };
 
   // Keep selected task in sync with store
-  const tasks = useProjectTrackerStore((s) => s.tasks);
   const syncedTask = selectedTask ? tasks.find((t) => t.id === selectedTask.id) ?? null : null;
 
   return (

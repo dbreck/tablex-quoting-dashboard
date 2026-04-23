@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   WORKSTREAMS,
   DELIVERABLES,
@@ -53,8 +53,6 @@ const varianceStyle = {
 export default function ProjectScopePage() {
   const {
     tasks,
-    isInitialized,
-    initializeFromDeliverables,
     baselinedAt,
     saveAllBaselines,
     clearAllBaselines,
@@ -64,10 +62,6 @@ export default function ProjectScopePage() {
   const overrides = useDeliverableOverrides();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [confirmBaseline, setConfirmBaseline] = useState(false);
-
-  useEffect(() => {
-    if (!isInitialized) initializeFromDeliverables();
-  }, [isInitialized, initializeFromDeliverables]);
 
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));

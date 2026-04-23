@@ -66,11 +66,7 @@ const DYN_MILESTONES = [
 ];
 
 export default function TimelinePage() {
-  const { tasks, isInitialized, initializeFromDeliverables } = useProjectTrackerStore();
-
-  useEffect(() => {
-    if (!isInitialized) initializeFromDeliverables();
-  }, [isInitialized, initializeFromDeliverables]);
+  const tasks = useProjectTrackerStore((s) => s.tasks);
 
   const [dynStartDate, setDynStartDate] = useState<string>(() => {
     if (typeof window !== "undefined") {

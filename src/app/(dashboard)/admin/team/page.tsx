@@ -9,6 +9,7 @@ import {
 } from "@/data/project-tracker";
 import { cn } from "@/lib/utils";
 import { Plus, Trash2, X, Check } from "lucide-react";
+import { TrackerImportButton } from "@/components/admin/TrackerImportButton";
 
 type DraftMember = Omit<TeamMember, "id">;
 
@@ -68,14 +69,17 @@ export default function AdminTeamPage() {
             Team members assignable to tasks. Deleting a member unassigns them from every task.
           </p>
         </div>
-        <button
-          onClick={startCreate}
-          disabled={creating !== null}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-green px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-green/90 disabled:opacity-40 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          Add team member
-        </button>
+        <div className="flex items-start gap-3">
+          <TrackerImportButton />
+          <button
+            onClick={startCreate}
+            disabled={creating !== null}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-green px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-green/90 disabled:opacity-40 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add team member
+          </button>
+        </div>
       </div>
 
       {/* Avatar grid */}
