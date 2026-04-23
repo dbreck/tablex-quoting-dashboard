@@ -121,6 +121,7 @@ interface ProjectTrackerStore {
   updateTask: (id: string, updates: Partial<Omit<Task, "id" | "createdAt">>) => void;
   deleteTask: (id: string) => void;
   moveTask: (taskId: string, toColumn: KanbanColumn, newSortOrder: number) => void;
+  duplicateTask: (sourceId: string, targetDeliverableId: string) => string | null;
 
   // Subtask operations
   addSubtask: (taskId: string, title: string) => void;
@@ -370,6 +371,30 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()((set, get) =
   deleteTask: (id) => {
     set({ tasks: get().tasks.filter((t) => t.id !== id) });
     fireAndForget("deleteTask", trackerClient.deleteTask(id));
+  },
+
+  duplicateTask: (sourceId, targetDeliverableId) => {
+    const source = get().tasks.find((t) => t.id === sourceId);
+    if (!source) return null;
+    const now = new Date().toISOString();
+    const tasks = get().tasks;
+    const maxSort = tasks.reduce((max, t) => Math.max(max, t.sortOrder), 0);
+    const clone: Task = {
+      ...source,
+      id: nanoid(10),
+      deliverableId: targetDeliverableId,
+      subtasks: source.subtasks.map((s) => ({ ...s, id: nanoid(8) })),
+      acceptanceCriteria: (source.acceptanceCriteria ?? []).map((c) => ({
+        ...c,
+        id: nanoid(8),
+      })),
+      createdAt: now,
+      updatedAt: now,
+      sortOrder: maxSort + 1,
+    };
+    set({ tasks: [...tasks, clone] });
+    fireAndForget("duplicateTask", trackerClient.insertTask(clone));
+    return clone.id;
   },
 
   moveTask: (taskId, toColumn, newSortOrder) => {

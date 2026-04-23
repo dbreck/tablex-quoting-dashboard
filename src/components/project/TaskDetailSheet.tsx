@@ -20,7 +20,9 @@ import {
   CheckCircle2,
   Circle,
   ArrowRight,
+  Copy,
 } from "lucide-react";
+import { WORKSTREAMS } from "@/data/project-phase2";
 
 interface TaskDetailSheetProps {
   task: Task | null;
@@ -31,6 +33,7 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const {
     updateTask,
     deleteTask,
+    duplicateTask,
     addSubtask,
     toggleSubtask,
     removeSubtask,
@@ -42,6 +45,8 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const sprints = useSprints();
   const [newSubtask, setNewSubtask] = useState("");
   const [newCriterion, setNewCriterion] = useState("");
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
+  const [duplicateTarget, setDuplicateTarget] = useState<string>("");
 
   if (!task) return null;
 
@@ -64,6 +69,17 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const handleDelete = () => {
     deleteTask(task.id);
     onClose();
+  };
+
+  const openDuplicate = () => {
+    setDuplicateTarget(task.deliverableId);
+    setDuplicateOpen(true);
+  };
+
+  const handleDuplicate = () => {
+    if (!duplicateTarget) return;
+    duplicateTask(task.id, duplicateTarget);
+    setDuplicateOpen(false);
   };
 
   return (
@@ -93,6 +109,13 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={openDuplicate}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Duplicate task"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+            <button
               onClick={handleDelete}
               className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
               title="Delete task"
@@ -107,6 +130,50 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
             </button>
           </div>
         </div>
+
+        {/* Duplicate panel */}
+        {duplicateOpen && (
+          <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 space-y-2">
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider block">
+              Duplicate to deliverable
+            </label>
+            <div className="flex items-center gap-2">
+              <select
+                value={duplicateTarget}
+                onChange={(e) => setDuplicateTarget(e.target.value)}
+                className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+              >
+                {WORKSTREAMS.map((ws) => {
+                  const opts = DELIVERABLES.filter((d) => d.workstream === ws.id);
+                  if (opts.length === 0) return null;
+                  return (
+                    <optgroup key={ws.id} label={ws.name}>
+                      {opts.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
+                          {d.id === task.deliverableId ? " (current)" : ""}
+                        </option>
+                      ))}
+                    </optgroup>
+                  );
+                })}
+              </select>
+              <button
+                onClick={handleDuplicate}
+                disabled={!duplicateTarget}
+                className="px-3 py-1.5 text-sm font-medium bg-brand-green text-white rounded-lg hover:bg-brand-green/90 disabled:opacity-40 transition-colors"
+              >
+                Duplicate
+              </button>
+              <button
+                onClick={() => setDuplicateOpen(false)}
+                className="px-2 py-1.5 text-sm text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
