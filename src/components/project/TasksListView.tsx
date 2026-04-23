@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
-import { type Task, filterTasks, COLUMNS } from "@/data/project-tracker";
+import { type Task, filterTasks, COLUMNS, compareTasksByDueDate } from "@/data/project-tracker";
 import { WORKSTREAMS, DELIVERABLES, getDeliverablesByWorkstream } from "@/data/project-phase2";
 import { useSprints } from "@/store/sprint-store";
 import { type GroupBy } from "./TasksToolbar";
@@ -207,8 +207,8 @@ export function TasksListView({
               </button>
               {!isCollapsed && (
                 <div className="ml-4 space-y-0.5">
-                  {group.tasks
-                    .sort((a, b) => a.sortOrder - b.sortOrder)
+                  {[...group.tasks]
+                    .sort(compareTasksByDueDate)
                     .map((task) => (
                       <TaskRow
                         key={task.id}

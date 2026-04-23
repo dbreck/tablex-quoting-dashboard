@@ -300,6 +300,18 @@ export function filterTasks(
   });
 }
 
+/**
+ * Sort comparator: ascending by due date, tasks without a due date sort last,
+ * ties broken by sortOrder for stability.
+ */
+export function compareTasksByDueDate(a: Task, b: Task): number {
+  if (!a.dueDate && !b.dueDate) return a.sortOrder - b.sortOrder;
+  if (!a.dueDate) return 1;
+  if (!b.dueDate) return -1;
+  const cmp = a.dueDate.localeCompare(b.dueDate);
+  return cmp !== 0 ? cmp : a.sortOrder - b.sortOrder;
+}
+
 /** Classify a due date relative to today */
 export type DueStatus = "overdue" | "due-soon" | "upcoming" | "none";
 

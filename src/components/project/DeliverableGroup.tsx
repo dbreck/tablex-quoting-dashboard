@@ -1,6 +1,6 @@
 "use client";
 
-import { type Task, getDeliverableProgress } from "@/data/project-tracker";
+import { type Task, getDeliverableProgress, compareTasksByDueDate } from "@/data/project-tracker";
 import { useTeam } from "@/store/project-tracker-store";
 import { type Deliverable, PROJECT_PHASES } from "@/data/project-phase2";
 import { cn } from "@/lib/utils";
@@ -100,8 +100,8 @@ export function DeliverableGroup({
       {/* Tasks */}
       {!collapsed && (
         <div className="ml-2 space-y-0.5">
-          {tasks
-            .sort((a, b) => a.sortOrder - b.sortOrder)
+          {[...tasks]
+            .sort(compareTasksByDueDate)
             .map((task) => (
               <TaskRow
                 key={task.id}

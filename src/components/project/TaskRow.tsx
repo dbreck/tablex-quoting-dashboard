@@ -12,7 +12,7 @@ import {
   formatDueDate,
 } from "@/data/project-tracker";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, ChevronDown, ChevronRight, GripVertical, Calendar } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, ChevronRight, Calendar } from "lucide-react";
 import { TaskRowExpanded } from "./TaskRowExpanded";
 import { SprintBadge } from "./SprintBadge";
 
@@ -23,7 +23,11 @@ const priorityDot: Record<string, string> = {
   low: "bg-gray-300",
 };
 
-const dueChipStyle: Record<string, string> = {
+type DueChipMode = "unset" | "done" | "overdue" | "due-soon" | "upcoming";
+
+const dueChipStyle: Record<DueChipMode, string> = {
+  unset: "bg-gray-50 text-gray-400 border-gray-200 border-dashed",
+  done: "bg-gray-50 text-gray-400 border-gray-200",
   overdue: "bg-red-50 text-red-600 border-red-200",
   "due-soon": "bg-amber-50 text-amber-700 border-amber-200",
   upcoming: "bg-gray-50 text-gray-500 border-gray-200",
@@ -55,6 +59,12 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
     });
   };
 
+  const dueChipMode: DueChipMode = !task.dueDate
+    ? "unset"
+    : isDone
+      ? "done"
+      : (getDueStatus(task) as "overdue" | "due-soon" | "upcoming");
+
   return (
     <div>
       <div
@@ -69,6 +79,18 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
           }
         }}
       >
+        {/* Expand chevron — far left, always visible */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(!expanded);
+          }}
+          className="shrink-0 p-0.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+          title={expanded ? "Collapse" : "Expand"}
+        >
+          {expanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+        </button>
+
         {/* Checkbox */}
         <button
           onClick={toggleDone}
@@ -134,19 +156,31 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
         {/* Sprint badge — hidden for tasks not in a sprint */}
         <SprintBadge sprintId={task.sprintId} />
 
-        {/* Due date chip — hidden for done tasks and tasks with no due date */}
-        {task.dueDate && getDueStatus(task) !== "none" && (
+        {/* Due date chip — always visible, click opens native date picker */}
+        <div
+          className="relative shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
           <span
             className={cn(
-              "flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border shrink-0",
-              dueChipStyle[getDueStatus(task)]
+              "flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border",
+              dueChipStyle[dueChipMode]
             )}
-            title={`Due ${formatDueDate(task.dueDate)}`}
+            title={task.dueDate ? `Due ${formatDueDate(task.dueDate)}` : "Set due date"}
           >
             <Calendar className="h-2.5 w-2.5" />
-            {formatDueDate(task.dueDate)}
+            {task.dueDate ? formatDueDate(task.dueDate) : "Due"}
           </span>
-        )}
+          <input
+            type="date"
+            value={task.dueDate ?? ""}
+            onChange={(e) =>
+              updateTask(task.id, { dueDate: e.target.value || undefined })
+            }
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            aria-label="Due date"
+          />
+        </div>
 
         {/* Priority dot */}
         <span
@@ -189,16 +223,6 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
           ))}
         </select>
 
-        {/* Expand chevron */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded(!expanded);
-          }}
-          className="p-0.5 rounded hover:bg-gray-100 text-gray-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          {expanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-        </button>
       </div>
 
       {/* Inline expanded detail */}
