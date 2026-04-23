@@ -6,7 +6,12 @@ import { WORKSTREAMS } from "@/data/project-phase2";
 import { useSprints } from "@/store/sprint-store";
 import { Search, X } from "lucide-react";
 
-export function FilterBar() {
+interface FilterBarProps {
+  /** Hide the Sprint dropdown (useful on the sprint detail page where sprint is fixed). */
+  hideSprint?: boolean;
+}
+
+export function FilterBar({ hideSprint = false }: FilterBarProps = {}) {
   const { filters, setFilter, resetFilters } = useProjectTrackerStore();
   const team = useTeam();
   const sprints = useSprints();
@@ -14,7 +19,7 @@ export function FilterBar() {
     filters.assignee !== "all" ||
     filters.workstream !== "all" ||
     filters.priority !== "all" ||
-    filters.sprint !== "all" ||
+    (!hideSprint && filters.sprint !== "all") ||
     filters.search !== "";
 
   return (
@@ -69,19 +74,21 @@ export function FilterBar() {
       </select>
 
       {/* Sprint */}
-      <select
-        value={filters.sprint}
-        onChange={(e) => setFilter("sprint", e.target.value as typeof filters.sprint)}
-        className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
-      >
-        <option value="all">All Sprints</option>
-        <option value="none">Unassigned</option>
-        {sprints.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.name}
-          </option>
-        ))}
-      </select>
+      {!hideSprint && (
+        <select
+          value={filters.sprint}
+          onChange={(e) => setFilter("sprint", e.target.value as typeof filters.sprint)}
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+        >
+          <option value="all">All Sprints</option>
+          <option value="none">Unassigned</option>
+          {sprints.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+      )}
 
       {/* Clear filters */}
       {hasFilters && (

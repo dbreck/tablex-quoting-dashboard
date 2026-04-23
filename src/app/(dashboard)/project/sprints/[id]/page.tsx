@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   CircleDashed,
   Trash2,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import {
   LineChart,
@@ -38,8 +40,13 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { TaskRow } from "@/components/project/TaskRow";
 import { TaskDetailSheet } from "@/components/project/TaskDetailSheet";
+import { FilterBar } from "@/components/project/FilterBar";
 import { cn } from "@/lib/utils";
-import type { Task } from "@/data/project-tracker";
+import {
+  filterTasks,
+  compareTasksByDueDate,
+  type Task,
+} from "@/data/project-tracker";
 
 const statusChip: Record<SprintStatus, string> = {
   active: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -63,6 +70,7 @@ export default function SprintDetailPage() {
 
   const sprint = useSprint(sprintId);
   const tasks = useProjectTrackerStore((s) => s.tasks);
+  const filters = useProjectTrackerStore((s) => s.filters);
   const updateSprint = useSprintStore((s) => s.updateSprint);
   const deleteSprint = useSprintStore((s) => s.deleteSprint);
   const loadBurndown = useSprintStore((s) => s.loadBurndownForSprint);
@@ -83,6 +91,16 @@ export default function SprintDetailPage() {
     () => tasks.filter((t) => t.sprintId === sprintId),
     [tasks, sprintId],
   );
+
+  /**
+   * Visible tasks = in-sprint tasks passed through the shared filter bar,
+   * sorted by due date. We override `sprint: "all"` so the global sprint
+   * filter (if set from elsewhere) doesn't zero out this page.
+   */
+  const visibleTasks = useMemo(() => {
+    const filtered = filterTasks(sprintTasks, { ...filters, sprint: "all" });
+    return [...filtered].sort(compareTasksByDueDate);
+  }, [sprintTasks, filters]);
 
   if (!sprint) {
     return (
@@ -149,7 +167,8 @@ export default function SprintDetailPage() {
       <BurndownPanel sprint={sprint} series={series} stats={stats} />
 
       <TasksPanel
-        tasks={sprintTasks}
+        tasks={visibleTasks}
+        totalCount={sprintTasks.length}
         onOpenDetail={(task) => setOpenTask(task)}
       />
 
@@ -298,6 +317,7 @@ interface BurndownPanelProps {
 }
 
 function BurndownPanel({ sprint, series, stats }: BurndownPanelProps) {
+  const [expanded, setExpanded] = useState(false);
   const chartData = useMemo(() => {
     if (!series || series.length === 0) return [];
     const total = stats.totalTasks;
@@ -310,20 +330,31 @@ function BurndownPanel({ sprint, series, stats }: BurndownPanelProps) {
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-5">
-      <div className="flex items-baseline justify-between mb-4">
-        <h2 className="text-sm font-semibold text-slate-900">Burndown</h2>
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="w-full flex items-baseline justify-between gap-3 group"
+      >
+        <span className="flex items-center gap-2">
+          {expanded ? (
+            <ChevronDown className="h-4 w-4 text-slate-400 group-hover:text-slate-600" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600" />
+          )}
+          <h2 className="text-sm font-semibold text-slate-900">Burndown</h2>
+        </span>
         <span className="text-[11px] text-slate-400">
           Snapshots run nightly at 23:59 UTC for active sprints.
         </span>
-      </div>
-      {chartData.length === 0 ? (
-        <div className="h-48 flex items-center justify-center text-xs text-slate-400">
+      </button>
+      {!expanded ? null : chartData.length === 0 ? (
+        <div className="mt-4 h-48 flex items-center justify-center text-xs text-slate-400">
           {sprint.status === "upcoming"
             ? "Burndown will start once this sprint is active."
             : "No snapshots yet for this sprint."}
         </div>
       ) : (
-        <div className="h-64">
+        <div className="mt-4 h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
@@ -380,23 +411,32 @@ function BurndownPanel({ sprint, series, stats }: BurndownPanelProps) {
 
 interface TasksPanelProps {
   tasks: Task[];
+  totalCount: number;
   onOpenDetail: (task: Task) => void;
 }
 
-function TasksPanel({ tasks, onOpenDetail }: TasksPanelProps) {
+function TasksPanel({ tasks, totalCount, onOpenDetail }: TasksPanelProps) {
+  const isFiltered = tasks.length !== totalCount;
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
-      <div className="flex items-baseline justify-between mb-3">
+    <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+      <div className="flex items-baseline justify-between">
         <h2 className="text-sm font-semibold text-slate-900">
-          Tasks ({tasks.length})
+          Tasks ({isFiltered ? `${tasks.length} of ${totalCount}` : totalCount})
         </h2>
         <span className="text-[11px] text-slate-400">
           Assign tasks to this sprint from the Tasks or Board view.
         </span>
       </div>
-      {tasks.length === 0 ? (
+
+      <FilterBar hideSprint />
+
+      {totalCount === 0 ? (
         <p className="py-6 text-center text-xs text-slate-400">
           No tasks in this sprint yet.
+        </p>
+      ) : tasks.length === 0 ? (
+        <p className="py-6 text-center text-xs text-slate-400">
+          No tasks match the current filters.
         </p>
       ) : (
         <div className="divide-y divide-slate-100">
