@@ -10,6 +10,7 @@ import {
   Sparkles,
   FileText,
   HardDrive,
+  Github,
   Shield,
   Link2,
   CircleCheck,
@@ -177,6 +178,29 @@ const GROUPS: ServiceGroup[] = [
     label: "Platform & Hosting",
     icon: Server,
     services: [
+      {
+        id: "github",
+        name: "GitHub",
+        icon: Github,
+        color: "#181717",
+        url: "https://github.com",
+        owner: "danny",
+        canStartNow: "yes",
+        handoffRequired: true,
+        handoffNotes:
+          "Org is owned by whichever GitHub user created it. Long-term: promote a TableX-owned user to Owner and step Danny down to Admin. Billing email can be swapped to digital@tablex.com once forwards work.",
+        costNote: "Free for public/private repos with small team",
+        steps: [
+          { id: "org", label: "Create 'tablex-inc' organization (business/institution type)" },
+          { id: "billing-email", label: "Set billing email (danny@clearph.com for now → digital@tablex.com later)" },
+          { id: "repo", label: "Create 'tablex-site' repo (empty, private)" },
+          { id: "branch-protect", label: "Enable branch protection on main (require PR review + CI)" },
+          { id: "invite-team", label: "Invite Richie, Brian, Arabella (roles: Admin / Member / Member)" },
+          { id: "vercel-link", label: "Authorize the Vercel GitHub app against the org" },
+          { id: "supabase-link", label: "Authorize Supabase GitHub integration for CI preview branches" },
+          { id: "handoff", label: "Promote TableX-owned user to Owner at handoff" },
+        ],
+      },
       {
         id: "vercel",
         name: "Vercel",
