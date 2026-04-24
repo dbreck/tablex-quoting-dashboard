@@ -6,6 +6,8 @@ import { useTrackerHydration } from "@/hooks/useTrackerHydration";
 import { useTrackerRealtime } from "@/hooks/useTrackerRealtime";
 import { useSprintHydration } from "@/hooks/useSprintHydration";
 import { useSprintRealtime } from "@/hooks/useSprintRealtime";
+import { useRisksDecisionsHydration } from "@/hooks/useRisksDecisionsHydration";
+import { useRisksDecisionsRealtime } from "@/hooks/useRisksDecisionsRealtime";
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
@@ -13,6 +15,8 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   useTrackerRealtime();
   useSprintHydration();
   useSprintRealtime();
+  useRisksDecisionsHydration();
+  useRisksDecisionsRealtime();
 
   if (!profile?.can_access_proposal) return null;
 

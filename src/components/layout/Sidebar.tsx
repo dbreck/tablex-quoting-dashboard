@@ -66,6 +66,7 @@ const projectNavItems = [
   { name: "Sprints", href: "/project/sprints", icon: Calendar },
   { name: "Board", href: "/project/board", icon: KanbanSquare },
   { name: "Infra Setup", href: "/project/infrastructure", icon: Server },
+  { name: "Risks & Decisions", href: "/project/risks-decisions", icon: ShieldAlert },
 ];
 
 const overviewItem = { name: "Overview", href: "/overview", icon: LayoutDashboard };
