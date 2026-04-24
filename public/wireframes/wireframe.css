@@ -10,7 +10,8 @@
   --wf-white: #ffffff;
   --wf-accent: #95ff00;
   --wf-annot: #7a6a2a;
-  --wf-hatch: repeating-linear-gradient(135deg, #d9d7cc 0 2px, transparent 2px 9px);
+  --wf-hatch: url("placeholder-light.svg") center/cover no-repeat #c9cfd4;
+  --wf-hatch-dark: url("placeholder-dark.svg") center/cover no-repeat #1b1b1b;
   --wf-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --wf-sans: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
@@ -95,7 +96,7 @@ a { color: inherit; text-decoration: none; }
 /* Image / asset placeholders */
 .ph { background: var(--wf-hatch); border: 1px dashed #aaa; display: flex; align-items: center; justify-content: center;
   font-family: var(--wf-mono); font-size: 10px; color: #666; letter-spacing: .1em; text-transform: uppercase; }
-.ph.dark { background: #222; color: #888; border-color:#444; }
+.ph.dark { background: var(--wf-hatch-dark); color: #888; border-color:#444; }
 
 /* Typographic placeholders */
 .h-bar { height: 14px; background: #111; border-radius: 2px; width: 70%; }
