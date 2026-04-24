@@ -43,6 +43,7 @@ import {
   Crosshair,
   Fingerprint,
   LayoutTemplate,
+  Layers,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -50,6 +51,7 @@ import { UserMenu } from "./UserMenu";
 
 const modes = [
   { id: "project" as const, label: "Project", icon: Crosshair, subtitle: "Project Tracker", dashboardHref: "/project" },
+  { id: "content" as const, label: "Content", icon: Layers, subtitle: "Content & Redesign", dashboardHref: "/content" },
   { id: "analytics" as const, label: "Analytics", icon: BarChart3, subtitle: "Quote Analytics", dashboardHref: "/overview" },
   { id: "quote-builder" as const, label: "Quoting", icon: FilePlus2, subtitle: "Quoting", dashboardHref: "/how-quoting-works" },
 ];
@@ -70,16 +72,11 @@ const overviewItem = { name: "Overview", href: "/overview", icon: LayoutDashboar
 
 const analyticsNavGroups = [
   {
-    label: "Website Redesign",
+    label: "Website Research",
     items: [
       { name: "User Personas", href: "/user-personas", icon: Users },
       { name: "Customer Journey", href: "/customer-journey", icon: Route },
       { name: "WP Site Audit", href: "/wp-site-audit", icon: Globe },
-      { name: "Site Architecture", href: "/site-architecture", icon: Network },
-      { name: "Wireframes", href: "/wireframes", icon: LayoutTemplate },
-      { name: "Product Library", href: "/product-library", icon: Library },
-      { name: "Catalog", href: "/catalog", icon: Package },
-      { name: "Configurator", href: "/configurator", icon: Box },
     ],
   },
   {
@@ -93,6 +90,28 @@ const analyticsNavGroups = [
       { name: "Competitor Analysis", href: "/competitor-analysis", icon: ShieldAlert },
     ],
   },
+];
+
+// ─── Content mode ────────────────────────────────────────────────────────────
+
+const contentNavItems = [
+  { name: "Dashboard", href: "/content", icon: LayoutDashboard, exact: true },
+  { name: "Content Map", href: "/content/map", icon: Network },
+  { name: "Site Architecture", href: "/site-architecture", icon: Layers },
+  { name: "Wireframes", href: "/wireframes", icon: LayoutTemplate },
+  { name: "Product Library", href: "/product-library", icon: Library },
+  { name: "Catalog", href: "/catalog", icon: Package },
+  { name: "Configurator", href: "/configurator", icon: Box },
+];
+
+// Routes that auto-activate Content mode.
+const contentRoutePrefixes = [
+  "/content",
+  "/site-architecture",
+  "/wireframes",
+  "/product-library",
+  "/catalog",
+  "/configurator",
 ];
 
 const builderOverviewItem = { name: "Overview", href: "/how-quoting-works", icon: LayoutDashboard };
@@ -132,6 +151,8 @@ export function Sidebar() {
       // Admin pages keep current mode (don't switch)
     } else if (pathname.startsWith("/project")) {
       setSidebarMode("project");
+    } else if (contentRoutePrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+      setSidebarMode("content");
     } else if (pathname.startsWith("/quote") || pathname === "/quoting-process" || pathname === "/cpq-gap-analysis" || pathname === "/how-quoting-works" || pathname === "/orders" || pathname === "/invoices") {
       setSidebarMode("quote-builder");
     } else {
@@ -170,6 +191,21 @@ export function Sidebar() {
         sidebarOpen ? "w-64" : "w-20"
       )}
     >
+      {/* Floating edge-tab collapse toggle. Sits on the sidebar's right border,
+          vertically centered, always visible regardless of scroll / dev overlays. */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        className="absolute top-1/2 -right-3 -translate-y-1/2 z-50 h-6 w-6 rounded-full bg-[#030609] border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-white/40 transition-colors shadow-lg"
+      >
+        {sidebarOpen ? (
+          <ChevronLeft className="h-3.5 w-3.5" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5" />
+        )}
+      </button>
+
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         <Link href="/project" className="flex items-center gap-3">
@@ -221,6 +257,32 @@ export function Sidebar() {
           /* ── Project Mode ─────────────────────────────────────────── */
           <div className="space-y-0.5">
             {projectNavItems.map((item) => {
+              const isActive = item.exact
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-white/60 hover:bg-white/5 hover:text-white",
+                    !sidebarOpen && "justify-center px-0"
+                  )}
+                  title={!sidebarOpen ? item.name : undefined}
+                >
+                  <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-brand-green")} />
+                  {sidebarOpen && <span>{item.name}</span>}
+                </Link>
+              );
+            })}
+          </div>
+        ) : sidebarMode === "content" ? (
+          /* ── Content Mode ─────────────────────────────────────────── */
+          <div className="space-y-0.5">
+            {contentNavItems.map((item) => {
               const isActive = item.exact
                 ? pathname === item.href
                 : pathname.startsWith(item.href);

@@ -1,8 +1,18 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
-type SidebarMode = "project" | "analytics" | "quote-builder";
+export type SidebarMode =
+  | "project"
+  | "analytics"
+  | "quote-builder"
+  | "content";
 
 interface SidebarContextType {
   sidebarOpen: boolean;
@@ -18,11 +28,36 @@ const SidebarContext = createContext<SidebarContextType>({
   setSidebarMode: () => {},
 });
 
+const OPEN_KEY = "tablex-sidebar-open";
+
 export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpenState] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("analytics");
+
+  // Rehydrate collapse state on mount. Default to open; stored "0" = collapsed.
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(OPEN_KEY);
+      if (stored === "0") setSidebarOpenState(false);
+      else if (stored === "1") setSidebarOpenState(true);
+    } catch {
+      // ignore (SSR, privacy mode)
+    }
+  }, []);
+
+  const setSidebarOpen = (open: boolean) => {
+    setSidebarOpenState(open);
+    try {
+      window.localStorage.setItem(OPEN_KEY, open ? "1" : "0");
+    } catch {
+      // ignore
+    }
+  };
+
   return (
-    <SidebarContext.Provider value={{ sidebarOpen, setSidebarOpen, sidebarMode, setSidebarMode }}>
+    <SidebarContext.Provider
+      value={{ sidebarOpen, setSidebarOpen, sidebarMode, setSidebarMode }}
+    >
       {children}
     </SidebarContext.Provider>
   );
