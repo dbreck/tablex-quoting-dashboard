@@ -12,7 +12,7 @@ import {
   formatDueDate,
 } from "@/data/project-tracker";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, ChevronDown, ChevronRight, Calendar } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, ChevronRight, Calendar, AlertOctagon } from "lucide-react";
 import { TaskRowExpanded } from "./TaskRowExpanded";
 import { SprintBadge } from "./SprintBadge";
 
@@ -151,6 +151,22 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
             <CheckCircle2 className="h-3 w-3" />
             {completedSubtasks}/{totalSubtasks}
           </span>
+        )}
+
+        {/* Blocker chip — only when blocked, click opens detail sheet */}
+        {task.blockerReason && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail(task);
+            }}
+            className="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded border bg-red-50 text-red-700 border-red-200 shrink-0 hover:bg-red-100 transition-colors"
+            title={`Blocked: ${task.blockerReason}`}
+          >
+            <AlertOctagon className="h-2.5 w-2.5" />
+            Blocked
+          </button>
         )}
 
         {/* Sprint badge — hidden for tasks not in a sprint */}

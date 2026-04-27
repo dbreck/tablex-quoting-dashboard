@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ChevronsDownUp, ChevronsUpDown, Eye, EyeOff } from "lucide-react";
+import { AlertOctagon, ChevronsDownUp, ChevronsUpDown, Eye, EyeOff } from "lucide-react";
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
 import { useSprints } from "@/store/sprint-store";
 
@@ -12,10 +12,13 @@ interface TasksToolbarProps {
   onGroupByChange: (v: GroupBy) => void;
   showCompleted: boolean;
   onShowCompletedChange: (v: boolean) => void;
+  blockedOnly: boolean;
+  onBlockedOnlyChange: (v: boolean) => void;
   onExpandAll: () => void;
   onCollapseAll: () => void;
   taskCount: number;
   doneCount: number;
+  blockedCount: number;
 }
 
 export function TasksToolbar({
@@ -23,10 +26,13 @@ export function TasksToolbar({
   onGroupByChange,
   showCompleted,
   onShowCompletedChange,
+  blockedOnly,
+  onBlockedOnlyChange,
   onExpandAll,
   onCollapseAll,
   taskCount,
   doneCount,
+  blockedCount,
 }: TasksToolbarProps) {
   const { filters, setFilter } = useProjectTrackerStore();
   const sprints = useSprints();
@@ -79,6 +85,23 @@ export function TasksToolbar({
       >
         {showCompleted ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
         {showCompleted ? "Showing completed" : "Hiding completed"}
+      </button>
+
+      {/* Blocked only */}
+      <button
+        onClick={() => onBlockedOnlyChange(!blockedOnly)}
+        disabled={blockedCount === 0 && !blockedOnly}
+        className={cn(
+          "flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-colors",
+          blockedOnly
+            ? "bg-red-600 border-red-600 text-white"
+            : "bg-white border-gray-200 text-gray-600 hover:border-red-200 hover:text-red-600",
+          blockedCount === 0 && !blockedOnly && "opacity-40 cursor-not-allowed hover:border-gray-200 hover:text-gray-600",
+        )}
+        title={blockedOnly ? "Showing only blocked tasks" : "Filter to blocked tasks"}
+      >
+        <AlertOctagon className="h-3.5 w-3.5" />
+        Blocked {blockedCount > 0 && <span className="opacity-70">({blockedCount})</span>}
       </button>
 
       {/* Expand/Collapse all */}

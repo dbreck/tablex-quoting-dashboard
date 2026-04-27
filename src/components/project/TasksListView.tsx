@@ -15,6 +15,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 interface TasksListViewProps {
   groupBy: GroupBy;
   showCompleted: boolean;
+  blockedOnly: boolean;
   onOpenDetail: (task: Task) => void;
   collapsedGroups: Set<string>;
   onToggleGroup: (id: string) => void;
@@ -23,6 +24,7 @@ interface TasksListViewProps {
 export function TasksListView({
   groupBy,
   showCompleted,
+  blockedOnly,
   onOpenDetail,
   collapsedGroups,
   onToggleGroup,
@@ -33,14 +35,17 @@ export function TasksListView({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
-  // Apply filters + show/hide completed
+  // Apply filters + show/hide completed + blocked-only toggle
   const filteredTasks = useMemo(() => {
     let result = filterTasks(tasks, filters);
     if (!showCompleted) {
       result = result.filter((t) => t.column !== "done");
     }
+    if (blockedOnly) {
+      result = result.filter((t) => Boolean(t.blockerReason));
+    }
     return result;
-  }, [tasks, filters, showCompleted]);
+  }, [tasks, filters, showCompleted, blockedOnly]);
 
   // Selection handler
   const handleSelect = useCallback(

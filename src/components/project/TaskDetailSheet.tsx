@@ -21,6 +21,7 @@ import {
   Circle,
   ArrowRight,
   Copy,
+  AlertOctagon,
 } from "lucide-react";
 import { WORKSTREAMS } from "@/data/project-phase2";
 
@@ -40,6 +41,7 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
     addAcceptanceCriterion,
     toggleAcceptanceCriterion,
     removeAcceptanceCriterion,
+    setTaskBlocker,
   } = useProjectTrackerStore();
   const team = useTeam();
   const sprints = useSprints();
@@ -47,6 +49,19 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const [newCriterion, setNewCriterion] = useState("");
   const [duplicateOpen, setDuplicateOpen] = useState(false);
   const [duplicateTarget, setDuplicateTarget] = useState<string>("");
+
+  // Blocker editor — local draft, only persisted on Save/Resolve. Reset
+  // during render when the task or its persisted reason changes (React's
+  // recommended pattern over a useEffect+setState).
+  const blockerKey = `${task?.id ?? ""}::${task?.blockerReason ?? ""}`;
+  const [blockerSyncedKey, setBlockerSyncedKey] = useState(blockerKey);
+  const [blockerDraft, setBlockerDraft] = useState(task?.blockerReason ?? "");
+  const [blockerEditing, setBlockerEditing] = useState(false);
+  if (blockerSyncedKey !== blockerKey) {
+    setBlockerSyncedKey(blockerKey);
+    setBlockerDraft(task?.blockerReason ?? "");
+    setBlockerEditing(false);
+  }
 
   if (!task) return null;
 
@@ -284,6 +299,98 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Blocker */}
+          <div>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">
+              Blocker
+            </label>
+            {task.blockerReason ? (
+              <div className="space-y-2">
+                <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2">
+                  <AlertOctagon className="h-4 w-4 mt-0.5 shrink-0" />
+                  <div className="text-xs flex-1">
+                    <p className="font-medium">Blocked</p>
+                    {task.blockedAt && (
+                      <p className="text-red-600/80">
+                        Since {new Date(task.blockedAt).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <textarea
+                  value={blockerDraft}
+                  onChange={(e) => setBlockerDraft(e.target.value)}
+                  rows={3}
+                  className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-y min-h-[5rem] focus:outline-none focus:ring-2 focus:ring-red-300/60"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setTaskBlocker(task.id, blockerDraft)}
+                    disabled={
+                      blockerDraft.trim() === (task.blockerReason ?? "").trim() ||
+                      blockerDraft.trim().length === 0
+                    }
+                    className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-40 transition-colors"
+                  >
+                    Save changes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTaskBlocker(task.id, null)}
+                    className="px-3 py-1.5 text-xs font-medium bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Resolve blocker
+                  </button>
+                </div>
+              </div>
+            ) : blockerEditing ? (
+              <div className="space-y-2">
+                <textarea
+                  autoFocus
+                  value={blockerDraft}
+                  onChange={(e) => setBlockerDraft(e.target.value)}
+                  placeholder="What's blocking this task?"
+                  rows={3}
+                  className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-y min-h-[5rem] focus:outline-none focus:ring-2 focus:ring-red-300/60"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (blockerDraft.trim().length === 0) return;
+                      setTaskBlocker(task.id, blockerDraft);
+                      setBlockerEditing(false);
+                    }}
+                    disabled={blockerDraft.trim().length === 0}
+                    className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-40 transition-colors"
+                  >
+                    Mark blocked
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBlockerDraft("");
+                      setBlockerEditing(false);
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setBlockerEditing(true)}
+                className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-red-600 border border-dashed border-gray-300 hover:border-red-300 rounded-lg px-3 py-2 transition-colors"
+              >
+                <AlertOctagon className="h-3.5 w-3.5" />
+                Mark blocked…
+              </button>
+            )}
           </div>
 
           {/* Labels */}

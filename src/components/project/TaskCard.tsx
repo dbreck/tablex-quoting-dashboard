@@ -9,7 +9,7 @@ import {
 } from "@/data/project-tracker";
 import { useTeam } from "@/store/project-tracker-store";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, GripVertical, MessageSquare, Calendar } from "lucide-react";
+import { CheckCircle2, GripVertical, MessageSquare, Calendar, AlertOctagon } from "lucide-react";
 import { SprintBadge } from "./SprintBadge";
 
 const priorityDot: Record<string, string> = {
@@ -68,6 +68,18 @@ export function TaskCard({ task, onClick, isDragging }: TaskCardProps) {
       <p className="text-sm font-medium text-gray-900 leading-snug mb-2">
         {task.title}
       </p>
+
+      {/* Blocker banner — full-width row when blocked */}
+      {task.blockerReason && (
+        <div
+          className="flex items-start gap-1.5 text-[10px] text-red-700 bg-red-50 border border-red-200 rounded px-1.5 py-1 mb-2"
+          title={task.blockerReason}
+        >
+          <AlertOctagon className="h-3 w-3 mt-px shrink-0" />
+          <span className="font-medium shrink-0">Blocked:</span>
+          <span className="line-clamp-1">{task.blockerReason}</span>
+        </div>
+      )}
 
       {/* Footer row */}
       <div className="flex items-center justify-between">

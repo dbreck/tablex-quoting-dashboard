@@ -48,6 +48,8 @@ export interface TaskRow {
   due_date: string | null;
   sort_order: number;
   started_at: string | null;
+  blocker_reason: string | null;
+  blocked_at: string | null;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -117,6 +119,8 @@ export function rowToTask(row: TaskRow): Task {
     acceptanceCriteria: row.acceptance_criteria ?? [],
     dueDate: row.due_date ?? undefined,
     startedAt: row.started_at ?? undefined,
+    blockerReason: row.blocker_reason,
+    blockedAt: row.blocked_at,
     sortOrder: row.sort_order,
     completedAt: row.completed_at ?? undefined,
     createdAt: row.created_at,
@@ -192,6 +196,8 @@ export function taskToInsertRow(task: Task): Omit<TaskRow, "created_at" | "updat
     acceptance_criteria: task.acceptanceCriteria ?? [],
     due_date: task.dueDate ?? null,
     started_at: task.startedAt ?? null,
+    blocker_reason: task.blockerReason ?? null,
+    blocked_at: task.blockedAt ?? null,
     sort_order: task.sortOrder,
     completed_at: task.completedAt ?? null,
     created_at: task.createdAt,
@@ -220,6 +226,8 @@ export function taskUpdatesToRow(
     row.acceptance_criteria = updates.acceptanceCriteria;
   if (updates.dueDate !== undefined) row.due_date = updates.dueDate ?? null;
   if (updates.startedAt !== undefined) row.started_at = updates.startedAt ?? null;
+  if (updates.blockerReason !== undefined) row.blocker_reason = updates.blockerReason ?? null;
+  if (updates.blockedAt !== undefined) row.blocked_at = updates.blockedAt ?? null;
   if (updates.sortOrder !== undefined) row.sort_order = updates.sortOrder;
   if (updates.completedAt !== undefined) row.completed_at = updates.completedAt ?? null;
   return row;

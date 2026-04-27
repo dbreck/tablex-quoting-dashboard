@@ -14,6 +14,7 @@ export default function TasksPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [groupBy, setGroupBy] = useState<GroupBy>("workstream");
   const [showCompleted, setShowCompleted] = useState(true);
+  const [blockedOnly, setBlockedOnly] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
   const handleToggleGroup = useCallback((id: string) => {
@@ -51,6 +52,7 @@ export default function TasksPage() {
   const syncedTask = selectedTask ? tasks.find((t) => t.id === selectedTask.id) ?? null : null;
 
   const doneCount = tasks.filter((t) => t.column === "done").length;
+  const blockedCount = tasks.filter((t) => Boolean(t.blockerReason)).length;
 
   return (
     <div className="space-y-5">
@@ -71,16 +73,20 @@ export default function TasksPage() {
         onGroupByChange={setGroupBy}
         showCompleted={showCompleted}
         onShowCompletedChange={setShowCompleted}
+        blockedOnly={blockedOnly}
+        onBlockedOnlyChange={setBlockedOnly}
         onExpandAll={handleExpandAll}
         onCollapseAll={handleCollapseAll}
         taskCount={tasks.length}
         doneCount={doneCount}
+        blockedCount={blockedCount}
       />
 
       {/* Task list */}
       <TasksListView
         groupBy={groupBy}
         showCompleted={showCompleted}
+        blockedOnly={blockedOnly}
         onOpenDetail={setSelectedTask}
         collapsedGroups={collapsedGroups}
         onToggleGroup={handleToggleGroup}

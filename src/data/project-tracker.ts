@@ -42,6 +42,10 @@ export interface Task {
    * once set. Used by the sprint timeline to draw Gantt bars. Not user-editable.
    */
   startedAt?: string;
+  /** Free-text explanation of why the task is blocked. Null/undefined = not blocked. */
+  blockerReason?: string | null;
+  /** ISO timestamp when the blocker was raised. Cleared when resolved. */
+  blockedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   completedAt?: string;

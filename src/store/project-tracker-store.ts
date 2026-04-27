@@ -133,6 +133,9 @@ interface ProjectTrackerStore {
   toggleAcceptanceCriterion: (taskId: string, criterionId: string) => void;
   removeAcceptanceCriterion: (taskId: string, criterionId: string) => void;
 
+  // Blocker (set reason to null/empty to clear)
+  setTaskBlocker: (taskId: string, reason: string | null) => void;
+
   // Bulk operations
   bulkUpdateTasks: (ids: string[], updates: Partial<Omit<Task, "id" | "createdAt">>) => void;
 
@@ -532,6 +535,27 @@ export const useProjectTrackerStore = create<ProjectTrackerStore>()((set, get) =
       "removeAcceptanceCriterion",
       trackerClient.persistAcceptanceCriteria(taskId, next),
     );
+  },
+
+  setTaskBlocker: (taskId, reason) => {
+    const trimmed = reason?.trim() ?? "";
+    const now = new Date().toISOString();
+    const current = get().tasks.find((t) => t.id === taskId);
+    if (!current) return;
+    const isClearing = trimmed.length === 0;
+    const updates: Partial<Task> = isClearing
+      ? { blockerReason: null, blockedAt: null }
+      : {
+          blockerReason: trimmed,
+          // Preserve the original blockedAt if already raised; only stamp on first raise.
+          blockedAt: current.blockedAt ?? now,
+        };
+    set({
+      tasks: get().tasks.map((t) =>
+        t.id === taskId ? { ...t, ...updates, updatedAt: now } : t,
+      ),
+    });
+    fireAndForget("setTaskBlocker", trackerClient.updateTask(taskId, updates));
   },
 
   bulkUpdateTasks: (ids, updates) => {
