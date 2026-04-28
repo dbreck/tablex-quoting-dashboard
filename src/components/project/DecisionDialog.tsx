@@ -61,9 +61,13 @@ export function DecisionDialog({ open, onOpenChange, decision }: DecisionDialogP
   const [decidedOn, setDecidedOn] = useState(todayISO());
   const [reversibility, setReversibility] = useState<Reversibility>("two_way_door");
   const [status, setStatus] = useState<DecisionStatus>("proposed");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
+    setError(null);
+    setSubmitting(false);
     if (decision) {
       setTitle(decision.title);
       setContext(decision.context ?? "");
@@ -100,56 +104,71 @@ export function DecisionDialog({ open, onOpenChange, decision }: DecisionDialogP
     decision.reversibility === "one_way_door" &&
     (decision.status === "approved" || decision.status === "implemented");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmedTitle = title.trim();
     if (!trimmedTitle) return;
     if (!decidedOn) return;
 
-    if (isEdit && decision) {
-      updateDecision(decision.id, {
-        title: trimmedTitle,
-        context: context.trim() || undefined,
-        optionsConsidered: optionsConsidered.trim() || undefined,
-        decision: decisionText.trim() || undefined,
-        consequences: consequences.trim() || undefined,
-        deliverableId: deliverableId || undefined,
-        taskId: taskId.trim() || undefined,
-        decidedByMemberId: decidedByMemberId || undefined,
-        decidedByExternal: decidedByExternal.trim() || undefined,
-        decidedOn,
-        reversibility,
-        status,
-      });
-    } else {
-      const now = new Date().toISOString();
-      const newDecision: Decision = {
-        id: makeDecisionId(nanoid(10)),
-        title: trimmedTitle,
-        context: context.trim() || undefined,
-        optionsConsidered: optionsConsidered.trim() || undefined,
-        decision: decisionText.trim() || undefined,
-        consequences: consequences.trim() || undefined,
-        deliverableId: deliverableId || undefined,
-        taskId: taskId.trim() || undefined,
-        decidedByMemberId: decidedByMemberId || undefined,
-        decidedByExternal: decidedByExternal.trim() || undefined,
-        decidedOn,
-        reversibility,
-        status,
-        createdAt: now,
-        updatedAt: now,
-      };
-      addDecision(newDecision);
+    setSubmitting(true);
+    setError(null);
+    try {
+      if (isEdit && decision) {
+        await updateDecision(decision.id, {
+          title: trimmedTitle,
+          context: context.trim() || undefined,
+          optionsConsidered: optionsConsidered.trim() || undefined,
+          decision: decisionText.trim() || undefined,
+          consequences: consequences.trim() || undefined,
+          deliverableId: deliverableId || undefined,
+          taskId: taskId.trim() || undefined,
+          decidedByMemberId: decidedByMemberId || undefined,
+          decidedByExternal: decidedByExternal.trim() || undefined,
+          decidedOn,
+          reversibility,
+          status,
+        });
+      } else {
+        const now = new Date().toISOString();
+        const newDecision: Decision = {
+          id: makeDecisionId(nanoid(10)),
+          title: trimmedTitle,
+          context: context.trim() || undefined,
+          optionsConsidered: optionsConsidered.trim() || undefined,
+          decision: decisionText.trim() || undefined,
+          consequences: consequences.trim() || undefined,
+          deliverableId: deliverableId || undefined,
+          taskId: taskId.trim() || undefined,
+          decidedByMemberId: decidedByMemberId || undefined,
+          decidedByExternal: decidedByExternal.trim() || undefined,
+          decidedOn,
+          reversibility,
+          status,
+          createdAt: now,
+          updatedAt: now,
+        };
+        await addDecision(newDecision);
+      }
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save decision");
+    } finally {
+      setSubmitting(false);
     }
-    onOpenChange(false);
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!decision) return;
     if (!confirm(`Delete decision "${decision.title}"? This can't be undone.`)) return;
-    deleteDecision(decision.id);
-    onOpenChange(false);
+    setSubmitting(true);
+    setError(null);
+    try {
+      await deleteDecision(decision.id);
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete decision");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -319,6 +338,12 @@ export function DecisionDialog({ open, onOpenChange, decision }: DecisionDialogP
               </select>
             </div>
           </div>
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+              <span className="font-medium">Couldn&rsquo;t save: </span>
+              {error}
+            </div>
+          )}
           <DialogFooter className="justify-between">
             <div>
               {isEdit && isAdmin && (
@@ -327,6 +352,7 @@ export function DecisionDialog({ open, onOpenChange, decision }: DecisionDialogP
                   variant="ghost"
                   className="text-red-600 hover:bg-red-50 hover:text-red-700"
                   onClick={handleDelete}
+                  disabled={submitting}
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete
@@ -338,11 +364,16 @@ export function DecisionDialog({ open, onOpenChange, decision }: DecisionDialogP
                 type="button"
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
+                disabled={submitting}
               >
                 Cancel
               </Button>
-              <Button type="submit">
-                {isEdit ? "Save changes" : "Log decision"}
+              <Button type="submit" disabled={submitting}>
+                {submitting
+                  ? "Saving…"
+                  : isEdit
+                    ? "Save changes"
+                    : "Log decision"}
               </Button>
             </div>
           </DialogFooter>

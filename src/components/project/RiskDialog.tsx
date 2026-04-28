@@ -57,9 +57,13 @@ export function RiskDialog({ open, onOpenChange, risk }: RiskDialogProps) {
   const [triggerDate, setTriggerDate] = useState<string>("");
   const [mitigationOwner, setMitigationOwner] = useState<string>("");
   const [mitigationPlan, setMitigationPlan] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
+    setError(null);
+    setSubmitting(false);
     if (risk) {
       setTitle(risk.title);
       setDescription(risk.description ?? "");
@@ -85,52 +89,67 @@ export function RiskDialog({ open, onOpenChange, risk }: RiskDialogProps) {
     }
   }, [open, risk]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmedTitle = title.trim();
     if (!trimmedTitle) return;
 
-    if (isEdit && risk) {
-      updateRisk(risk.id, {
-        title: trimmedTitle,
-        description: description.trim() || undefined,
-        deliverableId: deliverableId || undefined,
-        category,
-        probability,
-        impact,
-        status,
-        triggerDate: triggerDate || undefined,
-        mitigationOwner: mitigationOwner || undefined,
-        mitigationPlan: mitigationPlan.trim() || undefined,
-      });
-    } else {
-      const now = new Date().toISOString();
-      const newRisk: Risk = {
-        id: makeRiskId(nanoid(10)),
-        title: trimmedTitle,
-        description: description.trim() || undefined,
-        deliverableId: deliverableId || undefined,
-        category,
-        probability,
-        impact,
-        severity: probability * impact,
-        status,
-        triggerDate: triggerDate || undefined,
-        mitigationOwner: mitigationOwner || undefined,
-        mitigationPlan: mitigationPlan.trim() || undefined,
-        createdAt: now,
-        updatedAt: now,
-      };
-      addRisk(newRisk);
+    setSubmitting(true);
+    setError(null);
+    try {
+      if (isEdit && risk) {
+        await updateRisk(risk.id, {
+          title: trimmedTitle,
+          description: description.trim() || undefined,
+          deliverableId: deliverableId || undefined,
+          category,
+          probability,
+          impact,
+          status,
+          triggerDate: triggerDate || undefined,
+          mitigationOwner: mitigationOwner || undefined,
+          mitigationPlan: mitigationPlan.trim() || undefined,
+        });
+      } else {
+        const now = new Date().toISOString();
+        const newRisk: Risk = {
+          id: makeRiskId(nanoid(10)),
+          title: trimmedTitle,
+          description: description.trim() || undefined,
+          deliverableId: deliverableId || undefined,
+          category,
+          probability,
+          impact,
+          severity: probability * impact,
+          status,
+          triggerDate: triggerDate || undefined,
+          mitigationOwner: mitigationOwner || undefined,
+          mitigationPlan: mitigationPlan.trim() || undefined,
+          createdAt: now,
+          updatedAt: now,
+        };
+        await addRisk(newRisk);
+      }
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save risk");
+    } finally {
+      setSubmitting(false);
     }
-    onOpenChange(false);
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!risk) return;
     if (!confirm(`Delete risk "${risk.title}"? This can't be undone.`)) return;
-    deleteRisk(risk.id);
-    onOpenChange(false);
+    setSubmitting(true);
+    setError(null);
+    try {
+      await deleteRisk(risk.id);
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete risk");
+      setSubmitting(false);
+    }
   }
 
   const severity = probability * impact;
@@ -288,6 +307,12 @@ export function RiskDialog({ open, onOpenChange, risk }: RiskDialogProps) {
               className={inputCls}
             />
           </div>
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+              <span className="font-medium">Couldn&rsquo;t save: </span>
+              {error}
+            </div>
+          )}
           <DialogFooter className="justify-between">
             <div>
               {isEdit && isAdmin && (
@@ -296,6 +321,7 @@ export function RiskDialog({ open, onOpenChange, risk }: RiskDialogProps) {
                   variant="ghost"
                   className="text-red-600 hover:bg-red-50 hover:text-red-700"
                   onClick={handleDelete}
+                  disabled={submitting}
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete
@@ -307,10 +333,17 @@ export function RiskDialog({ open, onOpenChange, risk }: RiskDialogProps) {
                 type="button"
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
+                disabled={submitting}
               >
                 Cancel
               </Button>
-              <Button type="submit">{isEdit ? "Save changes" : "Create risk"}</Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting
+                  ? "Saving…"
+                  : isEdit
+                    ? "Save changes"
+                    : "Create risk"}
+              </Button>
             </div>
           </DialogFooter>
         </form>

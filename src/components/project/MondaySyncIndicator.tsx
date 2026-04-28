@@ -52,30 +52,57 @@ interface PendingTask {
   isNew: boolean;
 }
 
+interface PendingState {
+  /** Truly pending — a sync round will actually push or pull these. */
+  pending: PendingTask[];
+  /**
+   * Tasks the indicator used to count as pending but that can't actually sync
+   * because their parent deliverable has no Monday item. Reconcile errors out
+   * on these and never touches their sync link, so they'd otherwise show as
+   * "pending" on every page load forever. Surfaced separately so admins can
+   * see them in the popover without inflating the chip badge.
+   */
+  unsyncable: PendingTask[];
+}
+
 /** Tasks edited locally since their last successful sync, newest first. */
-function usePendingTasks(): PendingTask[] {
+function usePendingTasks(): PendingState {
   const tasks = useProjectTrackerStore((s) => s.tasks);
   const syncState = useProjectTrackerStore((s) => s.syncState);
   return useMemo(() => {
     const pending: PendingTask[] = [];
+    const unsyncable: PendingTask[] = [];
     for (const t of tasks) {
       const link = syncState[t.id];
-      if (!link?.lastSyncedAt) {
-        pending.push({ task: t, isNew: true });
+      const isPending =
+        !link?.lastSyncedAt ||
+        Date.parse(t.updatedAt) > Date.parse(link.lastSyncedAt);
+      if (!isPending) continue;
+
+      const entry: PendingTask = { task: t, isNew: !link?.lastSyncedAt };
+
+      // Skip tasks whose parent deliverable has no Monday item — reconcile
+      // can't push or create the subitem, so the link never advances and the
+      // task would phantom-pend on every page load.
+      const parentLink = syncState[t.deliverableId];
+      if (!parentLink?.mondayItemId) {
+        unsyncable.push(entry);
         continue;
       }
-      if (Date.parse(t.updatedAt) > Date.parse(link.lastSyncedAt)) {
-        pending.push({ task: t, isNew: false });
-      }
+      pending.push(entry);
     }
-    pending.sort((a, b) => b.task.updatedAt.localeCompare(a.task.updatedAt));
-    return pending;
+    const byNewest = (a: PendingTask, b: PendingTask) =>
+      b.task.updatedAt.localeCompare(a.task.updatedAt);
+    pending.sort(byNewest);
+    unsyncable.sort(byNewest);
+    return { pending, unsyncable };
   }, [tasks, syncState]);
 }
 
 export function MondaySyncIndicator({ className }: { className?: string }) {
   const status = useProjectTrackerStore((s) => s.syncStatus);
-  const pendingTasks = usePendingTasks();
+  const { pending: pendingTasks, unsyncable: unsyncableTasks } =
+    usePendingTasks();
   const pending = pendingTasks.length;
   const { syncNow } = useMondaySync();
   // Re-render every 30s so "Synced 2m ago" stays current.
@@ -168,6 +195,7 @@ export function MondaySyncIndicator({ className }: { className?: string }) {
           <PopoverContent align="end" className="w-96 p-0">
             <PendingPreview
               pending={pendingTasks}
+              unsyncable={unsyncableTasks}
               onSync={() => syncNow()}
             />
           </PopoverContent>
@@ -199,10 +227,11 @@ export function MondaySyncIndicator({ className }: { className?: string }) {
 
 interface PendingPreviewProps {
   pending: PendingTask[];
+  unsyncable: PendingTask[];
   onSync: () => void;
 }
 
-function PendingPreview({ pending, onSync }: PendingPreviewProps) {
+function PendingPreview({ pending, unsyncable, onSync }: PendingPreviewProps) {
   const newCount = pending.filter((p) => p.isNew).length;
   const updatedCount = pending.length - newCount;
 
@@ -283,6 +312,40 @@ function PendingPreview({ pending, onSync }: PendingPreviewProps) {
               </li>
             )}
           </ul>
+        )}
+
+        {unsyncable.length > 0 && (
+          <div className="border-t border-slate-200">
+            <div className="px-4 pt-2.5 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Won&rsquo;t sync ({unsyncable.length})
+            </div>
+            <p className="px-4 pb-2 text-[11px] text-slate-500">
+              Parent deliverable isn&rsquo;t on the Monday board. Re-seed the
+              board or move these tasks to a deliverable that is.
+            </p>
+            <ul className="divide-y divide-slate-100">
+              {unsyncable.slice(0, 20).map(({ task }) => {
+                const deliverable = DELIVERABLES.find(
+                  (d) => d.id === task.deliverableId,
+                );
+                return (
+                  <li key={task.id} className="px-4 py-2">
+                    <div className="text-xs font-medium text-slate-700 truncate">
+                      {task.title}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-slate-400">
+                      {deliverable?.name ?? task.deliverableId}
+                    </div>
+                  </li>
+                );
+              })}
+              {unsyncable.length > 20 && (
+                <li className="px-4 py-2 text-[11px] text-slate-400 text-center">
+                  +{unsyncable.length - 20} more
+                </li>
+              )}
+            </ul>
+          </div>
         )}
       </div>
 

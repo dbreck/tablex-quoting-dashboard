@@ -36,27 +36,35 @@ interface RisksDecisionsStore {
   ) => void;
   clearLocal: () => void;
 
-  // Risks CRUD
-  addRisk: (risk: Risk) => void;
+  // Risks CRUD — async, throw on DB failure (with optimistic state rolled back).
+  addRisk: (risk: Risk) => Promise<void>;
   updateRisk: (
     id: string,
     patch: Partial<Omit<Risk, "id" | "severity" | "createdAt" | "updatedAt">>,
-  ) => void;
-  deleteRisk: (id: string) => void;
+  ) => Promise<void>;
+  deleteRisk: (id: string) => Promise<void>;
 
-  // Decisions CRUD
-  addDecision: (decision: Decision) => void;
+  // Decisions CRUD — same pattern.
+  addDecision: (decision: Decision) => Promise<void>;
   updateDecision: (
     id: string,
     patch: Partial<Omit<Decision, "id" | "createdAt" | "updatedAt">>,
-  ) => void;
-  deleteDecision: (id: string) => void;
+  ) => Promise<void>;
+  deleteDecision: (id: string) => Promise<void>;
 }
 
-function fireAndForget(label: string, p: Promise<unknown>): void {
-  void p.catch((err) => {
-    console.error(`[risks-decisions-store] ${label} failed`, err);
-  });
+function toError(err: unknown, label: string): Error {
+  if (err instanceof Error) return err;
+  if (typeof err === "object" && err !== null) {
+    const obj = err as { message?: string; details?: string; hint?: string; code?: string };
+    const msg =
+      obj.message ??
+      obj.details ??
+      obj.hint ??
+      (obj.code ? `Postgres error ${obj.code}` : null);
+    if (msg) return new Error(msg);
+  }
+  return new Error(`${label} failed: ${String(err)}`);
 }
 
 // Severity client-side mirror so optimistic rows don't show `NaN`.
@@ -130,16 +138,20 @@ export const useRisksDecisionsStore = create<RisksDecisionsStore>()((set, get) =
   },
 
   // ─── Risks ─────────────────────────────────────────────────────────────────
+  //
+  // Each mutation applies the optimistic state, awaits the DB write, and
+  // rolls back on failure so the dialog can surface the error and the user
+  // can retry. Throwing here is intentional — RiskDialog awaits the promise.
 
-  addRisk: (risk) => {
+  addRisk: async (risk) => {
     const withSeverity: Risk = {
       ...risk,
       severity: computeSeverity(risk.probability, risk.impact),
     };
-    set({ risks: [...get().risks, withSeverity] });
-    fireAndForget(
-      "addRisk",
-      rdClient.createRisk({
+    const previous = get().risks;
+    set({ risks: [...previous, withSeverity] });
+    try {
+      await rdClient.createRisk({
         id: risk.id,
         deliverableId: risk.deliverableId,
         title: risk.title,
@@ -152,14 +164,19 @@ export const useRisksDecisionsStore = create<RisksDecisionsStore>()((set, get) =
         mitigationOwner: risk.mitigationOwner,
         mitigationPlan: risk.mitigationPlan,
         createdBy: risk.createdBy,
-      }),
-    );
+      });
+    } catch (err) {
+      set({ risks: previous });
+      console.error("[risks-decisions-store] addRisk failed", err);
+      throw toError(err, "Save risk");
+    }
   },
 
-  updateRisk: (id, patch) => {
+  updateRisk: async (id, patch) => {
     const now = new Date().toISOString();
+    const previous = get().risks;
     set({
-      risks: get().risks.map((r) => {
+      risks: previous.map((r) => {
         if (r.id !== id) return r;
         const next: Risk = { ...r, ...patch, updatedAt: now };
         // Recompute severity locally so the chip reacts before Realtime echoes.
@@ -169,21 +186,34 @@ export const useRisksDecisionsStore = create<RisksDecisionsStore>()((set, get) =
         return next;
       }),
     });
-    fireAndForget("updateRisk", rdClient.updateRisk(id, patch));
+    try {
+      await rdClient.updateRisk(id, patch);
+    } catch (err) {
+      set({ risks: previous });
+      console.error("[risks-decisions-store] updateRisk failed", err);
+      throw toError(err, "Update risk");
+    }
   },
 
-  deleteRisk: (id) => {
-    set({ risks: get().risks.filter((r) => r.id !== id) });
-    fireAndForget("deleteRisk", rdClient.deleteRisk(id));
+  deleteRisk: async (id) => {
+    const previous = get().risks;
+    set({ risks: previous.filter((r) => r.id !== id) });
+    try {
+      await rdClient.deleteRisk(id);
+    } catch (err) {
+      set({ risks: previous });
+      console.error("[risks-decisions-store] deleteRisk failed", err);
+      throw toError(err, "Delete risk");
+    }
   },
 
   // ─── Decisions ─────────────────────────────────────────────────────────────
 
-  addDecision: (decision) => {
-    set({ decisions: [...get().decisions, decision] });
-    fireAndForget(
-      "addDecision",
-      rdClient.createDecision({
+  addDecision: async (decision) => {
+    const previous = get().decisions;
+    set({ decisions: [...previous, decision] });
+    try {
+      await rdClient.createDecision({
         id: decision.id,
         deliverableId: decision.deliverableId,
         taskId: decision.taskId,
@@ -199,23 +229,41 @@ export const useRisksDecisionsStore = create<RisksDecisionsStore>()((set, get) =
         status: decision.status,
         supersedes: decision.supersedes,
         supersededBy: decision.supersededBy,
-      }),
-    );
+      });
+    } catch (err) {
+      set({ decisions: previous });
+      console.error("[risks-decisions-store] addDecision failed", err);
+      throw toError(err, "Save decision");
+    }
   },
 
-  updateDecision: (id, patch) => {
+  updateDecision: async (id, patch) => {
     const now = new Date().toISOString();
+    const previous = get().decisions;
     set({
-      decisions: get().decisions.map((d) =>
+      decisions: previous.map((d) =>
         d.id === id ? { ...d, ...patch, updatedAt: now } : d,
       ),
     });
-    fireAndForget("updateDecision", rdClient.updateDecision(id, patch));
+    try {
+      await rdClient.updateDecision(id, patch);
+    } catch (err) {
+      set({ decisions: previous });
+      console.error("[risks-decisions-store] updateDecision failed", err);
+      throw toError(err, "Update decision");
+    }
   },
 
-  deleteDecision: (id) => {
-    set({ decisions: get().decisions.filter((d) => d.id !== id) });
-    fireAndForget("deleteDecision", rdClient.deleteDecision(id));
+  deleteDecision: async (id) => {
+    const previous = get().decisions;
+    set({ decisions: previous.filter((d) => d.id !== id) });
+    try {
+      await rdClient.deleteDecision(id);
+    } catch (err) {
+      set({ decisions: previous });
+      console.error("[risks-decisions-store] deleteDecision failed", err);
+      throw toError(err, "Delete decision");
+    }
   },
 }));
 

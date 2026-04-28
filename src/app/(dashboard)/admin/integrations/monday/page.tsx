@@ -1,12 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Wifi, Database, RefreshCw, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
 import { useMondaySync } from "@/hooks/useMondaySync";
+import { fetchAllTrackerData } from "@/lib/supabase/tracker-client";
+import { DELIVERABLES } from "@/data/project-phase2";
+
+function formatLogTime(iso: string): string {
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return iso;
+  const diffMs = Date.now() - t;
+  const min = Math.round(diffMs / 60_000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.round(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.round(hr / 24);
+  if (day < 7) return `${day}d ago`;
+  return new Date(t).toLocaleDateString();
+}
 
 interface PingResult {
   boardName: string;
@@ -38,7 +54,66 @@ export default function AdminMondayPage() {
   const { syncNow } = useMondaySync();
   const syncStatus = useProjectTrackerStore((s) => s.syncStatus);
   const syncLog = useProjectTrackerStore((s) => s.syncLog);
+  const tasks = useProjectTrackerStore((s) => s.tasks);
   const syncing = syncStatus.status === "syncing";
+
+  const [refreshingLog, setRefreshingLog] = useState(false);
+  const [logFilter, setLogFilter] = useState<
+    "all" | "errors" | "pushed" | "pulled"
+  >("all");
+
+  // Resolve task ids → titles for friendlier log rows. Deliverables come from
+  // the static DELIVERABLES catalog.
+  const labelById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const d of DELIVERABLES) map.set(d.id, d.name);
+    for (const t of tasks) map.set(t.id, t.title);
+    return map;
+  }, [tasks]);
+
+  const filteredLog = useMemo(() => {
+    if (logFilter === "all") return syncLog;
+    if (logFilter === "errors")
+      return syncLog.filter((e) => e.direction === "error");
+    return syncLog.filter((e) => e.direction === logFilter);
+  }, [syncLog, logFilter]);
+
+  const handleRefreshLog = async () => {
+    setRefreshingLog(true);
+    try {
+      const snapshot = await fetchAllTrackerData();
+      useProjectTrackerStore.setState({
+        syncLog: snapshot.syncLog,
+        // Pull tasks too so log labels resolve even when the user came
+        // straight to /admin without visiting /project first.
+        tasks: snapshot.tasks,
+      });
+    } catch (err) {
+      console.error("[admin/monday] refresh sync log failed", err);
+    } finally {
+      setRefreshingLog(false);
+    }
+  };
+
+  // Hydrate the log on mount — admin layout doesn't run tracker hydration,
+  // so the user could land here with an empty syncLog.
+  useEffect(() => {
+    let cancelled = false;
+    fetchAllTrackerData()
+      .then((snapshot) => {
+        if (cancelled) return;
+        useProjectTrackerStore.setState({
+          syncLog: snapshot.syncLog,
+          tasks: snapshot.tasks,
+        });
+      })
+      .catch((err) => {
+        console.error("[admin/monday] initial sync log fetch failed", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handlePing = async () => {
     setPinging(true);
@@ -182,19 +257,75 @@ export default function AdminMondayPage() {
             {syncStatus.lastError && (
               <p className="text-xs text-red-600 break-words">{syncStatus.lastError}</p>
             )}
-            {syncLog.length > 0 && (
-              <details className="mt-3">
-                <summary className="text-xs font-medium text-gray-600 cursor-pointer hover:text-gray-900">
-                  Recent activity ({syncLog.length})
-                </summary>
-                <ul className="mt-2 space-y-1 max-h-64 overflow-y-auto">
-                  {syncLog.slice(0, 30).map((entry, idx) => (
-                    <li
-                      key={`${entry.at}-${entry.tableXId}-${idx}`}
-                      className="text-xs flex items-start gap-2 py-0.5"
-                    >
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Sync Log — full audit trail from sync_log table */}
+      <Card>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-sm font-semibold text-gray-700">
+              Sync Log
+              {syncLog.length > 0 && (
+                <span className="ml-2 text-xs font-normal text-gray-500 tabular-nums">
+                  {filteredLog.length}
+                  {logFilter !== "all" && ` of ${syncLog.length}`}
+                </span>
+              )}
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <select
+                value={logFilter}
+                onChange={(e) =>
+                  setLogFilter(
+                    e.target.value as "all" | "errors" | "pushed" | "pulled",
+                  )
+                }
+                className="rounded-md border border-gray-200 bg-white text-xs px-2 py-1"
+              >
+                <option value="all">All</option>
+                <option value="errors">Errors only</option>
+                <option value="pushed">Pushed</option>
+                <option value="pulled">Pulled</option>
+              </select>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleRefreshLog}
+                disabled={refreshingLog}
+                title="Reload the latest entries from Supabase"
+              >
+                {refreshingLog ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-3.5 w-3.5" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {syncLog.length === 0 ? (
+            <p className="text-xs text-gray-500">
+              No sync activity yet. Run a sync to populate the log.
+            </p>
+          ) : filteredLog.length === 0 ? (
+            <p className="text-xs text-gray-500">
+              No entries match the current filter.
+            </p>
+          ) : (
+            <ul className="divide-y divide-gray-100 max-h-[28rem] overflow-y-auto">
+              {filteredLog.map((entry, idx) => {
+                const label = labelById.get(entry.tableXId) ?? null;
+                return (
+                  <li
+                    key={`${entry.at}-${entry.tableXId}-${idx}`}
+                    className="py-2 first:pt-0 last:pb-0"
+                  >
+                    <div className="flex items-start gap-2">
                       <span
-                        className={`inline-block px-1.5 py-0.5 rounded font-mono text-[10px] uppercase ${
+                        className={`inline-block shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider ${
                           entry.direction === "pulled"
                             ? "bg-blue-100 text-blue-700"
                             : entry.direction === "pushed"
@@ -208,19 +339,50 @@ export default function AdminMondayPage() {
                       >
                         {entry.direction}
                       </span>
-                      <span className="text-gray-500">{entry.kind}</span>
-                      <span className="font-mono text-gray-900">{entry.tableXId}</span>
-                      {entry.detail && (
-                        <span className="text-gray-400 truncate">— {entry.detail}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            )}
-          </CardContent>
-        </Card>
-      )}
+                      <span className="shrink-0 text-[11px] uppercase tracking-wider text-gray-400 mt-0.5">
+                        {entry.kind}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-gray-900 truncate">
+                          {label ?? (
+                            <span className="text-gray-500 italic">
+                              (deleted)
+                            </span>
+                          )}
+                          <span className="ml-2 font-mono text-[10px] text-gray-400">
+                            {entry.tableXId}
+                          </span>
+                        </div>
+                        {entry.detail && (
+                          <div
+                            className={`mt-0.5 text-[11px] ${
+                              entry.direction === "error"
+                                ? "text-red-600"
+                                : "text-gray-500"
+                            } break-words`}
+                          >
+                            {entry.detail}
+                          </div>
+                        )}
+                      </div>
+                      <time
+                        className="shrink-0 text-[11px] text-gray-400 tabular-nums mt-0.5"
+                        dateTime={entry.at}
+                        title={new Date(entry.at).toLocaleString()}
+                      >
+                        {formatLogTime(entry.at)}
+                      </time>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <p className="mt-3 text-[11px] text-gray-400">
+            Last 50 entries. Older history is trimmed automatically.
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Ping result */}
       {(pingResult || pingError) && (
