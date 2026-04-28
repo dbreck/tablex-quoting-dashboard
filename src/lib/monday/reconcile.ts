@@ -514,6 +514,17 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
           tableXId: task.id,
           detail: Object.keys(trimmed).join(", "),
         });
+      } else {
+        // Monday's "newer" updated_at didn't actually carry any TableX-mappable
+        // changes — common when our prior push bumped Monday's clock but the
+        // payload was identical. Without recording the touch, lastSyncedAt
+        // stays stale and the task phantom-pends every round. Acknowledge the
+        // check-in so the next decideDirection sees both sides as caught up.
+        result.linkUpdates.push({
+          tableXId: task.id,
+          mondayItemId: mondayRecord.mondaySubitemId,
+          mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? syncedAt,
+        });
       }
       continue;
     }
@@ -547,8 +558,17 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
           detail: (err as Error).message,
         });
       }
+      continue;
     }
-    // dir === "noop" → no log entry to keep noise down.
+
+    // dir === "noop" — both sides "changed" since last sync but within the
+    // 1s no-op window (e.g., echoing edits). Without recording the touch
+    // here either, the task would phantom-pend on every subsequent round.
+    result.linkUpdates.push({
+      tableXId: task.id,
+      mondayItemId: mondayRecord.mondaySubitemId,
+      mondayUpdatedAt: mondayRecord.mondayUpdatedAt ?? syncedAt,
+    });
   }
 
   return result;
