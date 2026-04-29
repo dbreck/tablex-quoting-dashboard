@@ -44,6 +44,7 @@ import {
   Fingerprint,
   LayoutTemplate,
   Layers,
+  CheckCircle2,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -67,6 +68,7 @@ const projectNavItems = [
   { name: "Board", href: "/project/board", icon: KanbanSquare },
   { name: "Infra Setup", href: "/project/infrastructure", icon: Server },
   { name: "Risks & Decisions", href: "/project/risks-decisions", icon: ShieldAlert },
+  { name: "Sign-Offs", href: "/project/sign-offs", icon: CheckCircle2 },
 ];
 
 const overviewItem = { name: "Overview", href: "/overview", icon: LayoutDashboard };

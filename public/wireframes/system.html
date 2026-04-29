@@ -1743,6 +1743,19 @@ function __initWfCmts(){
     state.author = authorIn.value;
     try { localStorage.setItem(AUTHOR_KEY, state.author); } catch(e){}
   });
+  // Pull the logged-in user's name from the dashboard so reviewers don't
+  // have to type it. Falls back silently if the iframe is opened standalone.
+  fetch('/api/me', { credentials: 'same-origin' })
+    .then(function(r){ if (!r.ok) throw new Error('unauth'); return r.json(); })
+    .then(function(me){
+      if (!me || !me.name) return;
+      state.author = me.name;
+      authorIn.value = me.name;
+      authorIn.disabled = true;
+      authorIn.title = 'Pulled from your dashboard profile';
+      try { localStorage.setItem(AUTHOR_KEY, state.author); } catch(e){}
+    })
+    .catch(function(){ /* leave manual input in place */ });
 
   function setAddMode(on) {
     state.addMode = on;
