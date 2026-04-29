@@ -302,21 +302,23 @@ export default function WireframesClient() {
         )}
       </div>
 
-      {/* Iframe surface + side panel */}
-      <div className="flex-1 flex bg-[#f7f6f2] overflow-hidden">
-        <div className="flex-1 overflow-hidden">
-          <iframe
-            ref={iframeRef}
-            key={`${activeSet}-${hash}`}
-            src={src}
-            className="w-full h-full border-0"
-            title={set.title}
-          />
-        </div>
+      {/* Iframe surface — comments panel floats over it, doesn't shrink it */}
+      <div className="flex-1 relative bg-[#f7f6f2] overflow-hidden">
+        <iframe
+          ref={iframeRef}
+          key={`${activeSet}-${hash}`}
+          src={src}
+          className="w-full h-full border-0"
+          title={set.title}
+        />
 
-        {/* Comments panel */}
-        {panelOpen && (
-          <aside className="w-[340px] shrink-0 border-l border-black/10 bg-white flex flex-col">
+        {/* Comments panel — slides in over the iframe */}
+        <aside
+          className={`absolute right-0 top-0 bottom-0 w-[320px] z-20 bg-white border-l border-black/10 shadow-[-12px_0_28px_rgba(0,0,0,0.10)] flex flex-col transition-transform duration-200 ease-out ${
+            panelOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+          }`}
+          aria-hidden={!panelOpen}
+        >
             <div className="px-4 py-3 border-b border-black/10 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500 font-semibold">
@@ -430,8 +432,7 @@ export default function WireframesClient() {
                 ))
               )}
             </div>
-          </aside>
-        )}
+        </aside>
       </div>
 
       {/* Fullscreen modal */}
