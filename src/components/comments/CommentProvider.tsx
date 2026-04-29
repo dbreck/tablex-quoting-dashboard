@@ -58,6 +58,11 @@ export function CommentProvider({ children }: { children: ReactNode }) {
   const containerRef = useRef<HTMLElement | null>(null);
   const [mounted, setMounted] = useState(false);
 
+  // Routes that iframe untrusted content (wireframes) — the dashboard's
+  // overlay marker system can't reach inside an iframe, so suppress the
+  // floating UI there. Each iframe brings its own commenting.
+  const suppressOverlay = pathname.startsWith("/wireframes");
+
   const [commentMode, setCommentMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
@@ -161,6 +166,9 @@ export function CommentProvider({ children }: { children: ReactNode }) {
     >
       {children}
 
+      {/* Suppress all overlay UI on routes that iframe their content. */}
+      {suppressOverlay ? null : (
+      <>
       {/* Markers for existing comments */}
       {commentMode &&
         topLevelComments.map((comment, index) => (
@@ -210,6 +218,8 @@ export function CommentProvider({ children }: { children: ReactNode }) {
           unresolvedCount={unresolvedCount}
           onToggle={handleToggle}
         />
+      )}
+      </>
       )}
     </CommentContext.Provider>
   );

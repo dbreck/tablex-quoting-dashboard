@@ -425,7 +425,7 @@
   <a href="#templates" data-p="templates" data-scroll="tpl-home">Homepage (ref)</a>
   <a href="#templates" data-p="templates" data-scroll="tpl-series">Series Detail ×16</a>
   <a href="#templates" data-p="templates" data-scroll="tpl-collections">Collection Index</a>
-  <a href="#templates" data-p="templates" data-scroll="tpl-studio">Spec Studio</a>
+  <a href="#templates" data-p="templates" data-scroll="tpl-studio">X Spec</a>
   <a href="#templates" data-p="templates" data-scroll="tpl-browse">Browse / Filter</a>
   <a href="#templates" data-p="templates" data-scroll="tpl-space">Space ×5</a>
   <a href="#templates" data-p="templates" data-scroll="tpl-finish">Finish Library</a>
@@ -451,7 +451,17 @@
 
   <div class="wf-topbar">
     <div class="crumb"><b id="bc">Start here</b> <span>· system-level wireframe · atomic design template + page tier</span></div>
-    <div class="bp"><a class="on" href="#toc" data-p="toc">01 TOC</a><a href="#sitemap" data-p="sitemap">02 Sitemap</a><a href="#templates" data-p="templates">03 Templates</a><a href="#flows" data-p="flows">04 Flows</a><a href="#patterns" data-p="patterns">05 Patterns</a></div>
+    <div class="cmt-bar">
+      <div class="bp"><a class="on" href="#toc" data-p="toc">01 TOC</a><a href="#sitemap" data-p="sitemap">02 Sitemap</a><a href="#templates" data-p="templates">03 Templates</a><a href="#flows" data-p="flows">04 Flows</a><a href="#patterns" data-p="patterns">05 Patterns</a></div>
+      <button id="cmt-toggle" class="cmt-btn" title="Toggle comment mode">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2 3h12v9H6l-3 3v-3H2V3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M8 6.5v3M6.5 8h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Comments</span>
+        <span class="cmt-count zero" id="cmt-count">0</span>
+      </button>
+    </div>
   </div>
 
 <!-- =================== 0 · TOC =================== -->
@@ -543,7 +553,7 @@
               <div class="node"><span class="path">revel · app · element · artisan · solo</span><span class="label">unmapped — see follow-ups</span></div>
               <div class="node"><span class="path">justice · primary · puddle · exclaim · vertigo</span><span class="label">remainder</span></div>
             </div>
-            <div class="node new"><span class="path">/products/spec-studio</span><span class="label">Spec Studio · 3D CPQ</span></div>
+            <div class="node new"><span class="path">/products/x-spec</span><span class="label">X Spec · 3D CPQ</span></div>
             <div class="node new"><span class="path">/products/browse</span><span class="label">Browse / Filter Grid</span></div>
             <div class="node"><span class="path">/products/compare</span><span class="label">Compare (≤3)</span></div>
             <div class="node"><span class="path">/products/accessories</span><span class="label">Accessories</span></div>
@@ -673,7 +683,7 @@
       <a href="#tpl-home"><span class="n">T-01</span><span class="t">Homepage</span><span class="p">reference only · shipped</span></a>
       <a href="#tpl-series"><span class="n">T-02</span><span class="t">Series Detail</span><span class="p">/products/series/:slug · ×16</span></a>
       <a href="#tpl-collections"><span class="n">T-03</span><span class="t">Collection Index</span><span class="p">/products/collections</span></a>
-      <a href="#tpl-studio"><span class="n">T-04</span><span class="t">Spec Studio</span><span class="p">/products/spec-studio</span></a>
+      <a href="#tpl-studio"><span class="n">T-04</span><span class="t">X Spec</span><span class="p">/products/x-spec</span></a>
       <a href="#tpl-browse"><span class="n">T-05</span><span class="t">Browse / Filter</span><span class="p">/products/browse</span></a>
       <a href="#tpl-space"><span class="n">T-06</span><span class="t">Space Page</span><span class="p">/spaces/:slug · ×5</span></a>
       <a href="#tpl-finish"><span class="n">T-07</span><span class="t">Finish Library</span><span class="p">/finishes/:type</span></a>
@@ -700,17 +710,17 @@
         <div class="chip-row"><span class="chip on">A&amp;D</span><span class="chip on">Dealer</span><span class="chip">Rep</span><span class="chip">Individual</span></div>
         <hr/>
         <div class="meta-row"><span class="k">Linked templates</span></div>
-        <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">→ Spec Studio · Collection Index · Space pages · Find Your Rep</span></div>
+        <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">→ X Spec · Collection Index · Space pages · Find Your Rep</span></div>
         <hr/>
         <div class="meta-row"><span class="k">Note</span></div>
         <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">Included for reference. Full block list lives in wireframes/index.html → #home.</span></div>
       </div>
       <div class="blocks-col">
         <div class="tpl-note">Reference only. The shipped Homepage v4 is the source of truth. Block headlines reproduced here so cross-flow references stay readable.</div>
-        <div class="block"><span class="num">01</span><span class="intent"><span class="tag hero">Hero</span>Brand promise + primary CTA</span><span class="desc">Full-bleed architectural in-situ photography. H1 + lede + "get a quote" (primary) + "explore products" (ghost).</span><span class="adapt"><b>Individual</b> sees same. <b>Dealer</b> logged-in swaps "get a quote" → "open Spec Studio".</span></div>
+        <div class="block"><span class="num">01</span><span class="intent"><span class="tag hero">Hero</span>Brand promise + primary CTA</span><span class="desc">Full-bleed architectural in-situ photography. H1 + lede + "get a quote" (primary) + "explore products" (ghost).</span><span class="adapt"><b>Individual</b> sees same. <b>Dealer</b> logged-in swaps "get a quote" → "open X Spec".</span></div>
         <div class="block"><span class="num">02</span><span class="intent"><span class="tag">Path switcher</span>Two paths</span><span class="desc">"I know my products" (Products-first) vs. "I'm planning a space" (Spaces-first). Persistent cookie re-orders secondary nav site-wide.</span><span class="adapt"><b>All</b> — cookie sets audience pref.</span></div>
         <div class="block"><span class="num">03</span><span class="intent"><span class="tag">Content</span>Featured series · 3-up</span><span class="desc">Flagship + value + quick-ship slot (one of each tier). Card → Series Detail.</span><span class="adapt"><b>Tier slot</b> — see cross-cutting pattern P-07.</span></div>
-        <div class="block"><span class="num">04</span><span class="intent"><span class="tag hero">Hero</span>Spec Studio teaser</span><span class="desc">Dark full-bleed. 3D preview loop + 5 config chips + "open Spec Studio".</span><span class="adapt"><b>All personas</b> — different CTA copy: dealer "configure + price", individual "build yours", A&amp;D "spec + download".</span></div>
+        <div class="block"><span class="num">04</span><span class="intent"><span class="tag hero">Hero</span>X Spec teaser</span><span class="desc">Dark full-bleed. 3D preview loop + 5 config chips + "open X Spec".</span><span class="adapt"><b>All personas</b> — different CTA copy: dealer "configure + price", individual "build yours", A&amp;D "spec + download".</span></div>
         <div class="block"><span class="num">05</span><span class="intent"><span class="tag">Proof</span>Three pillars · modern craft · speed · design-forward</span><span class="desc">Oversized numerals (stats), hairline rule, editorial label — the "36 / 40+ / 30+" pattern.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">06</span><span class="intent"><span class="tag">Content</span>Browse by Space · 5-up</span><span class="desc">Training / Conference / Collaborative / Cafe / Healthcare tiles.</span><span class="adapt"><b>Individual + A&amp;D</b> weight higher.</span></div>
         <div class="block"><span class="num">07</span><span class="intent"><span class="tag cta">CTA</span>Dual action band</span><span class="desc">Get a Quote (primary) + Find Your Rep (ghost, zip field).</span><span class="adapt"><b>Geo-detected</b> — if location known, Find Your Rep surfaces a rep name inline.</span></div>
@@ -740,7 +750,7 @@
         <div class="block hero-block-row">
           <span class="num">01</span>
           <span class="intent"><span class="tag hero">Hero</span>Series identity + tier ribbon + primary CTA</span>
-          <span class="desc">Full-width in-situ photograph. H1 = series name (mixed case, "FOUNDATION series"). Tier ribbon floats top-left. CTA: "configure in Spec Studio" (primary) + "add to compare".</span>
+          <span class="desc">Full-width in-situ photograph. H1 = series name (mixed case, "FOUNDATION series"). Tier ribbon floats top-left. CTA: "configure in X Spec" (primary) + "add to compare".</span>
           <span class="adapt"><b>A&amp;D</b> sees "download spec sheet" as secondary.<br/><b>Dealer logged-in</b> sees "start a dealer quote".</span>
         </div>
         <div class="block"><span class="num">02</span><span class="intent"><span class="tag">Content</span>One-sentence pitch + variant summary</span><span class="desc">Editorial lede (≤24 words). Chip row: base style · #sizes · shapes. One-sentence designer quote if available.</span><span class="adapt">—</span></div>
@@ -753,7 +763,7 @@
         <div class="block"><span class="num">09</span><span class="intent"><span class="tag">Content</span>Downloads · 4-up</span><span class="desc">DWG · Revit (RFA) · Spec sheet PDF · Price list (dealer-gated).</span><span class="adapt"><b>Dealer</b> unlocks price list. <b>A&amp;D</b> gets CAD bundle ZIP. <b>Individual</b> sees PDF only.</span></div>
         <div class="block"><span class="num">10</span><span class="intent"><span class="tag">Content</span>Case studies using this series · 3-up</span><span class="desc">Links to Case Study Detail template. Hidden if no cases yet.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">11</span><span class="intent"><span class="tag">Content</span>Related series · 3-up</span><span class="desc">Same tier or same base style. Fallback: same collection.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">12</span><span class="intent"><span class="tag cta">CTA</span>Dual-path closer</span><span class="desc">"Configure in Spec Studio" (primary, Volt) + "Find your rep" (ghost, zip).</span><span class="adapt">Same as block 07 — if rep known, this shortens.</span></div>
+        <div class="block"><span class="num">12</span><span class="intent"><span class="tag cta">CTA</span>Dual-path closer</span><span class="desc">"Configure in X Spec" (primary, Volt) + "Find your rep" (ghost, zip).</span><span class="adapt">Same as block 07 — if rep known, this shortens.</span></div>
       </div>
     </div>
 
@@ -776,7 +786,7 @@
         <div class="tpl-note">Collections are the A&amp;D-friendly grouping — curated, editorial, not rigidly spec-driven. App · Solo · Outdoor · Occasional · Dining.</div>
         <div class="block hero-block-row"><span class="num">01</span><span class="intent"><span class="tag hero">Hero</span>Editorial hero · collection brand moment</span><span class="desc">Single headline + short lede. No CTA. Photography-forward.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">02</span><span class="intent"><span class="tag">Content</span>5 collection tiles</span><span class="desc">4:5 portrait crops. Name · 1-line descriptor · series count. Click → Collection Detail.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">03</span><span class="intent"><span class="tag">Content</span>"Not sure where to start?" · 2-up</span><span class="desc">"Browse by Space" ghost + "Open Spec Studio" primary. Routes to other IA zones for users who bounce off Collections.</span><span class="adapt"><b>A&amp;D</b> — primary is Spec Studio. <b>Individual</b> — primary is Spaces.</span></div>
+        <div class="block"><span class="num">03</span><span class="intent"><span class="tag">Content</span>"Not sure where to start?" · 2-up</span><span class="desc">"Browse by Space" ghost + "Open X Spec" primary. Routes to other IA zones for users who bounce off Collections.</span><span class="adapt"><b>A&amp;D</b> — primary is X Spec. <b>Individual</b> — primary is Spaces.</span></div>
         <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Footer</span>Global footer</span><span class="desc">—</span><span class="adapt">—</span></div>
 
         <div class="tpl-note" style="margin-top:16px"><b>COLLECTION DETAIL</b> (inherited, e.g. /collections/app):</div>
@@ -785,7 +795,7 @@
         <div class="block"><span class="num">03</span><span class="intent"><span class="tag">Content</span>Series in this collection · 3/4-up</span><span class="desc">Each card → Series Detail. Tier ribbon visible.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Content</span>Finish moments strip (dark bg)</span><span class="desc">Swatch strip specific to this collection's palette.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">05</span><span class="intent"><span class="tag">Content</span>Case studies · 3-up</span><span class="desc">Filtered to this collection.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">06</span><span class="intent"><span class="tag cta">CTA</span>Closer band · dual path</span><span class="desc">"Configure in Spec Studio" + "Find your rep".</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">06</span><span class="intent"><span class="tag cta">CTA</span>Closer band · dual path</span><span class="desc">"Configure in X Spec" + "Find your rep".</span><span class="adapt">—</span></div>
       </div>
     </div>
 
@@ -793,8 +803,8 @@
     <div class="tpl" id="tpl-studio">
       <div class="meta-col">
         <div class="meta-row"><span class="k">Template</span><span class="v">T-04</span></div>
-        <h3>Spec Studio</h3>
-        <div class="path">/products/spec-studio</div>
+        <h3>X Spec</h3>
+        <div class="path">/products/x-spec</div>
         <hr/>
         <div class="meta-row"><span class="k">Auth</span><span class="v">Public · dealer login unlocks live tier pricing</span></div>
         <div class="meta-row"><span class="k">Persona weight</span></div>
@@ -807,7 +817,7 @@
         <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">Logged-out: MSRP range · Dealer: live tier price · Individual: final-to-cart on QS only, otherwise "request quote".</span></div>
       </div>
       <div class="blocks-col">
-        <div class="tpl-note"><b>View A · Landing</b> · /products/spec-studio</div>
+        <div class="tpl-note"><b>View A · Landing</b> · /products/x-spec</div>
         <div class="block hero-block-row"><span class="num">L1</span><span class="intent"><span class="tag hero">Hero</span>3D preview loop + primary CTA</span><span class="desc">WebGL auto-rotate. CTA: "start a configuration" (primary) + "load saved" (auth).</span><span class="adapt"><b>Dealer</b> sees "resume last quote".</span></div>
         <div class="block"><span class="num">L2</span><span class="intent"><span class="tag">Content</span>Pick a base style · 6 families</span><span class="desc">T-leg · Pedestal · Flip-top nesting · Height-adjustable · Trestle · Occasional.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">L3</span><span class="intent"><span class="tag">Content</span>4-step explainer</span><span class="desc">Base → Top shape+size → Finish+edge → Accessories+price.</span><span class="adapt">—</span></div>
@@ -847,7 +857,7 @@
         <div class="block"><span class="num">03</span><span class="intent"><span class="tag">Grid</span>Series card grid · 4-col</span><span class="desc">Each card: image · series name · 1-line config summary · tier + QS badges.</span><span class="adapt"><b>Dealer</b> logged-in sees "starting $ [tier]" on hover.<br/><b>Individual</b> — only shows QS-eligible SKUs if QS filter is on.</span></div>
         <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Control</span>Active filter chips + "clear all"</span><span class="desc">Top of grid. Shows applied filters as removable chips.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">05</span><span class="intent"><span class="tag">Control</span>Pagination / infinite scroll</span><span class="desc">Pagination preferred — more predictable for A&amp;D.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">06</span><span class="intent"><span class="tag">Content</span>Empty state</span><span class="desc">"No series match these filters." Suggests loosening the most-restrictive filter. CTA: "talk to a rep" or "try Spec Studio".</span><span class="adapt">See T-14.</span></div>
+        <div class="block"><span class="num">06</span><span class="intent"><span class="tag">Content</span>Empty state</span><span class="desc">"No series match these filters." Suggests loosening the most-restrictive filter. CTA: "talk to a rep" or "try X Spec".</span><span class="adapt">See T-14.</span></div>
       </div>
     </div>
 
@@ -873,10 +883,10 @@
         <div class="block hero-block-row"><span class="num">01</span><span class="intent"><span class="tag hero">Hero</span>In-situ hero · space in use</span><span class="desc">Full-bleed photograph of a real space. H1 = space name. Lede: 1 sentence describing who the space is for.</span><span class="adapt"><b>Individual</b> — CTA is "explore recommended series". <b>A&amp;D</b> — CTA is "download space spec kit".</span></div>
         <div class="block"><span class="num">02</span><span class="intent"><span class="tag">Content</span>"What makes a [Space] table" · 4 attributes</span><span class="desc">4-up tiles describing the functional needs for this space (e.g. flip-top, ganging, power, casters for Training).</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">03</span><span class="intent"><span class="tag">Content</span>Recommended series · 4–5</span><span class="desc">Filtered series grid. Each card tags which attribute it solves ("nesting + power"). Click → Series Detail.</span><span class="adapt"><b>Dealer</b>: inline tier pricing.<br/><b>Individual</b>: QS-flag on applicable cards.</span></div>
-        <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Content</span>Configuration recipes · 2–3 pre-set layouts</span><span class="desc">"Classroom · 24 students" · "Training lab · 12 stations" · "Exam room · 4 cubicles". Each recipe → opens a pre-populated Spec Studio cart.</span><span class="adapt"><b>Dealer</b> sees "add recipe to quote". <b>Individual</b> sees "build this room".</span></div>
+        <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Content</span>Configuration recipes · 2–3 pre-set layouts</span><span class="desc">"Classroom · 24 students" · "Training lab · 12 stations" · "Exam room · 4 cubicles". Each recipe → opens a pre-populated X Spec cart.</span><span class="adapt"><b>Dealer</b> sees "add recipe to quote". <b>Individual</b> sees "build this room".</span></div>
         <div class="block"><span class="num">05</span><span class="intent"><span class="tag">Content</span>Finishes + accessories for this space</span><span class="desc">Narrowed finish palette (e.g. Healthcare → easy-clean laminates only). Accessories common to this space.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">06</span><span class="intent"><span class="tag">Content</span>Case studies · 3-up</span><span class="desc">Filtered to this space type.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">07</span><span class="intent"><span class="tag cta">CTA</span>Dual-path closer band</span><span class="desc">"Build my [Space]" → Spec Studio pre-filtered. "Find your rep" with zip.</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">07</span><span class="intent"><span class="tag cta">CTA</span>Dual-path closer band</span><span class="desc">"Build my [Space]" → X Spec pre-filtered. "Find your rep" with zip.</span><span class="adapt">—</span></div>
       </div>
     </div>
 
@@ -893,7 +903,7 @@
         <div class="chip-row"><span class="chip on">A&amp;D</span><span class="chip">Dealer</span><span class="chip">Rep</span><span class="chip">Individual</span></div>
         <hr/>
         <div class="meta-row"><span class="k">Reused</span></div>
-        <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">P-06 finish swatch — same component used in Series Detail + Spec Studio.</span></div>
+        <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">P-06 finish swatch — same component used in Series Detail + X Spec.</span></div>
       </div>
       <div class="blocks-col">
         <div class="block"><span class="num">01</span><span class="intent"><span class="tag">Header</span>Finish-type intro</span><span class="desc">"31 powder coats" / "40+ laminates" / "8 edge bands". Stat-forward, no hero image.</span><span class="adapt">—</span></div>
@@ -978,7 +988,7 @@
         <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Gallery</span>Full-bleed image + detail grid</span><span class="desc">One oversized image, then a 3-up detail grid (finish close-up, base close-up, wide shot).</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">05</span><span class="intent"><span class="tag">Content</span>Products used · series cards</span><span class="desc">Series cards for each series featured. Click → Series Detail.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">06</span><span class="intent"><span class="tag">Content</span>Finishes used · swatch strip</span><span class="desc">Specific finishes called out with their codes. Link to Finish Library.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">07</span><span class="intent"><span class="tag cta">CTA</span>"Spec something like this" closer</span><span class="desc">Primary: "open Spec Studio with these series". Ghost: "talk to the rep on this project".</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">07</span><span class="intent"><span class="tag cta">CTA</span>"Spec something like this" closer</span><span class="desc">Primary: "open X Spec with these series". Ghost: "talk to the rep on this project".</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">08</span><span class="intent"><span class="tag">Content</span>Related case studies · 3-up</span><span class="desc">Same Space or same Collection.</span><span class="adapt">—</span></div>
       </div>
     </div>
@@ -1022,9 +1032,9 @@
         <div class="meta-row"><span class="v" style="font-size:10px;color:#aaa;line-height:1.7">Sticky top progress bar — "1 · Configure · 2 · Review · 3 · Contact · 4 · Submit". Quote # persists from step 1 to /track via email magic link.</span></div>
       </div>
       <div class="blocks-col">
-        <div class="tpl-note"><b>Step 1 · Configure</b> · /quote — routes through Spec Studio (T-04)</div>
+        <div class="tpl-note"><b>Step 1 · Configure</b> · /quote — routes through X Spec (T-04)</div>
         <div class="block"><span class="num">1.1</span><span class="intent"><span class="tag">Chrome</span>Progress bar · step 1 of 4 · "Configure"</span><span class="desc">Visual step indicator across all quote steps.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">1.2</span><span class="intent"><span class="tag">Workspace</span>Spec Studio configurator</span><span class="desc">Hands off to T-04 View B. Returns to quote flow when "save to quote" is hit.</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">1.2</span><span class="intent"><span class="tag">Workspace</span>X Spec configurator</span><span class="desc">Hands off to T-04 View B. Returns to quote flow when "save to quote" is hit.</span><span class="adapt">—</span></div>
 
         <div class="tpl-note" style="margin-top:16px"><b>Step 2 · Price &amp; review</b> · /quote/review</div>
         <div class="block"><span class="num">2.1</span><span class="intent"><span class="tag">Content</span>Line items table · edit/delete/duplicate</span><span class="desc">Image · configuration summary · qty · unit · extended · edit. Sub-total row.</span><span class="adapt"><b>Dealer</b> — tiered price visible. <b>Individual</b> — MSRP only.</span></div>
@@ -1063,7 +1073,7 @@
         <div class="block"><span class="num">02</span><span class="intent"><span class="tag">Chrome</span>Left sidebar nav · role-specific</span><span class="desc">Dealer: Dashboard · Quotes · Orders · Pricing · CAD · My reps. Rep: Dashboard · Pipeline · Dealers · Territory · Sales tools · Commission.</span><span class="adapt">See cross-cutting P-01.</span></div>
         <div class="block"><span class="num">03</span><span class="intent"><span class="tag hero">Hero</span>Welcome + KPI band · 4 metrics</span><span class="desc">Dealer: Active quotes · In production · Shipped YTD · Tier. Rep: Pipeline value · Closed YTD · Commission YTD · Active dealers.</span><span class="adapt"><b>Role-specific KPI contract</b>. Same 4-column visual.</span></div>
         <div class="block"><span class="num">04</span><span class="intent"><span class="tag">Workspace</span>Recent activity table (quotes / orders / pipeline)</span><span class="desc">Sortable data grid. 5–10 rows. "See all →" expands full page.</span><span class="adapt"><b>Dealer</b>: recent quotes. <b>Rep</b>: pipeline by stage (draft/sent/approved/in-prod).</span></div>
-        <div class="block"><span class="num">05</span><span class="intent"><span class="tag cta">CTA</span>Quick actions · 4-up · role-specific</span><span class="desc">Dealer: Configure &amp; Price · Price list PDF · CAD bundle · Contact my rep. Rep: Launch Spec Studio demo · Product knowledge · Sample kit · Margin calculator.</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">05</span><span class="intent"><span class="tag cta">CTA</span>Quick actions · 4-up · role-specific</span><span class="desc">Dealer: Configure &amp; Price · Price list PDF · CAD bundle · Contact my rep. Rep: Launch X Spec demo · Product knowledge · Sample kit · Margin calculator.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">06</span><span class="intent"><span class="tag">Workspace</span>Secondary workspace table</span><span class="desc">Dealer: orders in production + tracking. Rep: dealers in territory with open quotes + YTD.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">07</span><span class="intent"><span class="tag gate">Gate</span>Logged-out redirect → /login</span><span class="desc">Any /dealer/* or /rep/* route with no session kicks to /login + preserves destination in query param.</span><span class="adapt">See P-04.</span></div>
       </div>
@@ -1091,11 +1101,11 @@
 
         <div class="tpl-note" style="margin-top:16px"><b>EMPTY STATES</b> · partials reused in Browse / Search / Resources</div>
         <div class="block"><span class="num">E1</span><span class="intent"><span class="tag">Content</span>Empty message + suggested filters to clear</span><span class="desc">"No [type] match these filters." Suggests the most-restrictive filter to clear first.</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">E2</span><span class="intent"><span class="tag cta">CTA</span>Fallback actions</span><span class="desc">"Talk to a rep" + "Try Spec Studio" — always gives the user two hands.</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">E2</span><span class="intent"><span class="tag cta">CTA</span>Fallback actions</span><span class="desc">"Talk to a rep" + "Try X Spec" — always gives the user two hands.</span><span class="adapt">—</span></div>
 
         <div class="tpl-note" style="margin-top:16px"><b>404</b> · /404</div>
         <div class="block"><span class="num">F1</span><span class="intent"><span class="tag">Content</span>Voice-forward message</span><span class="desc">Big headline, conversational. "That page is off the menu. Here's what IS on the menu."</span><span class="adapt">—</span></div>
-        <div class="block"><span class="num">F2</span><span class="intent"><span class="tag">Content</span>Fallback nav · 4 popular destinations</span><span class="desc">Series Detail (Trig) · Spec Studio · Find Your Rep · Homepage.</span><span class="adapt">—</span></div>
+        <div class="block"><span class="num">F2</span><span class="intent"><span class="tag">Content</span>Fallback nav · 4 popular destinations</span><span class="desc">Series Detail (Trig) · X Spec · Find Your Rep · Homepage.</span><span class="adapt">—</span></div>
         <div class="block"><span class="num">F3</span><span class="intent"><span class="tag">Control</span>Search bar</span><span class="desc">Inline search to recover.</span><span class="adapt">—</span></div>
       </div>
     </div>
@@ -1118,13 +1128,13 @@
         <div class="flow-node"><span class="n">02</span><div class="t">Auth gate</div><div class="l">dealer login → tiered pricing unlocks sitewide</div></div>
         <div class="flow-node"><span class="n">03</span><div class="t">Series detail</div><div class="l">/products/app • sees dealer tier price + CAD/Revit</div></div>
         <div class="flow-node dec"><span class="n">04</span><div class="t">Decision</div><div class="l">Configure or download?</div></div>
-        <div class="flow-node"><span class="n">05a</span><div class="t">Spec Studio</div><div class="l">/products/spec-studio • base→top→edge→finish→acc</div></div>
+        <div class="flow-node"><span class="n">05a</span><div class="t">X Spec</div><div class="l">/products/x-spec • base→top→edge→finish→acc</div></div>
         <div class="flow-node"><span class="n">06</span><div class="t">Quote flow</div><div class="l">/quote/configure → /quote/price → /quote/submit</div></div>
         <div class="flow-node success"><span class="n">07</span><div class="t">Success</div><div class="l">/portal/quotes/:id • tracking + PO upload</div></div>
       </div>
       <div class="flow-meta">
-        <div class="meta-row"><b>Alt path 05b</b>CAD download only → hand off to internal designer → returns later with finalized spec → rejoin at Spec Studio</div>
-        <div class="meta-row"><b>Failure</b>Spec Studio price not available for configured SKU → fallback "request quote back in 24hr" → rep + TableX sales both notified</div>
+        <div class="meta-row"><b>Alt path 05b</b>CAD download only → hand off to internal designer → returns later with finalized spec → rejoin at X Spec</div>
+        <div class="meta-row"><b>Failure</b>X Spec price not available for configured SKU → fallback "request quote back in 24hr" → rep + TableX sales both notified</div>
         <div class="meta-row"><b>Drop-off risk</b>Quote pipeline visibility — if portal status stalls without update, dealer goes back to phone/email</div>
         <div class="meta-row"><b>Auth gates hit</b>/login • /portal/* • dealer-tier price everywhere (quiet gate)</div>
       </div>
@@ -1138,7 +1148,7 @@
         <div class="flow-node"><span class="n">02</span><div class="t">What's new</div><div class="l">product updates feed • quick-ship availability • finish adds</div></div>
         <div class="flow-node"><span class="n">03</span><div class="t">Sales tools</div><div class="l">downloads CSV price list + brochure deck for this dealer's client</div></div>
         <div class="flow-node dec"><span class="n">04</span><div class="t">Decision</div><div class="l">In-office or on-site?</div></div>
-        <div class="flow-node"><span class="n">05</span><div class="t">Spec Studio tablet</div><div class="l">/products/spec-studio?mode=present • full-screen • swipe finishes</div></div>
+        <div class="flow-node"><span class="n">05</span><div class="t">X Spec tablet</div><div class="l">/products/x-spec?mode=present • full-screen • swipe finishes</div></div>
         <div class="flow-node"><span class="n">06</span><div class="t">Hand-off</div><div class="l">"save + send to dealer" → config lands in dealer's quote drafts</div></div>
         <div class="flow-node success"><span class="n">07</span><div class="t">Success</div><div class="l">Dealer opens draft later • converts to live quote</div></div>
       </div>
@@ -1156,7 +1166,7 @@
         <div class="flow-node"><span class="n">01</span><div class="t">Enters from</div><div class="l">Google "training room tables for small classroom"</div></div>
         <div class="flow-node"><span class="n">02</span><div class="t">Space page</div><div class="l">/spaces/training-classroom • no jargon, real rooms</div></div>
         <div class="flow-node"><span class="n">03</span><div class="t">Series detail</div><div class="l">/products/trig • sees MSRP • "buy direct ≤ 9 units" badge</div></div>
-        <div class="flow-node"><span class="n">04</span><div class="t">Spec Studio</div><div class="l">configures • sticks to QS SKUs • price updates live</div></div>
+        <div class="flow-node"><span class="n">04</span><div class="t">X Spec</div><div class="l">configures • sticks to QS SKUs • price updates live</div></div>
         <div class="flow-node dec"><span class="n">05</span><div class="t">Qty gate</div><div class="l">≤ 9: direct checkout · ≥ 10: route to rep</div></div>
         <div class="flow-node"><span class="n">06</span><div class="t">Checkout</div><div class="l">/quote/checkout • card · PO · net-30 via rep</div></div>
         <div class="flow-node success"><span class="n">07</span><div class="t">Success</div><div class="l">order confirm • tracking • 14-day ship</div></div>
@@ -1216,7 +1226,7 @@
       <div class="pat-head"><div class="eye-label">PATTERN 02</div><h3>Persona path switcher — home + 404 only</h3><div class="note">"Products first" for pros (dealer/rep/A&D) vs. "Spaces first" for newcomers. Explicit choice, persisted in cookie, re-orderable from footer.</div></div>
       <div class="two-col">
         <div class="switcher">
-          <div class="sw-option pro"><div class="sw-eye">I'M A PRO</div><div class="sw-title">Start with products</div><div class="sw-note">Series → specs → Spec Studio → quote. For dealers, reps, A&D specifiers.</div></div>
+          <div class="sw-option pro"><div class="sw-eye">I'M A PRO</div><div class="sw-title">Start with products</div><div class="sw-note">Series → specs → X Spec → quote. For dealers, reps, A&D specifiers.</div></div>
           <div class="sw-option new"><div class="sw-eye">I'M NEW TO TABLEX</div><div class="sw-title">Start with spaces</div><div class="sw-note">Rooms → what goes in them → see the tables. For facilities + end clients.</div></div>
         </div>
         <div class="switcher-notes">
@@ -1243,7 +1253,7 @@
     <div class="sheet">
       <div class="pat-head"><div class="eye-label">PATTERN 04</div><h3>Auth gates — quiet, never hostile</h3><div class="note">Four gate types. Most are "show the shape, hide the value" — not "request access to see a page."</div></div>
       <div class="gates-grid">
-        <div class="gate"><div class="g-eye">GATE A · PRICE</div><div class="g-title">Dealer-tier pricing</div><div class="g-note">Logged-out: MSRP visible. Dealer: tier 1–4 auto-applied. Appears inline on Series + Spec Studio + price list download.</div><div class="g-mock"><span class="p-bar" style="width:70%"></span><span class="hint" style="font-family:var(--wf-mono);font-size:10px;color:#7a6a2a">"sign in to see your dealer pricing"</span></div></div>
+        <div class="gate"><div class="g-eye">GATE A · PRICE</div><div class="g-title">Dealer-tier pricing</div><div class="g-note">Logged-out: MSRP visible. Dealer: tier 1–4 auto-applied. Appears inline on Series + X Spec + price list download.</div><div class="g-mock"><span class="p-bar" style="width:70%"></span><span class="hint" style="font-family:var(--wf-mono);font-size:10px;color:#7a6a2a">"sign in to see your dealer pricing"</span></div></div>
         <div class="gate"><div class="g-eye">GATE B · CAD BUNDLES</div><div class="g-title">Downloads email-gated</div><div class="g-note">Collect email + role (designer/dealer/rep/other) at first download. Subsequent downloads remembered for 90d. Not blocked; collected.</div><div class="g-mock"><span class="p-bar" style="width:80%"></span><span class="hint" style="font-family:var(--wf-mono);font-size:10px;color:#7a6a2a">"tell us who this is for"</span></div></div>
         <div class="gate"><div class="g-eye">GATE C · PORTAL</div><div class="g-title">Role-gated page</div><div class="g-note">/portal/* routes block at the door. Role = dealer | rep | admin. Unknown role → "apply for access" form, not a 403.</div><div class="g-mock" style="background:#111;color:#fff"><span class="hint" style="color:#95ff00;font-family:var(--wf-mono);font-size:10px">▣ portal · sign in</span></div></div>
         <div class="gate"><div class="g-eye">GATE D · SUBMIT</div><div class="g-title">Quote submit requires account</div><div class="g-note">Configure + price freely as guest. At submit: "create an account or sign in — your quote is waiting." Low-friction, no prior config lost.</div><div class="g-mock"><span class="p-bar" style="width:60%"></span><span class="hint" style="font-family:var(--wf-mono);font-size:10px;color:#7a6a2a">"one step to submit"</span></div></div>
@@ -1260,18 +1270,18 @@
         <div class="qs-item"><div class="qs-badge qs-custom">CUSTOM</div><div class="qs-note">COM / CFA / non-catalog · lead time quoted per-order</div></div>
       </div>
       <div class="two-col" style="margin-top:16px">
-        <div class="meta-row"><b>Where it surfaces</b>Series card · Spec Studio live · filter chip on Browse · quote line item · checkout summary</div>
+        <div class="meta-row"><b>Where it surfaces</b>Series card · X Spec live · filter chip on Browse · quote line item · checkout summary</div>
         <div class="meta-row"><b>Rule</b>If any line item exits the QS envelope, the whole cart drops to the longer lead time. Show this downgrade the moment it happens.</div>
       </div>
     </div>
 
     <!-- FINISH SWATCH COMPONENT -->
     <div class="sheet">
-      <div class="pat-head"><div class="eye-label">PATTERN 06</div><h3>Finish swatch — one component, three contexts</h3><div class="note">Reused on Series detail (finish strip), Finish Library (filterable grid), Spec Studio (selectable). Same data contract, three layouts.</div></div>
+      <div class="pat-head"><div class="eye-label">PATTERN 06</div><h3>Finish swatch — one component, three contexts</h3><div class="note">Reused on Series detail (finish strip), Finish Library (filterable grid), X Spec (selectable). Same data contract, three layouts.</div></div>
       <div class="three-col">
         <div class="ctx-box"><div class="ctx-title">Context A · Series finish strip</div><div class="swatch-grid"><div class="sw" style="background:#222"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div><div class="sw" style="background:#f8f7ec"></div><div class="sw" style="background:#95ff00"></div><div class="sw" style="background:#2a3d5c"></div><div class="sw" style="background:#750028"></div></div><div class="ctx-note">10–12 swatches shown · "see all 84 finishes →"</div></div>
         <div class="ctx-box"><div class="ctx-title">Context B · Finish Library filter</div><div class="swatch-grid" style="grid-template-columns:repeat(6,1fr)"><div class="sw" style="background:#222"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div></div><div class="ctx-note">filterable · family / tone / availability · drop-ship sample</div></div>
-        <div class="ctx-box"><div class="ctx-title">Context C · Spec Studio selector</div><div class="swatch-grid" style="grid-template-columns:repeat(4,1fr)"><div class="sw" style="background:#222;outline:2px solid #95ff00;outline-offset:2px"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div></div><div class="ctx-note">larger tap targets · live preview · lead-time badge per swatch</div></div>
+        <div class="ctx-box"><div class="ctx-title">Context C · X Spec selector</div><div class="swatch-grid" style="grid-template-columns:repeat(4,1fr)"><div class="sw" style="background:#222;outline:2px solid #95ff00;outline-offset:2px"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div></div><div class="ctx-note">larger tap targets · live preview · lead-time badge per swatch</div></div>
       </div>
       <div class="callout" data-n="F">Data contract: { id, name, family (paint|laminate|wood|edge), hex, textureUrl, leadTimeClass (QS2 / QS4 / STD / CUSTOM), sampleAvailable }. Same object drives all three contexts.</div>
     </div>
@@ -1304,7 +1314,7 @@
         <li><b>A&D specifier vs. Dealer overlap.</b> Some A&D firms also act as dealers. Can one account hold both roles? Blocks: auth gate C, portal role model. Proposed default: one account, multiple roles, role-switcher in header.</li>
         <li><b>Self-serve quantity ceiling.</b> Brief says "≤ 9 units direct, ≥10 routes to rep." Is 10 the right line? Does it vary by series (Quick-Ship vs custom)? Blocks: Individual Buyer flow, checkout. Proposed default: 9 units across all QS SKUs; non-QS always rep-routed.</li>
         <li><b>Rep card behavior in unmapped territories.</b> What surfaces when IP + zip don't match a rep? Blocks: pattern 03. Proposed default: generic "contact sales" card, logged in sales-CRM as house lead.</li>
-        <li><b>Spec Studio pricing visibility.</b> v2 assumes live price in-configurator. Does logged-out / non-dealer see MSRP? dealer-tier? a placeholder? Blocks: Spec Studio template. Proposed default: logged-out sees MSRP, dealer sees tiered, both visible at all times (not gated).</li>
+        <li><b>X Spec pricing visibility.</b> v2 assumes live price in-configurator. Does logged-out / non-dealer see MSRP? dealer-tier? a placeholder? Blocks: X Spec template. Proposed default: logged-out sees MSRP, dealer sees tiered, both visible at all times (not gated).</li>
         <li><b>Collections as IA vs. marketing motif.</b> Currently tagged "A&D primary." Do Collections belong at /products/collections or at a separate top-level /collections? Blocks: sitemap. Proposed default: nested under Products (current), surface in Spaces-first mega-menu as well.</li>
         <li><b>CSI 3-part spec generation.</b> Is this a downloadable PDF per series, or a configured document per spec? Blocks: A&D flow, Resource template. Proposed default: per-series PDF in v1, configured doc in v2.</li>
         <li><b>Quote tracking SLA.</b> Dealer-priced quote returns in how long? Affects confidence in the flow. Blocks: quote submit template, portal. Proposed default: 24 business hours stated, tracked in portal.</li>
@@ -1405,6 +1415,131 @@
 .st-row:last-child { border-bottom:none; }
 .st-row b { font-weight:500; color:#fff; }
 .st-row span { color:#95ff00; font-family:var(--wf-mono); font-size:11px; }
+
+/* --- In-iframe comment system --- */
+.page { position: relative; }
+.cmt-bar { display:inline-flex; align-items:center; gap:8px; }
+.cmt-btn {
+  appearance:none; background:#fff; border:1.5px solid #111;
+  padding:5px 10px; cursor:pointer;
+  font-family: var(--wf-mono); font-size:10px;
+  letter-spacing:.1em; text-transform:uppercase; color:#111;
+  display:inline-flex; align-items:center; gap:6px; position:relative;
+}
+.cmt-btn:hover { background:#111; color:#fff; }
+.cmt-btn.on { background:#95ff00; border-color:#111; color:#111; }
+.cmt-btn .cmt-count {
+  background:#111; color:#fff; min-width:16px; text-align:center;
+  border-radius:9px; padding:0 5px; font-size:9px; font-weight:600;
+}
+.cmt-btn.on .cmt-count { background:#111; color:#95ff00; }
+.cmt-btn .cmt-count.zero { display:none; }
+
+.cmt-marker {
+  position:absolute; width:26px; height:26px;
+  background:#95ff00; border:2px solid #111; border-radius:50%;
+  font-family: var(--wf-mono); font-size:11px; font-weight:700; color:#111;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; z-index:30;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 0 #111;
+  user-select:none;
+}
+.cmt-marker.resolved { background:#fff; opacity:.7; }
+.cmt-marker.active   { outline: 3px solid #95ff00; outline-offset:2px; background:#fff; }
+.cmt-pending {
+  position:absolute; width:26px; height:26px;
+  border-radius:50%; border:2px dashed #111;
+  background: rgba(149,255,0,.45);
+  z-index:31; transform: translate(-50%, -50%);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--wf-mono); font-size:14px; font-weight:700; color:#111;
+  pointer-events:none;
+}
+.cmt-sidebar {
+  position:fixed; right:0; top:0; bottom:0;
+  width:380px; max-width:90vw; background:#fff;
+  border-left:1.5px solid #111;
+  box-shadow: -8px 0 28px rgba(0,0,0,.06);
+  z-index:50;
+  transform: translateX(100%);
+  transition: transform 220ms ease;
+  display:flex; flex-direction:column;
+  color:#111;
+}
+.cmt-sidebar.open { transform: translateX(0); }
+.cmt-sidebar header {
+  padding:14px 16px; border-bottom:1px solid #ccc;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background:#fff;
+}
+.cmt-sidebar header h4 {
+  margin:0; font-family: var(--wf-mono); font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase; color:#111;
+}
+.cmt-sidebar header .actions { display:flex; gap:6px; }
+.cmt-sidebar header .actions button {
+  background:#fff; border:1px solid #111; color:#111;
+  font-family: var(--wf-mono); font-size:9.5px;
+  padding:4px 8px; cursor:pointer; letter-spacing:.08em; text-transform:uppercase;
+}
+.cmt-sidebar header .actions button:hover { background:#111; color:#fff; }
+.cmt-sidebar .who-bar {
+  padding:10px 16px; border-bottom:1px solid #eee;
+  background:#fcfbf6; display:flex; gap:10px; align-items:center;
+}
+.cmt-sidebar .who-bar label {
+  font-family: var(--wf-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:#555;
+}
+.cmt-sidebar .who-bar input {
+  flex:1; padding:5px 8px; font-family:inherit; border:1px solid #ccc;
+  font-size:12px; color:#111;
+}
+.cmt-sidebar .body { flex:1; overflow:auto; padding:12px 16px; background:#fff; }
+.cmt-sidebar .empty { color:#999; font-size:13px; padding:30px 0; text-align:center; line-height:1.5; }
+.cmt-pending-card {
+  background:#fcfbf6; border:1.5px solid #95ff00; padding:12px;
+  margin-bottom:12px;
+}
+.cmt-pending-card .who {
+  font-family: var(--wf-mono); font-size:10px; letter-spacing:.1em; color:#555; margin-bottom:6px;
+}
+.cmt-pending-card textarea, .cmt-item textarea {
+  width:100%; min-height:80px; padding:8px; font-family:inherit; font-size:13px;
+  border:1px solid #111; box-sizing:border-box; resize:vertical; color:#111;
+}
+.cmt-pending-card .row, .cmt-item .row {
+  margin-top:6px; display:flex; gap:6px; justify-content:flex-end;
+}
+.cmt-pending-card button, .cmt-item .row button {
+  background:#fff; border:1px solid #111; cursor:pointer; color:#111;
+  font-family: var(--wf-mono); font-size:9.5px; padding:4px 10px;
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.cmt-pending-card button.primary, .cmt-item .row button.primary {
+  background:#111; color:#fff;
+}
+.cmt-pending-card button:hover, .cmt-item .row button:hover {
+  background:#95ff00; color:#111; border-color:#111;
+}
+.cmt-item {
+  border:1px solid #ddd; padding:10px 12px; margin-bottom:10px;
+  background:#fcfbf6; font-size:13px; line-height:1.45; cursor:pointer; color:#111;
+}
+.cmt-item.active { border-color:#111; background:#fff; box-shadow: 0 0 0 2px #95ff00; }
+.cmt-item .head {
+  display:flex; align-items:center; justify-content:space-between;
+  font-family: var(--wf-mono); font-size:10px; letter-spacing:.08em;
+  color:#555; margin-bottom:6px;
+}
+.cmt-item .head .num { color:#111; font-weight:600; }
+.cmt-item .body-text { white-space: pre-wrap; word-break: break-word; }
+.cmt-item.resolved .body-text { text-decoration: line-through; opacity:.6; }
+body.cmt-mode .page.active { cursor: crosshair; }
+body.cmt-mode .page.active a,
+body.cmt-mode .page.active button,
+body.cmt-mode .cmt-marker { cursor: pointer; }
 </style>
 
 
@@ -1424,6 +1559,7 @@
     bp.forEach(a => a.classList.toggle('on', a.dataset.p === id));
     if (bc) bc.textContent = names[id] || id;
     window.scrollTo({top:0, behavior:'instant'});
+    window.__sysShow = show; // exposed for postMessage from dashboard parent
     if (scrollAnchor) {
       setTimeout(()=>{
         const el = document.getElementById(scrollAnchor);
@@ -1448,5 +1584,342 @@
   }
   show(initial);
 })();
+
+/* ============ Comments (in-iframe) ============ */
+function __initWfCmts(){
+  var STORE_KEY  = 'tablex_wf_comments_system';
+  var AUTHOR_KEY = 'tablex_wf_author';
+  var state = {
+    mode: false,
+    pending: null,
+    selectedId: null,
+    author: localStorage.getItem(AUTHOR_KEY) || '',
+    comments: load()
+  };
+  var SET_KEY      = 'system';
+  var SYNC_URL     = '/api/wireframe-comments';
+  var syncTimer    = null;
+  var pendingPages = {};
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function persistLocal() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state.comments)); } catch(e){}
+  }
+  function persist() {
+    persistLocal();
+    var pid = activePageId();
+    if (pid) scheduleSync(pid);
+  }
+  function uid() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'wfc-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+  }
+  function scheduleSync(pid) {
+    pendingPages[pid] = true;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(flushSync, 1500);
+  }
+  function flushSync() {
+    var pids = Object.keys(pendingPages);
+    pendingPages = {};
+    pids.forEach(function(pid){
+      var rows = pageComments(pid).map(function(c){
+        return {
+          id: c.id, pageId: pid,
+          x: c.x, y: c.y,
+          text: c.text, author: c.author || 'Anonymous',
+          resolved: !!c.resolved
+        };
+      });
+      fetch(SYNC_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          pagePath: '/wireframes/' + SET_KEY + '/' + pid,
+          setKey: SET_KEY,
+          pageId: pid,
+          comments: rows
+        })
+      }).catch(function(err){ console.warn('[wf-cmt] sync failed', err); });
+    });
+  }
+  function pullFromServer() {
+    fetch(SYNC_URL + '?set=' + SET_KEY, { credentials: 'same-origin' })
+      .then(function(r){ if (!r.ok) throw new Error('pull ' + r.status); return r.json(); })
+      .then(function(data){
+        if (!data || !Array.isArray(data.comments)) return;
+        state.comments = data.comments.map(function(row){
+          return {
+            id: row.id,
+            pageId: row.page_id,
+            x: Number(row.marker_x),
+            y: Number(row.marker_y),
+            text: row.body,
+            author: row.author || 'Anonymous',
+            resolved: !!row.is_resolved,
+            ts: row.created_at ? new Date(row.created_at).getTime() : Date.now()
+          };
+        });
+        persistLocal();
+        render();
+      })
+      .catch(function(err){ console.warn('[wf-cmt] pull failed', err); });
+  }
+  function activePageId() {
+    var p = document.querySelector('.page.active');
+    return p ? p.id : null;
+  }
+  function activePageLabel() {
+    var pid = activePageId();
+    var rail = pid && document.querySelector('.wf-rail a[data-p="'+pid+'"]');
+    return rail ? rail.textContent.trim() : (pid || 'Page');
+  }
+  function pageComments(pid) {
+    pid = pid || activePageId();
+    return state.comments.filter(function(c){ return c.pageId === pid; });
+  }
+  function unresolvedTotal() {
+    return state.comments.filter(function(c){ return !c.resolved; }).length;
+  }
+
+  var btn       = document.getElementById('cmt-toggle');
+  var sidebar   = document.getElementById('cmt-sidebar');
+  var bodyEl    = document.getElementById('cmt-body');
+  var labelEl   = document.getElementById('cmt-page-label');
+  var countEl   = document.getElementById('cmt-count');
+  var authorIn  = document.getElementById('cmt-author');
+  authorIn.value = state.author;
+  authorIn.addEventListener('input', function(){
+    state.author = authorIn.value;
+    try { localStorage.setItem(AUTHOR_KEY, state.author); } catch(e){}
+  });
+
+  function setMode(on) {
+    state.mode = on;
+    btn.classList.toggle('on', on);
+    document.body.classList.toggle('cmt-mode', on);
+    sidebar.classList.toggle('open', on);
+    if (!on) state.pending = null;
+    render();
+  }
+  btn.addEventListener('click', function(){ setMode(!state.mode); });
+  document.getElementById('cmt-close').addEventListener('click', function(){ setMode(false); });
+  document.getElementById('cmt-export').addEventListener('click', function(){
+    var text = exportMarkdown();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function(){
+        alert('Comments exported — markdown copied to clipboard. Paste into email/doc to share.');
+      }, function(){ window.prompt('Copy this markdown:', text); });
+    } else { window.prompt('Copy this markdown:', text); }
+  });
+
+  document.addEventListener('click', function(e){
+    if (!state.mode) return;
+    var p = document.querySelector('.page.active');
+    if (!p || !p.contains(e.target)) return;
+    if (e.target.closest('.cmt-marker')) return;
+    if (e.target.closest('a, button, input, select, textarea')) return;
+    var rect = p.getBoundingClientRect();
+    var x = ((e.clientX - rect.left) / rect.width) * 100;
+    var y = ((e.clientY - rect.top) / rect.height) * 100;
+    state.pending = { x: x, y: y, pageId: p.id };
+    state.selectedId = null;
+    sidebar.classList.add('open');
+    render();
+  });
+
+  function render() {
+    labelEl.textContent = activePageLabel();
+    var n = unresolvedTotal();
+    countEl.textContent = n;
+    countEl.classList.toggle('zero', n === 0);
+
+    document.querySelectorAll('.cmt-marker, .cmt-pending').forEach(function(el){ el.remove(); });
+    if (!state.mode) { renderSidebar(); return; }
+    var p = document.querySelector('.page.active');
+    if (!p) { renderSidebar(); return; }
+    var pid = p.id;
+    pageComments(pid).forEach(function(c, i){
+      var m = document.createElement('div');
+      m.className = 'cmt-marker' + (c.resolved ? ' resolved' : '') + (c.id === state.selectedId ? ' active' : '');
+      m.style.left = c.x + '%';
+      m.style.top  = c.y + '%';
+      m.textContent = (i + 1);
+      m.title = (c.author || 'Anonymous') + ': ' + c.text.split('\n')[0].slice(0, 80);
+      m.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        state.selectedId = (state.selectedId === c.id) ? null : c.id;
+        sidebar.classList.add('open');
+        render();
+      });
+      p.appendChild(m);
+    });
+    if (state.pending && state.pending.pageId === pid) {
+      var pm = document.createElement('div');
+      pm.className = 'cmt-pending';
+      pm.style.left = state.pending.x + '%';
+      pm.style.top  = state.pending.y + '%';
+      pm.textContent = '+';
+      p.appendChild(pm);
+    }
+    renderSidebar();
+  }
+
+  function renderSidebar() {
+    var pid = activePageId();
+    var list = pageComments(pid);
+    var html = '';
+    if (state.pending && state.pending.pageId === pid) {
+      html += '<div class="cmt-pending-card">' +
+        '<div class="who">New comment · ' + escapeHtml(state.author || 'Anonymous') + '</div>' +
+        '<textarea id="cmt-pending-text" placeholder="Type your comment..." autofocus></textarea>' +
+        '<div class="row">' +
+          '<button id="cmt-pending-cancel">Cancel</button>' +
+          '<button class="primary" id="cmt-pending-save">Save</button>' +
+        '</div>' +
+      '</div>';
+    }
+    if (!list.length && !state.pending) {
+      html += '<div class="empty">No comments on this page yet.<br/>Toggle Comments and click anywhere on the wireframe to drop one.</div>';
+    }
+    list.forEach(function(c, i){
+      var active = c.id === state.selectedId;
+      html += '<div class="cmt-item' + (c.resolved ? ' resolved' : '') + (active ? ' active' : '') + '" data-id="' + c.id + '">' +
+        '<div class="head"><span class="num">#' + (i+1) + ' &middot; ' + escapeHtml(c.author || 'Anonymous') + '</span><span>' + relTime(c.ts) + '</span></div>' +
+        (c.editing
+          ? '<textarea class="cmt-edit-text">' + escapeHtml(c.text) + '</textarea>' +
+            '<div class="row">' +
+              '<button data-act="cancel-edit" data-id="' + c.id + '">Cancel</button>' +
+              '<button class="primary" data-act="save-edit" data-id="' + c.id + '">Save</button>' +
+            '</div>'
+          : '<div class="body-text">' + escapeHtml(c.text) + '</div>' +
+            '<div class="row">' +
+              '<button data-act="' + (c.resolved ? 'unresolve' : 'resolve') + '" data-id="' + c.id + '">' + (c.resolved ? 'Unresolve' : 'Resolve') + '</button>' +
+              '<button data-act="edit" data-id="' + c.id + '">Edit</button>' +
+              '<button data-act="delete" data-id="' + c.id + '">Delete</button>' +
+            '</div>') +
+      '</div>';
+    });
+    bodyEl.innerHTML = html;
+
+    var saveBtn = document.getElementById('cmt-pending-save');
+    var cancelBtn = document.getElementById('cmt-pending-cancel');
+    var ta = document.getElementById('cmt-pending-text');
+    if (ta) ta.focus();
+    if (saveBtn) saveBtn.addEventListener('click', function(){
+      var text = (ta.value || '').trim();
+      if (!text) return;
+      state.comments.push({
+        id: uid(), pageId: state.pending.pageId,
+        x: state.pending.x, y: state.pending.y,
+        text: text, author: state.author || 'Anonymous',
+        ts: Date.now(), resolved: false
+      });
+      state.pending = null;
+      persist(); render();
+    });
+    if (cancelBtn) cancelBtn.addEventListener('click', function(){
+      state.pending = null; render();
+    });
+    bodyEl.querySelectorAll('.cmt-item').forEach(function(it){
+      it.addEventListener('click', function(e){
+        if (e.target.matches('button, textarea')) return;
+        state.selectedId = it.dataset.id;
+        render();
+      });
+    });
+    bodyEl.querySelectorAll('button[data-act]').forEach(function(b){
+      b.addEventListener('click', function(e){
+        e.stopPropagation();
+        var id = b.dataset.id, act = b.dataset.act;
+        var c = state.comments.find(function(x){ return x.id === id; });
+        if (!c) return;
+        if (act === 'delete') { state.comments = state.comments.filter(function(x){ return x.id !== id; }); persist(); render(); }
+        else if (act === 'resolve')   { c.resolved = true;  persist(); render(); }
+        else if (act === 'unresolve') { c.resolved = false; persist(); render(); }
+        else if (act === 'edit') { state.comments.forEach(function(x){ x.editing = false; }); c.editing = true; render(); }
+        else if (act === 'cancel-edit') { c.editing = false; render(); }
+        else if (act === 'save-edit') {
+          var t = b.closest('.cmt-item').querySelector('.cmt-edit-text');
+          c.text = (t.value || '').trim();
+          c.editing = false; persist(); render();
+        }
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s||'').replace(/[&<>"']/g, function(ch){
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch];
+    });
+  }
+  function relTime(ts) {
+    var d = (Date.now() - ts) / 1000;
+    if (d < 60) return 'just now';
+    if (d < 3600) return Math.floor(d/60) + 'm ago';
+    if (d < 86400) return Math.floor(d/3600) + 'h ago';
+    return Math.floor(d/86400) + 'd ago';
+  }
+  function exportMarkdown() {
+    var byPage = {};
+    state.comments.forEach(function(c){ (byPage[c.pageId] = byPage[c.pageId] || []).push(c); });
+    var pages = Object.keys(byPage);
+    if (!pages.length) return '_No comments yet._';
+    var out = '# TableX wireframe comments — System\n\n_Exported ' + new Date().toISOString().slice(0,10) + ' · ' + state.comments.length + ' comments_\n\n';
+    pages.forEach(function(pid){
+      var rail = document.querySelector('.wf-rail a[data-p="' + pid + '"]');
+      var pageLabel = rail ? rail.textContent.trim() : pid;
+      out += '## ' + pageLabel + '\n\n';
+      byPage[pid].forEach(function(c, i){
+        out += '- **#' + (i+1) + '** _(' + (c.author || 'Anonymous') + ')_' + (c.resolved ? ' ~~resolved~~' : '') + '  \n  ' + c.text.replace(/\n/g, '\n  ') + '\n';
+      });
+      out += '\n';
+    });
+    return out;
+  }
+
+  var observer = new MutationObserver(function(){ render(); });
+  document.querySelectorAll('.page').forEach(function(p){
+    observer.observe(p, { attributes: true, attributeFilter: ['class'] });
+  });
+
+  // Listen for parent (dashboard) jump-to-comment messages
+  window.addEventListener('message', function(e){
+    if (!e.data || typeof e.data !== 'object') return;
+    if (e.data.type !== 'wf:goto') return;
+    if (e.data.set && e.data.set !== SET_KEY) return;
+    if (e.data.pageId && typeof window.__sysShow === 'function') window.__sysShow(e.data.pageId);
+    if (e.data.commentId) {
+      state.selectedId = e.data.commentId;
+      if (!state.mode) setMode(true);
+      sidebar.classList.add('open');
+      render();
+    }
+  });
+
+  render();
+  pullFromServer();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __initWfCmts);
+else __initWfCmts();
 </script>
+
+<aside class="cmt-sidebar" id="cmt-sidebar" aria-label="Comments">
+  <header>
+    <h4>Comments &middot; <span id="cmt-page-label">Page</span></h4>
+    <div class="actions">
+      <button id="cmt-export" title="Copy markdown summary to clipboard">Export</button>
+      <button id="cmt-close">Close</button>
+    </div>
+  </header>
+  <div class="who-bar">
+    <label for="cmt-author">You</label>
+    <input id="cmt-author" type="text" placeholder="Your name" />
+  </div>
+  <div class="body" id="cmt-body"></div>
+</aside>
 </body></html>

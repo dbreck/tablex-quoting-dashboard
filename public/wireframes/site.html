@@ -65,6 +65,129 @@
   .tabbar { display:flex; gap:6px; flex-wrap:wrap; padding: 10px 22px; background:#fff; border-bottom:1px solid #ccc; position:sticky; top: 42px; z-index: 4;}
   .tabbar a { padding: 6px 10px; font-family: var(--wf-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; border:1px solid #ccc; color:#555; cursor:pointer; background:#fff; }
   .tabbar a.on { background:#111; color:#fff; border-color:#111; }
+
+  /* --- In-iframe comment system --- */
+  .page { position: relative; }
+  .cmt-bar { display:inline-flex; align-items:center; gap:8px; }
+  .cmt-btn {
+    appearance:none; background:#fff; border:1.5px solid #111;
+    padding:5px 10px; cursor:pointer;
+    font-family: var(--wf-mono); font-size:10px;
+    letter-spacing:.1em; text-transform:uppercase; color:#111;
+    display:inline-flex; align-items:center; gap:6px; position:relative;
+  }
+  .cmt-btn:hover { background:#111; color:#fff; }
+  .cmt-btn.on { background:#95ff00; border-color:#111; color:#111; }
+  .cmt-btn .cmt-count {
+    background:#111; color:#fff; min-width:16px; text-align:center;
+    border-radius:9px; padding:0 5px; font-size:9px; font-weight:600;
+  }
+  .cmt-btn.on .cmt-count { background:#111; color:#95ff00; }
+  .cmt-btn .cmt-count.zero { display:none; }
+
+  .cmt-marker {
+    position:absolute; width:26px; height:26px;
+    background:#95ff00; border:2px solid #111; border-radius:50%;
+    font-family: var(--wf-mono); font-size:11px; font-weight:700; color:#111;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:30;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 0 #111;
+    user-select:none;
+  }
+  .cmt-marker.resolved { background:#fff; opacity:.7; }
+  .cmt-marker.active   { outline: 3px solid #95ff00; outline-offset:2px; background:#fff; }
+  .cmt-pending {
+    position:absolute; width:26px; height:26px;
+    border-radius:50%; border:2px dashed #111;
+    background: rgba(149,255,0,.45);
+    z-index:31; transform: translate(-50%, -50%);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--wf-mono); font-size:14px; font-weight:700; color:#111;
+    pointer-events:none;
+  }
+  .cmt-sidebar {
+    position:fixed; right:0; top:0; bottom:0;
+    width:380px; max-width:90vw; background:#fff;
+    border-left:1.5px solid #111;
+    box-shadow: -8px 0 28px rgba(0,0,0,.06);
+    z-index:50;
+    transform: translateX(100%);
+    transition: transform 220ms ease;
+    display:flex; flex-direction:column;
+  }
+  .cmt-sidebar.open { transform: translateX(0); }
+  .cmt-sidebar header {
+    padding:14px 16px; border-bottom:1px solid #ccc;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+  }
+  .cmt-sidebar header h4 {
+    margin:0; font-family: var(--wf-mono); font-size:11px;
+    letter-spacing:.14em; text-transform:uppercase;
+  }
+  .cmt-sidebar header .actions { display:flex; gap:6px; }
+  .cmt-sidebar header .actions button {
+    background:#fff; border:1px solid #111;
+    font-family: var(--wf-mono); font-size:9.5px;
+    padding:4px 8px; cursor:pointer; letter-spacing:.08em; text-transform:uppercase;
+  }
+  .cmt-sidebar header .actions button:hover { background:#111; color:#fff; }
+  .cmt-sidebar .who-bar {
+    padding:10px 16px; border-bottom:1px solid #eee;
+    background:#fcfbf6; display:flex; gap:10px; align-items:center;
+  }
+  .cmt-sidebar .who-bar label {
+    font-family: var(--wf-mono); font-size:10px; letter-spacing:.1em;
+    text-transform:uppercase; color:#555;
+  }
+  .cmt-sidebar .who-bar input {
+    flex:1; padding:5px 8px; font-family:inherit; border:1px solid #ccc;
+    font-size:12px;
+  }
+  .cmt-sidebar .body { flex:1; overflow:auto; padding:12px 16px; }
+  .cmt-sidebar .empty { color:#999; font-size:13px; padding:30px 0; text-align:center; line-height:1.5; }
+  .cmt-pending-card {
+    background:#fcfbf6; border:1.5px solid #95ff00; padding:12px;
+    margin-bottom:12px;
+  }
+  .cmt-pending-card .who {
+    font-family: var(--wf-mono); font-size:10px; letter-spacing:.1em; color:#555; margin-bottom:6px;
+  }
+  .cmt-pending-card textarea, .cmt-item textarea {
+    width:100%; min-height:80px; padding:8px; font-family:inherit; font-size:13px;
+    border:1px solid #111; box-sizing:border-box; resize:vertical;
+  }
+  .cmt-pending-card .row, .cmt-item .row {
+    margin-top:6px; display:flex; gap:6px; justify-content:flex-end;
+  }
+  .cmt-pending-card button, .cmt-item .row button {
+    background:#fff; border:1px solid #111; cursor:pointer;
+    font-family: var(--wf-mono); font-size:9.5px; padding:4px 10px;
+    letter-spacing:.08em; text-transform:uppercase;
+  }
+  .cmt-pending-card button.primary, .cmt-item .row button.primary {
+    background:#111; color:#fff;
+  }
+  .cmt-pending-card button:hover, .cmt-item .row button:hover {
+    background:#95ff00; color:#111; border-color:#111;
+  }
+  .cmt-item {
+    border:1px solid #ddd; padding:10px 12px; margin-bottom:10px;
+    background:#fcfbf6; font-size:13px; line-height:1.45; cursor:pointer;
+  }
+  .cmt-item.active { border-color:#111; background:#fff; box-shadow: 0 0 0 2px #95ff00; }
+  .cmt-item .head {
+    display:flex; align-items:center; justify-content:space-between;
+    font-family: var(--wf-mono); font-size:10px; letter-spacing:.08em;
+    color:#555; margin-bottom:6px;
+  }
+  .cmt-item .head .num { color:#111; font-weight:600; }
+  .cmt-item .body-text { white-space: pre-wrap; word-break: break-word; }
+  .cmt-item.resolved .body-text { text-decoration: line-through; opacity:.6; }
+  body.cmt-mode .page.active { cursor: crosshair; }
+  body.cmt-mode .page.active a,
+  body.cmt-mode .page.active button,
+  body.cmt-mode .cmt-marker { cursor: pointer; }
 </style>
 </head>
 <body data-page="home">
@@ -77,7 +200,7 @@
   <div class="grp">P1 · Marketing + Discovery</div>
   <a href="#home"              data-p="home">Home</a>
   <a href="#products"          data-p="products">Products (hub)</a>
-  <a href="#spec-studio"       data-p="spec-studio">Spec Studio</a>
+  <a href="#x-spec"       data-p="x-spec">X Spec</a>
   <a href="#collections"       data-p="collections">Collections index</a>
   <a href="#collection-app"    data-p="collection-app">Collection · App</a>
   <a href="#product-ultra"     data-p="product-ultra">Product · Ultra</a>
@@ -106,7 +229,17 @@
 <div class="wf-main">
   <div class="wf-topbar">
     <div class="crumb"><b id="bc">Home</b> <span>· wireframe · desktop 1280 / tablet 820</span></div>
-    <div class="bp" id="bp"><a class="on" data-bp="desktop">Desktop</a><a data-bp="tablet">Tablet</a><a data-bp="both">Both</a></div>
+    <div class="cmt-bar">
+      <div class="bp" id="bp"><a class="on" data-bp="desktop">Desktop</a><a data-bp="tablet">Tablet</a><a data-bp="both">Both</a></div>
+      <button id="cmt-toggle" class="cmt-btn" title="Toggle comment mode">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2 3h12v9H6l-3 3v-3H2V3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M8 6.5v3M6.5 8h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Comments</span>
+        <span class="cmt-count zero" id="cmt-count">0</span>
+      </button>
+    </div>
   </div>
 
 <!-- ============ HOME ============ -->
@@ -138,7 +271,7 @@
       <div class="stripe">
         <div class="stripe-head"><div class="eye">Audience-Aware Paths · primary IA entry</div><span class="hint">§ Principle #1</span></div>
         <div class="three-col">
-          <div class="box panel"><span class="label">Path A</span><span class="persona dealer">Dealer (60%)</span><div class="title">I'm specifying for a client</div><div class="note">→ Spec Studio · Tiered pricing · Quote pipeline · CAD downloads. CTA: "open Spec Studio"</div></div>
+          <div class="box panel"><span class="label">Path A</span><span class="persona dealer">Dealer (60%)</span><div class="title">I'm specifying for a client</div><div class="note">→ X Spec · Tiered pricing · Quote pipeline · CAD downloads. CTA: "open X Spec"</div></div>
           <div class="box panel"><span class="label">Path B</span><span class="persona rep">Rep (30%)</span><div class="title">I'm demoing in the field</div><div class="note">→ Tablet-optimized catalog · Territory dashboard · Commission. CTA: "open Rep Portal"</div></div>
           <div class="box panel"><span class="label">Path C</span><span class="persona buyer">Buyer (10%)</span><div class="title">I need tables for my space</div><div class="note">→ Browse by Space · Collections · Quick Ship · Cart for 1–10. CTA: "browse by space"</div></div>
         </div>
@@ -155,7 +288,7 @@
       </div>
 
       <div class="stripe dark">
-        <div class="stripe-head"><div class="eye">Spec Studio teaser · the 3D configurator</div></div>
+        <div class="stripe-head"><div class="eye">X Spec teaser · the 3D configurator</div></div>
         <div class="two-col">
           <div class="ph dark" style="aspect-ratio:16/10"></div>
           <div class="stack">
@@ -168,7 +301,7 @@
               <span class="chip" style="background:#222;color:#fff;border-color:#555">Finish</span>
               <span class="chip" style="background:#222;color:#fff;border-color:#555">Accessories</span>
             </div>
-            <div class="row"><div class="btn-wf primary">open Spec Studio</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">watch 60s demo</div></div>
+            <div class="row"><div class="btn-wf primary">open X Spec</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">watch 60s demo</div></div>
           </div>
         </div>
       </div>
@@ -204,7 +337,7 @@
       <div class="footer-wf">
         <div><div style="font-weight:600;font-size:18px">TableX</div><div style="font-size:11px;color:#888;margin-top:6px">Midwest USA · Since 1998</div></div>
         <div class="cols">
-          <div><h5>Products</h5><ul><li>Spec Studio</li><li>Collections</li><li>Quick Ship</li><li>Compare</li></ul></div>
+          <div><h5>Products</h5><ul><li>X Spec</li><li>Collections</li><li>Quick Ship</li><li>Compare</li></ul></div>
           <div><h5>Resources</h5><ul><li>CAD</li><li>Brochures</li><li>Case studies</li><li>Sustainability</li></ul></div>
           <div><h5>Portals</h5><ul><li>Dealer</li><li>Rep</li><li>Track quote</li></ul></div>
           <div><h5>Company</h5><ul><li>About</li><li>Warranty</li><li>TIPS/Contracts</li><li>Careers</li></ul></div>
@@ -216,7 +349,7 @@
 
 <!-- ============ PRODUCTS HUB ============ -->
 <section id="products" class="page">
-  <div class="wf-page-title"><h2>Products hub</h2><div class="meta">Gateway to Spec Studio · Collections · Browse All · Compare · Accessories · Quick Ship</div></div>
+  <div class="wf-page-title"><h2>Products hub</h2><div class="meta">Gateway to X Spec · Collections · Browse All · Compare · Accessories · Quick Ship</div></div>
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Products · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">Products</span><span>Spaces</span><span>Finishes</span><span>Resources</span><span>About</span></div><div class="util"><span>Login</span><span>🛒</span></div></div>
@@ -224,7 +357,7 @@
       <div class="stripe">
         <div class="stripe-head"><div class="eye">6 entry points · persona-ranked</div></div>
         <div class="two-col">
-          <div class="box accent"><span class="label">Hero entry · dealer/rep</span><div class="title">Spec Studio</div><div class="note">3D configurator · base style · top shape · edge · finish · accessories · live price (v2)</div><div class="btn-wf primary">open studio →</div></div>
+          <div class="box accent"><span class="label">Hero entry · dealer/rep</span><div class="title">X Spec</div><div class="note">3D configurator · base style · top shape · edge · finish · accessories · live price (v2)</div><div class="btn-wf primary">open studio →</div></div>
           <div class="box"><span class="label">Hero entry · A&D + buyer</span><div class="title">Collections</div><div class="note">Curated groupings: App · Solo · Outdoor · Occasional · Dining</div><div class="btn-wf">view all collections →</div></div>
         </div>
         <div class="four-col">
@@ -260,15 +393,15 @@
 </section>
 
 <!-- ============ SPEC STUDIO ============ -->
-<section id="spec-studio" class="page">
-  <div class="wf-page-title"><h2>Spec Studio</h2><div class="meta">3D configurator · landing + in-configurator views · desktop + tablet (rep demo)</div></div>
+<section id="x-spec" class="page">
+  <div class="wf-page-title"><h2>X Spec</h2><div class="meta">3D configurator · landing + in-configurator views · desktop + tablet (rep demo)</div></div>
   <div class="tabbar"><a class="on" data-sub="ss-landing">Landing</a><a data-sub="ss-config">In-Configurator</a><a data-sub="ss-tablet">Tablet view</a></div>
   <div class="wf-canvas">
 
   <div id="ss-landing" class="ss-view">
-    <div class="device desktop"><div class="device-header"><span>Spec Studio · Landing · 1280</span><span>DESKTOP</span></div>
+    <div class="device desktop"><div class="device-header"><span>X Spec · Landing · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
-      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">Spec Studio</span><span>Collections</span><span>Browse</span><span>Compare</span></div><div class="util"><span>Login</span></div></div>
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">X Spec</span><span>Collections</span><span>Browse</span><span>Compare</span></div><div class="util"><span>Login</span></div></div>
       <div class="hero-block" style="height:320px">
         <div class="ph"></div>
         <div class="hint" style="color:#95ff00">Hero · 3D preview loop</div>
@@ -286,7 +419,7 @@
           <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Occasional</div><div class="note">Puddle · Exclaim</div></div>
         </div>
       </div>
-      <div class="stripe"><div class="stripe-head"><div class="eye">How Spec Studio works · 4-step</div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">How X Spec works · 4-step</div></div>
         <div class="four-col">
           <div class="box"><div class="hint">STEP 01</div><div class="title">Pick a base</div><div class="note">6 families above</div></div>
           <div class="box"><div class="hint">STEP 02</div><div class="title">Shape + size the top</div><div class="note">Rect / round / racetrack · 14 sizes</div></div>
@@ -299,9 +432,9 @@
   </div>
 
   <div id="ss-config" class="ss-view" style="display:none">
-    <div class="device desktop"><div class="device-header"><span>Spec Studio · In-Configurator · 1280</span><span>DESKTOP</span></div>
+    <div class="device desktop"><div class="device-header"><span>X Spec · In-Configurator · 1280</span><span>DESKTOP</span></div>
     <div class="viewport" style="padding:0">
-      <div class="nav-wf" style="border-left:none;border-right:none;border-top:none"><div class="logo">TableX / Spec Studio</div><div class="util"><span>Save</span><span>Share</span><span>Reset</span></div></div>
+      <div class="nav-wf" style="border-left:none;border-right:none;border-top:none"><div class="logo">TableX / X Spec</div><div class="util"><span>Save</span><span>Share</span><span>Reset</span></div></div>
       <div class="studio-grid">
         <div class="studio-col">
           <h5>Step · 2/4 · Top shape + size</h5>
@@ -360,7 +493,7 @@
   </div>
 
   <div id="ss-tablet" class="ss-view" style="display:none">
-    <div class="device tablet"><div class="device-header"><span>Spec Studio · Tablet · 820 · Rep demo</span><span>TABLET</span></div>
+    <div class="device tablet"><div class="device-header"><span>X Spec · Tablet · 820 · Rep demo</span><span>TABLET</span></div>
     <div class="viewport" style="padding:0">
       <div class="nav-wf"><div class="logo">TableX / Studio</div><div class="util"><span>Save</span></div></div>
       <div style="display:grid;grid-template-columns:1fr 260px;border:1.5px solid #111;min-height:480px">
@@ -430,7 +563,7 @@
         <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">Cummins HQ</div><div class="note">Huddle rooms · App</div></div>
         <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">IU Health</div><div class="note">Training · App + Stretch</div></div>
       </div></div>
-      <div class="stripe accent" style="background:#f6ffe3"><div class="stripe-head"><div class="eye">CTA band · dual path</div></div><div class="row" style="gap:16px"><div class="btn-wf primary">configure App in Spec Studio</div><div class="btn-wf">find your rep</div></div></div>
+      <div class="stripe accent" style="background:#f6ffe3"><div class="stripe-head"><div class="eye">CTA band · dual path</div></div><div class="row" style="gap:16px"><div class="btn-wf primary">configure App in X Spec</div><div class="btn-wf">find your rep</div></div></div>
     </div></div>
   </div>
 </section>
@@ -455,7 +588,7 @@
                 <div class="h-bar" style="width:40%;height:30px">Ultra</div>
                 <div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div>
                 <div class="chip-row"><span class="chip">T-leg</span><span class="chip">14 sizes</span><span class="chip">Rect · Round · D-end</span></div>
-                <div class="row"><div class="btn-wf primary">configure in Spec Studio</div><div class="btn-wf">add to compare</div></div>
+                <div class="row"><div class="btn-wf primary">configure in X Spec</div><div class="btn-wf">add to compare</div></div>
               </div>
             </div>
           </div>
@@ -495,8 +628,8 @@
             <div class="chip-row"><span class="chip">Serving: zip 11211 ✓</span></div>
             <div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">schedule a visit</div><div class="btn-wf sm">change location</div></div>
           </div>
-          <div class="box"><span class="label">Buy 1–10 direct</span><span class="persona buyer">Buyer</span><div class="note">Configure in Spec Studio · add to cart · ship in 2 weeks (Quick Ship SKUs only).</div><div class="btn-wf">see Quick Ship Ultras</div></div>
-          <div class="box accent"><span class="label">Dealer? Log in</span><span class="persona dealer">Dealer</span><div class="note">Tiered pricing unlocks on Spec Studio + CAD bundles + quote pipeline.</div><div class="btn-wf">dealer login</div></div>
+          <div class="box"><span class="label">Buy 1–10 direct</span><span class="persona buyer">Buyer</span><div class="note">Configure in X Spec · add to cart · ship in 2 weeks (Quick Ship SKUs only).</div><div class="btn-wf">see Quick Ship Ultras</div></div>
+          <div class="box accent"><span class="label">Dealer? Log in</span><span class="persona dealer">Dealer</span><div class="note">Tiered pricing unlocks on X Spec + CAD bundles + quote pipeline.</div><div class="btn-wf">dealer login</div></div>
         </div>
       </div>
     </div></div>
@@ -508,7 +641,7 @@
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products / Ultra</span></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Hero · full-width</div></div>
-        <div class="two-col"><div class="ph" style="aspect-ratio:4/3"></div><div class="stack"><div class="hint">SERIES · flagship</div><div class="h-bar" style="width:30%;height:40px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div><div class="row"><div class="btn-wf primary">configure in Spec Studio</div><div class="btn-wf">compare</div></div></div></div>
+        <div class="two-col"><div class="ph" style="aspect-ratio:4/3"></div><div class="stack"><div class="hint">SERIES · flagship</div><div class="h-bar" style="width:30%;height:40px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div><div class="row"><div class="btn-wf primary">configure in X Spec</div><div class="btn-wf">compare</div></div></div></div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Specs · full-width table</div></div>
         <div class="spec-table">
@@ -812,7 +945,7 @@
           <div class="stack"><div class="h-bar" style="height:28px;width:60%">2005</div><div class="note" style="font-size:11px">First dealer network</div></div>
           <div class="stack"><div class="h-bar" style="height:28px;width:60%">2012</div><div class="note" style="font-size:11px">Quick Ship launched</div></div>
           <div class="stack"><div class="h-bar" style="height:28px;width:60%">2018</div><div class="note" style="font-size:11px">50-yr warranty</div></div>
-          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2024</div><div class="note" style="font-size:11px">Spec Studio launched</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2024</div><div class="note" style="font-size:11px">X Spec launched</div></div>
           <div class="stack"><div class="h-bar" style="height:28px;width:60%;background:#95ff00;color:#111">2026</div><div class="note" style="font-size:11px">Site + CPQ relaunch</div></div>
         </div>
       </div>
@@ -850,7 +983,7 @@
         </div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Quick actions · role-specific</div></div>
-        <div class="four-col"><div class="box"><div class="title" style="font-size:15px">Configure &amp; Price</div><div class="btn-wf sm primary">open Spec Studio</div></div><div class="box"><div class="title" style="font-size:15px">Download dealer price list</div><div class="btn-wf sm">PDF / XLSX</div></div><div class="box"><div class="title" style="font-size:15px">CAD bundle</div><div class="btn-wf sm">all series · ZIP</div></div><div class="box"><div class="title" style="font-size:15px">My reps</div><div class="btn-wf sm">contact my rep</div></div></div>
+        <div class="four-col"><div class="box"><div class="title" style="font-size:15px">Configure &amp; Price</div><div class="btn-wf sm primary">open X Spec</div></div><div class="box"><div class="title" style="font-size:15px">Download dealer price list</div><div class="btn-wf sm">PDF / XLSX</div></div><div class="box"><div class="title" style="font-size:15px">CAD bundle</div><div class="btn-wf sm">all series · ZIP</div></div><div class="box"><div class="title" style="font-size:15px">My reps</div><div class="btn-wf sm">contact my rep</div></div></div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">My Orders · in production</div></div>
         <div class="spec-table"><div class="row" style="grid-template-columns:120px 1fr 1fr 1fr 1fr"><b>PO</b><b>Client</b><b>Ship date</b><b>Tracking</b><b>Status</b></div>
@@ -868,9 +1001,9 @@
         <div class="two-col"><div class="kpi"><div class="l">Active quotes</div><div class="n">14</div></div><div class="kpi"><div class="l">In production</div><div class="n">6</div></div></div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Quotes · swipeable</div></div><div class="stack"><div class="box"><div class="hint">Q-0412 · Newfield</div><div class="note">$42,110 · In production</div></div><div class="box"><div class="hint">Q-0409 · Butler U</div><div class="note">$68,400 · Approved</div></div></div></div>
-      <div class="stripe"><div class="two-col"><div class="btn-wf primary">open Spec Studio</div><div class="btn-wf">price list</div></div></div>
+      <div class="stripe"><div class="two-col"><div class="btn-wf primary">open X Spec</div><div class="btn-wf">price list</div></div></div>
     </div></div>
-    <div class="callout" data-n="T">Dealer tablet: condensed KPIs, swipe quotes list, giant-tap Spec Studio — matches rep "in showroom on tablet" principle extended to dealer visits.</div>
+    <div class="callout" data-n="T">Dealer tablet: condensed KPIs, swipe quotes list, giant-tap X Spec — matches rep "in showroom on tablet" principle extended to dealer visits.</div>
   </div>
   <div id="dp-login" class="dp-view" style="display:none">
     <div class="device desktop"><div class="device-header"><span>Dealer login · 1280</span><span>DESKTOP</span></div>
@@ -918,9 +1051,9 @@
         </div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Sales tools &amp; training</div></div>
-        <div class="four-col"><div class="box"><div class="title" style="font-size:14px">Product knowledge · video</div></div><div class="box"><div class="title" style="font-size:14px">Finishes sample kit request</div></div><div class="box"><div class="title" style="font-size:14px">Spec Studio demo · tablet</div><div class="btn-wf sm primary">launch demo</div></div><div class="box"><div class="title" style="font-size:14px">Pricing &amp; margin calculator</div></div></div>
+        <div class="four-col"><div class="box"><div class="title" style="font-size:14px">Product knowledge · video</div></div><div class="box"><div class="title" style="font-size:14px">Finishes sample kit request</div></div><div class="box"><div class="title" style="font-size:14px">X Spec demo · tablet</div><div class="btn-wf sm primary">launch demo</div></div><div class="box"><div class="title" style="font-size:14px">Pricing &amp; margin calculator</div></div></div>
       </div>
-      <div class="callout" data-n="R">Rep persona is 30% of traffic and 100% of in-showroom demos — notice the "launch demo" CTA targets the tablet view of Spec Studio, which is where rep value is created.</div>
+      <div class="callout" data-n="R">Rep persona is 30% of traffic and 100% of in-showroom demos — notice the "launch demo" CTA targets the tablet view of X Spec, which is where rep value is created.</div>
     </div></div>
   </div>
 </section>
@@ -945,7 +1078,7 @@
   var initial = (location.hash && location.hash.slice(1)) || localStorage.getItem('tablex_wf_page') || 'home';
   go(initial);
 
-  // Sub-tabs within Spec Studio + Product + Dealer
+  // Sub-tabs within X Spec + Product + Dealer
   document.querySelectorAll('.tabbar').forEach(bar => {
     bar.querySelectorAll('a').forEach(a => a.addEventListener('click', e => {
       e.preventDefault();
@@ -974,5 +1107,356 @@
       else d.style.display = '';
     });
   }));
+
+  /* ============ Comments (in-iframe) ============ */
+  function __initWfCmts(){
+    var STORE_KEY  = 'tablex_wf_comments_site';
+    var AUTHOR_KEY = 'tablex_wf_author';
+    var state = {
+      mode: false,
+      pending: null,
+      selectedId: null,
+      author: localStorage.getItem(AUTHOR_KEY) || '',
+      comments: load()
+    };
+    var SET_KEY      = 'site';
+    var SYNC_URL     = '/api/wireframe-comments';
+    var syncTimer    = null;
+    var pendingPages = {};
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+      catch(e){ return []; }
+    }
+    function persistLocal() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state.comments)); } catch(e){}
+    }
+    function persist() {
+      persistLocal();
+      var pid = activePageId();
+      if (pid) scheduleSync(pid);
+    }
+    function uid() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+      return 'wfc-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+    }
+    function scheduleSync(pid) {
+      pendingPages[pid] = true;
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(flushSync, 1500);
+    }
+    function flushSync() {
+      var pids = Object.keys(pendingPages);
+      pendingPages = {};
+      pids.forEach(function(pid){
+        var rows = pageComments(pid).map(function(c){
+          return {
+            id: c.id, pageId: pid,
+            x: c.x, y: c.y,
+            text: c.text, author: c.author || 'Anonymous',
+            resolved: !!c.resolved
+          };
+        });
+        fetch(SYNC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            pagePath: '/wireframes/' + SET_KEY + '/' + pid,
+            setKey: SET_KEY,
+            pageId: pid,
+            comments: rows
+          })
+        }).catch(function(err){ console.warn('[wf-cmt] sync failed', err); });
+      });
+    }
+    function pullFromServer() {
+      fetch(SYNC_URL + '?set=' + SET_KEY, { credentials: 'same-origin' })
+        .then(function(r){ if (!r.ok) throw new Error('pull ' + r.status); return r.json(); })
+        .then(function(data){
+          if (!data || !Array.isArray(data.comments)) return;
+          // Server is authoritative on load.
+          state.comments = data.comments.map(function(row){
+            return {
+              id: row.id,
+              pageId: row.page_id,
+              x: Number(row.marker_x),
+              y: Number(row.marker_y),
+              text: row.body,
+              author: row.author || 'Anonymous',
+              resolved: !!row.is_resolved,
+              ts: row.created_at ? new Date(row.created_at).getTime() : Date.now()
+            };
+          });
+          persistLocal();
+          render();
+        })
+        .catch(function(err){ console.warn('[wf-cmt] pull failed', err); });
+    }
+    function activePageId() {
+      var p = document.querySelector('.page.active');
+      return p ? p.id : null;
+    }
+    function activePageLabel() {
+      var pid = activePageId();
+      var rail = pid && document.querySelector('.wf-rail a[data-p="'+pid+'"]');
+      return rail ? rail.textContent.trim() : (pid || 'Page');
+    }
+    function pageComments(pid) {
+      pid = pid || activePageId();
+      return state.comments.filter(function(c){ return c.pageId === pid; });
+    }
+    function unresolvedTotal() {
+      return state.comments.filter(function(c){ return !c.resolved; }).length;
+    }
+
+    var btn       = document.getElementById('cmt-toggle');
+    var sidebar   = document.getElementById('cmt-sidebar');
+    var bodyEl    = document.getElementById('cmt-body');
+    var labelEl   = document.getElementById('cmt-page-label');
+    var countEl   = document.getElementById('cmt-count');
+    var authorIn  = document.getElementById('cmt-author');
+    authorIn.value = state.author;
+    authorIn.addEventListener('input', function(){
+      state.author = authorIn.value;
+      try { localStorage.setItem(AUTHOR_KEY, state.author); } catch(e){}
+    });
+
+    function setMode(on) {
+      state.mode = on;
+      btn.classList.toggle('on', on);
+      document.body.classList.toggle('cmt-mode', on);
+      sidebar.classList.toggle('open', on);
+      if (!on) state.pending = null;
+      render();
+    }
+    btn.addEventListener('click', function(){ setMode(!state.mode); });
+    document.getElementById('cmt-close').addEventListener('click', function(){ setMode(false); });
+    document.getElementById('cmt-export').addEventListener('click', function(){
+      var text = exportMarkdown();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function(){
+          alert('Comments exported — markdown copied to clipboard. Paste into email/doc to share.');
+        }, function(){ window.prompt('Copy this markdown:', text); });
+      } else { window.prompt('Copy this markdown:', text); }
+    });
+
+    document.addEventListener('click', function(e){
+      if (!state.mode) return;
+      var p = document.querySelector('.page.active');
+      if (!p || !p.contains(e.target)) return;
+      if (e.target.closest('.cmt-marker')) return;
+      if (e.target.closest('a, button, input, select, textarea')) return;
+      var rect = p.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width) * 100;
+      var y = ((e.clientY - rect.top) / rect.height) * 100;
+      state.pending = { x: x, y: y, pageId: p.id };
+      state.selectedId = null;
+      sidebar.classList.add('open');
+      render();
+    });
+
+    function render() {
+      labelEl.textContent = activePageLabel();
+      var n = unresolvedTotal();
+      countEl.textContent = n;
+      countEl.classList.toggle('zero', n === 0);
+
+      document.querySelectorAll('.cmt-marker, .cmt-pending').forEach(function(el){ el.remove(); });
+      if (!state.mode) { renderSidebar(); return; }
+      var p = document.querySelector('.page.active');
+      if (!p) { renderSidebar(); return; }
+      var pid = p.id;
+      pageComments(pid).forEach(function(c, i){
+        var m = document.createElement('div');
+        m.className = 'cmt-marker' + (c.resolved ? ' resolved' : '') + (c.id === state.selectedId ? ' active' : '');
+        m.style.left = c.x + '%';
+        m.style.top  = c.y + '%';
+        m.textContent = (i + 1);
+        m.title = (c.author || 'Anonymous') + ': ' + c.text.split('\n')[0].slice(0, 80);
+        m.addEventListener('click', function(ev){
+          ev.stopPropagation();
+          state.selectedId = (state.selectedId === c.id) ? null : c.id;
+          sidebar.classList.add('open');
+          render();
+        });
+        p.appendChild(m);
+      });
+      if (state.pending && state.pending.pageId === pid) {
+        var pm = document.createElement('div');
+        pm.className = 'cmt-pending';
+        pm.style.left = state.pending.x + '%';
+        pm.style.top  = state.pending.y + '%';
+        pm.textContent = '+';
+        p.appendChild(pm);
+      }
+      renderSidebar();
+    }
+
+    function renderSidebar() {
+      var pid = activePageId();
+      var list = pageComments(pid);
+      var html = '';
+      if (state.pending && state.pending.pageId === pid) {
+        html += '<div class="cmt-pending-card">' +
+          '<div class="who">New comment · ' + escapeHtml(state.author || 'Anonymous') + '</div>' +
+          '<textarea id="cmt-pending-text" placeholder="Type your comment..." autofocus></textarea>' +
+          '<div class="row">' +
+            '<button id="cmt-pending-cancel">Cancel</button>' +
+            '<button class="primary" id="cmt-pending-save">Save</button>' +
+          '</div>' +
+        '</div>';
+      }
+      if (!list.length && !state.pending) {
+        html += '<div class="empty">No comments on this page yet.<br/>Toggle Comments and click anywhere on the wireframe to drop one.</div>';
+      }
+      list.forEach(function(c, i){
+        var active = c.id === state.selectedId;
+        html += '<div class="cmt-item' + (c.resolved ? ' resolved' : '') + (active ? ' active' : '') + '" data-id="' + c.id + '">' +
+          '<div class="head"><span class="num">#' + (i+1) + ' &middot; ' + escapeHtml(c.author || 'Anonymous') + '</span><span>' + relTime(c.ts) + '</span></div>' +
+          (c.editing
+            ? '<textarea class="cmt-edit-text">' + escapeHtml(c.text) + '</textarea>' +
+              '<div class="row">' +
+                '<button data-act="cancel-edit" data-id="' + c.id + '">Cancel</button>' +
+                '<button class="primary" data-act="save-edit" data-id="' + c.id + '">Save</button>' +
+              '</div>'
+            : '<div class="body-text">' + escapeHtml(c.text) + '</div>' +
+              '<div class="row">' +
+                '<button data-act="' + (c.resolved ? 'unresolve' : 'resolve') + '" data-id="' + c.id + '">' + (c.resolved ? 'Unresolve' : 'Resolve') + '</button>' +
+                '<button data-act="edit" data-id="' + c.id + '">Edit</button>' +
+                '<button data-act="delete" data-id="' + c.id + '">Delete</button>' +
+              '</div>') +
+        '</div>';
+      });
+      bodyEl.innerHTML = html;
+
+      var saveBtn = document.getElementById('cmt-pending-save');
+      var cancelBtn = document.getElementById('cmt-pending-cancel');
+      var ta = document.getElementById('cmt-pending-text');
+      if (ta) ta.focus();
+      if (saveBtn) saveBtn.addEventListener('click', function(){
+        var text = (ta.value || '').trim();
+        if (!text) return;
+        state.comments.push({
+          id: uid(), pageId: state.pending.pageId,
+          x: state.pending.x, y: state.pending.y,
+          text: text, author: state.author || 'Anonymous',
+          ts: Date.now(), resolved: false
+        });
+        state.pending = null;
+        persist(); render();
+      });
+      if (cancelBtn) cancelBtn.addEventListener('click', function(){
+        state.pending = null; render();
+      });
+      bodyEl.querySelectorAll('.cmt-item').forEach(function(it){
+        it.addEventListener('click', function(e){
+          if (e.target.matches('button, textarea')) return;
+          state.selectedId = it.dataset.id;
+          render();
+        });
+      });
+      bodyEl.querySelectorAll('button[data-act]').forEach(function(b){
+        b.addEventListener('click', function(e){
+          e.stopPropagation();
+          var id = b.dataset.id, act = b.dataset.act;
+          var c = state.comments.find(function(x){ return x.id === id; });
+          if (!c) return;
+          if (act === 'delete') { state.comments = state.comments.filter(function(x){ return x.id !== id; }); persist(); render(); }
+          else if (act === 'resolve')   { c.resolved = true;  persist(); render(); }
+          else if (act === 'unresolve') { c.resolved = false; persist(); render(); }
+          else if (act === 'edit') { state.comments.forEach(function(x){ x.editing = false; }); c.editing = true; render(); }
+          else if (act === 'cancel-edit') { c.editing = false; render(); }
+          else if (act === 'save-edit') {
+            var t = b.closest('.cmt-item').querySelector('.cmt-edit-text');
+            c.text = (t.value || '').trim();
+            c.editing = false; persist(); render();
+          }
+        });
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s||'').replace(/[&<>"']/g, function(ch){
+        return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch];
+      });
+    }
+    function relTime(ts) {
+      var d = (Date.now() - ts) / 1000;
+      if (d < 60) return 'just now';
+      if (d < 3600) return Math.floor(d/60) + 'm ago';
+      if (d < 86400) return Math.floor(d/3600) + 'h ago';
+      return Math.floor(d/86400) + 'd ago';
+    }
+
+    function exportMarkdown() {
+      var byPage = {};
+      state.comments.forEach(function(c){ (byPage[c.pageId] = byPage[c.pageId] || []).push(c); });
+      var pages = Object.keys(byPage);
+      if (!pages.length) return '_No comments yet._';
+      var out = '# TableX wireframe comments — Site\n\n_Exported ' + new Date().toISOString().slice(0,10) + ' · ' + state.comments.length + ' comments_\n\n';
+      pages.forEach(function(pid){
+        var rail = document.querySelector('.wf-rail a[data-p="' + pid + '"]');
+        var pageLabel = rail ? rail.textContent.trim() : pid;
+        out += '## ' + pageLabel + '\n\n';
+        byPage[pid].forEach(function(c, i){
+          out += '- **#' + (i+1) + '** _(' + (c.author || 'Anonymous') + ')_' + (c.resolved ? ' ~~resolved~~' : '') + '  \n  ' + c.text.replace(/\n/g, '\n  ') + '\n';
+        });
+        out += '\n';
+      });
+      return out;
+    }
+
+    // Page-aware Desktop/Tablet/Both — hide on pages without tablet wireframes
+    var bp = document.getElementById('bp');
+    function updateBpVisibility() {
+      var p = document.querySelector('.page.active');
+      if (!p || !bp) return;
+      var hasTablet = p.querySelector('.device.tablet') !== null;
+      bp.style.display = hasTablet ? '' : 'none';
+    }
+    var observer = new MutationObserver(function(){
+      updateBpVisibility();
+      render();
+    });
+    document.querySelectorAll('.page').forEach(function(p){
+      observer.observe(p, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    // Listen for parent (dashboard) jump-to-comment messages
+    window.addEventListener('message', function(e){
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type !== 'wf:goto') return;
+      if (e.data.set && e.data.set !== SET_KEY) return;
+      if (e.data.pageId && typeof go === 'function') go(e.data.pageId);
+      if (e.data.commentId) {
+        state.selectedId = e.data.commentId;
+        if (!state.mode) setMode(true);
+        sidebar.classList.add('open');
+        render();
+      }
+    });
+
+    updateBpVisibility();
+    render();
+    pullFromServer();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', __initWfCmts);
+  else __initWfCmts();
 </script>
+
+<aside class="cmt-sidebar" id="cmt-sidebar" aria-label="Comments">
+  <header>
+    <h4>Comments &middot; <span id="cmt-page-label">Page</span></h4>
+    <div class="actions">
+      <button id="cmt-export" title="Copy markdown summary to clipboard">Export</button>
+      <button id="cmt-close">Close</button>
+    </div>
+  </header>
+  <div class="who-bar">
+    <label for="cmt-author">You</label>
+    <input id="cmt-author" type="text" placeholder="Your name" />
+  </div>
+  <div class="body" id="cmt-body"></div>
+</aside>
 </body></html>
