@@ -453,12 +453,17 @@
     <div class="crumb"><b id="bc">Start here</b> <span>· system-level wireframe · atomic design template + page tier</span></div>
     <div class="cmt-bar">
       <div class="bp"><a class="on" href="#toc" data-p="toc">01 TOC</a><a href="#sitemap" data-p="sitemap">02 Sitemap</a><a href="#templates" data-p="templates">03 Templates</a><a href="#flows" data-p="flows">04 Flows</a><a href="#patterns" data-p="patterns">05 Patterns</a></div>
-      <button id="cmt-toggle" class="cmt-btn" title="Toggle comment mode">
+      <button id="cmt-add" class="cmt-btn" title="Drop a comment marker on the wireframe">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span>Comment</span>
+      </button>
+      <button id="cmt-list" class="cmt-btn" title="Show all comments for this set">
         <svg width="11" height="11" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M2 3h12v9H6l-3 3v-3H2V3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M8 6.5v3M6.5 8h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <span>Comments</span>
+        <span>All Comments</span>
         <span class="cmt-count zero" id="cmt-count">0</span>
       </button>
     </div>
@@ -1540,6 +1545,44 @@ body.cmt-mode .page.active { cursor: crosshair; }
 body.cmt-mode .page.active a,
 body.cmt-mode .page.active button,
 body.cmt-mode .cmt-marker { cursor: pointer; }
+
+/* Inline popover (anchors near a marker) */
+.cmt-popover {
+  position: absolute; z-index: 40;
+  width: 300px;
+  background: #fff; border: 1.5px solid #111;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  padding: 12px;
+  font-size: 13px; line-height: 1.45; color: #111;
+}
+.cmt-popover .pop-head {
+  font-family: var(--wf-mono); font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: #555;
+  display: flex; justify-content: space-between; gap: 8px;
+  margin-bottom: 8px;
+}
+.cmt-popover .pop-head .num { color: #111; font-weight: 600; }
+.cmt-popover .pop-body {
+  white-space: pre-wrap; word-break: break-word; color: #111;
+  background: #fcfbf6; border: 1px solid #eee; padding: 8px; margin-bottom: 8px;
+}
+.cmt-popover .pop-body.resolved { text-decoration: line-through; opacity: .6; }
+.cmt-popover textarea.pop-text {
+  width: 100%; min-height: 80px; padding: 8px;
+  font-family: inherit; font-size: 13px; color: #111;
+  border: 1px solid #111; box-sizing: border-box; resize: vertical;
+  margin-bottom: 8px;
+}
+.cmt-popover .pop-row {
+  display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap;
+}
+.cmt-popover .pop-row button {
+  background: #fff; border: 1px solid #111; cursor: pointer; color: #111;
+  font-family: var(--wf-mono); font-size: 9.5px;
+  padding: 4px 10px; letter-spacing: .08em; text-transform: uppercase;
+}
+.cmt-popover .pop-row button.primary { background: #111; color: #fff; }
+.cmt-popover .pop-row button:hover { background: #95ff00; color: #111; border-color: #111; }
 </style>
 
 
@@ -1589,17 +1632,19 @@ body.cmt-mode .cmt-marker { cursor: pointer; }
 function __initWfCmts(){
   var STORE_KEY  = 'tablex_wf_comments_system';
   var AUTHOR_KEY = 'tablex_wf_author';
+  var SET_KEY      = 'system';
+  var SYNC_URL     = '/api/wireframe-comments';
+  var syncTimer    = null;
+  var pendingPages = {};
+  var popoverEl    = null;
   var state = {
-    mode: false,
+    addMode: false,
+    sidebarOpen: false,
     pending: null,
     selectedId: null,
     author: localStorage.getItem(AUTHOR_KEY) || '',
     comments: load()
   };
-  var SET_KEY      = 'system';
-  var SYNC_URL     = '/api/wireframe-comments';
-  var syncTimer    = null;
-  var pendingPages = {};
 
   function load() {
     try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
@@ -1686,7 +1731,8 @@ function __initWfCmts(){
     return state.comments.filter(function(c){ return !c.resolved; }).length;
   }
 
-  var btn       = document.getElementById('cmt-toggle');
+  var btnAdd    = document.getElementById('cmt-add');
+  var btnList   = document.getElementById('cmt-list');
   var sidebar   = document.getElementById('cmt-sidebar');
   var bodyEl    = document.getElementById('cmt-body');
   var labelEl   = document.getElementById('cmt-page-label');
@@ -1698,16 +1744,24 @@ function __initWfCmts(){
     try { localStorage.setItem(AUTHOR_KEY, state.author); } catch(e){}
   });
 
-  function setMode(on) {
-    state.mode = on;
-    btn.classList.toggle('on', on);
+  function setAddMode(on) {
+    state.addMode = on;
+    btnAdd.classList.toggle('on', on);
     document.body.classList.toggle('cmt-mode', on);
-    sidebar.classList.toggle('open', on);
-    if (!on) state.pending = null;
+    if (!on) {
+      state.pending = null;
+      closePopover();
+    }
     render();
   }
-  btn.addEventListener('click', function(){ setMode(!state.mode); });
-  document.getElementById('cmt-close').addEventListener('click', function(){ setMode(false); });
+  function setSidebarOpen(on) {
+    state.sidebarOpen = on;
+    btnList.classList.toggle('on', on);
+    sidebar.classList.toggle('open', on);
+  }
+  btnAdd.addEventListener('click', function(){ setAddMode(!state.addMode); });
+  btnList.addEventListener('click', function(){ setSidebarOpen(!state.sidebarOpen); });
+  document.getElementById('cmt-close').addEventListener('click', function(){ setSidebarOpen(false); });
   document.getElementById('cmt-export').addEventListener('click', function(){
     var text = exportMarkdown();
     if (navigator.clipboard) {
@@ -1717,21 +1771,168 @@ function __initWfCmts(){
     } else { window.prompt('Copy this markdown:', text); }
   });
 
-  document.addEventListener('click', function(e){
-    if (!state.mode) return;
-    var p = document.querySelector('.page.active');
-    if (!p || !p.contains(e.target)) return;
-    if (e.target.closest('.cmt-marker')) return;
-    if (e.target.closest('a, button, input, select, textarea')) return;
-    var rect = p.getBoundingClientRect();
-    var x = ((e.clientX - rect.left) / rect.width) * 100;
-    var y = ((e.clientY - rect.top) / rect.height) * 100;
-    state.pending = { x: x, y: y, pageId: p.id };
-    state.selectedId = null;
-    sidebar.classList.add('open');
+  /* ---- Inline popover ---- */
+  function closePopover() {
+    if (popoverEl) { popoverEl.remove(); popoverEl = null; }
+    state.pending = null;
     render();
+  }
+  function buildPopover() {
+    var el = document.createElement('div');
+    el.className = 'cmt-popover';
+    el.addEventListener('click', function(e){ e.stopPropagation(); });
+    el.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') { e.preventDefault(); closePopover(); }
+    });
+    return el;
+  }
+  function placePopover(el, page, xPct, yPct) {
+    page.appendChild(el);
+    var pageRect = page.getBoundingClientRect();
+    var popRect  = el.getBoundingClientRect();
+    var POP_W = popRect.width;
+    var POP_H = popRect.height;
+    var OFFSET = 22;
+
+    var leftPx = (xPct / 100) * pageRect.width;
+    var topPx  = (yPct / 100) * pageRect.height + OFFSET;
+
+    if (topPx + POP_H > pageRect.height - 8) {
+      topPx = (yPct / 100) * pageRect.height - OFFSET - POP_H;
+    }
+    if (topPx < 8) topPx = 8;
+
+    var left = leftPx - POP_W / 2;
+    if (left < 8) left = 8;
+    if (left + POP_W > pageRect.width - 8) left = pageRect.width - POP_W - 8;
+
+    el.style.left = left + 'px';
+    el.style.top  = topPx + 'px';
+  }
+  function openPopoverForPending() {
+    closePopover();
+    var page = document.querySelector('.page.active');
+    if (!page || !state.pending) return;
+    var el = buildPopover();
+    el.innerHTML =
+      '<div class="pop-head"><span class="num">New comment</span><span>' + escapeHtml(state.author || 'Anonymous') + '</span></div>' +
+      '<textarea class="pop-text" placeholder="Type your comment..."></textarea>' +
+      '<div class="pop-row">' +
+        '<button class="pop-cancel">Cancel</button>' +
+        '<button class="pop-save primary">Submit</button>' +
+      '</div>';
+    popoverEl = el;
+    placePopover(el, page, state.pending.x, state.pending.y);
+    var ta = el.querySelector('.pop-text');
+    ta.focus();
+    ta.addEventListener('keydown', function(e){
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); doSave(); }
+    });
+    function doSave(){
+      var text = (ta.value || '').trim();
+      if (!text) { ta.focus(); return; }
+      state.comments.push({
+        id: uid(), pageId: state.pending.pageId,
+        x: state.pending.x, y: state.pending.y,
+        text: text, author: state.author || 'Anonymous',
+        ts: Date.now(), resolved: false
+      });
+      state.pending = null;
+      persist();
+      closePopover();
+    }
+    el.querySelector('.pop-save').addEventListener('click', doSave);
+    el.querySelector('.pop-cancel').addEventListener('click', closePopover);
+  }
+  function openPopoverForExisting(id) {
+    closePopover();
+    var c = state.comments.find(function(x){ return x.id === id; });
+    if (!c) return;
+    var page = document.querySelector('.page.active');
+    if (!page || c.pageId !== page.id) return;
+    state.selectedId = id;
+    var idx = pageComments(c.pageId).findIndex(function(x){ return x.id === id; });
+    var el = buildPopover();
+    el.innerHTML =
+      '<div class="pop-head"><span class="num">#' + (idx + 1) + ' &middot; ' + escapeHtml(c.author || 'Anonymous') + '</span><span>' + relTime(c.ts) + '</span></div>' +
+      '<div class="pop-body' + (c.resolved ? ' resolved' : '') + '">' + escapeHtml(c.text) + '</div>' +
+      '<div class="pop-row">' +
+        '<button class="pop-toggle">' + (c.resolved ? 'Unresolve' : 'Resolve') + '</button>' +
+        '<button class="pop-edit">Edit</button>' +
+        '<button class="pop-delete">Delete</button>' +
+        '<button class="pop-close">Close</button>' +
+      '</div>';
+    popoverEl = el;
+    placePopover(el, page, c.x, c.y);
+    el.querySelector('.pop-toggle').addEventListener('click', function(){
+      c.resolved = !c.resolved; persist(); openPopoverForExisting(id);
+    });
+    el.querySelector('.pop-edit').addEventListener('click', function(){
+      el.querySelector('.pop-body').outerHTML = '<textarea class="pop-text"></textarea>';
+      var ta = el.querySelector('.pop-text');
+      ta.value = c.text;
+      var actions = el.querySelector('.pop-row');
+      actions.innerHTML = '<button class="pop-cancel">Cancel</button><button class="pop-save primary">Save</button>';
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+      actions.querySelector('.pop-save').addEventListener('click', function(){
+        var text = (ta.value || '').trim();
+        if (!text) return;
+        c.text = text;
+        persist();
+        openPopoverForExisting(id);
+      });
+      actions.querySelector('.pop-cancel').addEventListener('click', function(){
+        openPopoverForExisting(id);
+      });
+      ta.addEventListener('keydown', function(e){
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); actions.querySelector('.pop-save').click(); }
+      });
+    });
+    el.querySelector('.pop-delete').addEventListener('click', function(){
+      if (!confirm('Delete this comment?')) return;
+      state.comments = state.comments.filter(function(x){ return x.id !== id; });
+      state.selectedId = null;
+      persist();
+      closePopover();
+    });
+    el.querySelector('.pop-close').addEventListener('click', closePopover);
+  }
+
+  /* ---- Click handling ---- */
+  document.addEventListener('click', function(e){
+    if (e.target.closest('.cmt-popover')) return;
+    if (e.target.closest('.cmt-bar'))     return;
+    if (e.target.closest('.cmt-sidebar')) return;
+
+    var marker = e.target.closest('.cmt-marker');
+    if (marker) {
+      var id = marker.dataset.id;
+      if (id) openPopoverForExisting(id);
+      e.stopPropagation();
+      return;
+    }
+
+    if (state.addMode) {
+      var p = document.querySelector('.page.active');
+      if (!p || !p.contains(e.target)) {
+        if (popoverEl) closePopover();
+        return;
+      }
+      if (e.target.closest('a, button, input, select, textarea')) return;
+      var rect = p.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width) * 100;
+      var y = ((e.clientY - rect.top) / rect.height) * 100;
+      state.pending = { x: x, y: y, pageId: p.id };
+      state.selectedId = null;
+      render();
+      openPopoverForPending();
+    } else if (popoverEl) {
+      closePopover();
+    }
   });
 
+  /* ---- Render: markers ALWAYS visible ---- */
   function render() {
     labelEl.textContent = activePageLabel();
     var n = unresolvedTotal();
@@ -1739,7 +1940,6 @@ function __initWfCmts(){
     countEl.classList.toggle('zero', n === 0);
 
     document.querySelectorAll('.cmt-marker, .cmt-pending').forEach(function(el){ el.remove(); });
-    if (!state.mode) { renderSidebar(); return; }
     var p = document.querySelector('.page.active');
     if (!p) { renderSidebar(); return; }
     var pid = p.id;
@@ -1748,14 +1948,9 @@ function __initWfCmts(){
       m.className = 'cmt-marker' + (c.resolved ? ' resolved' : '') + (c.id === state.selectedId ? ' active' : '');
       m.style.left = c.x + '%';
       m.style.top  = c.y + '%';
+      m.dataset.id = c.id;
       m.textContent = (i + 1);
       m.title = (c.author || 'Anonymous') + ': ' + c.text.split('\n')[0].slice(0, 80);
-      m.addEventListener('click', function(ev){
-        ev.stopPropagation();
-        state.selectedId = (state.selectedId === c.id) ? null : c.id;
-        sidebar.classList.add('open');
-        render();
-      });
       p.appendChild(m);
     });
     if (state.pending && state.pending.pageId === pid) {
@@ -1773,82 +1968,19 @@ function __initWfCmts(){
     var pid = activePageId();
     var list = pageComments(pid);
     var html = '';
-    if (state.pending && state.pending.pageId === pid) {
-      html += '<div class="cmt-pending-card">' +
-        '<div class="who">New comment · ' + escapeHtml(state.author || 'Anonymous') + '</div>' +
-        '<textarea id="cmt-pending-text" placeholder="Type your comment..." autofocus></textarea>' +
-        '<div class="row">' +
-          '<button id="cmt-pending-cancel">Cancel</button>' +
-          '<button class="primary" id="cmt-pending-save">Save</button>' +
-        '</div>' +
-      '</div>';
-    }
-    if (!list.length && !state.pending) {
-      html += '<div class="empty">No comments on this page yet.<br/>Toggle Comments and click anywhere on the wireframe to drop one.</div>';
+    if (!list.length) {
+      html += '<div class="empty">No comments on this page yet.<br/>Click <b>+ Comment</b> in the topbar, then click on the wireframe to drop a pin.</div>';
     }
     list.forEach(function(c, i){
       var active = c.id === state.selectedId;
       html += '<div class="cmt-item' + (c.resolved ? ' resolved' : '') + (active ? ' active' : '') + '" data-id="' + c.id + '">' +
         '<div class="head"><span class="num">#' + (i+1) + ' &middot; ' + escapeHtml(c.author || 'Anonymous') + '</span><span>' + relTime(c.ts) + '</span></div>' +
-        (c.editing
-          ? '<textarea class="cmt-edit-text">' + escapeHtml(c.text) + '</textarea>' +
-            '<div class="row">' +
-              '<button data-act="cancel-edit" data-id="' + c.id + '">Cancel</button>' +
-              '<button class="primary" data-act="save-edit" data-id="' + c.id + '">Save</button>' +
-            '</div>'
-          : '<div class="body-text">' + escapeHtml(c.text) + '</div>' +
-            '<div class="row">' +
-              '<button data-act="' + (c.resolved ? 'unresolve' : 'resolve') + '" data-id="' + c.id + '">' + (c.resolved ? 'Unresolve' : 'Resolve') + '</button>' +
-              '<button data-act="edit" data-id="' + c.id + '">Edit</button>' +
-              '<button data-act="delete" data-id="' + c.id + '">Delete</button>' +
-            '</div>') +
+        '<div class="body-text">' + escapeHtml(c.text) + '</div>' +
       '</div>';
     });
     bodyEl.innerHTML = html;
-
-    var saveBtn = document.getElementById('cmt-pending-save');
-    var cancelBtn = document.getElementById('cmt-pending-cancel');
-    var ta = document.getElementById('cmt-pending-text');
-    if (ta) ta.focus();
-    if (saveBtn) saveBtn.addEventListener('click', function(){
-      var text = (ta.value || '').trim();
-      if (!text) return;
-      state.comments.push({
-        id: uid(), pageId: state.pending.pageId,
-        x: state.pending.x, y: state.pending.y,
-        text: text, author: state.author || 'Anonymous',
-        ts: Date.now(), resolved: false
-      });
-      state.pending = null;
-      persist(); render();
-    });
-    if (cancelBtn) cancelBtn.addEventListener('click', function(){
-      state.pending = null; render();
-    });
     bodyEl.querySelectorAll('.cmt-item').forEach(function(it){
-      it.addEventListener('click', function(e){
-        if (e.target.matches('button, textarea')) return;
-        state.selectedId = it.dataset.id;
-        render();
-      });
-    });
-    bodyEl.querySelectorAll('button[data-act]').forEach(function(b){
-      b.addEventListener('click', function(e){
-        e.stopPropagation();
-        var id = b.dataset.id, act = b.dataset.act;
-        var c = state.comments.find(function(x){ return x.id === id; });
-        if (!c) return;
-        if (act === 'delete') { state.comments = state.comments.filter(function(x){ return x.id !== id; }); persist(); render(); }
-        else if (act === 'resolve')   { c.resolved = true;  persist(); render(); }
-        else if (act === 'unresolve') { c.resolved = false; persist(); render(); }
-        else if (act === 'edit') { state.comments.forEach(function(x){ x.editing = false; }); c.editing = true; render(); }
-        else if (act === 'cancel-edit') { c.editing = false; render(); }
-        else if (act === 'save-edit') {
-          var t = b.closest('.cmt-item').querySelector('.cmt-edit-text');
-          c.text = (t.value || '').trim();
-          c.editing = false; persist(); render();
-        }
-      });
+      it.addEventListener('click', function(){ openPopoverForExisting(it.dataset.id); });
     });
   }
 
@@ -1882,7 +2014,10 @@ function __initWfCmts(){
     return out;
   }
 
-  var observer = new MutationObserver(function(){ render(); });
+  var observer = new MutationObserver(function(){
+    closePopover();
+    render();
+  });
   document.querySelectorAll('.page').forEach(function(p){
     observer.observe(p, { attributes: true, attributeFilter: ['class'] });
   });
@@ -1894,11 +2029,19 @@ function __initWfCmts(){
     if (e.data.set && e.data.set !== SET_KEY) return;
     if (e.data.pageId && typeof window.__sysShow === 'function') window.__sysShow(e.data.pageId);
     if (e.data.commentId) {
-      state.selectedId = e.data.commentId;
-      if (!state.mode) setMode(true);
-      sidebar.classList.add('open');
-      render();
+      setTimeout(function(){ openPopoverForExisting(e.data.commentId); }, 80);
     }
+  });
+
+  // Reposition open popover on resize
+  var resizeT = null;
+  window.addEventListener('resize', function(){
+    if (!popoverEl) return;
+    clearTimeout(resizeT);
+    resizeT = setTimeout(function(){
+      if (state.selectedId) openPopoverForExisting(state.selectedId);
+      else if (state.pending) openPopoverForPending();
+    }, 80);
   });
 
   render();
