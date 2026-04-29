@@ -81,15 +81,15 @@ export default function SignOffDetailPage() {
 
   if (!signOff) {
     return (
-      <div className="px-6 py-10 max-w-3xl mx-auto">
+      <div className="space-y-6">
         <Link
           href="/project/sign-offs"
-          className="inline-flex items-center gap-1.5 text-xs text-white/60 hover:text-white"
+          className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to all sign-offs
         </Link>
-        <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.03] py-12 text-center">
-          <p className="text-sm text-white/60">
+        <div className="rounded-lg border border-slate-200 bg-white py-12 text-center">
+          <p className="text-sm text-slate-500">
             Sign-off not found, or you don&rsquo;t have access.
           </p>
         </div>
@@ -113,11 +113,11 @@ export default function SignOffDetailPage() {
   }
 
   return (
-    <div className="px-6 py-6 max-w-3xl mx-auto">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="space-y-4 max-w-3xl">
+      <div className="flex items-center justify-between">
         <Link
           href="/project/sign-offs"
-          className="inline-flex items-center gap-1.5 text-xs text-white/60 hover:text-white"
+          className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to all sign-offs
         </Link>
@@ -144,7 +144,7 @@ export default function SignOffDetailPage() {
       </div>
 
       {/* Header card */}
-      <div className="rounded-lg border border-slate-200 bg-white p-5 mb-4">
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
         <div className="flex items-start gap-3 mb-3">
           <div
             className={`shrink-0 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-mono uppercase tracking-[0.08em] border ${STATUS_PILL[signOff.status]}`}
@@ -220,16 +220,10 @@ export default function SignOffDetailPage() {
       </div>
 
       {/* Decision panel — only when actively awaiting */}
-      {isAwaitingDecision(signOff) && (
-        <div className="mb-4">
-          <SignOffDecisionPanel signOff={signOff} />
-        </div>
-      )}
+      {isAwaitingDecision(signOff) && <SignOffDecisionPanel signOff={signOff} />}
 
       {/* Revision history */}
-      <div className="mb-4">
-        <SignOffRevisionTimeline signOffId={signOff.id} />
-      </div>
+      <SignOffRevisionTimeline signOffId={signOff.id} />
 
       {/* Notes thread */}
       <SignOffNotesList signOffId={signOff.id} />
