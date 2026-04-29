@@ -1810,7 +1810,7 @@ function __initWfCmts(){
     el.style.top  = topPx + 'px';
   }
   function openPopoverForPending() {
-    closePopover();
+    if (popoverEl) { popoverEl.remove(); popoverEl = null; }
     var page = document.querySelector('.page.active');
     if (!page || !state.pending) return;
     var el = buildPopover();
@@ -1845,7 +1845,7 @@ function __initWfCmts(){
     el.querySelector('.pop-cancel').addEventListener('click', closePopover);
   }
   function openPopoverForExisting(id) {
-    closePopover();
+    if (popoverEl) { popoverEl.remove(); popoverEl = null; }
     var c = state.comments.find(function(x){ return x.id === id; });
     if (!c) return;
     var page = document.querySelector('.page.active');
