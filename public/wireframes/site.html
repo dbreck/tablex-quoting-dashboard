@@ -16,7 +16,7 @@
   .stripe { padding: 28px 32px; background:#fff; border: 1.5px solid #111; display:flex; flex-direction:column; gap:14px; }
   .stripe.dark { background:#111; color:#fff; }
   .stripe-head { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; }
-  .stripe-head .eye { font-family: var(--wf-mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #95ff00; }
+  .stripe-head .eye { font-family: var(--wf-mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #FF6902; }
 
   .seg { display:inline-flex; border:1px solid #111; }
   .seg > * { padding: 6px 12px; font-family: var(--wf-mono); font-size: 10px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-right:1px solid #111;}
@@ -52,7 +52,7 @@
 
   /* Map */
   .map-ph { height: 420px; background: var(--wf-hatch); border:1.5px solid #111; position:relative; }
-  .map-pin { position:absolute; width:18px; height:18px; border-radius:50%; background:#95ff00; border:2px solid #111; }
+  .map-pin { position:absolute; width:18px; height:18px; border-radius:50%; background:#FF6902; border:2px solid #111; }
 
   /* Rep card */
   .rep-card { border: 1.5px solid #111; background:#fff; padding: 18px; display:flex; flex-direction:column; gap:10px; }
@@ -77,17 +77,17 @@
     display:inline-flex; align-items:center; gap:6px; position:relative;
   }
   .cmt-btn:hover { background:#111; color:#fff; }
-  .cmt-btn.on { background:#95ff00; border-color:#111; color:#111; }
+  .cmt-btn.on { background:#FF6902; border-color:#111; color:#111; }
   .cmt-btn .cmt-count {
     background:#111; color:#fff; min-width:16px; text-align:center;
     border-radius:9px; padding:0 5px; font-size:9px; font-weight:600;
   }
-  .cmt-btn.on .cmt-count { background:#111; color:#95ff00; }
+  .cmt-btn.on .cmt-count { background:#111; color:#FF6902; }
   .cmt-btn .cmt-count.zero { display:none; }
 
   .cmt-marker {
     position:absolute; width:26px; height:26px;
-    background:#95ff00; border:2px solid #111; border-radius:50%;
+    background:#FF6902; border:2px solid #111; border-radius:50%;
     font-family: var(--wf-mono); font-size:11px; font-weight:700; color:#111;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer; z-index:30;
@@ -96,7 +96,7 @@
     user-select:none;
   }
   .cmt-marker.resolved { background:#fff; opacity:.7; }
-  .cmt-marker.active   { outline: 3px solid #95ff00; outline-offset:2px; background:#fff; }
+  .cmt-marker.active   { outline: 3px solid #FF6902; outline-offset:2px; background:#fff; }
   .cmt-pending {
     position:absolute; width:26px; height:26px;
     border-radius:50%; border:2px dashed #111;
@@ -147,7 +147,7 @@
   .cmt-sidebar .body { flex:1; overflow:auto; padding:12px 16px; }
   .cmt-sidebar .empty { color:#999; font-size:13px; padding:30px 0; text-align:center; line-height:1.5; }
   .cmt-pending-card {
-    background:#fcfbf6; border:1.5px solid #95ff00; padding:12px;
+    background:#fcfbf6; border:1.5px solid #FF6902; padding:12px;
     margin-bottom:12px;
   }
   .cmt-pending-card .who {
@@ -169,13 +169,13 @@
     background:#111; color:#fff;
   }
   .cmt-pending-card button:hover, .cmt-item .row button:hover {
-    background:#95ff00; color:#111; border-color:#111;
+    background:#FF6902; color:#111; border-color:#111;
   }
   .cmt-item {
     border:1px solid #ddd; padding:10px 12px; margin-bottom:10px;
     background:#fcfbf6; font-size:13px; line-height:1.45; cursor:pointer;
   }
-  .cmt-item.active { border-color:#111; background:#fff; box-shadow: 0 0 0 2px #95ff00; }
+  .cmt-item.active { border-color:#111; background:#fff; box-shadow: 0 0 0 2px #FF6902; }
   .cmt-item .head {
     display:flex; align-items:center; justify-content:space-between;
     font-family: var(--wf-mono); font-size:10px; letter-spacing:.08em;
@@ -225,7 +225,7 @@
     padding: 4px 10px; letter-spacing: .08em; text-transform: uppercase;
   }
   .cmt-popover .pop-row button.primary { background: #111; color: #fff; }
-  .cmt-popover .pop-row button:hover { background: #95ff00; color: #111; border-color: #111; }
+  .cmt-popover .pop-row button:hover { background: #FF6902; color: #111; border-color: #111; }
 </style>
 </head>
 <body data-page="home">
@@ -238,7 +238,7 @@
   <div class="grp">P1 · Marketing + Discovery</div>
   <a href="#home"              data-p="home">Home</a>
   <a href="#products"          data-p="products">Products (hub)</a>
-  <a href="#x-spec"       data-p="x-spec">X Spec</a>
+  <a href="#spex-studio"       data-p="spex-studio">Spex Studio</a>
   <a href="#collections"       data-p="collections">Collections index</a>
   <a href="#collection-app"    data-p="collection-app">Collection · App</a>
   <a href="#product-ultra"     data-p="product-ultra">Product · Ultra</a>
@@ -302,7 +302,7 @@
 
       <div class="hero-block">
         <div class="ph"></div>
-        <div class="hint" style="color:#95ff00;font-family:var(--wf-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase">H1 · Brand value prop</div>
+        <div class="hint" style="color:#FF6902;font-family:var(--wf-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase">H1 · Brand value prop</div>
         <div>
           <div class="h-bar" style="width:60%;background:#fff;height:40px"></div>
           <div class="h-bar sm" style="width:40%;background:#ccc;height:14px;margin-top:10px"></div>
@@ -314,7 +314,7 @@
       <div class="stripe">
         <div class="stripe-head"><div class="eye">Audience-Aware Paths · primary IA entry</div><span class="hint">§ Principle #1</span></div>
         <div class="three-col">
-          <div class="box panel"><span class="label">Path A</span><span class="persona dealer">Dealer (60%)</span><div class="title">I'm specifying for a client</div><div class="note">→ X Spec · Tiered pricing · Quote pipeline · CAD downloads. CTA: "open X Spec"</div></div>
+          <div class="box panel"><span class="label">Path A</span><span class="persona dealer">Dealer (60%)</span><div class="title">I'm specifying for a client</div><div class="note">→ Spex Studio · Tiered pricing · Quote pipeline · CAD downloads. CTA: "open Spex Studio"</div></div>
           <div class="box panel"><span class="label">Path B</span><span class="persona rep">Rep (30%)</span><div class="title">I'm demoing in the field</div><div class="note">→ Tablet-optimized catalog · Territory dashboard · Commission. CTA: "open Rep Portal"</div></div>
           <div class="box panel"><span class="label">Path C</span><span class="persona buyer">Buyer (10%)</span><div class="title">I need tables for my space</div><div class="note">→ Browse by Space · Collections · Quick Ship · Cart for 1–10. CTA: "browse by space"</div></div>
         </div>
@@ -331,7 +331,7 @@
       </div>
 
       <div class="stripe dark">
-        <div class="stripe-head"><div class="eye">X Spec teaser · the 3D configurator</div></div>
+        <div class="stripe-head"><div class="eye">Spex Studio teaser · the 3D configurator</div></div>
         <div class="two-col">
           <div class="ph dark" style="aspect-ratio:16/10"></div>
           <div class="stack">
@@ -344,7 +344,7 @@
               <span class="chip" style="background:#222;color:#fff;border-color:#555">Finish</span>
               <span class="chip" style="background:#222;color:#fff;border-color:#555">Accessories</span>
             </div>
-            <div class="row"><div class="btn-wf primary">open X Spec</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">watch 60s demo</div></div>
+            <div class="row"><div class="btn-wf primary">open Spex Studio</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">watch 60s demo</div></div>
           </div>
         </div>
       </div>
@@ -380,7 +380,7 @@
       <div class="footer-wf">
         <div><div style="font-weight:600;font-size:18px">TableX</div><div style="font-size:11px;color:#888;margin-top:6px">Midwest USA · Since 1998</div></div>
         <div class="cols">
-          <div><h5>Products</h5><ul><li>X Spec</li><li>Collections</li><li>Quick Ship</li><li>Compare</li></ul></div>
+          <div><h5>Products</h5><ul><li>Spex Studio</li><li>Collections</li><li>Quick Ship</li><li>Compare</li></ul></div>
           <div><h5>Resources</h5><ul><li>CAD</li><li>Brochures</li><li>Case studies</li><li>Sustainability</li></ul></div>
           <div><h5>Portals</h5><ul><li>Dealer</li><li>Rep</li><li>Track quote</li></ul></div>
           <div><h5>Company</h5><ul><li>About</li><li>Warranty</li><li>TIPS/Contracts</li><li>Careers</li></ul></div>
@@ -392,15 +392,15 @@
 
 <!-- ============ PRODUCTS HUB ============ -->
 <section id="products" class="page">
-  <div class="wf-page-title"><h2>Products hub</h2><div class="meta">Gateway to X Spec · Collections · Browse All · Compare · Accessories · Quick Ship</div></div>
+  <div class="wf-page-title"><h2>Products hub</h2><div class="meta">Gateway to Spex Studio · Collections · Browse All · Compare · Accessories · Quick Ship</div></div>
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Products · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
-      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">Products</span><span>Spaces</span><span>Finishes</span><span>Resources</span><span>About</span></div><div class="util"><span>Login</span><span>🛒</span></div></div>
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#FF6902">Products</span><span>Spaces</span><span>Finishes</span><span>Resources</span><span>About</span></div><div class="util"><span>Login</span><span>🛒</span></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Intro</div></div><div class="h-bar" style="width:50%;height:30px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div></div>
       <div class="stripe">
         <div class="stripe-head"><div class="eye">6 entry points · persona-ranked</div></div>
         <div class="two-col">
-          <div class="box accent"><span class="label">Hero entry · dealer/rep</span><div class="title">X Spec</div><div class="note">3D configurator · base style · top shape · edge · finish · accessories · live price (v2)</div><div class="btn-wf primary">open studio →</div></div>
+          <div class="box accent"><span class="label">Hero entry · dealer/rep</span><div class="title">Spex Studio</div><div class="note">3D configurator · base style · top shape · edge · finish · accessories · live price (v2)</div><div class="btn-wf primary">open studio →</div></div>
           <div class="box"><span class="label">Hero entry · A&D + buyer</span><div class="title">Collections</div><div class="note">Curated groupings: App · Solo · Outdoor · Occasional · Dining</div><div class="btn-wf">view all collections →</div></div>
         </div>
         <div class="four-col">
@@ -428,7 +428,7 @@
           <div class="box" style="padding:10px"><div class="hint">Exclaim</div></div>
           <div class="box" style="padding:10px"><div class="hint">VertiGo</div></div>
           <div class="box" style="padding:10px"><div class="hint">Surge</div></div>
-          <div class="box" style="padding:10px;border-color:#95ff00"><div class="hint">TableXpress QS</div></div>
+          <div class="box" style="padding:10px;border-color:#FF6902"><div class="hint">TableXpress QS</div></div>
         </div>
       </div>
     </div></div>
@@ -436,18 +436,18 @@
 </section>
 
 <!-- ============ SPEC STUDIO ============ -->
-<section id="x-spec" class="page">
-  <div class="wf-page-title"><h2>X Spec</h2><div class="meta">3D configurator · landing + in-configurator views · desktop + tablet (rep demo)</div></div>
+<section id="spex-studio" class="page">
+  <div class="wf-page-title"><h2>Spex Studio</h2><div class="meta">3D configurator · landing + in-configurator views · desktop + tablet (rep demo)</div></div>
   <div class="tabbar"><a class="on" data-sub="ss-landing">Landing</a><a data-sub="ss-config">In-Configurator</a><a data-sub="ss-tablet">Tablet view</a></div>
   <div class="wf-canvas">
 
   <div id="ss-landing" class="ss-view">
-    <div class="device desktop"><div class="device-header"><span>X Spec · Landing · 1280</span><span>DESKTOP</span></div>
+    <div class="device desktop"><div class="device-header"><span>Spex Studio · Landing · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
-      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#95ff00">X Spec</span><span>Collections</span><span>Browse</span><span>Compare</span></div><div class="util"><span>Login</span></div></div>
+      <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span style="color:#FF6902">Spex Studio</span><span>Collections</span><span>Browse</span><span>Compare</span></div><div class="util"><span>Login</span></div></div>
       <div class="hero-block" style="height:320px">
         <div class="ph"></div>
-        <div class="hint" style="color:#95ff00">Hero · 3D preview loop</div>
+        <div class="hint" style="color:#FF6902">Hero · 3D preview loop</div>
         <div><div class="h-bar" style="background:#fff;width:55%;height:34px"></div><div class="p-bar" style="background:#888;margin-top:12px"></div>
           <div class="row" style="margin-top:14px"><div class="btn-wf primary">start a configuration</div><div class="btn-wf" style="border-color:#fff;color:#fff;background:transparent">load saved</div></div>
         </div>
@@ -462,7 +462,7 @@
           <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Occasional</div><div class="note">Puddle · Exclaim</div></div>
         </div>
       </div>
-      <div class="stripe"><div class="stripe-head"><div class="eye">How X Spec works · 4-step</div></div>
+      <div class="stripe"><div class="stripe-head"><div class="eye">How Spex Studio works · 4-step</div></div>
         <div class="four-col">
           <div class="box"><div class="hint">STEP 01</div><div class="title">Pick a base</div><div class="note">6 families above</div></div>
           <div class="box"><div class="hint">STEP 02</div><div class="title">Shape + size the top</div><div class="note">Rect / round / racetrack · 14 sizes</div></div>
@@ -475,9 +475,9 @@
   </div>
 
   <div id="ss-config" class="ss-view" style="display:none">
-    <div class="device desktop"><div class="device-header"><span>X Spec · In-Configurator · 1280</span><span>DESKTOP</span></div>
+    <div class="device desktop"><div class="device-header"><span>Spex Studio · In-Configurator · 1280</span><span>DESKTOP</span></div>
     <div class="viewport" style="padding:0">
-      <div class="nav-wf" style="border-left:none;border-right:none;border-top:none"><div class="logo">TableX / X Spec</div><div class="util"><span>Save</span><span>Share</span><span>Reset</span></div></div>
+      <div class="nav-wf" style="border-left:none;border-right:none;border-top:none"><div class="logo">TableX / Spex Studio</div><div class="util"><span>Save</span><span>Share</span><span>Reset</span></div></div>
       <div class="studio-grid">
         <div class="studio-col">
           <h5>Step · 2/4 · Top shape + size</h5>
@@ -519,7 +519,7 @@
             <div class="row"><b>Accessories</b><span>— none —</span></div>
           </div>
           <div class="hr"></div>
-          <h5>Estimated unit price <span class="hint" style="color:#95ff00">live</span></h5>
+          <h5>Estimated unit price <span class="hint" style="color:#FF6902">live</span></h5>
           <div style="font-size:28px;font-weight:500">$ ____</div>
           <div class="note">Log in as dealer to see tiered pricing.</div>
           <div class="chip-row"><span class="chip">Qty 1</span><span class="chip">10</span><span class="chip">25</span><span class="chip">50</span></div>
@@ -536,7 +536,7 @@
   </div>
 
   <div id="ss-tablet" class="ss-view" style="display:none">
-    <div class="device tablet"><div class="device-header"><span>X Spec · Tablet · 820 · Rep demo</span><span>TABLET</span></div>
+    <div class="device tablet"><div class="device-header"><span>Spex Studio · Tablet · 820 · Rep demo</span><span>TABLET</span></div>
     <div class="viewport" style="padding:0">
       <div class="nav-wf"><div class="logo">TableX / Studio</div><div class="util"><span>Save</span></div></div>
       <div style="display:grid;grid-template-columns:1fr 260px;border:1.5px solid #111;min-height:480px">
@@ -565,7 +565,7 @@
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Collections · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products</span><span>Spaces</span></div></div>
-      <div class="hero-block" style="height:260px"><div class="ph"></div><div class="hint" style="color:#95ff00">Editorial hero</div><div><div class="h-bar" style="background:#fff;width:55%;height:30px"></div></div></div>
+      <div class="hero-block" style="height:260px"><div class="ph"></div><div class="hint" style="color:#FF6902">Editorial hero</div><div><div class="h-bar" style="background:#fff;width:55%;height:30px"></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">5 collections · editorial tiles</div></div>
         <div class="three-col">
           <div class="box"><div class="ph" style="aspect-ratio:4/5"></div><div class="title">App</div><div class="note">Huddle + training rooms · 4 series</div></div>
@@ -587,7 +587,7 @@
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Collection · App · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Collections / App</span></div></div>
-      <div class="hero-block" style="height:340px"><div class="ph"></div><div class="hint" style="color:#95ff00">Editorial hero · App in-situ</div>
+      <div class="hero-block" style="height:340px"><div class="ph"></div><div class="hint" style="color:#FF6902">Editorial hero · App in-situ</div>
         <div><div class="h-bar" style="background:#fff;width:30%;height:36px"></div><div class="p-bar" style="background:#888;margin-top:10px;width:60%"></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Collection story · editorial</div></div>
         <div class="two-col"><div class="stack"><div class="h-bar" style="width:60%"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar"></div><div class="p-bar short"></div></div></div><div class="ph" style="aspect-ratio:4/3"></div></div>
@@ -600,13 +600,13 @@
           <div class="box"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:15px">Exclaim</div><div class="note">Whiteboard-top variant.</div></div>
         </div>
       </div>
-      <div class="stripe dark"><div class="stripe-head"><div class="eye">Finish moments · swatch strip</div></div><div class="swatch-grid"><div class="sw" style="background:#222"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div><div class="sw" style="background:#f8f7ec"></div><div class="sw" style="background:#95ff00"></div><div class="sw" style="background:#2a3d5c"></div><div class="sw" style="background:#750028"></div></div></div>
+      <div class="stripe dark"><div class="stripe-head"><div class="eye">Finish moments · swatch strip</div></div><div class="swatch-grid"><div class="sw" style="background:#222"></div><div class="sw" style="background:#444"></div><div class="sw" style="background:#6c6b6b"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div><div class="sw" style="background:#f8f7ec"></div><div class="sw" style="background:#FF6902"></div><div class="sw" style="background:#2a3d5c"></div><div class="sw" style="background:#750028"></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Case studies using App</div></div><div class="three-col">
         <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">Indiana Tech</div><div class="note">Classrooms · Trig + App</div></div>
         <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">Cummins HQ</div><div class="note">Huddle rooms · App</div></div>
         <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title" style="font-size:14px">IU Health</div><div class="note">Training · App + Stretch</div></div>
       </div></div>
-      <div class="stripe accent" style="background:#f6ffe3"><div class="stripe-head"><div class="eye">CTA band · dual path</div></div><div class="row" style="gap:16px"><div class="btn-wf primary">configure App in X Spec</div><div class="btn-wf">find your rep</div></div></div>
+      <div class="stripe accent" style="background:#fff1e6"><div class="stripe-head"><div class="eye">CTA band · dual path</div></div><div class="row" style="gap:16px"><div class="btn-wf primary">configure App in Spex Studio</div><div class="btn-wf">find your rep</div></div></div>
     </div></div>
   </div>
 </section>
@@ -631,7 +631,7 @@
                 <div class="h-bar" style="width:40%;height:30px">Ultra</div>
                 <div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div>
                 <div class="chip-row"><span class="chip">T-leg</span><span class="chip">14 sizes</span><span class="chip">Rect · Round · D-end</span></div>
-                <div class="row"><div class="btn-wf primary">configure in X Spec</div><div class="btn-wf">add to compare</div></div>
+                <div class="row"><div class="btn-wf primary">configure in Spex Studio</div><div class="btn-wf">add to compare</div></div>
               </div>
             </div>
           </div>
@@ -671,8 +671,8 @@
             <div class="chip-row"><span class="chip">Serving: zip 11211 ✓</span></div>
             <div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">schedule a visit</div><div class="btn-wf sm">change location</div></div>
           </div>
-          <div class="box"><span class="label">Buy 1–10 direct</span><span class="persona buyer">Buyer</span><div class="note">Configure in X Spec · add to cart · ship in 2 weeks (Quick Ship SKUs only).</div><div class="btn-wf">see Quick Ship Ultras</div></div>
-          <div class="box accent"><span class="label">Dealer? Log in</span><span class="persona dealer">Dealer</span><div class="note">Tiered pricing unlocks on X Spec + CAD bundles + quote pipeline.</div><div class="btn-wf">dealer login</div></div>
+          <div class="box"><span class="label">Buy 1–10 direct</span><span class="persona buyer">Buyer</span><div class="note">Configure in Spex Studio · add to cart · ship in 2 weeks (Quick Ship SKUs only).</div><div class="btn-wf">see Quick Ship Ultras</div></div>
+          <div class="box accent"><span class="label">Dealer? Log in</span><span class="persona dealer">Dealer</span><div class="note">Tiered pricing unlocks on Spex Studio + CAD bundles + quote pipeline.</div><div class="btn-wf">dealer login</div></div>
         </div>
       </div>
     </div></div>
@@ -684,7 +684,7 @@
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Products / Ultra</span></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Hero · full-width</div></div>
-        <div class="two-col"><div class="ph" style="aspect-ratio:4/3"></div><div class="stack"><div class="hint">SERIES · flagship</div><div class="h-bar" style="width:30%;height:40px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div><div class="row"><div class="btn-wf primary">configure in X Spec</div><div class="btn-wf">compare</div></div></div></div>
+        <div class="two-col"><div class="ph" style="aspect-ratio:4/3"></div><div class="stack"><div class="hint">SERIES · flagship</div><div class="h-bar" style="width:30%;height:40px"></div><div class="p-stack"><div class="p-bar"></div><div class="p-bar short"></div></div><div class="row"><div class="btn-wf primary">configure in Spex Studio</div><div class="btn-wf">compare</div></div></div></div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Specs · full-width table</div></div>
         <div class="spec-table">
@@ -697,7 +697,7 @@
           <div class="row"><b>Warranty</b><span>50-year structural</span></div>
         </div>
       </div>
-      <div class="stripe dark" style="background:#111"><div class="stripe-head"><div class="eye" style="color:#95ff00">Geo-aware rep card · mid-page band</div></div>
+      <div class="stripe dark" style="background:#111"><div class="stripe-head"><div class="eye" style="color:#FF6902">Geo-aware rep card · mid-page band</div></div>
         <div class="two-col">
           <div class="stack"><div class="h-bar" style="width:60%;background:#fff;height:28px"></div><div class="p-stack"><div class="p-bar" style="background:#444"></div><div class="p-bar short" style="background:#444"></div></div><div class="note" style="color:#a8a8a8">"Talk to the rep who knows your market." Auto-surface based on IP / zip fallback.</div></div>
           <div class="rep-card" style="background:#fff;color:#111;border:none">
@@ -756,7 +756,7 @@
             <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Revel</div><div class="note">Pedestal</div></div>
             <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">App</div><div class="note">Huddle</div></div>
             <div class="box" style="padding:10px"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">Element</div><div class="note">Nesting modular</div></div>
-            <div class="box" style="padding:10px;border-color:#95ff00"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">TableXpress</div><div class="note">Quick Ship · 2wk</div></div>
+            <div class="box" style="padding:10px;border-color:#FF6902"><div class="ph" style="aspect-ratio:1/1"></div><div class="title" style="font-size:14px">TableXpress</div><div class="note">Quick Ship · 2wk</div></div>
           </div>
           <div class="hint">+ 8 more · pagination</div>
         </div>
@@ -801,7 +801,7 @@
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Spaces · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Spaces</span></div></div>
-      <div class="hero-block" style="height:260px"><div class="ph"></div><div class="hint" style="color:#95ff00">Editorial</div><div><div class="h-bar" style="background:#fff;width:40%;height:30px"></div></div></div>
+      <div class="hero-block" style="height:260px"><div class="ph"></div><div class="hint" style="color:#FF6902">Editorial</div><div><div class="h-bar" style="background:#fff;width:40%;height:30px"></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">5 spaces · editorial tiles</div></div>
         <div class="three-col">
           <div class="box"><div class="ph" style="aspect-ratio:4/3"></div><div class="title">Training &amp; Classroom</div><div class="note">Flip-top nesting · gang · casters</div></div>
@@ -823,7 +823,7 @@
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>Spaces/Training · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Spaces / Training</span></div></div>
-      <div class="hero-block" style="height:340px"><div class="ph"></div><div class="hint" style="color:#95ff00">In-situ classroom imagery</div><div><div class="h-bar" style="background:#fff;width:45%;height:34px"></div></div></div>
+      <div class="hero-block" style="height:340px"><div class="ph"></div><div class="hint" style="color:#FF6902">In-situ classroom imagery</div><div><div class="h-bar" style="background:#fff;width:45%;height:34px"></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">What makes a training table</div></div>
         <div class="four-col">
           <div class="box"><div class="title" style="font-size:15px">Flip-top</div><div class="note">Nest away when unused</div></div>
@@ -860,7 +860,7 @@
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>Finishes</span></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">6 categories</div></div>
         <div class="three-col">
-          <div class="box"><div class="swatch-grid" style="grid-template-columns:repeat(5,1fr)"><div class="sw" style="background:#111"></div><div class="sw" style="background:#555"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#95ff00"></div><div class="sw" style="background:#750028"></div></div><div class="title">Powder coats</div><div class="note">31 colors · paint</div></div>
+          <div class="box"><div class="swatch-grid" style="grid-template-columns:repeat(5,1fr)"><div class="sw" style="background:#111"></div><div class="sw" style="background:#555"></div><div class="sw" style="background:#918966"></div><div class="sw" style="background:#FF6902"></div><div class="sw" style="background:#750028"></div></div><div class="title">Powder coats</div><div class="note">31 colors · paint</div></div>
           <div class="box"><div class="swatch-grid" style="grid-template-columns:repeat(5,1fr)"><div class="sw" style="background:#cd9866"></div><div class="sw" style="background:#62391b"></div><div class="sw" style="background:#d9d1b6"></div><div class="sw" style="background:#2a3d5c"></div><div class="sw" style="background:#f8f7ec"></div></div><div class="title">Laminates · HPL + TFL</div><div class="note">Wood · solids · textures</div></div>
           <div class="box"><div class="row"><div class="ph" style="width:60px;height:20px"></div><div class="ph" style="width:60px;height:20px;border-radius:2px"></div><div class="ph" style="width:60px;height:20px;border-radius:10px"></div></div><div class="title">Edge bands</div><div class="note">8 cross-sections</div></div>
         </div>
@@ -894,7 +894,7 @@
           <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#750028"></div><div class="hint">Brick</div></div>
           <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#2a3d5c"></div><div class="hint">Navy</div></div>
           <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#05553a"></div><div class="hint">Forest</div></div>
-          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#95ff00"></div><div class="hint">Volt</div></div>
+          <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#FF6902"></div><div class="hint">Volt</div></div>
           <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#ffd59e"></div><div class="hint">Butter</div></div>
           <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#ff5700"></div><div class="hint">Signal</div></div>
           <div class="stack"><div class="sw" style="aspect-ratio:1/1;background:#e1001b"></div><div class="hint">Scarlet</div></div>
@@ -933,7 +933,7 @@
             <div class="row"><b>Subtotal</b><span>$ 19,296</span></div>
             <div class="row"><b>Dealer discount (tier 3)</b><span>− $ 5,788</span></div>
             <div class="row"><b>Estimated freight</b><span>$ 920</span></div>
-            <div class="row" style="background:#111;color:#fff"><b style="color:#95ff00">Quote total</b><span>$ 14,428</span></div>
+            <div class="row" style="background:#111;color:#fff"><b style="color:#FF6902">Quote total</b><span>$ 14,428</span></div>
           </div></div>
         </div>
       </div>
@@ -955,7 +955,7 @@
         <div class="map-ph">
           <div class="map-pin" style="top:24%;left:28%"></div>
           <div class="map-pin" style="top:32%;left:48%"></div>
-          <div class="map-pin" style="top:22%;left:72%;background:#111;border-color:#95ff00"></div>
+          <div class="map-pin" style="top:22%;left:72%;background:#111;border-color:#FF6902"></div>
           <div class="map-pin" style="top:58%;left:62%"></div>
           <div class="map-pin" style="top:48%;left:30%"></div>
           <div class="map-pin" style="top:70%;left:78%"></div>
@@ -963,7 +963,7 @@
         </div>
         <div class="stack">
           <div class="hint">Your territory · Northeast</div>
-          <div class="rep-card" style="border-color:#95ff00"><div class="head"><div class="avatar"></div><div><div style="font-weight:600">Maren Castillo</div><div class="hint">Parallel Contract Group</div></div></div><div class="note">Serves: NY · NJ · CT · eastern PA. Dealer + A&amp;D contact.</div><div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">email Maren</div><div class="btn-wf">schedule visit</div></div></div>
+          <div class="rep-card" style="border-color:#FF6902"><div class="head"><div class="avatar"></div><div><div style="font-weight:600">Maren Castillo</div><div class="hint">Parallel Contract Group</div></div></div><div class="note">Serves: NY · NJ · CT · eastern PA. Dealer + A&amp;D contact.</div><div class="stack"><div class="btn-wf primary">request a quote</div><div class="btn-wf">email Maren</div><div class="btn-wf">schedule visit</div></div></div>
           <div class="box"><span class="label">Neighboring</span><div class="stack"><div class="note">Mid-Atlantic · Jordan Okafor</div><div class="note">New England · Pat Deery</div></div></div>
         </div>
       </div></div>
@@ -980,7 +980,7 @@
   <div class="wf-canvas"><div class="device desktop"><div class="device-header"><span>About · 1280</span><span>DESKTOP</span></div>
     <div class="viewport stack">
       <div class="nav-wf"><div class="logo">TableX</div><div class="links"><span>About / Our Story</span></div></div>
-      <div class="hero-block" style="height:380px"><div class="ph"></div><div class="hint" style="color:#95ff00">Shop floor · hands at work</div><div><div class="h-bar" style="background:#fff;width:60%;height:40px"></div><div class="p-bar" style="background:#ccc;margin-top:10px;width:50%"></div></div></div>
+      <div class="hero-block" style="height:380px"><div class="ph"></div><div class="hint" style="color:#FF6902">Shop floor · hands at work</div><div><div class="h-bar" style="background:#fff;width:60%;height:40px"></div><div class="p-bar" style="background:#ccc;margin-top:10px;width:50%"></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Three pillars · repeat from home</div></div><div class="three-col"><div class="box"><div class="title" style="font-size:16px">Modern craft</div><div class="note">Hands + machines · current practice not legacy claim</div></div><div class="box"><div class="title" style="font-size:16px">Speed to ship</div><div class="note">Quick Ship program · 2 weeks</div></div><div class="box"><div class="title" style="font-size:16px">Design-forward</div><div class="note">Built to be seen in great spaces</div></div></div></div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Timeline · 1998 → today</div></div>
         <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
@@ -988,8 +988,8 @@
           <div class="stack"><div class="h-bar" style="height:28px;width:60%">2005</div><div class="note" style="font-size:11px">First dealer network</div></div>
           <div class="stack"><div class="h-bar" style="height:28px;width:60%">2012</div><div class="note" style="font-size:11px">Quick Ship launched</div></div>
           <div class="stack"><div class="h-bar" style="height:28px;width:60%">2018</div><div class="note" style="font-size:11px">50-yr warranty</div></div>
-          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2024</div><div class="note" style="font-size:11px">X Spec launched</div></div>
-          <div class="stack"><div class="h-bar" style="height:28px;width:60%;background:#95ff00;color:#111">2026</div><div class="note" style="font-size:11px">Site + CPQ relaunch</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%">2024</div><div class="note" style="font-size:11px">Spex Studio launched</div></div>
+          <div class="stack"><div class="h-bar" style="height:28px;width:60%;background:#FF6902;color:#111">2026</div><div class="note" style="font-size:11px">Site + CPQ relaunch</div></div>
         </div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Manufacturing · Made in USA</div></div>
@@ -1026,7 +1026,7 @@
         </div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Quick actions · role-specific</div></div>
-        <div class="four-col"><div class="box"><div class="title" style="font-size:15px">Configure &amp; Price</div><div class="btn-wf sm primary">open X Spec</div></div><div class="box"><div class="title" style="font-size:15px">Download dealer price list</div><div class="btn-wf sm">PDF / XLSX</div></div><div class="box"><div class="title" style="font-size:15px">CAD bundle</div><div class="btn-wf sm">all series · ZIP</div></div><div class="box"><div class="title" style="font-size:15px">My reps</div><div class="btn-wf sm">contact my rep</div></div></div>
+        <div class="four-col"><div class="box"><div class="title" style="font-size:15px">Configure &amp; Price</div><div class="btn-wf sm primary">open Spex Studio</div></div><div class="box"><div class="title" style="font-size:15px">Download dealer price list</div><div class="btn-wf sm">PDF / XLSX</div></div><div class="box"><div class="title" style="font-size:15px">CAD bundle</div><div class="btn-wf sm">all series · ZIP</div></div><div class="box"><div class="title" style="font-size:15px">My reps</div><div class="btn-wf sm">contact my rep</div></div></div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">My Orders · in production</div></div>
         <div class="spec-table"><div class="row" style="grid-template-columns:120px 1fr 1fr 1fr 1fr"><b>PO</b><b>Client</b><b>Ship date</b><b>Tracking</b><b>Status</b></div>
@@ -1044,9 +1044,9 @@
         <div class="two-col"><div class="kpi"><div class="l">Active quotes</div><div class="n">14</div></div><div class="kpi"><div class="l">In production</div><div class="n">6</div></div></div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Quotes · swipeable</div></div><div class="stack"><div class="box"><div class="hint">Q-0412 · Newfield</div><div class="note">$42,110 · In production</div></div><div class="box"><div class="hint">Q-0409 · Butler U</div><div class="note">$68,400 · Approved</div></div></div></div>
-      <div class="stripe"><div class="two-col"><div class="btn-wf primary">open X Spec</div><div class="btn-wf">price list</div></div></div>
+      <div class="stripe"><div class="two-col"><div class="btn-wf primary">open Spex Studio</div><div class="btn-wf">price list</div></div></div>
     </div></div>
-    <div class="callout" data-n="T">Dealer tablet: condensed KPIs, swipe quotes list, giant-tap X Spec — matches rep "in showroom on tablet" principle extended to dealer visits.</div>
+    <div class="callout" data-n="T">Dealer tablet: condensed KPIs, swipe quotes list, giant-tap Spex Studio — matches rep "in showroom on tablet" principle extended to dealer visits.</div>
   </div>
   <div id="dp-login" class="dp-view" style="display:none">
     <div class="device desktop"><div class="device-header"><span>Dealer login · 1280</span><span>DESKTOP</span></div>
@@ -1083,7 +1083,7 @@
           <div class="box"><div class="hint">DRAFT</div><div class="n" style="font-size:22px">7</div><div class="note">$ 128k</div></div>
           <div class="box"><div class="hint">SENT</div><div class="n" style="font-size:22px">12</div><div class="note">$ 420k</div></div>
           <div class="box"><div class="hint">APPROVED</div><div class="n" style="font-size:22px">5</div><div class="note">$ 612k</div></div>
-          <div class="box" style="border-color:#95ff00"><div class="hint">IN PRODUCTION</div><div class="n" style="font-size:22px">4</div><div class="note">$ 260k</div></div>
+          <div class="box" style="border-color:#FF6902"><div class="hint">IN PRODUCTION</div><div class="n" style="font-size:22px">4</div><div class="note">$ 260k</div></div>
         </div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Dealers in my territory · 18</div><a class="btn-wf sm">add dealer</a></div>
@@ -1094,9 +1094,9 @@
         </div>
       </div>
       <div class="stripe"><div class="stripe-head"><div class="eye">Sales tools &amp; training</div></div>
-        <div class="four-col"><div class="box"><div class="title" style="font-size:14px">Product knowledge · video</div></div><div class="box"><div class="title" style="font-size:14px">Finishes sample kit request</div></div><div class="box"><div class="title" style="font-size:14px">X Spec demo · tablet</div><div class="btn-wf sm primary">launch demo</div></div><div class="box"><div class="title" style="font-size:14px">Pricing &amp; margin calculator</div></div></div>
+        <div class="four-col"><div class="box"><div class="title" style="font-size:14px">Product knowledge · video</div></div><div class="box"><div class="title" style="font-size:14px">Finishes sample kit request</div></div><div class="box"><div class="title" style="font-size:14px">Spex Studio demo · tablet</div><div class="btn-wf sm primary">launch demo</div></div><div class="box"><div class="title" style="font-size:14px">Pricing &amp; margin calculator</div></div></div>
       </div>
-      <div class="callout" data-n="R">Rep persona is 30% of traffic and 100% of in-showroom demos — notice the "launch demo" CTA targets the tablet view of X Spec, which is where rep value is created.</div>
+      <div class="callout" data-n="R">Rep persona is 30% of traffic and 100% of in-showroom demos — notice the "launch demo" CTA targets the tablet view of Spex Studio, which is where rep value is created.</div>
     </div></div>
   </div>
 </section>
@@ -1121,7 +1121,7 @@
   var initial = (location.hash && location.hash.slice(1)) || localStorage.getItem('tablex_wf_page') || 'home';
   go(initial);
 
-  // Sub-tabs within X Spec + Product + Dealer
+  // Sub-tabs within Spex Studio + Product + Dealer
   document.querySelectorAll('.tabbar').forEach(bar => {
     bar.querySelectorAll('a').forEach(a => a.addEventListener('click', e => {
       e.preventDefault();
