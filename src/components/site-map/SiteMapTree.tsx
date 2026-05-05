@@ -8,6 +8,8 @@ import {
   Eye,
   EyeOff,
   Hash,
+  Check,
+  X,
 } from "lucide-react";
 import {
   audienceLabels,
@@ -17,6 +19,12 @@ import {
   type SiteMapPage,
 } from "@/data/site-map";
 import { useContentNode } from "@/store/content-map-store";
+import {
+  useApprovalDecision,
+  useApprovalsStore,
+  useGroupApprovalRollup,
+} from "@/store/site-map-approvals-store";
+import { ApprovalControls } from "./ApprovalControls";
 
 interface Props {
   groups: SiteMapGroup[];
@@ -132,6 +140,19 @@ function PageRow({
   const expanded = expandedPages.has(page.id);
   const dimmed = !visibleAudiences.has(page.audience);
   const selected = page.id === selectedPageId;
+  const decision = useApprovalDecision(page.id);
+  const setDecision = useApprovalsStore((s) => s.setDecision);
+  const clearApproval = useApprovalsStore((s) => s.clear);
+  const isApproved = decision === "approved";
+  const isRejected = decision === "rejected";
+
+  const rowBg = selected
+    ? "bg-orange-50 ring-1 ring-orange-300"
+    : isApproved
+      ? "hover:bg-emerald-50/60"
+      : isRejected
+        ? "hover:bg-rose-50/60"
+        : "hover:bg-slate-50";
 
   return (
     <>
@@ -151,13 +172,20 @@ function PageRow({
           } else if (e.key === "ArrowLeft" && hasChildren && expanded) {
             e.preventDefault();
             onTogglePage(page.id);
+          } else if ((e.key === "y" || e.key === "Y") && !e.metaKey && !e.ctrlKey) {
+            e.preventDefault();
+            setDecision(page.id, "approved");
+          } else if ((e.key === "n" || e.key === "N") && !e.metaKey && !e.ctrlKey) {
+            e.preventDefault();
+            setDecision(page.id, "rejected");
+          } else if (e.key === "r" || e.key === "R") {
+            e.preventDefault();
+            clearApproval(page.id);
           }
         }}
-        className={`group relative grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-md px-2 py-1.5 cursor-pointer transition-colors ${
-          selected
-            ? "bg-orange-50 ring-1 ring-orange-300"
-            : "hover:bg-slate-50"
-        } ${dimmed ? "opacity-40" : ""}`}
+        className={`group relative grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 rounded-md px-2 py-1.5 cursor-pointer transition-colors ${rowBg} ${
+          dimmed ? "opacity-40" : ""
+        }`}
         style={{ paddingLeft: `${depth * 24 + 8}px` }}
       >
         {/* Indent guide lines */}
@@ -169,6 +197,16 @@ function PageRow({
             aria-hidden
           />
         ))}
+
+        {/* Decision color stripe on the leftmost border */}
+        {(isApproved || isRejected) && (
+          <span
+            aria-hidden
+            className={`absolute left-0 top-1 bottom-1 w-0.5 rounded-full ${
+              isApproved ? "bg-emerald-500" : "bg-rose-500"
+            }`}
+          />
+        )}
 
         {/* Chevron / leaf dot */}
         <button
@@ -190,14 +228,28 @@ function PageRow({
               className={`h-4 w-4 transition-transform ${expanded ? "rotate-90" : ""}`}
             />
           ) : (
-            <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isApproved
+                  ? "bg-emerald-400"
+                  : isRejected
+                    ? "bg-rose-400"
+                    : "bg-slate-300"
+              }`}
+            />
           )}
         </button>
 
         {/* Label + route */}
         <div className="min-w-0 flex flex-col">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-900 truncate">
+            <span
+              className={`text-sm font-medium truncate transition-colors ${
+                isRejected
+                  ? "text-slate-400 line-through decoration-rose-400 decoration-2"
+                  : "text-slate-900"
+              }`}
+            >
               {page.label}
             </span>
             {page.isNew && (
@@ -206,12 +258,20 @@ function PageRow({
                 NEW
               </span>
             )}
-            <code className="font-mono text-[10px] text-slate-400 truncate">
+            <code
+              className={`font-mono text-[10px] truncate ${
+                isRejected ? "text-slate-300 line-through" : "text-slate-400"
+              }`}
+            >
               {page.route}
             </code>
           </div>
           {page.description && (
-            <p className="text-[11px] text-slate-500 truncate">
+            <p
+              className={`text-[11px] truncate ${
+                isRejected ? "text-slate-300" : "text-slate-500"
+              }`}
+            >
               {page.description}
             </p>
           )}
@@ -233,6 +293,9 @@ function PageRow({
           </span>
           {page.contentNodeRef && <ContentNodeBadge nodeId={page.contentNodeRef} />}
         </div>
+
+        {/* Approval controls — Y/N + note popover */}
+        <ApprovalControls pageId={page.id} pageLabel={page.label} />
       </div>
 
       {hasChildren && expanded && (
@@ -333,47 +396,16 @@ export function SiteMapTree({
         ).length;
 
         return (
-          <section
+          <GroupSection
             key={group.id}
-            className="border-b border-slate-200 last:border-b-0"
+            group={group}
+            tree={tree}
+            visiblePages={visiblePages}
+            visibleCount={visibleCount}
+            isOpen={isOpen}
+            onToggle={() => onToggleGroup(group.id)}
+            audienceStripe={audienceStripe}
           >
-            {/* Group header */}
-            <button
-              type="button"
-              onClick={() => onToggleGroup(group.id)}
-              className="w-full flex items-center gap-3 bg-slate-50 hover:bg-slate-100 px-3 py-2.5 transition-colors text-left"
-              aria-expanded={isOpen}
-            >
-              <div
-                className={`h-8 w-1 rounded-full ${audienceStripe[group.audience]}`}
-                aria-hidden
-              />
-              <ChevronRight
-                className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-90" : ""}`}
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-sm font-bold text-slate-900">
-                    {group.label}
-                  </h3>
-                  <code className="font-mono text-[10px] text-slate-500 bg-white border border-slate-200 px-1.5 py-0.5 rounded">
-                    {group.routeGroup}
-                  </code>
-                </div>
-                <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                  {group.description}
-                </p>
-              </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 shrink-0">
-                <Hash className="h-3 w-3" />
-                <span>
-                  {visibleCount}
-                  {visibleCount !== group.pages.length && (
-                    <span className="text-slate-400"> / {group.pages.length}</span>
-                  )}
-                </span>
-              </div>
-            </button>
 
             {/* Group body */}
             {isOpen && (
@@ -400,7 +432,7 @@ export function SiteMapTree({
                 )}
               </div>
             )}
-          </section>
+          </GroupSection>
         );
       })}
 
@@ -411,5 +443,108 @@ export function SiteMapTree({
         </div>
       )}
     </div>
+  );
+}
+
+interface GroupSectionProps {
+  group: SiteMapGroup;
+  tree: PageNode[];
+  visiblePages: PageNode[];
+  visibleCount: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  audienceStripe: Record<Audience, string>;
+  children: React.ReactNode;
+}
+
+function GroupSection({
+  group,
+  visibleCount,
+  isOpen,
+  onToggle,
+  audienceStripe,
+  children,
+}: GroupSectionProps) {
+  const allPageIds = useMemo(
+    () => group.pages.map((p) => p.id),
+    [group.pages],
+  );
+  const rollup = useGroupApprovalRollup(allPageIds);
+  const reviewedTotal = rollup.approved + rollup.rejected;
+  const allApproved =
+    reviewedTotal === group.pages.length && rollup.rejected === 0;
+
+  return (
+    <section className="border-b border-slate-200 last:border-b-0">
+      {/* Group header */}
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`w-full flex items-center gap-3 px-3 py-2.5 transition-colors text-left ${
+          allApproved
+            ? "bg-emerald-50/60 hover:bg-emerald-100/60"
+            : "bg-slate-50 hover:bg-slate-100"
+        }`}
+        aria-expanded={isOpen}
+      >
+        <div
+          className={`h-8 w-1 rounded-full ${audienceStripe[group.audience]}`}
+          aria-hidden
+        />
+        <ChevronRight
+          className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-90" : ""}`}
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-sm font-bold text-slate-900">{group.label}</h3>
+            <code className="font-mono text-[10px] text-slate-500 bg-white border border-slate-200 px-1.5 py-0.5 rounded">
+              {group.routeGroup}
+            </code>
+            {allApproved && (
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500 text-white px-1.5 py-0.5 text-[9px] font-semibold">
+                <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                ALL APPROVED
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-slate-500 truncate mt-0.5">
+            {group.description}
+          </p>
+        </div>
+
+        {/* Approval rollup chips */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {rollup.approved > 0 && (
+            <span
+              className="inline-flex items-center gap-0.5 rounded-full bg-emerald-100 text-emerald-700 px-1.5 py-0.5 text-[10px] font-semibold"
+              title={`${rollup.approved} approved`}
+            >
+              <Check className="h-2.5 w-2.5" strokeWidth={3} />
+              {rollup.approved}
+            </span>
+          )}
+          {rollup.rejected > 0 && (
+            <span
+              className="inline-flex items-center gap-0.5 rounded-full bg-rose-100 text-rose-700 px-1.5 py-0.5 text-[10px] font-semibold"
+              title={`${rollup.rejected} rejected`}
+            >
+              <X className="h-2.5 w-2.5" strokeWidth={3} />
+              {rollup.rejected}
+            </span>
+          )}
+          <div className="flex items-center gap-1 text-[11px] text-slate-500 ml-1">
+            <Hash className="h-3 w-3" />
+            <span>
+              {visibleCount}
+              {visibleCount !== group.pages.length && (
+                <span className="text-slate-400"> / {group.pages.length}</span>
+              )}
+            </span>
+          </div>
+        </div>
+      </button>
+
+      {children}
+    </section>
   );
 }

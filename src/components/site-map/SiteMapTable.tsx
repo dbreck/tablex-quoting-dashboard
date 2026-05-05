@@ -1,15 +1,16 @@
 "use client";
 
-import { ExternalLink, Sparkles } from "lucide-react";
+import { Check, ExternalLink, Sparkles, X } from "lucide-react";
 import {
   audienceLabels,
-  approvalLabels,
   ownerLabels,
   type Audience,
   type SiteMapPage,
   type SiteMapGroup,
 } from "@/data/site-map";
 import { useContentNode } from "@/store/content-map-store";
+import { useApprovalForPage } from "@/store/site-map-approvals-store";
+import { ApprovalControls } from "./ApprovalControls";
 
 interface Props {
   groups: SiteMapGroup[];
@@ -27,11 +28,30 @@ const audienceBadge: Record<Audience, string> = {
   admin: "bg-rose-100 text-rose-700",
 };
 
-const approvalBadge = {
-  approved: "bg-green-100 text-green-700",
-  pending: "bg-slate-100 text-slate-600",
-  review: "bg-amber-100 text-amber-700",
-} as const;
+function ApprovalBadge({ pageId }: { pageId: string }) {
+  const approval = useApprovalForPage(pageId);
+  if (!approval || approval.decision === "pending") {
+    return (
+      <span className="inline-block rounded px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-600">
+        Pending
+      </span>
+    );
+  }
+  if (approval.decision === "approved") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold bg-emerald-100 text-emerald-700">
+        <Check className="h-3 w-3" strokeWidth={3} />
+        Approved
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold bg-rose-100 text-rose-700">
+      <X className="h-3 w-3" strokeWidth={3} />
+      Rejected
+    </span>
+  );
+}
 
 function ContentNodeLink({ nodeId }: { nodeId: string }) {
   const node = useContentNode(nodeId);
@@ -107,6 +127,7 @@ export function SiteMapTable({
                     <th className="px-4 py-2 font-medium">Owner</th>
                     <th className="px-4 py-2 font-medium">Approval</th>
                     <th className="px-4 py-2 font-medium">Content node</th>
+                    <th className="px-4 py-2 font-medium text-right">Decide</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -159,11 +180,7 @@ export function SiteMapTable({
                           {ownerLabels[p.owner]}
                         </td>
                         <td className="px-4 py-2.5 align-top">
-                          <span
-                            className={`inline-block rounded px-2 py-0.5 text-[11px] font-medium ${approvalBadge[p.approval]}`}
-                          >
-                            {approvalLabels[p.approval]}
-                          </span>
+                          <ApprovalBadge pageId={p.id} />
                         </td>
                         <td className="px-4 py-2.5 align-top">
                           {p.contentNodeRef ? (
@@ -171,6 +188,11 @@ export function SiteMapTable({
                           ) : (
                             <span className="text-[11px] text-slate-300">—</span>
                           )}
+                        </td>
+                        <td className="px-4 py-2.5 align-top">
+                          <div className="flex justify-end">
+                            <ApprovalControls pageId={p.id} pageLabel={p.label} />
+                          </div>
                         </td>
                       </tr>
                     );

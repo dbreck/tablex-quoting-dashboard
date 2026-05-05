@@ -3,12 +3,15 @@
 import { useCallback, useMemo, useState } from "react";
 import {
   Brain,
+  Check,
   Download,
   ListTree,
   Network,
+  RotateCcw,
   Search as SearchIcon,
   Sparkles,
   Table as TableIcon,
+  X,
 } from "lucide-react";
 import {
   siteMapGroups,
@@ -21,6 +24,10 @@ import { SiteMapFlow } from "@/components/site-map/SiteMapFlow";
 import { SiteMapTable } from "@/components/site-map/SiteMapTable";
 import { SiteMapTree } from "@/components/site-map/SiteMapTree";
 import { SiteMapMindmap } from "@/components/site-map/SiteMapMindmap";
+import {
+  useApprovalsStore,
+  useApprovalStats,
+} from "@/store/site-map-approvals-store";
 
 type ViewMode = "tree" | "mindmap" | "diagram" | "table";
 
@@ -102,6 +109,8 @@ export default function SiteMapClient() {
   );
 
   const stats = useMemo(() => computeSiteMapStats(siteMapGroups), []);
+  const approvalStats = useApprovalStats(stats.totalPages);
+  const clearAllApprovals = useApprovalsStore((s) => s.clearAll);
 
   const toggleGroup = useCallback((groupId: string) => {
     setCollapsedGroups((prev) => {
@@ -195,21 +204,79 @@ export default function SiteMapClient() {
       </div>
 
       {/* Stat bar */}
-      <div className="mb-5 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+      <div className="mb-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
         <Stat label="Total pages" value={stats.totalPages} />
         <Stat label="Groups" value={stats.totalGroups} />
+        <Stat label="New in Phase 2" value={stats.newPages} highlight />
         <Stat
-          label="New in Phase 2"
-          value={stats.newPages}
-          highlight
+          label="Approved"
+          value={approvalStats.approved}
+          tone="emerald"
+          icon={Check}
         />
-        <Stat label="Public" value={stats.byAudience.public} />
-        <Stat label="Dealer" value={stats.byAudience.dealer} />
-        <Stat label="Rep" value={stats.byAudience.rep} />
+        <Stat
+          label="Rejected"
+          value={approvalStats.rejected}
+          tone="rose"
+          icon={X}
+        />
+        <Stat
+          label="Pending"
+          value={approvalStats.pending}
+          tone="slate"
+        />
       </div>
 
-      {/* Toolbar */}
-      <div className="mb-4 rounded-xl border border-slate-200 bg-white p-3 flex flex-col lg:flex-row lg:items-center gap-3">
+      {/* Approval progress bar */}
+      <div className="mb-5">
+        <div className="flex items-center justify-between text-[11px] mb-1.5">
+          <span className="text-slate-500">
+            <strong className="text-slate-900">{approvalStats.pctReviewed}%</strong>{" "}
+            reviewed —{" "}
+            <span className="text-emerald-700 font-semibold">{approvalStats.approved} yes</span>{" "}
+            ·{" "}
+            <span className="text-rose-700 font-semibold">{approvalStats.rejected} no</span>{" "}
+            · {approvalStats.pending} undecided
+          </span>
+          {(approvalStats.approved > 0 || approvalStats.rejected > 0) && (
+            <button
+              onClick={() => {
+                if (
+                  confirm(
+                    "Reset every approval decision and clear all reasons? This can't be undone.",
+                  )
+                ) {
+                  clearAllApprovals();
+                }
+              }}
+              className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-rose-600 transition-colors"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Reset all
+            </button>
+          )}
+        </div>
+        <div className="relative h-2 rounded-full bg-slate-100 overflow-hidden">
+          {/* Approved fill */}
+          <div
+            className="absolute inset-y-0 left-0 bg-emerald-500 transition-all duration-300"
+            style={{
+              width: `${(approvalStats.approved / Math.max(1, approvalStats.total)) * 100}%`,
+            }}
+          />
+          {/* Rejected fill */}
+          <div
+            className="absolute inset-y-0 bg-rose-500 transition-all duration-300"
+            style={{
+              left: `${(approvalStats.approved / Math.max(1, approvalStats.total)) * 100}%`,
+              width: `${(approvalStats.rejected / Math.max(1, approvalStats.total)) * 100}%`,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Toolbar — Row 1: tabs + actions */}
+      <div className="mb-2 rounded-xl border border-slate-200 bg-white p-3 flex flex-col lg:flex-row lg:items-center gap-3">
         {/* View toggle — 4 tabs */}
         <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
           {VIEW_TABS.map((tab) => {
@@ -228,29 +295,6 @@ export default function SiteMapClient() {
               >
                 <Icon className="h-3.5 w-3.5" />
                 {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Audience filter chips */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mr-1">
-            Audience:
-          </span>
-          {ALL_AUDIENCES.map((aud) => {
-            const active = visibleAudiences.has(aud);
-            return (
-              <button
-                key={aud}
-                onClick={() => toggleAudience(aud)}
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-all ${
-                  active
-                    ? audienceChipColor[aud]
-                    : "border-slate-200 bg-white text-slate-400 line-through"
-                }`}
-              >
-                {audienceLabels[aud]}
               </button>
             );
           })}
@@ -288,6 +332,43 @@ export default function SiteMapClient() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Toolbar — Row 2: audience filter chips */}
+      <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 flex items-center gap-2 flex-wrap">
+        <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+          Audience
+        </span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {ALL_AUDIENCES.map((aud) => {
+            const active = visibleAudiences.has(aud);
+            return (
+              <button
+                key={aud}
+                onClick={() => toggleAudience(aud)}
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-all ${
+                  active
+                    ? audienceChipColor[aud]
+                    : "border-slate-200 bg-white text-slate-400 line-through"
+                }`}
+              >
+                {audienceLabels[aud]}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => {
+            const allOn = ALL_AUDIENCES.every((a) => visibleAudiences.has(a));
+            ALL_AUDIENCES.forEach((a) => {
+              if (allOn) toggleAudience(a);
+              else if (!visibleAudiences.has(a)) toggleAudience(a);
+            });
+          }}
+          className="ml-auto text-[11px] text-slate-400 hover:text-slate-700 transition-colors"
+        >
+          {ALL_AUDIENCES.every((a) => visibleAudiences.has(a)) ? "Hide all" : "Show all"}
+        </button>
       </div>
 
       {/* Main view */}
@@ -362,33 +443,42 @@ function Stat({
   label,
   value,
   highlight,
+  tone,
+  icon: Icon,
 }: {
   label: string;
   value: number;
   highlight?: boolean;
+  tone?: "emerald" | "rose" | "slate";
+  icon?: typeof Check;
 }) {
+  let containerClass = "border-slate-200 bg-white";
+  let labelClass = "text-slate-500";
+  let valueClass = "text-slate-900";
+
+  if (highlight) {
+    containerClass = "border-orange-200 bg-orange-50";
+    labelClass = "text-orange-700";
+    valueClass = "text-orange-900";
+  } else if (tone === "emerald") {
+    containerClass = "border-emerald-200 bg-emerald-50/60";
+    labelClass = "text-emerald-700";
+    valueClass = "text-emerald-900";
+  } else if (tone === "rose") {
+    containerClass = "border-rose-200 bg-rose-50/60";
+    labelClass = "text-rose-700";
+    valueClass = "text-rose-900";
+  }
+
   return (
-    <div
-      className={`rounded-lg border px-3 py-2 ${
-        highlight
-          ? "border-orange-200 bg-orange-50"
-          : "border-slate-200 bg-white"
-      }`}
-    >
+    <div className={`rounded-lg border px-3 py-2 ${containerClass}`}>
       <div
-        className={`text-[10px] uppercase tracking-wider font-semibold ${
-          highlight ? "text-orange-700" : "text-slate-500"
-        }`}
+        className={`text-[10px] uppercase tracking-wider font-semibold flex items-center gap-1 ${labelClass}`}
       >
+        {Icon && <Icon className="h-2.5 w-2.5" strokeWidth={3} />}
         {label}
       </div>
-      <div
-        className={`mt-0.5 text-xl font-bold ${
-          highlight ? "text-orange-900" : "text-slate-900"
-        }`}
-      >
-        {value}
-      </div>
+      <div className={`mt-0.5 text-xl font-bold ${valueClass}`}>{value}</div>
     </div>
   );
 }

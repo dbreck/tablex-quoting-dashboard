@@ -6,12 +6,15 @@ import {
   computeSiteMapStats,
   audienceLabels,
   ownerLabels,
-  approvalLabels,
   type Audience,
   type Owner,
   type SiteMapGroup,
   type SiteMapPage,
 } from "@/data/site-map";
+import {
+  useApprovalsStore,
+  type PageApproval,
+} from "@/store/site-map-approvals-store";
 
 function fmtNew(p: SiteMapPage): string {
   return p.isNew ? " · **NEW**" : "";
@@ -37,13 +40,27 @@ function todayISO(): string {
   return `${y}-${m}-${day}`;
 }
 
-function renderGroupTable(group: SiteMapGroup): string {
+function decisionLabel(approval: PageApproval | undefined): string {
+  if (!approval || approval.decision === "pending") return "Pending";
+  if (approval.decision === "approved") return "✓ Approved";
+  return "✗ Rejected";
+}
+
+function renderGroupTable(
+  group: SiteMapGroup,
+  approvals: Record<string, PageApproval>,
+): string {
   const rows = group.pages.map((p) => {
     const route = `\`${p.route}\``;
     const label = `${escapeMd(p.label)}${fmtNew(p)}`;
     const desc = p.description ? escapeMd(p.description) : "—";
-    const notes = p.notes ? escapeMd(p.notes) : "";
-    return `| ${route} | ${label} | ${audienceTag(p.audience)} | ${ownerTag(p.owner)} | ${approvalLabels[p.approval]} | ${desc}${notes ? ` _(${notes})_` : ""} |`;
+    const fixed = p.notes ? escapeMd(p.notes) : "";
+    const approval = approvals[p.id];
+    const reasonNote =
+      approval?.decision === "rejected" && approval.note.trim()
+        ? ` _Reason:_ ${escapeMd(approval.note.trim())}`
+        : "";
+    return `| ${route} | ${label} | ${audienceTag(p.audience)} | ${ownerTag(p.owner)} | ${decisionLabel(approval)} | ${desc}${fixed ? ` _(${fixed})_` : ""}${reasonNote} |`;
   });
   return [
     "| Route | Page | Audience | Owner | Approval | Notes |",
@@ -54,20 +71,50 @@ function renderGroupTable(group: SiteMapGroup): string {
 
 export function exportSiteMapMarkdown(
   groups: SiteMapGroup[] = siteMapGroups,
+  approvals: Record<string, PageApproval> = {},
 ): string {
   const stats = computeSiteMapStats(groups);
   const date = todayISO();
+  let approved = 0;
+  let rejected = 0;
+  for (const a of Object.values(approvals)) {
+    if (a.decision === "approved") approved++;
+    else if (a.decision === "rejected") rejected++;
+  }
+  const pendingCount = stats.totalPages - approved - rejected;
 
   const header = [
     "# tablex.com — Site Map",
     "",
     `*Exported ${date}*`,
     "",
-    "Canonical IA for the redesigned tablex-site (Phase 2). Synthesized from `src/data/site-map.ts` in the dashboard. Approved: TBD.",
+    "Canonical IA for the redesigned tablex-site (Phase 2). Synthesized from `src/data/site-map.ts` in the dashboard.",
     "",
     `**${stats.totalPages}** pages across **${stats.totalGroups}** groups · **${stats.newPages}** net-new vs current tablex.com`,
     "",
+    `**Review status:** ✓ ${approved} approved · ✗ ${rejected} rejected · ${pendingCount} undecided`,
+    "",
   ].join("\n");
+
+  const rejectedSection =
+    rejected === 0
+      ? ""
+      : [
+          "## Rejected pages — reasons",
+          "",
+          "_Pages flagged as rejected, with the reviewer's stated reason._",
+          "",
+          ...groups.flatMap((g) =>
+            g.pages
+              .filter((p) => approvals[p.id]?.decision === "rejected")
+              .map((p) => {
+                const a = approvals[p.id];
+                const reason = a?.note.trim() || "_(no reason given)_";
+                return `- **${escapeMd(p.label)}** (\`${p.route}\` · ${g.label}) — ${escapeMd(reason)}`;
+              }),
+          ),
+          "",
+        ].join("\n");
 
   const audienceBreakdown = [
     "## At a glance",
@@ -109,7 +156,7 @@ export function exportSiteMapMarkdown(
         "",
         g.description,
         "",
-        renderGroupTable(g),
+        renderGroupTable(g, approvals),
         "",
       ].join("\n");
     })
@@ -134,14 +181,18 @@ export function exportSiteMapMarkdown(
     "",
   ].join("\n");
 
-  return [header, audienceBreakdown, toc, groupSections, footer].join("\n");
+  return [header, audienceBreakdown, toc, rejectedSection, groupSections, footer]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /** Trigger a browser download of the markdown export. */
 export function downloadSiteMapMarkdown(
   groups: SiteMapGroup[] = siteMapGroups,
 ): void {
-  const md = exportSiteMapMarkdown(groups);
+  // Read approvals from the persisted store (browser only).
+  const approvals = useApprovalsStore.getState().approvals;
+  const md = exportSiteMapMarkdown(groups, approvals);
   const date = todayISO();
   const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);
