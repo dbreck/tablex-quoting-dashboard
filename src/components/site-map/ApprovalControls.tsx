@@ -150,18 +150,6 @@ export function ApprovalControls({ pageId, pageLabel, onClosed }: Props) {
           side="bottom"
           align="end"
           sideOffset={8}
-          onOpenAutoFocus={(e) => {
-            // Let the textarea grab focus naturally; don't shift to first child.
-            e.preventDefault();
-            // Defer until after the portal mounts the textarea.
-            setTimeout(() => {
-              const ta = document.getElementById(
-                `approval-note-${pageId}`,
-              ) as HTMLTextAreaElement | null;
-              ta?.focus();
-              ta?.select();
-            }, 0);
-          }}
           className="w-80"
         >
           <NoteForm
@@ -214,9 +202,14 @@ function NoteForm({
       <textarea
         id={`approval-note-${pageId}`}
         ref={ref}
+        autoFocus
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => {
+          // Let the textarea handle every keystroke (especially y/n/r) —
+          // stopping propagation so the tree row's shortcut handler never
+          // sees them, even if focus somehow ended up split.
+          e.stopPropagation();
           if (e.key === "Escape") {
             e.preventDefault();
             onClose();

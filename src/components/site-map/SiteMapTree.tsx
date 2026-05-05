@@ -125,6 +125,17 @@ interface RowProps {
   onPageClick: (id: string) => void;
 }
 
+/** Suppress single-letter shortcuts when an input-like element has focus. */
+function isTypingFocused(): boolean {
+  const el = (typeof document !== "undefined" && document.activeElement) as
+    | HTMLElement
+    | null;
+  if (!el) return false;
+  const tag = el.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+  return el.isContentEditable;
+}
+
 function PageRow({
   node,
   depth,
@@ -172,13 +183,31 @@ function PageRow({
           } else if (e.key === "ArrowLeft" && hasChildren && expanded) {
             e.preventDefault();
             onTogglePage(page.id);
-          } else if ((e.key === "y" || e.key === "Y") && !e.metaKey && !e.ctrlKey) {
+          } else if (
+            !e.metaKey &&
+            !e.ctrlKey &&
+            !e.altKey &&
+            !isTypingFocused() &&
+            (e.key === "y" || e.key === "Y")
+          ) {
             e.preventDefault();
             setDecision(page.id, "approved");
-          } else if ((e.key === "n" || e.key === "N") && !e.metaKey && !e.ctrlKey) {
+          } else if (
+            !e.metaKey &&
+            !e.ctrlKey &&
+            !e.altKey &&
+            !isTypingFocused() &&
+            (e.key === "n" || e.key === "N")
+          ) {
             e.preventDefault();
             setDecision(page.id, "rejected");
-          } else if (e.key === "r" || e.key === "R") {
+          } else if (
+            !e.metaKey &&
+            !e.ctrlKey &&
+            !e.altKey &&
+            !isTypingFocused() &&
+            (e.key === "r" || e.key === "R")
+          ) {
             e.preventDefault();
             clearApproval(page.id);
           }
