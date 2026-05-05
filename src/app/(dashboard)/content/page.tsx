@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import {
-  Network,
   Layers,
   LayoutTemplate,
   Library,
   Package,
   Box,
   ArrowRight,
+  Map as MapIcon,
 } from "lucide-react";
 import {
   Card,
@@ -18,24 +18,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useContentMapCounts } from "@/store/content-map-store";
+import {
+  computeSiteMapStats,
+  siteMapGroups,
+} from "@/data/site-map";
 import { architectureStats } from "@/data/future-site-architecture";
 import { wireframePages } from "@/data/wireframe-pages";
 
 export default function ContentDashboardPage() {
-  const { nodeCount, edgeCount } = useContentMapCounts();
+  const siteMapStats = computeSiteMapStats(siteMapGroups);
 
   const cards = [
     {
-      href: "/content/map",
-      icon: Network,
-      label: "Content Map",
+      href: "/content/site-map",
+      icon: MapIcon,
+      label: "Site Map",
       description:
-        "Infinite-canvas mind map. Plan every page and write its content with your team and client.",
-      stat:
-        nodeCount > 0
-          ? `${nodeCount} ${nodeCount === 1 ? "node" : "nodes"}${edgeCount > 0 ? ` · ${edgeCount} link${edgeCount === 1 ? "" : "s"}` : ""}`
-          : "Empty — start by seeding from Site Architecture or Wireframes",
+        "Canonical IA for tablex.com — every page Phase 2 will ship, by route group and audience tier. Replaces the old Content Map.",
+      stat: `${siteMapStats.totalPages} pages · ${siteMapStats.totalGroups} groups · ${siteMapStats.newPages} new`,
       accent: "bg-brand-green/10 text-brand-green",
       featured: true,
     },

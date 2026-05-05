@@ -45,6 +45,7 @@ import {
   LayoutTemplate,
   Layers,
   CheckCircle2,
+  Map as MapIcon,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -99,7 +100,7 @@ const analyticsNavGroups = [
 
 const contentNavItems = [
   { name: "Dashboard", href: "/content", icon: LayoutDashboard, exact: true },
-  { name: "Content Map", href: "/content/map", icon: Network },
+  { name: "Site Map", href: "/content/site-map", icon: MapIcon },
   { name: "Site Architecture", href: "/site-architecture", icon: Layers },
   { name: "Wireframes", href: "/wireframes", icon: LayoutTemplate },
   { name: "Product Library", href: "/product-library", icon: Library },
