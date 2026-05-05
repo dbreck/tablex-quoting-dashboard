@@ -2,7 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import {
+  Brain,
   Download,
+  ListTree,
   Network,
   Search as SearchIcon,
   Sparkles,
@@ -17,8 +19,42 @@ import {
 import { downloadSiteMapMarkdown } from "@/lib/site-map/export";
 import { SiteMapFlow } from "@/components/site-map/SiteMapFlow";
 import { SiteMapTable } from "@/components/site-map/SiteMapTable";
+import { SiteMapTree } from "@/components/site-map/SiteMapTree";
+import { SiteMapMindmap } from "@/components/site-map/SiteMapMindmap";
 
-type ViewMode = "diagram" | "table";
+type ViewMode = "tree" | "mindmap" | "diagram" | "table";
+
+const VIEW_TABS: Array<{
+  id: ViewMode;
+  label: string;
+  icon: typeof Network;
+  hint: string;
+}> = [
+  {
+    id: "tree",
+    label: "Tree",
+    icon: ListTree,
+    hint: "Expandable outline — most readable",
+  },
+  {
+    id: "mindmap",
+    label: "Mindmap",
+    icon: Brain,
+    hint: "Radial — full surface at a glance",
+  },
+  {
+    id: "diagram",
+    label: "Diagram",
+    icon: Network,
+    hint: "Hierarchical flow",
+  },
+  {
+    id: "table",
+    label: "Table",
+    icon: TableIcon,
+    hint: "All metadata",
+  },
+];
 
 const ALL_AUDIENCES: Audience[] = [
   "public",
@@ -37,7 +73,7 @@ const audienceChipColor: Record<Audience, string> = {
 };
 
 export default function SiteMapClient() {
-  const [view, setView] = useState<ViewMode>("diagram");
+  const [view, setView] = useState<ViewMode>("tree");
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set(),
   );
@@ -46,6 +82,24 @@ export default function SiteMapClient() {
   );
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+
+  // Tree view state — owned here so toolbar Expand/Collapse can act on it.
+  const [treeExpandedGroups, setTreeExpandedGroups] = useState<Set<string>>(
+    () => new Set(siteMapGroups.map((g) => g.id)),
+  );
+  const [treeExpandedPages, setTreeExpandedPages] = useState<Set<string>>(
+    () => {
+      // Default: expand pages that have children, leave leaves alone.
+      const s = new Set<string>();
+      for (const g of siteMapGroups) {
+        for (const p of g.pages) {
+          const hasChildren = g.pages.some((c) => c.parentId === p.id);
+          if (hasChildren) s.add(p.id);
+        }
+      }
+      return s;
+    },
+  );
 
   const stats = useMemo(() => computeSiteMapStats(siteMapGroups), []);
 
@@ -67,13 +121,48 @@ export default function SiteMapClient() {
     });
   }, []);
 
-  const collapseAll = useCallback(() => {
-    setCollapsedGroups(new Set(siteMapGroups.map((g) => g.id)));
+  const toggleTreeGroup = useCallback((id: string) => {
+    setTreeExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }, []);
 
-  const expandAll = useCallback(() => {
-    setCollapsedGroups(new Set());
+  const toggleTreePage = useCallback((id: string) => {
+    setTreeExpandedPages((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }, []);
+
+  const collapseAll = useCallback(() => {
+    if (view === "diagram") {
+      setCollapsedGroups(new Set(siteMapGroups.map((g) => g.id)));
+    } else if (view === "tree") {
+      setTreeExpandedGroups(new Set());
+      setTreeExpandedPages(new Set());
+    }
+  }, [view]);
+
+  const expandAll = useCallback(() => {
+    if (view === "diagram") {
+      setCollapsedGroups(new Set());
+    } else if (view === "tree") {
+      setTreeExpandedGroups(new Set(siteMapGroups.map((g) => g.id)));
+      setTreeExpandedPages(() => {
+        const s = new Set<string>();
+        for (const g of siteMapGroups) for (const p of g.pages) s.add(p.id);
+        return s;
+      });
+    }
+  }, [view]);
+
+  const showsExpandControls = view === "diagram" || view === "tree";
+  const showsSearch = view === "tree" || view === "table";
 
   return (
     <div>
@@ -88,8 +177,8 @@ export default function SiteMapClient() {
           <h1 className="text-2xl font-bold text-slate-900">Site Map</h1>
           <p className="mt-1 text-sm text-slate-500 max-w-3xl">
             Canonical IA for the redesigned tablex.com — every page Phase 2 will ship,
-            grouped by route group, tagged by audience tier, and tracked toward Brian&apos;s
-            sign-off. The table view is the contract; the diagram is for review meetings.
+            grouped by route group and tagged by audience tier. Switch views by job:
+            tree to read, mindmap to see the whole shape, diagram for flow, table for metadata.
           </p>
         </div>
 
@@ -121,30 +210,27 @@ export default function SiteMapClient() {
 
       {/* Toolbar */}
       <div className="mb-4 rounded-xl border border-slate-200 bg-white p-3 flex flex-col lg:flex-row lg:items-center gap-3">
-        {/* View toggle */}
+        {/* View toggle — 4 tabs */}
         <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
-          <button
-            onClick={() => setView("diagram")}
-            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-              view === "diagram"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            <Network className="h-3.5 w-3.5" />
-            Diagram
-          </button>
-          <button
-            onClick={() => setView("table")}
-            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-              view === "table"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            <TableIcon className="h-3.5 w-3.5" />
-            Table
-          </button>
+          {VIEW_TABS.map((tab) => {
+            const Icon = tab.icon;
+            const active = view === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setView(tab.id)}
+                title={tab.hint}
+                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                  active
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Audience filter chips */}
@@ -170,42 +256,66 @@ export default function SiteMapClient() {
           })}
         </div>
 
-        {view === "diagram" && (
-          <div className="flex items-center gap-1.5 ml-auto">
-            <button
-              onClick={expandAll}
-              disabled={collapsedGroups.size === 0}
-              className="text-xs text-slate-500 hover:text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Expand all
-            </button>
-            <span className="text-slate-300">·</span>
-            <button
-              onClick={collapseAll}
-              disabled={collapsedGroups.size === siteMapGroups.length}
-              className="text-xs text-slate-500 hover:text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Collapse all
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3 ml-auto flex-wrap">
+          {showsExpandControls && (
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={expandAll}
+                className="text-xs text-slate-500 hover:text-slate-700"
+              >
+                Expand all
+              </button>
+              <span className="text-slate-300">·</span>
+              <button
+                onClick={collapseAll}
+                className="text-xs text-slate-500 hover:text-slate-700"
+              >
+                Collapse all
+              </button>
+            </div>
+          )}
 
-        {view === "table" && (
-          <div className="relative ml-auto w-full lg:w-72">
-            <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Filter routes / pages…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-md border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-300"
-            />
-          </div>
-        )}
+          {showsSearch && (
+            <div className="relative w-full lg:w-72">
+              <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Filter routes / pages…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="w-full rounded-md border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-300"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Main view */}
-      {view === "diagram" ? (
+      {view === "tree" && (
+        <SiteMapTree
+          groups={siteMapGroups}
+          visibleAudiences={visibleAudiences}
+          query={query}
+          selectedPageId={selectedPageId}
+          onPageClick={setSelectedPageId}
+          expandedGroups={treeExpandedGroups}
+          expandedPages={treeExpandedPages}
+          onToggleGroup={toggleTreeGroup}
+          onTogglePage={toggleTreePage}
+        />
+      )}
+
+      {view === "mindmap" && (
+        <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white overflow-hidden h-[calc(100vh-300px)] min-h-[600px]">
+          <SiteMapMindmap
+            visibleAudiences={visibleAudiences}
+            selectedPageId={selectedPageId}
+            onPageClick={setSelectedPageId}
+          />
+        </div>
+      )}
+
+      {view === "diagram" && (
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden h-[calc(100vh-300px)] min-h-[480px]">
           <SiteMapFlow
             collapsedGroups={collapsedGroups}
@@ -215,7 +325,9 @@ export default function SiteMapClient() {
             onPageClick={setSelectedPageId}
           />
         </div>
-      ) : (
+      )}
+
+      {view === "table" && (
         <SiteMapTable
           groups={siteMapGroups}
           visibleAudiences={visibleAudiences}
@@ -280,4 +392,3 @@ function Stat({
     </div>
   );
 }
-

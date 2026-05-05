@@ -1,7 +1,7 @@
 "use client";
 
 import "d3-transition";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -10,16 +10,9 @@ import {
   Controls,
   MiniMap,
   useReactFlow,
-  type Node,
-  type Edge,
-  type NodeChange,
-  applyNodeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import {
-  buildSiteMapFlow,
-  type SiteMapFlowNode,
-} from "@/lib/site-map/flow";
+import { buildSiteMapFlow } from "@/lib/site-map/flow";
 import {
   GroupNode,
   PageNode,
@@ -52,10 +45,8 @@ function FlowInner({
   onPageClick,
 }: FlowProps) {
   const { fitView } = useReactFlow();
-  const [localNodes, setLocalNodes] = useState<SiteMapFlowNode[]>([]);
-  const [localEdges, setLocalEdges] = useState<Edge[]>([]);
 
-  // Wire node-component callbacks once.
+  // Wire node-component callbacks. Effect-only — observes external module state.
   useEffect(() => {
     setSiteMapNodeCallbacks({
       onToggleGroup,
@@ -72,8 +63,6 @@ function FlowInner({
     onPageClick,
   ]);
 
-  // Recompute layout when collapsed groups change. Audience filter only
-  // toggles dimming so we don't relay out the canvas on every filter change.
   const built = useMemo(
     () =>
       buildSiteMapFlow(siteMapGroups, {
@@ -83,24 +72,18 @@ function FlowInner({
   );
 
   useEffect(() => {
-    setLocalNodes(built.nodes);
-    setLocalEdges(built.edges);
     requestAnimationFrame(() => {
       fitView({ padding: 0.15, duration: 0 });
     });
   }, [built, fitView]);
 
-  const onNodesChange = useCallback((changes: NodeChange[]) => {
-    setLocalNodes(
-      (nds) => applyNodeChanges(changes, nds as Node[]) as SiteMapFlowNode[],
-    );
-  }, []);
-
+  // Use uncontrolled defaults + key to remount on layout change. Lets xyflow
+  // own internal node positions for drag without us mirroring state.
   return (
     <ReactFlow
-      nodes={localNodes}
-      edges={localEdges}
-      onNodesChange={onNodesChange}
+      key={Array.from(collapsedGroups).sort().join("|")}
+      defaultNodes={built.nodes}
+      defaultEdges={built.edges}
       nodeTypes={nodeTypes}
       fitView
       minZoom={0.15}
