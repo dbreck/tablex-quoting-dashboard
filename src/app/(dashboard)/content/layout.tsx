@@ -4,6 +4,8 @@ import { AlertTriangle, Database } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useContentMapHydration } from "@/hooks/useContentMapHydration";
 import { useContentMapRealtime } from "@/hooks/useContentMapRealtime";
+import { useSiteMapApprovalsHydration } from "@/hooks/useSiteMapApprovalsHydration";
+import { useSiteMapApprovalsRealtime } from "@/hooks/useSiteMapApprovalsRealtime";
 
 export default function ContentLayout({
   children,
@@ -13,6 +15,12 @@ export default function ContentLayout({
   const { profile } = useAuth();
   const { isInitialized, error } = useContentMapHydration();
   useContentMapRealtime();
+  // Site Map approvals run independently — don't gate the layout on them.
+  // If migration 025 isn't applied yet, console errors are fine; the IA still
+  // renders and approval clicks queue optimistically (they'll fail server-side
+  // until the table exists).
+  useSiteMapApprovalsHydration();
+  useSiteMapApprovalsRealtime();
 
   if (!profile?.can_access_proposal) return null;
 

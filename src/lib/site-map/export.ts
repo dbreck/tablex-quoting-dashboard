@@ -12,7 +12,7 @@ import {
   type SiteMapPage,
 } from "@/data/site-map";
 import {
-  useApprovalsStore,
+  getApprovalsSnapshot,
   type PageApproval,
 } from "@/store/site-map-approvals-store";
 
@@ -190,8 +190,8 @@ export function exportSiteMapMarkdown(
 export function downloadSiteMapMarkdown(
   groups: SiteMapGroup[] = siteMapGroups,
 ): void {
-  // Read approvals from the persisted store (browser only).
-  const approvals = useApprovalsStore.getState().approvals;
+  // Imperative snapshot — fine outside React render.
+  const approvals = getApprovalsSnapshot();
   const md = exportSiteMapMarkdown(groups, approvals);
   const date = todayISO();
   const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
