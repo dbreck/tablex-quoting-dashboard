@@ -213,11 +213,12 @@ export function getApprovalsSnapshot(): Record<string, PageApproval> {
 // ─── Selector hooks ────────────────────────────────────────────────────
 
 export function useApprovalForPage(pageId: string): PageApproval | undefined {
-  return useApprovalsStore((s) => {
-    const a = s._byId[pageId];
-    if (!a) return undefined;
-    return { decision: a.decision, note: a.note, decidedAt: a.decidedAt };
-  });
+  // Return the stored internal record directly — it structurally satisfies
+  // PageApproval (the extra `updatedAt` field is invisible through the
+  // declared return type). Building a fresh `{decision, note, decidedAt}`
+  // object inside the selector creates a new ref on every call and trips
+  // React #185 the moment any store update fires.
+  return useApprovalsStore((s) => s._byId[pageId]);
 }
 
 export function useApprovalDecision(pageId: string): ApprovalDecision {
