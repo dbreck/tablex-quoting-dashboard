@@ -1,0 +1,3 @@
+#!/bin/sh
+# Starts Claude Code with this project's architecture + flow diagrams pre-loaded into the system prompt.
+claude --append-system-prompt "$(cat ./docs/diagrams/*.md 2>/dev/null)" "$@"

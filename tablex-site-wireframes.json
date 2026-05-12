@@ -1,0 +1,487 @@
+{
+  "_meta": {
+    "source_repo": "github.com/dbreck/tablex-quoting-dashboard",
+    "purpose": "Page-level IA + section outline for tablex.com (Phase 2 marketing site). Derived from the hand-built wireframes in public/wireframes/site.html. Pair this with project-brief.json (brand/voice/product data) when briefing a design tool.",
+    "wireframes_html": "public/wireframes/site.html",
+    "system_diagrams_html": "public/wireframes/system.html",
+    "companion_brief": "project-brief.json",
+    "last_updated": "2026-04-24",
+    "spaces_taxonomy_version": 5,
+    "note_for_ai_designers": "Every page's sections are ordered top→bottom. 'intent' is why the section exists (audience + JTBD). 'components' are the rough primitives we expect; names are suggestive, not prescriptive — adapt to your design system."
+  },
+
+  "navigation": {
+    "primary": ["Products", "Spaces", "Finishes", "Resources", "About"],
+    "utility": ["search", "Login", "Contact", "cart"],
+    "mobile": "hamburger — collapse primary into disclosed menu, utility stays visible (search icon + cart count)",
+    "footer_groups": [
+      { "label": "Products", "items": ["Spec Studio", "Collections", "Browse All", "Quick Ship"] },
+      { "label": "Spaces", "items": ["Training & Classroom", "Conference & Meeting", "Collaborative", "Cafe & Hospitality", "Healthcare"] },
+      { "label": "Resources", "items": ["DWG/Revit", "Spec sheets", "Case studies", "News"] },
+      { "label": "Connect", "items": ["Find your rep", "Dealer login", "Rep login", "Contact"] }
+    ],
+    "breakpoints_in_wireframes": [1280, 820]
+  },
+
+  "persona_weight_default": {
+    "dealer": 0.6,
+    "rep": 0.3,
+    "buyer": 0.1,
+    "ad_firm": "weighted within dealer/buyer overlap — not a separate IA track"
+  },
+
+  "pages": [
+    {
+      "slug": "/",
+      "id": "home",
+      "name": "Home",
+      "purpose": "Route visitors to one of three persona paths (dealer / rep / buyer) and showcase brand archetype. Primary IA entry.",
+      "h1": "Brand value prop (archetype statement — see project-brief.json → brand.tagline_candidates)",
+      "hero_photography": "architectural / in-situ table in a real commercial space, full-bleed, 40/60 dark gradient for hero text legibility",
+      "sections": [
+        {
+          "name": "Hero",
+          "intent": "Brand value prop + top-of-funnel CTAs",
+          "components": ["full-bleed photo", "H1 value prop", "subhead", "primary CTA 'Get a quote'", "secondary CTA 'Explore products'"]
+        },
+        {
+          "name": "Audience-aware paths",
+          "intent": "Three-up card row letting visitors self-identify. Principle #1 — role-first IA.",
+          "components": [
+            { "type": "path_card", "audience": "dealer", "weight": 0.6, "title": "I'm specifying for a client", "leads_to": ["Spec Studio", "tiered pricing", "quote pipeline", "CAD downloads"], "cta": "open Spec Studio" },
+            { "type": "path_card", "audience": "rep", "weight": 0.3, "title": "I'm demoing in the field", "leads_to": ["tablet-optimized catalog", "territory dashboard", "commission"], "cta": "open Rep Portal" },
+            { "type": "path_card", "audience": "buyer", "weight": 0.1, "title": "I need tables for my space", "leads_to": ["Browse by Space", "Collections", "Quick Ship", "cart for 1–10"], "cta": "browse by space" }
+          ]
+        },
+        {
+          "name": "Featured Collections",
+          "intent": "Editorial window into curated collections. 3-up with hover reveal. Link to collections index.",
+          "components": ["collection_card × 3 (App, Solo, Outdoor)", "view-all link"]
+        },
+        {
+          "name": "Spec Studio teaser",
+          "intent": "Showcase the 3D configurator — principle #2, the self-service hero capability",
+          "treatment": "dark stripe with large preview loop",
+          "components": ["3D preview media", "positioning copy", "CTA 'open Spec Studio'"]
+        },
+        {
+          "name": "Proof points",
+          "intent": "Principle #3 — self-service credibility. Numbers that matter (series count, Quick Ship window, download formats).",
+          "components": ["3-up stat row"]
+        },
+        {
+          "name": "Browse by Space",
+          "intent": "Buyer + A&D path. Use-case entry — the 5 canonical spaces.",
+          "components": ["5-up tile grid: Training, Conference, Collaborative, Cafe & Hospitality, Healthcare"]
+        },
+        {
+          "name": "Dual-action CTA band",
+          "intent": "Final push — the two primary conversion actions",
+          "components": [
+            { "type": "cta_card", "accent": true, "title": "Get a Quote", "copy": "Configure → Price → Quote → Track. All online. Dealer login unlocks tiered pricing.", "cta": "start a quote" },
+            { "type": "cta_card", "title": "Find Your Rep", "copy": "Zip-based territory map. Geo-aware: pre-filled if location detected.", "cta": "enter zip" }
+          ]
+        },
+        {
+          "name": "Finish moments",
+          "intent": "Dark strip of finish swatches — sensory proof of depth of customization",
+          "components": ["10-swatch grid"]
+        },
+        {
+          "name": "Footer",
+          "intent": "Global footer — primary + spaces + resources + connect",
+          "components": ["4-col link groups", "newsletter signup", "socials"]
+        }
+      ]
+    },
+
+    {
+      "slug": "/products",
+      "id": "products",
+      "name": "Products hub",
+      "purpose": "Gateway to the six product-discovery entry points — persona-ranked.",
+      "sections": [
+        { "name": "Intro", "intent": "Short editorial statement on the product universe" },
+        {
+          "name": "6 entry points · persona-ranked",
+          "intent": "Each entry point is a card explaining who it's for and where it leads",
+          "components": [
+            { "title": "Spec Studio", "accent": true, "for": "dealer/rep", "cta": "open studio →" },
+            { "title": "Collections", "for": "A&D + buyer", "cta": "view all collections →" },
+            { "title": "Browse All", "for": "dealer", "cta": "open catalog →" },
+            { "title": "Compare", "for": "A&D", "cta": "compare products →" },
+            { "title": "Accessories", "for": "dealer/rep", "cta": "shop accessories →" },
+            { "title": "Quick Ship", "accent_green": true, "for": "buyer", "cta": "see QS catalog →" }
+          ]
+        },
+        {
+          "name": "All 17 series · logo grid",
+          "intent": "Full series browsable index — visual confirmation of catalog breadth",
+          "components": ["17-tile series grid", "TableXpress QS tile highlighted with accent border"]
+        }
+      ]
+    },
+
+    {
+      "slug": "/spec-studio",
+      "id": "spec-studio",
+      "name": "Spec Studio",
+      "purpose": "The 3D configurator. Landing + in-configurator views. Desktop + tablet (rep demo).",
+      "is_hero_capability": true,
+      "sections": [
+        { "name": "Hero · 3D preview loop", "intent": "Motion demo of the configurator working. Archetype: confident, self-service." },
+        {
+          "name": "Choose a base style · 6 families",
+          "intent": "Base style is the first configuration decision — 6 archetype families",
+          "components": [
+            { "title": "T-leg", "series": ["Ultra", "Foundation", "Justice"] },
+            { "title": "Pedestal", "series": ["App", "Solo", "Revel"] },
+            { "title": "Flip-top nesting", "series": ["Trig", "Element", "Surge"] },
+            { "title": "Height-adjustable", "series": ["Stretch", "VertiGo"] },
+            { "title": "Trestle", "series": ["Artisan", "Primary"] },
+            { "title": "Occasional", "series": ["Puddle", "Exclaim"] }
+          ]
+        },
+        {
+          "name": "How Spec Studio works · 4 steps",
+          "intent": "Demystify the flow for first-time visitors",
+          "components": [
+            { "step": "01", "title": "Pick a base", "note": "6 families above" },
+            { "step": "02", "title": "Shape + size the top", "note": "Rect / round / racetrack · 14 sizes" },
+            { "step": "03", "title": "Finishes + edge", "note": "31 paints · HPL/TFL · 8 edges" },
+            { "step": "04", "title": "Accessories + price", "note": "Power · screens · ganging · live price" }
+          ]
+        },
+        {
+          "name": "In-configurator layout",
+          "intent": "The actual workspace — left options rail, center 3D canvas, right summary/price/actions",
+          "layout": "3-column grid",
+          "components": [
+            { "area": "left_rail", "contents": ["base style", "top shape", "top size", "edge profile", "paint finish", "laminate finish", "accessories", "quantity"] },
+            { "area": "canvas_center", "contents": ["3D viewer with orbit controls", "view toggles (front/top/iso)", "finish swatch overlay"] },
+            { "area": "summary_right", "contents": ["current config read-out", "live estimated unit price", "CTAs: add to quote · save as draft · share link", "dealer-only tier display"] }
+          ]
+        },
+        { "name": "Sticky summary bar · mobile/tablet", "intent": "Collapse the right panel into a bottom sheet on narrow viewports" }
+      ]
+    },
+
+    {
+      "slug": "/collections",
+      "id": "collections",
+      "name": "Collections index",
+      "purpose": "Curated editorial groupings — opinionated design-forward entry for A&D and buyers.",
+      "sections": [
+        { "name": "Editorial hero", "intent": "Set the mood — collections are Design Decisions, not catalog drawers" },
+        {
+          "name": "5 collections · editorial tiles",
+          "components": [
+            { "title": "App", "note": "Huddle + training rooms · 4 series" },
+            { "title": "Solo", "note": "Individual focus · 3 series" },
+            { "title": "Outdoor", "note": "Patios + campuses · 2 series" },
+            { "title": "Occasional", "note": "Lobby, lounge, side · 3 series" },
+            { "title": "Dining", "note": "Café + hospitality · 3 series" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "slug": "/collections/app",
+      "id": "collection-app",
+      "name": "Collection · App",
+      "purpose": "Template page — Solo / Outdoor / Occasional / Dining inherit this layout",
+      "sections": [
+        { "name": "Editorial hero · in-situ", "intent": "Real room, real table, collection-specific energy" },
+        { "name": "Collection story", "intent": "Short editorial — why this collection exists, what it solves" },
+        { "name": "Series in this collection · 4-up", "intent": "Tile grid linking to series detail pages", "components": ["compare-all link"] },
+        { "name": "Finish moments", "intent": "Dark swatch strip honoring the Home treatment" },
+        { "name": "Case studies using App", "intent": "Real projects · 3-up cards", "treatment": "image-led" },
+        { "name": "CTA band · dual path", "intent": "Configure in Spec Studio OR find your rep" }
+      ]
+    },
+
+    {
+      "slug": "/products/ultra",
+      "id": "product-ultra",
+      "name": "Product · Ultra (series detail)",
+      "purpose": "Deep series page. Canonical template. Two rep-card variants being evaluated: (a) sidebar sticky · (b) mid-page band after specs.",
+      "template_for": "all 17 series pages",
+      "sections": [
+        {
+          "name": "Hero · series identity",
+          "intent": "Large photo + short series statement + flagship badge",
+          "components": ["full-width photo", "series name (SERIES · flagship)", "tagline", "primary CTA 'configure in Spec Studio'", "secondary 'compare'"]
+        },
+        { "name": "Specs · full-width table", "intent": "Transparent data, no marketing fluff", "components": ["spec_table rows: Base, Heights, Finishes, edge profiles, top shapes, accessories"] },
+        {
+          "name": "Downloads + formats",
+          "intent": "Pro collateral — the thing dealers/specifiers need",
+          "components": ["DWG", "Revit (RFA)", "Spec sheet PDF", "Price list (dealer-gated)"]
+        },
+        { "name": "In these Collections + Spaces", "intent": "Taxonomic footprint — which Collections + Spaces this series lives in", "components": ["chip-row"] },
+        { "name": "Related series · 3-up", "intent": "Cross-sell to adjacent base styles or collections" },
+        {
+          "name": "Geo-aware Rep card",
+          "intent": "Auto-detected rep card — named human over a 'contact us' form",
+          "variants": ["sidebar sticky (A)", "mid-page band (B)"],
+          "components": ["avatar", "rep name", "territory", "CTAs: quote · call · email"]
+        }
+      ]
+    },
+
+    {
+      "slug": "/browse",
+      "id": "browse-all",
+      "name": "Browse All",
+      "purpose": "Filterable grid · 17 series × all shapes. Dealer-primary discovery surface.",
+      "layout": "left-filter-rail + right-grid",
+      "filters": {
+        "collection": ["All", "App", "Solo", "Outdoor", "Dining"],
+        "space": ["Training", "Conf.", "Collab", "Cafe", "Healthcare"],
+        "height": ["Seated", "Counter", "Bar", "Adjustable"],
+        "top_shape": ["Rect", "Round", "D-end"],
+        "features": ["Flip-top", "Nesting", "Power", "Casters"],
+        "quick_ship": ["QS only"]
+      },
+      "result_grid": {
+        "header": "17 series · 142 configurations",
+        "controls": ["Sort · featured", "Grid", "List"],
+        "card_per_series": ["thumbnail", "series name", "one-line characterization (e.g. 'T-leg · 14 sizes', 'Flip-top nesting')"]
+      }
+    },
+
+    {
+      "slug": "/compare",
+      "id": "compare",
+      "name": "Compare Products",
+      "purpose": "Side-by-side comparison — 2 to 4 series at once. A&D-primary.",
+      "sections": [
+        { "name": "Selection bar", "intent": "Add / swap series being compared" },
+        { "name": "Comparison grid", "intent": "Spec rows for each axis (base, heights, finishes, shapes, features, price tier, QS)", "components": ["sticky header row", "highlight-diff toggle"] },
+        { "name": "Actions", "intent": "Per-column CTAs: configure · download spec · add to quote" }
+      ]
+    },
+
+    {
+      "slug": "/spaces",
+      "id": "spaces",
+      "name": "Spaces hub",
+      "purpose": "Use-case entry — primary buyer + A&D path. The 5 canonical spaces.",
+      "sections": [
+        { "name": "Editorial hero", "intent": "Set up spaces as the 'which room are you furnishing' question" },
+        {
+          "name": "5 spaces · editorial tiles",
+          "components": [
+            { "title": "Training & Classroom", "note": "Flip-top nesting · gang · casters" },
+            { "title": "Conference & Meeting", "note": "Power · cable · boat shape" },
+            { "title": "Collaborative", "note": "Huddle · mobile · whiteboard tops" },
+            { "title": "Cafe & Hospitality", "note": "Counter · bar · round · café" },
+            { "title": "Healthcare", "note": "Exam · clinical · easy-clean finishes" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "slug": "/spaces/training-classroom",
+      "id": "spaces-training",
+      "name": "Spaces · Training & Classroom",
+      "purpose": "Template page — other 4 spaces inherit this layout",
+      "template_for": "all 5 space pages",
+      "sections": [
+        { "name": "Editorial hero · in-situ classroom imagery", "intent": "Real classroom, real table, real students" },
+        {
+          "name": "What makes a training table · 4 attributes",
+          "intent": "Functional spec primer — the 4 attributes that matter for this space",
+          "components": [
+            { "title": "Flip-top", "note": "Nest away when unused" },
+            { "title": "Ganging", "note": "Connect rows for long-line setups" },
+            { "title": "Casters", "note": "Mobile · lockable" },
+            { "title": "Power/data", "note": "Optional grommet" }
+          ]
+        },
+        { "name": "Recommended series · 5-up", "intent": "Curated series recommendations for this space", "components": ["5-tile grid: Trig, Element, Stretch, Surge, App"] },
+        {
+          "name": "Configuration recipes · 2-3 pre-set layouts",
+          "intent": "'Classroom · 24 students' / 'Training lab · 12 stations' / 'Exam room · 4 cubicles' — each opens a pre-populated Spec Studio cart",
+          "components": ["recipe_card with layout image + count + CTA 'add recipe to quote' or 'build this room'"]
+        },
+        { "name": "Finishes + accessories for this space", "intent": "Narrowed finish palette (e.g. Healthcare → easy-clean laminates only) + space-specific accessories" }
+      ]
+    },
+
+    {
+      "slug": "/finishes",
+      "id": "finishes",
+      "name": "Finishes hub",
+      "purpose": "Visual material library · swatches, filters, zoom",
+      "sections": [
+        { "name": "Editorial hero · material close-up", "intent": "Material-first sensory opener" },
+        { "name": "Finish family tabs", "intent": "Powder paint · HPL · TFL · Wood veneer · Solid surface · Edgebanding", "components": ["tab_bar"] },
+        { "name": "Swatch grid", "intent": "Large tappable swatches with filter rail (tier, brand, stock availability)", "components": ["filter_rail", "swatch_grid", "zoom-on-hover"] }
+      ]
+    },
+
+    {
+      "slug": "/finishes/powder",
+      "id": "finishes-powder",
+      "name": "Finishes · Powder (family detail)",
+      "purpose": "Family template — HPL/TFL/etc inherit",
+      "template_for": "all finish family pages",
+      "sections": [
+        { "name": "Family hero · what this family is, where it fits", "intent": "Material primer" },
+        { "name": "All 31 colors · filterable grid", "intent": "Filter by tier (Core / Select / Luxe / Custom), tappable to swatch detail" },
+        { "name": "Pairing guidance", "intent": "Which edge profiles and top materials pair with this family" },
+        { "name": "Samples CTA", "intent": "Order physical samples (dealer-gated? or available to all?)" }
+      ]
+    },
+
+    {
+      "slug": "/get-a-quote",
+      "id": "get-a-quote",
+      "name": "Get a Quote (CPQ)",
+      "purpose": "Self-service quoting entry. Lands visitors in the CPQ flow.",
+      "sections": [
+        { "name": "Value prop · 'configure → price → quote → track, all online'", "intent": "Re-establish self-service promise" },
+        { "name": "Flow visualization · 4-step", "intent": "Show the journey upfront so no one feels lost" },
+        { "name": "Entry CTAs", "intent": "Either jump to Spec Studio OR paste in a previously-saved config" },
+        { "name": "Dealer login nudge", "intent": "Unlock tiered pricing · if not already logged in" }
+      ]
+    },
+
+    {
+      "slug": "/find-rep",
+      "id": "find-rep",
+      "name": "Find Your Rep",
+      "purpose": "Zip/territory-based rep finder. Geo-aware.",
+      "sections": [
+        { "name": "Map hero · US territory", "intent": "Interactive map with rep territory overlays" },
+        { "name": "Zip entry + manual region picker", "intent": "Fast zip lookup; fallback manual select" },
+        { "name": "Rep card · geo-resolved result", "intent": "Named human, photo, territory, CTAs: email · call · schedule" }
+      ]
+    },
+
+    {
+      "slug": "/about",
+      "id": "about",
+      "name": "About · Our Story",
+      "purpose": "Brand story, craft ethos, sustainability, team",
+      "sections": [
+        { "name": "Editorial hero · shop floor photography", "intent": "Craft ethos made visible — hands + machines" },
+        { "name": "Manifesto band", "intent": "Brian's 'every space tells a story' poem (see tablex-dna.ts)" },
+        { "name": "Three pillars", "intent": "Modern craft · Speed to ship · Design-forward" },
+        { "name": "Team / leadership", "intent": "Named humans — founders + key roles" },
+        { "name": "Sustainability + certifications", "intent": "BIFMA · GREENGUARD · FSC (when applicable)" }
+      ]
+    },
+
+    {
+      "slug": "/portals/dealer",
+      "id": "dealer-portal",
+      "name": "Dealer Portal",
+      "purpose": "Auth-gated · dealer-only. Pricing tier, quotes, orders, commission ledgers.",
+      "persona": "dealer",
+      "gated": true,
+      "sections": [
+        { "name": "KPI strip", "intent": "4 KPIs at a glance: open quotes, orders this quarter, commission YTD, projects won" },
+        { "name": "Active quotes table", "intent": "Pipeline view — sortable, filterable, bulk actions" },
+        { "name": "Dealer-priced product catalog", "intent": "Same catalog + tier-priced views" },
+        { "name": "Resources · dealer-specific", "intent": "Price list PDF, territory map, contact rep, training library" }
+      ]
+    },
+
+    {
+      "slug": "/portals/rep",
+      "id": "rep-portal",
+      "name": "Rep Portal",
+      "purpose": "Auth-gated · rep-only. Tablet-optimized for field demos.",
+      "persona": "rep",
+      "gated": true,
+      "tablet_first": true,
+      "sections": [
+        { "name": "Territory dashboard", "intent": "Map + KPIs relevant to the rep's territory" },
+        { "name": "Demo mode · Spec Studio", "intent": "Simplified configurator for sitting-with-client demos" },
+        { "name": "Commission ledger", "intent": "Transparency on earnings per quote → order" },
+        { "name": "Dealer contacts in territory", "intent": "Fast lookup / call / email from tablet" }
+      ]
+    }
+  ],
+
+  "cross_cutting_patterns": {
+    "audience_aware_paths": {
+      "where_it_appears": ["/", "product pages (via rep card variants)", "Get a Quote"],
+      "principle": "Content is re-ranked or re-labelled per persona — same atoms, different emphasis."
+    },
+    "rep_card_geo_aware": {
+      "where_it_appears": ["/products/*", "/find-rep", "homepage footer band"],
+      "components": ["avatar", "rep name", "territory", "CTAs: email · call · book"],
+      "geo_source": "IP-based approximation with optional zip override"
+    },
+    "editorial_hero_block": {
+      "treatment": "dark stripe · 260–420px · full-bleed in-situ photography · 40/60 gradient for text legibility",
+      "where_it_appears": "every top-level hub page + series/collection/space detail"
+    },
+    "cta_dual_path": {
+      "pattern": "Always offer two — one self-service, one human (rep). Buyers split on whether they want to talk to someone.",
+      "example": "Home footer band: 'Get a Quote' + 'Find Your Rep'"
+    },
+    "dealer_gating": {
+      "rule": "Tiered pricing and dealer price lists gated behind /login. Public site shows retail/MSRP or 'request pricing' depending on context. Never show wholesale pricing to an un-auth'd visitor."
+    }
+  },
+
+  "taxonomies": {
+    "spaces": ["Training & Classroom", "Conference & Meeting", "Collaborative", "Cafe & Hospitality", "Healthcare"],
+    "collections": ["App", "Solo", "Outdoor", "Occasional", "Dining"],
+    "base_styles": ["T-leg", "Pedestal", "Flip-top nesting", "Height-adjustable", "Trestle", "Occasional"],
+    "all_series_17": [
+      "Ultra", "Foundation", "Fundamental", "Trig", "Stretch", "Elite",
+      "Revel", "App", "Element", "Justice", "Artisan", "Primary",
+      "Puddle", "Exclaim", "VertiGo", "Surge", "TableXpress QS"
+    ],
+    "filter_axes": {
+      "collection": ["All", "App", "Solo", "Outdoor", "Dining"],
+      "space": ["Training", "Conf.", "Collab", "Cafe", "Healthcare"],
+      "height": ["Seated", "Counter", "Bar", "Adjustable"],
+      "top_shape": ["Rect", "Round", "D-end"],
+      "features": ["Flip-top", "Nesting", "Power", "Casters"],
+      "quick_ship": ["QS only"]
+    },
+    "finish_families": ["Powder paint", "HPL", "TFL", "Wood veneer", "Solid surface", "Edgebanding"],
+    "finish_tiers": ["Core", "Select", "Luxe", "Custom"]
+  },
+
+  "cpq_flow_summary": {
+    "steps": [
+      "1. Pick a base (6 families)",
+      "2. Shape + size the top (rect/round/racetrack · 14 sizes)",
+      "3. Finishes + edge (31 paints · HPL/TFL · 8 edges)",
+      "4. Accessories + live price (power, screens, ganging)",
+      "5. Save / share / add to quote"
+    ],
+    "dealer_flow_extras": ["tier pricing auto-applied", "quote assigned to dealer account", "bulk line items"],
+    "buyer_flow_extras": ["retail pricing", "cart for 1–10 units", "Quick Ship flag", "checkout or 'send to rep'"]
+  },
+
+  "design_intent_hints": {
+    "sidebar_mood": "dark · monospace · wireframe feel evokes in-progress craft — the FINAL site should feel material-first, not wireframe-y. Use the wireframe as IA/layout only, not as visual direction.",
+    "brand_accent_colors": {
+      "accent_green": "#95ff00 (wireframe annotation color — TBD whether it survives to final)",
+      "see_also": "project-brief.json → design_system.color_tokens"
+    },
+    "typography_intent": "large, confident, typographically-led. Display type carries the brand. No placeholder lorem.",
+    "photography_intent": "in-situ > product-on-white. Real rooms, real hands, real light. Craft visible.",
+    "interaction_feel": "calm and direct. The site is for pros making real decisions — no marketing theatrics, no modal assault."
+  },
+
+  "see_also": {
+    "brand_voice_product": "project-brief.json (at repo root)",
+    "wireframe_html_desktop_tablet": "public/wireframes/site.html",
+    "system_diagrams": "public/wireframes/system.html (IA graph, flows, mock screens)",
+    "tablex_dna_page": "/tablex-dna route in this dashboard — renders the Brand Voice Report + Manifesto",
+    "series_archetype_copy": "src/data/series-catalog.ts (16 series with Brian's archetype-aligned marketing copy)",
+    "finishes_catalog": "src/data/finish-catalog.ts (66 real 2026 Wilsonart + Formica colors)",
+    "site_architecture_typescript": "src/data/future-site-architecture.ts (typed IA tree — source of truth for IDs)"
+  }
+}
