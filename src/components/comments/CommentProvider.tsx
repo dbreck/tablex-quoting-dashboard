@@ -211,8 +211,9 @@ export function CommentProvider({ children }: { children: ReactNode }) {
         pagePath={pathname}
       />
 
-      {/* Toggle button — top-right, clear of bottom-right "Back to Slides" */}
-      {mounted && (
+      {/* Toggle button hidden globally — page-specific comment UIs (wireframes)
+          still work via their own controls. */}
+      {false && mounted && (
         <CommentToggle
           active={commentMode}
           unresolvedCount={unresolvedCount}

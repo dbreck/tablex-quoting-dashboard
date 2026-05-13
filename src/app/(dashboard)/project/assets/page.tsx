@@ -1,19 +1,17 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { nanoid } from "nanoid";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  useAssetsStore,
   useAssetGroups,
   useAssetGroupStatusCounts,
 } from "@/store/assets-store";
 import { AssetCard } from "@/components/project/AssetCard";
 import { AssetDrawer } from "@/components/project/AssetDrawer";
+import { AssetCreateDialog } from "@/components/project/AssetCreateDialog";
 import {
   ASSET_GROUP_STATUS_LABEL,
-  type AssetGroup,
   type AssetGroupStatus,
 } from "@/data/assets";
 
@@ -29,11 +27,11 @@ const STATUS_FILTERS: { id: "all" | AssetGroupStatus; label: string }[] = [
 export default function AssetsPage() {
   const groups = useAssetGroups();
   const counts = useAssetGroupStatusCounts();
-  const addAssetGroup = useAssetsStore((s) => s.addAssetGroup);
 
   const [statusFilter, setStatusFilter] = useState<"all" | AssetGroupStatus>("all");
   const [vendorFilter, setVendorFilter] = useState<string>("all");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const vendors = useMemo(() => {
     const set = new Set<string>();
@@ -51,23 +49,6 @@ export default function AssetsPage() {
     });
   }, [groups, statusFilter, vendorFilter]);
 
-  async function createNew() {
-    const id = nanoid(10);
-    const now = new Date().toISOString();
-    const group: AssetGroup = {
-      id,
-      name: "New asset group",
-      status: "requested",
-      items: [],
-      tags: [],
-      sortOrder: 0,
-      createdAt: now,
-      updatedAt: now,
-    };
-    await addAssetGroup(group);
-    setOpenId(id);
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -79,7 +60,7 @@ export default function AssetsPage() {
             delivered files.
           </p>
         </div>
-        <Button onClick={() => void createNew()} className="gap-1.5 shrink-0">
+        <Button onClick={() => setCreateOpen(true)} className="gap-1.5 shrink-0">
           <Plus className="h-4 w-4" />
           Asset Group
         </Button>
@@ -148,6 +129,12 @@ export default function AssetsPage() {
       )}
 
       <AssetDrawer groupId={openId} onClose={() => setOpenId(null)} />
+
+      <AssetCreateDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={(id) => setOpenId(id)}
+      />
     </div>
   );
 }
