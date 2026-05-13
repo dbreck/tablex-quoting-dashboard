@@ -15,6 +15,7 @@ import {
   ScanBarcode,
   DollarSign,
   Package,
+  Boxes,
   ClipboardList,
   Truck,
   ChevronLeft,
@@ -70,6 +71,7 @@ const projectNavItems = [
   { name: "Infra Setup", href: "/project/infrastructure", icon: Server },
   { name: "Risks & Decisions", href: "/project/risks-decisions", icon: ShieldAlert },
   { name: "Sign-Offs", href: "/project/sign-offs", icon: CheckCircle2 },
+  { name: "Assets", href: "/project/assets", icon: Boxes },
 ];
 
 const overviewItem = { name: "Overview", href: "/overview", icon: LayoutDashboard };

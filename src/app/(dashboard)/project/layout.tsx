@@ -10,6 +10,8 @@ import { useRisksDecisionsHydration } from "@/hooks/useRisksDecisionsHydration";
 import { useRisksDecisionsRealtime } from "@/hooks/useRisksDecisionsRealtime";
 import { useSignOffsHydration } from "@/hooks/useSignOffsHydration";
 import { useSignOffsRealtime } from "@/hooks/useSignOffsRealtime";
+import { useAssetsHydration } from "@/hooks/useAssetsHydration";
+import { useAssetsRealtime } from "@/hooks/useAssetsRealtime";
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
@@ -21,6 +23,8 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   useRisksDecisionsRealtime();
   useSignOffsHydration();
   useSignOffsRealtime();
+  useAssetsHydration();
+  useAssetsRealtime();
 
   if (!profile?.can_access_proposal) return null;
 
