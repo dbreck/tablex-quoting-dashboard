@@ -49,6 +49,7 @@ import {
   pushDeliverableToMonday,
   pushTaskToMonday,
 } from "./push";
+import { DELIVERABLE_COLUMN_TITLES } from "./schema";
 import { fetchMondayUsers } from "./users";
 import type { SyncLink } from "@/lib/supabase/tracker-converters";
 import type { MondaySubitem } from "./types";
@@ -303,6 +304,21 @@ export async function reconcile(req: SyncRequest): Promise<SyncResult> {
         userMaps,
       },
     );
+    // Overwrite mondayActual.status with Monday's actual label text. Going
+    // through mondayItemToOverridePatch drops unmapped labels (Monday's
+    // default "Working on it" isn't in MONDAY_LABEL_TO_SCOPE_STATUS), and the
+    // re-derivation falls back to the static deliverable.status — which can
+    // coincidentally match wouldPush and suppress a needed push.
+    const statusColId = snapshot.itemColumnsByTitle[DELIVERABLE_COLUMN_TITLES.status];
+    if (statusColId) {
+      const cv = mondayRecord.raw.column_values?.find((c) => c.id === statusColId);
+      const actualLabel = cv?.text?.trim();
+      if (actualLabel) {
+        (mondayActual as Record<string, unknown>)[statusColId] = { label: actualLabel };
+      } else {
+        delete (mondayActual as Record<string, unknown>)[statusColId];
+      }
+    }
     if (JSON.stringify(wouldPush) === JSON.stringify(mondayActual)) {
       continue;
     }
