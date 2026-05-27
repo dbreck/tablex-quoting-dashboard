@@ -45,6 +45,7 @@ import {
   Fingerprint,
   LayoutTemplate,
   Layers,
+  AppWindow,
   CheckCircle2,
   Map as MapIcon,
 } from "lucide-react";
@@ -103,6 +104,7 @@ const analyticsNavGroups = [
 const contentNavItems = [
   { name: "Dashboard", href: "/content", icon: LayoutDashboard, exact: true },
   { name: "Site Map", href: "/content/site-map", icon: MapIcon },
+  { name: "Comps", href: "/content/comps", icon: AppWindow },
   { name: "Site Architecture", href: "/site-architecture", icon: Layers },
   { name: "Wireframes", href: "/wireframes", icon: LayoutTemplate },
   { name: "Product Library", href: "/product-library", icon: Library },

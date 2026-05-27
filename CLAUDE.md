@@ -19,6 +19,21 @@ To launch a Claude Code session with all diagrams appended to the system prompt,
 
 Regenerate with `/arch-map` when the architecture drifts.
 
+## Design system (claude.ai/design bundle)
+
+The authoritative TableX brand bundle lives at `docs/TableX Design System/Design Finals/`. It's the upload set for the published claude.ai/design Design System.
+
+**Status (2026-05-26):** DS published + validated (A/B/C) + distinctiveness pass done. `00-DESIGN-SYSTEM.md` §8a "Distinctiveness mandates" (M1–M6, surface-tiered) breaks the "warm-field + orange + black = Anthropic" recipe — direction is *contrast & depth, not cooling*. Grade claude.ai/design handoffs at the CODE level (curl the tarball → grep tokens/fonts/shadows). Handoffs are read-to-grade only — never implement design output in this repo; production impl → `tablex-site`. **Session 3 (Public Marketing wireframing) in progress; the A2 Home design was scrapped 2026-05-26 (overlap/clip cruft from iterating) — restart Home fresh.** Full state + fresh-start carry-list: auto-memory `project-claude-design-ds-published.md`.
+
+- Brand source-of-truth: `Brand-Quick-Guide.png` (6 Pantone swatches + Acumin Pro specimens), `Home-01.png` (canonical homepage hi-fi), `TableX.fig`
+- Authoritative master spec: `00-DESIGN-SYSTEM.md` (palette, type, anti-AI-slop block)
+- Operator's manual for the claude.ai/design session: `13-SESSION-PLAN.md` — read FIRST before opening claude.ai/design
+- Full 86-page wireframe briefs in `05`–`12-PAGE-BRIEFS-*.md` grouped by route group
+
+**Brand palette (Pantone-derived, exact):** Forge `#000000` · Iron `#191919` · Saddle `#75400E` · Moss `#8A8962` · Canvas `#EAE5DE` · **Ember `#F26721`** (single accent, one per fold). Adobe Fonts kit: `juc1jwq` (NOT `ucn5jze` — that's Peregrine).
+
+**Stale & superseded** (do not upload to claude.ai/design): `docs/TableX Design System/DESIGN.md`, all `Homepage v2/v3/v4.html`, all `browse-all*.html`, `Assets/fonts/` (FreightSans era), `colors_and_type.css`. Left in place for archaeology.
+
 ## Stack
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 · Supabase (`@supabase/ssr`) · Zustand 5 · Monday.com GraphQL · React Three Fiber · Radix UI · Recharts · Plotly · `@hello-pangea/dnd`

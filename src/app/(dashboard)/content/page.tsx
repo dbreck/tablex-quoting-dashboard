@@ -8,6 +8,7 @@ import {
   Package,
   Box,
   ArrowRight,
+  AppWindow,
   Map as MapIcon,
 } from "lucide-react";
 import {
@@ -24,6 +25,7 @@ import {
 } from "@/data/site-map";
 import { architectureStats } from "@/data/future-site-architecture";
 import { wireframePages } from "@/data/wireframe-pages";
+import { comps } from "@/data/comps";
 
 export default function ContentDashboardPage() {
   const siteMapStats = computeSiteMapStats(siteMapGroups);
@@ -38,6 +40,15 @@ export default function ContentDashboardPage() {
       stat: `${siteMapStats.totalPages} pages · ${siteMapStats.totalGroups} groups · ${siteMapStats.newPages} new`,
       accent: "bg-brand-green/10 text-brand-green",
       featured: true,
+    },
+    {
+      href: "/content/comps",
+      icon: AppWindow,
+      label: "Comps",
+      description:
+        "High-fidelity homepage & marketing comps from claude.ai/design. Each opens full-screen in a new tab.",
+      stat: `${comps.length} comp${comps.length === 1 ? "" : "s"} · opens in new tab`,
+      accent: "bg-orange-500/10 text-orange-600",
     },
     {
       href: "/site-architecture",
