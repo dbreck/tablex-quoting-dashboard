@@ -37,6 +37,9 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/_next") &&
     !request.nextUrl.pathname.startsWith("/favicon") &&
+    // Design comps are publicly shareable (so external reviewers can open
+    // the link + leave feedback without a dashboard login).
+    !request.nextUrl.pathname.startsWith("/comps") &&
     !request.nextUrl.pathname.startsWith("/api")
   ) {
     const url = request.nextUrl.clone();
