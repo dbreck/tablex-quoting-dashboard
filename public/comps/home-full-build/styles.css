@@ -1,0 +1,218 @@
+/* =============================================================
+   TableX Home — Full Build · Global page styles
+   Layered on top of colors_and_type.css
+   ============================================================= */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--tx-white);
+  color: var(--tx-iron);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+img { display: block; max-width: 100%; }
+button { font-family: inherit; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+
+strong { font-family: var(--font-display); font-weight: 700; }
+
+/* -------------------------------------------------------------
+   Root container — design width fluid down from 1920
+   ------------------------------------------------------------- */
+#root {
+  width: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/* -------------------------------------------------------------
+   Responsive scale tokens — collapse padding & type at breakpoints
+   ------------------------------------------------------------- */
+:root {
+  --pg-gutter: 140px;            /* desktop */
+  --pg-content-max: 1640px;
+  --pg-section-y: 128px;
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --pg-gutter: 80px;
+    --pg-section-y: 96px;
+  }
+}
+@media (max-width: 900px) {
+  :root {
+    --pg-gutter: 40px;
+    --pg-section-y: 72px;
+  }
+}
+@media (max-width: 560px) {
+  :root {
+    --pg-gutter: 22px;
+    --pg-section-y: 56px;
+  }
+}
+
+/* -------------------------------------------------------------
+   Section utilities
+   ------------------------------------------------------------- */
+.section {
+  padding: var(--pg-section-y) var(--pg-gutter);
+  width: 100%;
+}
+.section-inner {
+  max-width: var(--pg-content-max);
+  margin: 0 auto;
+  width: 100%;
+}
+.section-eyebrow {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tx-stone-600);
+  margin-top: 14px;
+  margin-bottom: 56px;
+}
+.section-eyebrow--dark { color: #B8B4A6; }
+.hairline { border: 0; border-top: 1px solid rgba(10,10,10,0.12); margin: 0; }
+.hairline--inverse { border-top-color: rgba(255,255,255,0.18); }
+
+/* -------------------------------------------------------------
+   Buttons
+   ------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  padding: 17px 36px;
+  /* cc-3 — optical vertical centering of button text */
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background var(--dur-ui) var(--ease-out-quart),
+              color var(--dur-ui) var(--ease-out-quart),
+              border-color var(--dur-ui) var(--ease-out-quart);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn--ember   { background: var(--tx-ember); color: #fff; border-color: var(--tx-ember); }
+.btn--ember:hover { background: #DC5A18; border-color: #DC5A18; }
+.btn--paper   { background: #fff; color: var(--tx-iron); border-color: #fff; }
+.btn--paper:hover { background: var(--tx-paper); border-color: var(--tx-paper); }
+.btn--ghost-dark  { background: transparent; color: #fff; border-color: rgba(255,255,255,0.55); }
+.btn--ghost-dark:hover { background: #fff; color: var(--tx-iron); border-color: #fff; }
+.btn--ghost-light { background: transparent; color: var(--tx-iron); border-color: var(--tx-iron); }
+.btn--ghost-light:hover { background: var(--tx-iron); color: #fff; }
+/* Pill size variant — large CTAs ("view all collections" etc).
+   Per casing Rule 1: action pills stay lowercase; this is sizing only.
+   No text-transform / letter-spacing here. */
+.btn--pill-caps {
+  padding: 18px 48px;
+}
+
+/* CTA arrow link */
+.cta-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+  transition: opacity var(--dur-ui) var(--ease-out-quart);
+}
+.cta-arrow:hover { opacity: 0.65; }
+
+/* -------------------------------------------------------------
+   Eyebrow link in dark sections
+   ------------------------------------------------------------- */
+.label-caps {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------
+   Display type — scales down at breakpoints
+   ------------------------------------------------------------- */
+.h-hero {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(34px, 5.2vw, 80px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+  margin: 0;
+}
+.h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(30px, 3.2vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(26px, 2.4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(20px, 1.5vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.lede {
+  font-size: clamp(15px, 1.05vw, 18px);
+  line-height: 1.55;
+  color: var(--tx-stone-600);
+  margin: 0;
+}
+.lede--inverse { color: rgba(255,255,255,0.72); }
+
+/* -------------------------------------------------------------
+   Grid helpers used in multiple sections
+   ------------------------------------------------------------- */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .grid-2 { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 560px) {
+  .grid-3 { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* -------------------------------------------------------------
+   Focus state — design-system rule
+   ------------------------------------------------------------- */
+.btn:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--tx-ember);
+}

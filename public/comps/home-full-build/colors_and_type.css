@@ -1,0 +1,254 @@
+/* =============================================================
+   TableX Design System — Colors & Type
+   Source of truth: reference/00-DESIGN-SYSTEM.md (Brand Quick Guide)
+   ============================================================= */
+
+/* -----------------------------------------------------------
+   FONT IMPORTS
+   -----------------------------------------------------------
+   Licensed Adobe fonts — self-hosted as .otf in /fonts.
+   Two families:
+     • Acumin Pro       — body & UI (H3 down)
+     • Acumin Pro Wide  — display (hero, H1, H2, big stats)
+   ----------------------------------------------------------- */
+
+/* Acumin Pro — body & UI */
+@font-face {
+  font-family: "Acumin Pro";
+  src: url("fonts/AcuminPro-Regular.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Acumin Pro";
+  src: url("fonts/AcuminPro-Italic.otf") format("opentype");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Acumin Pro";
+  src: url("fonts/AcuminPro-Medium.otf") format("opentype");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Acumin Pro";
+  src: url("fonts/AcuminPro-Semibold.otf") format("opentype");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Acumin Pro";
+  src: url("fonts/AcuminPro-Bold.otf") format("opentype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+/* Acumin Pro Wide — display family (Adobe's separate width-family, NOT a variable axis) */
+@font-face {
+  font-family: "Acumin Pro Wide";
+  src: url("fonts/AcuminProWide-Regular.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Acumin Pro Wide";
+  src: url("fonts/AcuminProWide-Medium.otf") format("opentype");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Acumin Pro Wide";
+  src: url("fonts/AcuminProWide-Bold.otf") format("opentype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* ===========================================================
+     1. CORE BRAND PALETTE — six tokens, Brand-Quick-Guide.png
+     =========================================================== */
+  --tx-forge:   #000000;   /* Process Black 100 — editorial full-bleed black */
+  --tx-iron:    #191919;   /* Process Black 95 — body text, dark surfaces, footer */
+  --tx-saddle:  #75400E;   /* Pantone 2319 — warm wood accent */
+  --tx-moss:    #8A8962;   /* Pantone 4221 C — olive editorial blocking */
+  --tx-canvas:  #EAE5DE;   /* Pantone 7527 — warm parchment panel */
+  --tx-ember:   #F26721;   /* Pantone Orange 021 U — THE signal accent */
+
+  /* ===========================================================
+     2. NEUTRAL FOUNDATION (carries forward from production CSS)
+     =========================================================== */
+  --tx-white:     #FFFFFF;   /* default page background */
+  --tx-paper:     #FAFAF7;   /* off-white card / section */
+  --tx-bone:      #F5F4EE;   /* warm panel — slightly cooler than Canvas */
+  --tx-stone-100: #EEEDE6;   /* subtle panel separation */
+  --tx-stone-300: #B8B4A6;   /* hairline rule warm tone */
+  --tx-stone-500: #6C6B6B;   /* muted secondary text */
+  --tx-stone-600: #4E4D4B;   /* body secondary */
+  --tx-stone-700: #2C2C2C;   /* body emphasis on light */
+
+  /* ===========================================================
+     3. SEMANTIC COLOR
+     =========================================================== */
+  --tx-success: #275F37;
+  --tx-warn:    #FF5700;     /* NOT Ember — Ember is structural, not state */
+  --tx-error:   #D60035;
+  --tx-info:    #0B3D60;
+
+  /* ===========================================================
+     4. BORDERS — hairlines do elevation, not shadows
+     =========================================================== */
+  --border-hair:     rgba(10, 10, 10, 0.08);
+  --border:          rgba(10, 10, 10, 0.12);
+  --border-strong:   rgba(10, 10, 10, 0.28);
+  --border-inverse:  rgba(255, 255, 255, 0.20);
+
+  /* ===========================================================
+     5. SHADOWS — used sparingly
+     =========================================================== */
+  --shadow-hair:  0 0 0 1px var(--border-hair);
+  --shadow-1:     0 1px 2px rgba(10,10,10,0.04), 0 2px 8px rgba(10,10,10,0.04);
+  --shadow-2:     0 4px 14px rgba(10,10,10,0.06), 0 10px 30px rgba(10,10,10,0.08);
+  --shadow-lift:  0 24px 60px rgba(10,10,10,0.14);
+
+  /* ===========================================================
+     6. RADII
+     =========================================================== */
+  --radius-none:   0;        /* default — sections, hairlines, full-bleed */
+  --radius-sm:     4px;      /* inputs, small chips */
+  --radius-md:     8px;      /* compact cards, table-row hover */
+  --radius-lg:     20px;     /* SIGNATURE — image cards floating in whitespace */
+  --radius-pill:   999px;    /* CTA buttons */
+  --radius-circle: 50%;      /* editorial photo crops */
+
+  /* ===========================================================
+     7. SPACING SCALE
+     =========================================================== */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   24px;
+  --space-6:   32px;
+  --space-7:   48px;
+  --space-8:   64px;
+  --space-9:   96px;
+  --space-10:  128px;
+  --space-11:  160px;
+
+  /* ===========================================================
+     8. LAYOUT
+     =========================================================== */
+  --design-width:   1920px;
+  --content-max:    1640px;
+  --gutter-desktop: 140px;
+  --gutter-dense:   80px;
+
+  /* ===========================================================
+     9. MOTION — no bounces, ever
+     =========================================================== */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.30, 1);   /* reveals */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.50, 1);   /* UI */
+  --dur-press:   120ms;
+  --dur-ui:      220ms;
+  --dur-reveal:  420ms;
+  --dur-hero:    700ms;
+
+  /* ===========================================================
+     10. TYPOGRAPHY — families
+     =========================================================== */
+  /* Display: Acumin Pro Wide (Adobe Fonts, self-hosted) */
+  --font-display: "Acumin Pro Wide",
+                  ui-sans-serif, system-ui, -apple-system,
+                  "Segoe UI", "Helvetica Neue", sans-serif;
+  /* Body: Acumin Pro (Adobe Fonts, self-hosted) */
+  --font-body:    "Acumin Pro",
+                  ui-sans-serif, system-ui, -apple-system,
+                  "Segoe UI", "Helvetica Neue", sans-serif;
+  /* Mono — utility only */
+  --font-mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Display weight + tracking */
+  --display-weight:  500;
+  --display-tracking: -0.02em;
+
+  /* ===========================================================
+     11. SEMANTIC TYPE TOKENS — desktop scale (1920px design)
+     =========================================================== */
+  --t-hero-size:    180px;  --t-hero-weight: 400;  --t-hero-track: -0.02em;
+  --t-display-size: 96px;   --t-display-weight: 500;
+  --t-h1-size:      64px;   --t-h1-weight: 500;    --t-h1-track: -0.02em;  --t-h1-lh: 1.05;
+  --t-h2-size:      48px;   --t-h2-weight: 500;    --t-h2-track: -0.02em;  --t-h2-lh: 1.10;
+  --t-h3-size:      30px;   --t-h3-weight: 600;    --t-h3-track: -0.01em;  --t-h3-lh: 1.20;
+  --t-h4-size:      22px;   --t-h4-weight: 600;                            --t-h4-lh: 1.30;
+  --t-lead-size:    20px;   --t-lead-weight: 400;                          --t-lead-lh: 1.55;
+  --t-body-size:    16px;   --t-body-weight: 400;                          --t-body-lh: 1.55;
+  --t-bodysm-size:  14px;
+  --t-caption-size: 12px;
+  --t-nav-size:     14px;   --t-nav-weight: 500;   --t-nav-track: 0.10em;
+  --t-eyebrow-size: 12px;   --t-eyebrow-weight: 600; --t-eyebrow-track: 0.18em;
+  --t-button-size:  16px;   --t-button-weight: 600;  --t-button-track: 0.05em;
+}
+
+/* =============================================================
+   BASE
+   ============================================================= */
+html, body {
+  background: var(--tx-white);
+  color: var(--tx-iron);
+  font-family: var(--font-body);
+  font-size: var(--t-body-size);
+  line-height: var(--t-body-lh);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Apply the display family on display utilities */
+.tx-display,
+.tx-hero, .tx-h1, .tx-h2 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+}
+
+/* =============================================================
+   SEMANTIC TYPE UTILITIES
+   ============================================================= */
+.tx-hero    { font-size: var(--t-hero-size); font-weight: 400; line-height: 1; }
+.tx-display { font-size: var(--t-display-size); line-height: 1.05; }
+.tx-h1      { font-size: var(--t-h1-size); font-weight: var(--t-h1-weight); line-height: var(--t-h1-lh); letter-spacing: var(--t-h1-track); }
+.tx-h2      { font-size: var(--t-h2-size); font-weight: var(--t-h2-weight); line-height: var(--t-h2-lh); letter-spacing: var(--t-h2-track); }
+.tx-h3      { font-family: var(--font-body); font-size: var(--t-h3-size); font-weight: var(--t-h3-weight); line-height: var(--t-h3-lh); letter-spacing: var(--t-h3-track); }
+.tx-h4      { font-family: var(--font-body); font-size: var(--t-h4-size); font-weight: var(--t-h4-weight); line-height: var(--t-h4-lh); }
+.tx-lead    { font-family: var(--font-body); font-size: var(--t-lead-size); font-weight: 400; line-height: var(--t-lead-lh); color: var(--tx-stone-600); }
+.tx-body    { font-family: var(--font-body); font-size: var(--t-body-size); line-height: var(--t-body-lh); }
+.tx-bodysm  { font-family: var(--font-body); font-size: var(--t-bodysm-size); line-height: 1.5; }
+.tx-caption { font-family: var(--font-body); font-size: var(--t-caption-size); color: var(--tx-stone-500); line-height: 1.4; }
+
+.tx-nav {
+  font-family: var(--font-body);
+  font-size: var(--t-nav-size);
+  font-weight: var(--t-nav-weight);
+  text-transform: uppercase;
+  letter-spacing: var(--t-nav-track);
+}
+.tx-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--t-eyebrow-size);
+  font-weight: var(--t-eyebrow-weight);
+  text-transform: uppercase;
+  letter-spacing: var(--t-eyebrow-track);
+  color: var(--tx-stone-600);
+}
+.tx-button-label {
+  font-family: var(--font-body);
+  font-size: var(--t-button-size);
+  font-weight: var(--t-button-weight);
+  letter-spacing: var(--t-button-track);
+}
+
+/* Hairline rule — replaces shadows for elevation */
+.tx-hairline {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* X-pattern wallpaper utility */
+.tx-x-pattern {
+  background-image: url("assets/x-pattern-tile.svg");
+  background-repeat: repeat;
+  background-size: 160px 164px;
+}

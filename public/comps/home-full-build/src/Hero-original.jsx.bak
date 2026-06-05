@@ -1,0 +1,73 @@
+// Hero.jsx — Pattern #5 — Editorial asymmetric hero
+// Uses the canonical photo-hero-chairs.png (Moss + Ember saddle composition baked in)
+// + eyebrow + giant H1 + CTAs. Falls back to a single column on mobile.
+const Hero = () => (
+  <section style={{
+    position: 'relative',
+    width: '100%',
+    overflow: 'hidden',
+    background: 'var(--tx-moss)',
+    minHeight: 'clamp(560px, 86vh, 880px)',
+    paddingTop: 78  // nav offset
+  }}>
+    {/* Background photograph — scaled 1.15× from top-left, clipped by section overflow:hidden */}
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      backgroundImage: `url(${window.__txAsset('photo-hero-tables-05.png')})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center right',
+      backgroundRepeat: 'no-repeat',
+      transformOrigin: 'top left',
+      transform: 'scale(1.20)'
+    }} />
+
+    {/* Top vignette so the nav scrim doesn't fight type */}
+    <div style={{
+      position: 'absolute', inset: 0, pointerEvents: 'none',
+      background:
+        'linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0) 240px), ' +
+        'linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 55%)'
+    }} />
+
+    {/* Content stack — bottom-left, asymmetric */}
+    <div style={{
+      position: 'relative',
+      maxWidth: 'var(--pg-content-max)',
+      margin: '0 auto',
+      padding: 'clamp(180px, 28vh, 320px) var(--pg-gutter) clamp(56px, 9vh, 120px)',
+      color: '#FFFFFF',
+      transform: 'translateY(-50px)'
+    }}>
+      <div style={{
+        fontFamily: 'var(--font-body)',
+        fontSize: 12, fontWeight: 600,
+        letterSpacing: '0.18em',
+        textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.86)',
+        marginBottom: 28
+      }}>
+        the modern american tablemaker
+      </div>
+
+      <h1 className="h-hero" style={{ color: '#FFFFFF', maxWidth: 960 }}>
+        Where first impressions are formed, where plans are built, and where work moves forward.
+      </h1>
+
+      <p className="lede" style={{
+        color: 'rgba(255,255,255,0.88)',
+        marginTop: 28,
+        maxWidth: 620
+      }}>
+        Commercial-grade tables, designed and built in the Midwest. On your floor in under two weeks. Backed by a 50-year warranty.
+      </p>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 40 }}>
+        <a href="#" className="btn btn--paper">get a quote</a>
+        <a href="#" className="btn btn--ghost-dark">explore products</a>
+      </div>
+    </div>
+  </section>
+);
+
+window.Hero = Hero;

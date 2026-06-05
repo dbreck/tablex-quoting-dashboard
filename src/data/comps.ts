@@ -23,10 +23,12 @@ export const comps: Comp[] = [
     slug: "home-full-build",
     label: "Home — Full Build",
     description:
-      "Full homepage comp from Kayla's approved direction, blown out with real content — the customer-framed Spex Studio quoting numbers, Browse by Space, Finishes, 50-Year Warranty, and Made in America blocks.",
-    file: "/comps/home-full-build.html",
+      "Full homepage comp from Kayla's approved direction — iteration 01 applied (Brian's 5/27 feedback): wordmark hero, SELLING door, 'Your quote, right now.', Quick Ship carries the ships-from-Jasper story, Made in America fold removed, Finishes reframed to differentiators.",
+    // Multi-file bundle (index.html + live JSX components) — replaced the old
+    // single-file blob export 2026-06-05 so fixes can be made directly in src/.
+    file: "/comps/home-full-build/index.html",
     thumb: "/comps/thumbs/comps-home-full-build-html.png",
-    date: "2026-05-27",
+    date: "2026-06-05",
     tool: "claude.ai/design",
     tags: ["Home", "Marketing"],
   },

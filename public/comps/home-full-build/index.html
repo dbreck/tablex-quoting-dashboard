@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TableX — Where work moves forward</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Commercial-grade tables, designed and built in the Midwest. On your floor in under two weeks. Backed by a 50-year warranty.">
+<link rel="icon" href="assets/TableX-logomark.svg">
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Standalone bundling — code-referenced assets must be lifted via ext-resource-dependency
+     meta tags so the inliner can find them (they're built from string-template URLs in JSX). -->
+<meta name="ext-resource-dependency" content="assets/photo-hero-tables-05-bundle.jpg"     data-resource-id="photo_hero_tables_05_png" />
+<meta name="ext-resource-dependency" content="assets/photo-collection-app-bundle.jpg"     data-resource-id="photo_collection_app_jpg" />
+<meta name="ext-resource-dependency" content="assets/photo-collection-solo-bundle.jpg"    data-resource-id="photo_collection_solo_jpg" />
+<meta name="ext-resource-dependency" content="assets/photo-ember-circle-1-bundle.jpg"     data-resource-id="photo_ember_circle_1_jpg" />
+<meta name="ext-resource-dependency" content="assets/photo-ember-circle-2-bundle.jpg"     data-resource-id="photo_ember_circle_2_jpg" />
+<meta name="ext-resource-dependency" content="assets/photo-trig-render-bundle.png"        data-resource-id="photo_trig_render_png" />
+<meta name="ext-resource-dependency" content="assets/photo-featured-bases-bundle.jpg"     data-resource-id="photo_featured_bases_png" />
+<meta name="ext-resource-dependency" content="assets/made-in-america.png"          data-resource-id="made_in_america_png" />
+<meta name="ext-resource-dependency" content="assets/logo-white.svg"               data-resource-id="logo_white_svg" />
+<meta name="ext-resource-dependency" content="assets/logo-black.svg"               data-resource-id="logo_black_svg" />
+<meta name="ext-resource-dependency" content="assets/wordmark.svg"                 data-resource-id="wordmark_svg" />
+<meta name="ext-resource-dependency" content="assets/laminate-ashwood-beige-bundle.png"   data-resource-id="laminate_ashwood_beige_png" />
+<meta name="ext-resource-dependency" content="assets/laminate-asian-sand-bundle.png"      data-resource-id="laminate_asian_sand_png" />
+<meta name="ext-resource-dependency" content="assets/laminate-brazilwood-bundle.png"      data-resource-id="laminate_brazilwood_png" />
+<meta name="ext-resource-dependency" content="assets/laminate-colombian-walnut-bundle.png" data-resource-id="laminate_colombian_walnut_png" />
+
+<script>
+  /* Asset resolver used by JSX components.
+     - Bundled: returns the blob URL the inliner mapped onto window.__resources.
+     - Dev: falls back to the on-disk path "assets/<name>" so the unbundled page works too. */
+  window.__txAsset = function (name) {
+    var key = String(name).replace(/[^A-Za-z0-9]/g, '_');
+    var fromBundle = window.__resources && window.__resources[key];
+    return fromBundle || ('assets/' + name);
+  };
+</script>
+
+<!-- Bundler splash — shown while assets unpack, also the no-JS fallback. -->
+<template id="__bundler_thumbnail" data-bg-color="#191919">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#191919"/>
+    <!-- Ember bar, top-left -->
+    <rect x="0" y="0" width="540" height="44" fill="#F26721"/>
+    <!-- Wordmark stand-in: T  X -->
+    <g fill="#FFFFFF" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="320" letter-spacing="60">
+      <text x="380" y="520">T</text>
+      <text x="700" y="520">X</text>
+    </g>
+    <!-- Bottom orange rule -->
+    <rect x="380" y="600" width="440" height="6" fill="#F26721"/>
+    <text x="600" y="690" fill="#B8B4A6" text-anchor="middle"
+          font-family="Helvetica, Arial, sans-serif" font-size="28"
+          letter-spacing="6">THE MODERN AMERICAN TABLEMAKER</text>
+  </svg>
+</template>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="/comps/_feedback-embed.js" defer></script>
+</head>
+<body>
+
+<div id="root" data-screen-label="01 Marketing Home"></div>
+
+<script type="text/babel" src="src/Nav.jsx"></script>
+<script type="text/babel" src="src/Hero.jsx"></script>
+<script type="text/babel" src="src/TriBlock.jsx"></script>
+<script type="text/babel" src="src/FeaturedCollections.jsx"></script>
+<script type="text/babel" src="src/EnvironmentalBand.jsx"></script>
+<script type="text/babel" src="src/BrowseBySpace.jsx"></script>
+<script type="text/babel" src="src/FinishesTeaser.jsx"></script>
+<script type="text/babel" src="src/StatStrip.jsx"></script>
+<script type="text/babel" src="src/Spotlight.jsx"></script>
+<script type="text/babel" src="src/Quoting617.jsx"></script>
+<script type="text/babel" src="src/QuickShip.jsx"></script>
+<script type="text/babel" src="src/Warranty.jsx"></script>
+<script type="text/babel" src="src/EmberBand.jsx"></script>
+<script type="text/babel" src="src/DualCTA.jsx"></script>
+<script type="text/babel" src="src/Footer.jsx"></script>
+
+<script type="text/babel">
+  const App = () => (
+    <React.Fragment>
+      <Nav />
+      <Hero />
+      <TriBlock />
+      <FeaturedCollections />
+      <EnvironmentalBand />
+      <BrowseBySpace />
+      <FinishesTeaser />
+      <StatStrip />
+      <Spotlight />
+      <Quoting617 />
+      <QuickShip />
+      <Warranty />
+      <EmberBand />
+      <DualCTA />
+      <Footer />
+    </React.Fragment>
+  );
+
+  const NEEDED = ['Nav','Hero','TriBlock','FeaturedCollections','EnvironmentalBand',
+                  'BrowseBySpace','FinishesTeaser','StatStrip','Spotlight','Quoting617',
+                  'QuickShip','Warranty','EmberBand','DualCTA','Footer'];
+  const tick = () => {
+    if (NEEDED.every(k => window[k])) {
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+      setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 80);
+    } else {
+      setTimeout(tick, 30);
+    }
+  };
+  tick();
+</script>
+
+</body>
+</html>
