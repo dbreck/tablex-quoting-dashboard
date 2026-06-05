@@ -224,13 +224,15 @@ export default function LaminatesTab() {
                   {f.isStock ? "In stock" : f.mustStock ? "Stocking soon" : "Special order"}
                 </span>
               </div>
-              {/* Edgeband state (priority: named substitute > stocked > planned > custom quote) */}
+              {/* Edgeband state (priority: named substitute > offered matching > planned > custom quote).
+                  Keyed on hasMatchingEdgeband (OFFER-level): patterns never show a matching edge even
+                  where the manufacturer stocks one — TableX doesn't offer them (Brian 6/5). */}
               {f.edgebandRef ? (
                 <div className="flex items-center gap-1 pt-1">
                   <Check className="h-3 w-3 text-amber-600" />
                   <span className="text-[10px] text-slate-500">Edge: {f.edgebandRef}</span>
                 </div>
-              ) : f.edgebandStocked ? (
+              ) : f.hasMatchingEdgeband ? (
                 <div className="flex items-center gap-1 pt-1">
                   <Check className="h-3 w-3 text-green-600" />
                   <span className="text-[10px] text-slate-500">
