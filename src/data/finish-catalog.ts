@@ -1,6 +1,12 @@
 export type LaminateBrand = "Wilsonart" | "Formica";
 export type LaminatePriceTier = "Core" | "Select" | "Luxe" | "Custom";
 export type LaminateSubCategory = "woodgrain" | "solid" | "pattern";
+/** Which vendor price column the laminate price is computed from (2026-06 sheet, detail tabs). */
+export type LaminatePriceBasis =
+  | "Standard Column"
+  | "Wilsonart Column"
+  | "Formica Column"
+  | "Custom quote only";
 
 export interface FinishOption {
   id: string;
@@ -13,14 +19,23 @@ export interface FinishOption {
   normalMapUrl?: string;
   roughnessMapUrl?: string;
 
-  // TableX laminate metadata (populated for 2026 Wilsonart / Formica catalog)
+  // TableX laminate metadata (populated for 2026 Wilsonart / Formica catalog,
+  // rev 2026-06-05 of "2026 TableX Laminate Colors FINAL.xlsx" — detail tabs authoritative)
   brand?: LaminateBrand;
   itemNumber?: string;
   subCategory?: LaminateSubCategory;
   priceTier?: LaminatePriceTier;
-  upchargePct?: number;             // 0, 10, 15, 20, 30, 35
-  hasMatchingEdgeband?: boolean;
-  isStock?: boolean;                // TableX "must stock" flag
+  upchargePct?: number;             // laminate upcharge % over priceBasis: 0, 10, 15, 20, 30, 35
+  hasMatchingEdgeband?: boolean;    // legacy alias — mirrors edgebandStocked
+  isStock?: boolean;                // laminate currently stocked (sheet "Stock Laminate")
+  mustStock?: boolean;              // TableX "must stock" mandate for the laminate (may not be stocked yet)
+  priceBasis?: LaminatePriceBasis;  // vendor price column the laminate price draws from
+  bandingBasis?: string;            // edgeband price column (woodgrain detail tab, raw string e.g. "Wilsonart Column + 10%")
+  bandingUpchargePct?: number | "custom"; // ADDITIONAL edgeband upcharge %, or "custom" = banding priced by custom quote only
+  bandingNote?: string;             // conditional pricing notes, e.g. "if stocking program put in place for banding then 15% upcharge"
+  edgebandRef?: string;             // named substitute edgeband (not a self-match), e.g. "Kimball HN2"
+  edgebandStocked?: boolean;        // matching/designated edgeband currently stocked (sheet "Stock Edgeband")
+  edgebandMustStock?: boolean;      // TableX must-stock mandate for the edgeband
 }
 
 export interface EdgeType {
@@ -85,7 +100,16 @@ export const chromeFinish: FinishOption = {
 
 // ---------------------------------------------------------------------------
 // 2026 TableX Laminate Catalog — Wilsonart + Formica
-// Source: "2026 TableX Laminate Colors FINAL.xlsx"
+// Source: "2026 TableX Laminate Colors FINAL.xlsx", revision 2026-06-05.
+// Detail tabs (Woodgrain/Solid/Pattern) are authoritative for all values.
+//
+// KNOWN OPEN CONFLICTS (summary tab disagrees with detail tabs — pending Brian,
+// catalog keeps the detail-tab values, which all match the prior import):
+//  - 8 woodgrain upcharges priced HIGHER on the summary tab ("Wilsonart 2 or
+//    More" basis): 5785-NG/5788-NG/7949K-18/7964K-12/7909-60 (+15 vs +10),
+//    8208K-16 (+35 vs +20), 8210K-28/8212K-28 (+35 vs +30).
+//  - Summary tab header says patterns have NO matching edgeband, but the
+//    Pattern detail tab marks 4783-60/4623-60/4942-38 with stocked edgebands.
 //
 // Organized as:
 //  - Woodgrains (28 colors) → exposed as `tflFinishes` for UI grouping
@@ -107,6 +131,7 @@ function laminate(
   upchargePct: number,
   hasMatchingEdgeband: boolean,
   isStock = true,
+  extra?: Partial<FinishOption>,
 ): FinishOption {
   return {
     id,
@@ -122,84 +147,151 @@ function laminate(
     upchargePct,
     hasMatchingEdgeband,
     isStock,
+    ...extra,
   };
 }
 
 // ----- WOODGRAINS (28) → tflFinishes -----
 export const tflFinishes: FinishOption[] = [
-  laminate('lam-7122K-07', 'Empire Mahogany',    '#4a2618', 'tfl', 'woodgrain', 'Wilsonart', '7122K-07',  'Core',   0,  true),
-  laminate('lam-7925-38',  'Monticello Maple',   '#c89668', 'tfl', 'woodgrain', 'Wilsonart', '7925-38',   'Core',   0,  true),
-  laminate('lam-7960K-18', 'Studio Teak',        '#8b6239', 'tfl', 'woodgrain', 'Wilsonart', '7960K-18',  'Core',   0,  true),
-  laminate('lam-7946-38',  'Brazilwood',         '#6b2e1f', 'tfl', 'woodgrain', 'Wilsonart', '7946-38',   'Core',   0,  true),
-  laminate('lam-10776-60', 'Kensington Maple',   '#d4a374', 'tfl', 'woodgrain', 'Wilsonart', '10776-60',  'Core',   0,  true),
-  laminate('lam-7054-60',  'Wild Cherry',        '#7a3b28', 'tfl', 'woodgrain', 'Wilsonart', '7054-60',   'Core',   0,  true),
-  laminate('lam-7965K-12', 'Walnut Heights',     '#5a3c2a', 'tfl', 'woodgrain', 'Wilsonart', '7965K-12',  'Core',   0,  true),
-  laminate('lam-7943K-07', 'Colombian Walnut',   '#3d2817', 'tfl', 'woodgrain', 'Wilsonart', '7943K-07',  'Core',   0,  true),
-  laminate('lam-5785-NG',  'Ashwood Beige',      '#b39a77', 'tfl', 'woodgrain', 'Formica',   '5785-NG',   'Select', 10, true),
-  laminate('lam-5788-NG',  'Hazel Walnut',       '#8b6a4a', 'tfl', 'woodgrain', 'Formica',   '5788-NG',   'Select', 10, true),
-  laminate('lam-7991-38',  'Neowalnut',          '#6a4a33', 'tfl', 'woodgrain', 'Wilsonart', '7991-38',   'Select', 15, true),
-  laminate('lam-7992-38',  'Pinnacle Walnut',    '#7a5a3e', 'tfl', 'woodgrain', 'Wilsonart', '7992-38',   'Select', 15, false),
-  laminate('lam-7993-38',  'Florence Walnut',    '#6b5440', 'tfl', 'woodgrain', 'Wilsonart', '7993-38',   'Select', 15, false),
-  laminate('lam-7949K-18', 'Asian Night',        '#2a1f18', 'tfl', 'woodgrain', 'Wilsonart', '7949K-18',  'Select', 10, true),
-  laminate('lam-7964K-12', 'Skyline Walnut',     '#3d3028', 'tfl', 'woodgrain', 'Wilsonart', '7964K-12',  'Select', 10, true),
-  laminate('lam-7985-38',  'Morelia Mango',      '#9a6a40', 'tfl', 'woodgrain', 'Wilsonart', '7985-38',   'Select', 15, false),
-  laminate('lam-7937-38',  'River Cherry',       '#8b4a33', 'tfl', 'woodgrain', 'Wilsonart', '7937-38',   'Select', 15, true),
-  laminate('lam-7909-60',  'Fusion Maple',       '#d4a87d', 'tfl', 'woodgrain', 'Wilsonart', '7909-60',   'Select', 10, true),
-  laminate('lam-7990-38',  'Mission Maple',      '#a88560', 'tfl', 'woodgrain', 'Wilsonart', '7990-38',   'Select', 15, false),
-  laminate('lam-7995-38',  'Sterling Ash',       '#a09790', 'tfl', 'woodgrain', 'Wilsonart', '7995-38',   'Select', 15, false),
-  laminate('lam-7933K-07', 'Cafelle',            '#8a6850', 'tfl', 'woodgrain', 'Wilsonart', '7933K-07',  'Select', 15, false),
-  laminate('lam-7981K-12', 'Landmark Wood',      '#5d3f2a', 'tfl', 'woodgrain', 'Wilsonart', '7981K-12',  'Luxe',   35, false),
-  laminate('lam-8208K-16', 'Fawn Cypress',       '#b8a082', 'tfl', 'woodgrain', 'Wilsonart', '8208K-16',  'Luxe',   20, true),
-  laminate('lam-7952K-18', 'Asian Sand',         '#b89870', 'tfl', 'woodgrain', 'Wilsonart', '7952K-18',  'Luxe',   35, false),
-  laminate('lam-8210K-28', 'Portico Teak',       '#7a5638', 'tfl', 'woodgrain', 'Wilsonart', '8210K-28',  'Luxe',   30, true),
-  laminate('lam-8209K-28', 'Veranla Teak',       '#8a7056', 'tfl', 'woodgrain', 'Wilsonart', '8209K-28',  'Luxe',   35, false),
-  laminate('lam-7970K-18', 'High Line',          '#6a553e', 'tfl', 'woodgrain', 'Wilsonart', '7970K-18',  'Luxe',   35, true),
-  laminate('lam-8212K-28', 'Phantom Ecru',       '#c8b89e', 'tfl', 'woodgrain', 'Wilsonart', '8212K-28',  'Luxe',   30, true),
+  laminate('lam-7122K-07', 'Empire Mahogany', '#4a2618', 'tfl', 'woodgrain', 'Wilsonart', '7122K-07', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7925-38', 'Monticello Maple', '#c89668', 'tfl', 'woodgrain', 'Wilsonart', '7925-38', 'Core', 0, false, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', edgebandRef: 'Kimball HN2', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7960K-18', 'Studio Teak', '#8b6239', 'tfl', 'woodgrain', 'Wilsonart', '7960K-18', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7946-38', 'Brazilwood', '#6b2e1f', 'tfl', 'woodgrain', 'Wilsonart', '7946-38', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-10776-60', 'Kensington Maple', '#d4a374', 'tfl', 'woodgrain', 'Wilsonart', '10776-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7054-60', 'Wild Cherry', '#7a3b28', 'tfl', 'woodgrain', 'Wilsonart', '7054-60', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7965K-12', 'Walnut Heights', '#5a3c2a', 'tfl', 'woodgrain', 'Wilsonart', '7965K-12', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7943K-07', 'Colombian Walnut', '#3d2817', 'tfl', 'woodgrain', 'Wilsonart', '7943K-07', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-5785-NG', 'Ashwood Beige', '#b39a77', 'tfl', 'woodgrain', 'Formica', '5785-NG', 'Select', 10, true, true,
+    { priceBasis: 'Formica Column', bandingBasis: 'Formica Column + 10%', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-5788-NG', 'Hazel Walnut', '#8b6a4a', 'tfl', 'woodgrain', 'Formica', '5788-NG', 'Select', 10, true, true,
+    { priceBasis: 'Formica Column', bandingBasis: 'Formica Column + 10%', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7991-38', 'Neowalnut', '#6a4a33', 'tfl', 'woodgrain', 'Wilsonart', '7991-38', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 15, mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7992-38', 'Pinnacle Walnut', '#7a5a3e', 'tfl', 'woodgrain', 'Wilsonart', '7992-38', 'Select', 15, false, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: false, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7993-38', 'Florence Walnut', '#6b5440', 'tfl', 'woodgrain', 'Wilsonart', '7993-38', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7949K-18', 'Asian Night', '#2a1f18', 'tfl', 'woodgrain', 'Wilsonart', '7949K-18', 'Select', 10, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 10%', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7964K-12', 'Skyline Walnut', '#3d3028', 'tfl', 'woodgrain', 'Wilsonart', '7964K-12', 'Select', 10, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 10%', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7985-38', 'Morelia Mango', '#9a6a40', 'tfl', 'woodgrain', 'Wilsonart', '7985-38', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7937-38', 'River Cherry', '#8b4a33', 'tfl', 'woodgrain', 'Wilsonart', '7937-38', 'Select', 15, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7909-60', 'Fusion Maple', '#d4a87d', 'tfl', 'woodgrain', 'Wilsonart', '7909-60', 'Select', 10, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 10, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7990-38', 'Mission Maple', '#a88560', 'tfl', 'woodgrain', 'Wilsonart', '7990-38', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7995-38', 'Sterling Ash', '#a09790', 'tfl', 'woodgrain', 'Wilsonart', '7995-38', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7933K-07', 'Cafelle', '#8a6850', 'tfl', 'woodgrain', 'Wilsonart', '7933K-07', 'Select', 15, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-7981K-12', 'Landmark Wood', '#5d3f2a', 'tfl', 'woodgrain', 'Wilsonart', '7981K-12', 'Luxe', 35, true, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 'custom', edgebandRef: 'Cashew Rift Edge Band', mustStock: true, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-8208K-16', 'Fawn Cypress', '#b8a082', 'tfl', 'woodgrain', 'Wilsonart', '8208K-16', 'Luxe', 20, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 15, mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7952K-18', 'Asian Sand', '#b89870', 'tfl', 'woodgrain', 'Wilsonart', '7952K-18', 'Luxe', 35, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-8210K-28', 'Portico Teak', '#7a5638', 'tfl', 'woodgrain', 'Wilsonart', '8210K-28', 'Luxe', 30, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 10, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-8209K-28', 'Veranla Teak', '#8a7056', 'tfl', 'woodgrain', 'Wilsonart', '8209K-28', 'Luxe', 35, false, false,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-7970K-18', 'High Line', '#6a553e', 'tfl', 'woodgrain', 'Wilsonart', '7970K-18', 'Luxe', 35, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-8212K-28', 'Phantom Ecru', '#c8b89e', 'tfl', 'woodgrain', 'Wilsonart', '8212K-28', 'Luxe', 30, true, true,
+    { priceBasis: 'Wilsonart Column', bandingBasis: 'Wilsonart Column + 20%', bandingUpchargePct: 10, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
 ];
 
 // ----- SOLIDS (15) + PATTERNS (23) → hplFinishes -----
 export const hplFinishes: FinishOption[] = [
   // Solids
-  laminate('lam-D354-60',   'Designer White',              '#f0eee8', 'hpl', 'solid', 'Wilsonart', 'D354-60',  'Core',   0,  true),
-  laminate('lam-15501-31',  'White Velvet — Traceless',    '#f5f5f3', 'hpl', 'solid', 'Wilsonart', '15501-31', 'Custom', 0,  false),
-  laminate('lam-1573-60',   'Frosty White',                '#ffffff', 'hpl', 'solid', 'Wilsonart', '1573-60',  'Core',   0,  true),
-  laminate('lam-D439-60',   'Wallaby',                     '#a89b88', 'hpl', 'solid', 'Wilsonart', 'D439-60',  'Core',   0,  true),
-  laminate('lam-D327-60',   'Pepperdust',                  '#968878', 'hpl', 'solid', 'Wilsonart', 'D327-60',  'Core',   0,  true),
-  laminate('lam-D381-60',   'Fashion Grey',                '#8e8882', 'hpl', 'solid', 'Wilsonart', 'D381-60',  'Core',   0,  true),
-  laminate('lam-D315-60',   'Platinum Grey',               '#b8b4ae', 'hpl', 'solid', 'Wilsonart', 'D315-60',  'Core',   0,  true),
-  laminate('lam-D504-60',   'Fossil Shale',                '#6a6058', 'hpl', 'solid', 'Wilsonart', 'D504-60',  'Core',   0,  true),
-  laminate('lam-15504-31',  'Charcoal Velvet — Traceless', '#3a3a3a', 'hpl', 'solid', 'Wilsonart', '15504-31', 'Custom', 0,  false),
-  laminate('lam-D91-60',    'Slate Grey',                  '#4a4a4e', 'hpl', 'solid', 'Wilsonart', 'D91-60',   'Core',   0,  true),
-  laminate('lam-1595-60',   'Black',                       '#1a1a1a', 'hpl', 'solid', 'Wilsonart', '1595-60',  'Core',   0,  true),
-  laminate('lam-D321-60',   'Brittany Blue',               '#1e3a5f', 'hpl', 'solid', 'Wilsonart', 'D321-60',  'Select', 15, false),
-  laminate('lam-D25-60',    'Atlantis',                    '#1e5a6f', 'hpl', 'solid', 'Wilsonart', 'D25-60',   'Select', 15, false),
-  laminate('lam-D505-60',   'Midnight',                    '#0e0f18', 'hpl', 'solid', 'Wilsonart', 'D505-60',  'Select', 15, false),
-  laminate('lam-15505-31',  'Black — Traceless',           '#1a1a1a', 'hpl', 'solid', 'Wilsonart', '15505-31', 'Custom', 0,  false),
+  laminate('lam-D354-60', 'Designer White', '#f0eee8', 'hpl', 'solid', 'Wilsonart', 'D354-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-15501-31', 'White Velvet — Traceless', '#f5f5f3', 'hpl', 'solid', 'Wilsonart', '15501-31', 'Luxe', 0, true, true,
+    { priceBasis: 'Custom quote only', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-1573-60', 'Frosty White', '#ffffff', 'hpl', 'solid', 'Wilsonart', '1573-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D439-60', 'Wallaby', '#a89b88', 'hpl', 'solid', 'Wilsonart', 'D439-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D327-60', 'Pepperdust', '#968878', 'hpl', 'solid', 'Wilsonart', 'D327-60', 'Core', 0, true, true,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D381-60', 'Fashion Grey', '#8e8882', 'hpl', 'solid', 'Wilsonart', 'D381-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D315-60', 'Platinum Grey', '#b8b4ae', 'hpl', 'solid', 'Wilsonart', 'D315-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D504-60', 'Fossil Shale', '#6a6058', 'hpl', 'solid', 'Wilsonart', 'D504-60', 'Core', 0, false, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-15504-31', 'Charcoal Velvet — Traceless', '#3a3a3a', 'hpl', 'solid', 'Wilsonart', '15504-31', 'Luxe', 0, true, true,
+    { priceBasis: 'Custom quote only', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D91-60', 'Slate Grey', '#4a4a4e', 'hpl', 'solid', 'Wilsonart', 'D91-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-1595-60', 'Black', '#1a1a1a', 'hpl', 'solid', 'Wilsonart', '1595-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 0, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-D321-60', 'Brittany Blue', '#1e3a5f', 'hpl', 'solid', 'Wilsonart', 'D321-60', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-D25-60', 'Atlantis', '#1e5a6f', 'hpl', 'solid', 'Wilsonart', 'D25-60', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-D505-60', 'Midnight', '#0e0f18', 'hpl', 'solid', 'Wilsonart', 'D505-60', 'Select', 15, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-15505-31', 'Black — Traceless', '#1a1a1a', 'hpl', 'solid', 'Wilsonart', '15505-31', 'Luxe', 0, true, true,
+    { priceBasis: 'Custom quote only', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
 
   // Patterns
-  laminate('lam-4779-60',   'Pewter Brush',      '#7a7874', 'hpl', 'pattern', 'Wilsonart', '4779-60',  'Core',   0,  false),
-  laminate('lam-4669-60',   'Natural Tigris',    '#a89680', 'hpl', 'pattern', 'Wilsonart', '4669-60',  'Core',   0,  false),
-  laminate('lam-4674-60',   'Evening Tigris',    '#4a4038', 'hpl', 'pattern', 'Wilsonart', '4674-60',  'Core',   0,  false),
-  laminate('lam-4783-60',   'White Tigris',      '#d8d0c4', 'hpl', 'pattern', 'Wilsonart', '4783-60',  'Core',   0,  false),
-  laminate('lam-4623-60',   'Graphite Nebula',   '#3a3a3e', 'hpl', 'pattern', 'Wilsonart', '4623-60',  'Core',   0,  false),
-  laminate('lam-4622-60',   'Grey Nebula',       '#8a8a8e', 'hpl', 'pattern', 'Wilsonart', '4622-60',  'Core',   0,  false),
-  laminate('lam-4621-60',   'White Nebula',      '#dcd8d4', 'hpl', 'pattern', 'Wilsonart', '4621-60',  'Core',   0,  false),
-  laminate('lam-5035-38',   'Handspun Slate',    '#6a6a6c', 'hpl', 'pattern', 'Wilsonart', '5035-38',  'Core',   0,  false),
-  laminate('lam-5034-38',   'Handspun Dove',     '#a8a8aa', 'hpl', 'pattern', 'Wilsonart', '5034-38',  'Core',   0,  false),
-  laminate('lam-5036-38',   'Handspun Chestnut', '#7a5a40', 'hpl', 'pattern', 'Wilsonart', '5036-38',  'Core',   0,  false),
-  laminate('lam-5033-38',   'Handspun Pearl',    '#e8e4de', 'hpl', 'pattern', 'Wilsonart', '5033-38',  'Core',   0,  false),
-  laminate('lam-5016-38',   'French Linen',      '#c4b8a0', 'hpl', 'pattern', 'Wilsonart', '5016-38',  'Core',   0,  false),
-  laminate('lam-4991-38',   'Pressed Linen',     '#b8ac98', 'hpl', 'pattern', 'Wilsonart', '4991-38',  'Core',   0,  false),
-  laminate('lam-5015-38',   'Nordic Linen',      '#b4b0a4', 'hpl', 'pattern', 'Wilsonart', '5015-38',  'Core',   0,  false),
-  laminate('lam-4942-38',   'Crisp Linen',       '#d4c8b0', 'hpl', 'pattern', 'Wilsonart', '4942-38',  'Core',   0,  true),
-  laminate('lam-4944-38',   'Casual Linen',      '#c0b498', 'hpl', 'pattern', 'Wilsonart', '4944-38',  'Core',   0,  false),
-  laminate('lam-4996-38',   'Flax Linen',        '#c8ba90', 'hpl', 'pattern', 'Wilsonart', '4996-38',  'Core',   0,  false),
-  laminate('lam-4943-38',   'Classic Linen',     '#bbb094', 'hpl', 'pattern', 'Wilsonart', '4943-38',  'Core',   0,  false),
-  laminate('lam-4941K-18',  'Cosmic Strandz',    '#3e3834', 'hpl', 'pattern', 'Wilsonart', '4941K-18', 'Luxe',   20, false),
-  laminate('lam-4940K-18',  'Astro Strandz',     '#6a6460', 'hpl', 'pattern', 'Wilsonart', '4940K-18', 'Luxe',   20, false),
-  laminate('lam-4939K-18',  'Vapor Strandz',     '#a8a4a0', 'hpl', 'pattern', 'Wilsonart', '4939K-18', 'Luxe',   20, false),
-  laminate('lam-5023K-19',  'Nightfall',         '#1a1a20', 'hpl', 'pattern', 'Wilsonart', '5023K-19', 'Luxe',   20, false),
-  laminate('lam-5024K-19',  'Blackbird',         '#232326', 'hpl', 'pattern', 'Wilsonart', '5024K-19', 'Luxe',   20, false),
+  laminate('lam-4779-60', 'Pewter Brush', '#7a7874', 'hpl', 'pattern', 'Wilsonart', '4779-60', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-4669-60', 'Natural Tigris', '#a89680', 'hpl', 'pattern', 'Wilsonart', '4669-60', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-4674-60', 'Evening Tigris', '#4a4038', 'hpl', 'pattern', 'Wilsonart', '4674-60', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 15, mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-4783-60', 'White Tigris', '#d8d0c4', 'hpl', 'pattern', 'Wilsonart', '4783-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-4623-60', 'Graphite Nebula', '#3a3a3e', 'hpl', 'pattern', 'Wilsonart', '4623-60', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-4622-60', 'Grey Nebula', '#8a8a8e', 'hpl', 'pattern', 'Wilsonart', '4622-60', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-4621-60', 'White Nebula', '#dcd8d4', 'hpl', 'pattern', 'Wilsonart', '4621-60', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 15, mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5035-38', 'Handspun Slate', '#6a6a6c', 'hpl', 'pattern', 'Wilsonart', '5035-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5034-38', 'Handspun Dove', '#a8a8aa', 'hpl', 'pattern', 'Wilsonart', '5034-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5036-38', 'Handspun Chestnut', '#7a5a40', 'hpl', 'pattern', 'Wilsonart', '5036-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5033-38', 'Handspun Pearl', '#e8e4de', 'hpl', 'pattern', 'Wilsonart', '5033-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5016-38', 'French Linen', '#c4b8a0', 'hpl', 'pattern', 'Wilsonart', '5016-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-4991-38', 'Pressed Linen', '#b8ac98', 'hpl', 'pattern', 'Wilsonart', '4991-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5015-38', 'Nordic Linen', '#b4b0a4', 'hpl', 'pattern', 'Wilsonart', '5015-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-4942-38', 'Crisp Linen', '#d4c8b0', 'hpl', 'pattern', 'Wilsonart', '4942-38', 'Core', 0, true, true,
+    { priceBasis: 'Standard Column', bandingUpchargePct: 15, mustStock: false, edgebandStocked: true, edgebandMustStock: false }),
+  laminate('lam-4944-38', 'Casual Linen', '#c0b498', 'hpl', 'pattern', 'Wilsonart', '4944-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-4996-38', 'Flax Linen', '#c8ba90', 'hpl', 'pattern', 'Wilsonart', '4996-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-4943-38', 'Classic Linen', '#bbb094', 'hpl', 'pattern', 'Wilsonart', '4943-38', 'Core', 0, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-4941K-18', 'Cosmic Strandz', '#3e3834', 'hpl', 'pattern', 'Wilsonart', '4941K-18', 'Luxe', 20, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-4940K-18', 'Astro Strandz', '#6a6460', 'hpl', 'pattern', 'Wilsonart', '4940K-18', 'Luxe', 20, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-4939K-18', 'Vapor Strandz', '#a8a4a0', 'hpl', 'pattern', 'Wilsonart', '4939K-18', 'Luxe', 20, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
+  laminate('lam-5023K-19', 'Nightfall', '#1a1a20', 'hpl', 'pattern', 'Wilsonart', '5023K-19', 'Luxe', 20, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
+  laminate('lam-5024K-19', 'Blackbird', '#232326', 'hpl', 'pattern', 'Wilsonart', '5024K-19', 'Luxe', 20, false, false,
+    { priceBasis: 'Wilsonart Column', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
 ];
 
 /** All 2026 TableX laminates (66 colors: 28 woodgrain + 15 solid + 23 pattern). */
