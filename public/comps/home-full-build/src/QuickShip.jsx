@@ -21,7 +21,7 @@ const QuickShip = () => (
             Designer White, and Frosty White.
           </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 36 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, marginTop: 36 }}>
             <a href="#" className="btn btn--ember">browse Quick Ship</a>
             <a href="#" className="cta-arrow" style={{ color: 'var(--tx-iron)', alignSelf: 'center' }}>
               See eligible configurations <span aria-hidden="true">→</span>
@@ -35,12 +35,16 @@ const QuickShip = () => (
             Eligible series
           </div>
           <div style={{ borderTop: '1px solid rgba(10,10,10,0.12)' }}>
+            {/* nitpick 2026-06-05: rows are deep links to series pages — clickable,
+                with the same hover-wash + breathing-room affordance as Browse by Space */}
             {ELIGIBLE.map((s, i) => (
-              <div key={s} style={{
+              <a key={s} href="#" className="qs-series-row" style={{
                 display: 'flex',
                 alignItems: 'baseline',
                 justifyContent: 'space-between',
-                padding: '20px 0',
+                padding: '20px 28px',
+                textDecoration: 'none',
+                transition: 'background 220ms var(--ease-out-quart)',
                 borderBottom: '1px solid rgba(10,10,10,0.12)'
               }}>
                 <div style={{
@@ -62,7 +66,7 @@ const QuickShip = () => (
                   }} />
                   In stock
                 </div>
-              </div>
+              </a>
             ))}
           </div>
           <div style={{ marginTop: 18, fontSize: 13, color: 'var(--tx-stone-500)', lineHeight: 1.55 }}>
@@ -82,6 +86,7 @@ const QuickShip = () => (
       @media (max-width: 900px) {
         .qs-grid { grid-template-columns: 1fr; gap: 48px; }
       }
+      .qs-series-row:hover { background: var(--tx-bone); }
     `}</style>
   </section>
 );

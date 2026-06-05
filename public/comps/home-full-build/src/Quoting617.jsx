@@ -66,7 +66,9 @@ const Quoting617 = () => (
               display: 'grid',
               gridTemplateColumns: 'minmax(140px, 1.1fr) 2.4fr',
               gap: 32,
-              alignItems: 'baseline',
+              /* nitpick 2026-06-05: baseline pinned the numeral to the label's
+                 first line — center the numeral against the full text block */
+              alignItems: 'center',
               padding: 'clamp(28px, 3vw, 44px) 0',
               borderTop: i === 0 ? '1px solid rgba(255,255,255,0.18)' : 'none',
               borderBottom: '1px solid rgba(255,255,255,0.18)'
@@ -77,7 +79,10 @@ const Quoting617 = () => (
                 fontSize: 'clamp(36px, 3.4vw, 64px)',
                 lineHeight: 1,
                 letterSpacing: '-0.02em',
-                color: '#FFFFFF'
+                color: '#FFFFFF',
+                /* leading-trim so the centering uses glyph bounds, not line-box */
+                textBoxTrim: 'trim-both',
+                textBoxEdge: 'cap alphabetic'
               }}>{row.kpi}</div>
               <div>
                 <div className="label-caps" style={{ color: '#B8B4A6', marginBottom: 6 }}>{row.label}</div>

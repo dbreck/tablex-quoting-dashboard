@@ -5,10 +5,10 @@
 // overflow cards Kayla drew (Occasional / Dining). We show all 5 — 3-up on desktop
 // with the last 2 wrapping to the next row.
 const COLLECTIONS = [
-{ name: 'App', tag: 'Work-from-anywhere small tables.', img: 'photo-collection-app.jpg' },
-{ name: 'Solo', tag: 'Individual focus stations.', img: 'photo-collection-solo.jpg' },
-{ name: 'Outdoor', tag: 'Weather-rated for patios + campuses.', img: 'photo-ember-circle-2.jpg' },
-{ name: 'Occasional', tag: 'Lounge + lobby + statement tables.', img: 'photo-ember-circle-1.jpg' },
+{ name: 'App', tag: 'Work-from-anywhere small tables.', img: 'photo-collection-app-bundle.jpg' },
+{ name: 'Solo', tag: 'Individual focus stations.', img: 'photo-collection-solo-bundle.jpg' },
+{ name: 'Outdoor', tag: 'Weather-rated for patios + campuses.', img: 'photo-ember-circle-2-bundle.jpg' },
+{ name: 'Occasional', tag: 'Lounge + lobby + statement tables.', img: 'photo-ember-circle-1-bundle.jpg' },
 { name: 'Dining', tag: 'Café + hospitality + employee dining.', img: 'photo-trig-render.png' },
 { name: 'Conference', tag: 'Boardroom + breakout + huddle.', img: 'photo-featured-bases.png', bgPos: 'right center' }];
 

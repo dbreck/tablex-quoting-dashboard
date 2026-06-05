@@ -1,6 +1,6 @@
 // TriBlock.jsx — Pattern #9 — Tri-block routing band
 // Three doors. Specifying on Canvas, Demoing + Browsing on Iron-black.
-const TriColumn = ({ tone, eyebrow, icon, items, cta, pill }) => {
+const TriColumn = ({ tone, eyebrow, icon, items, cta }) => {
   const TONES = {
     canvas: { bg: 'var(--tx-canvas)', fg: '#191919', dim: '#6C6B6B' },
     iron:   { bg: 'var(--tx-iron)',   fg: '#FFFFFF', dim: '#B8B4A6' },
@@ -53,32 +53,20 @@ const TriColumn = ({ tone, eyebrow, icon, items, cta, pill }) => {
       </ul>
 
       <div style={{ marginTop: 'auto', paddingTop: 36 }}>
-        {pill ? (
-          <a href="#" style={{
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: '#FFFFFF',
-            background: 'var(--tx-ember)',
-            textDecoration: 'none',
-            borderRadius: 999,
-            padding: '13px 26px',
-            display: 'inline-block'
-          }}>{cta}</a>
-        ) : (
-          <a href="#" style={{
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: fg,
-            textDecoration: 'none',
-            borderBottom: `2px solid ${fg}`,
-            paddingBottom: 6,
-            display: 'inline-block'
-          }}>{cta}</a>
-        )}
+        {/* nitpick 2026-06-05: all three doors are peers — uniform UPPERCASE
+            underlined link treatment (the Ember pill on Selling implied hierarchy
+            and broke the casing rule: pills are lowercase, tri-block CTAs nav-class). */}
+        <a href="#" style={{
+          fontSize: 12,
+          fontWeight: 600,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: fg,
+          textDecoration: 'none',
+          borderBottom: `2px solid ${fg}`,
+          paddingBottom: 6,
+          display: 'inline-block'
+        }}>{cta}</a>
       </div>
     </div>
   );
@@ -107,7 +95,6 @@ const TriBlock = () => {
         icon="aperture"
         items={['Tablet-optimized catalog', 'Territory dashboard', 'Commerce']}
         cta="Open Rep Portal"
-        pill
       />
       <TriColumn
         tone="iron"

@@ -12,14 +12,14 @@
 //   • Product-detail + environmental imagery only (NO shop-floor / maker shots).
 
 const ITEMS = [
-  { mask: 'circle',    img: 'photo-hero-chairs.png',     w: 480, h: 480, pos: 'center' },
-  { mask: 'v-stadium', img: 'photo-collection-solo.jpg', w: 300, h: 620, pos: 'center' },
+  { mask: 'circle',    img: 'photo-hero-chairs-bundle.jpg',     w: 480, h: 480, pos: 'center' },
+  { mask: 'v-stadium', img: 'photo-collection-solo-bundle.jpg', w: 300, h: 620, pos: 'center' },
   { mask: 'soft-rect', img: 'photo-featured-bases.png',  w: 560, h: 380, pos: 'center' },
   { mask: 'h-stadium', img: 'photo-trig-render.png',     w: 660, h: 340, pos: 'center' },
-  { mask: 'circle',    img: 'photo-collection-app.jpg',  w: 460, h: 460, pos: 'center' },
-  { mask: 'v-stadium', img: 'photo-ember-circle-1.jpg',  w: 300, h: 620, pos: 'center' },
-  { mask: 'soft-rect', img: 'photo-ember-circle-2.jpg',  w: 540, h: 400, pos: 'center' },
-  { mask: 'h-stadium', img: 'photo-hero-chairs.png',     w: 640, h: 320, pos: 'right'  },
+  { mask: 'circle',    img: 'photo-collection-app-bundle.jpg',  w: 460, h: 460, pos: 'center' },
+  { mask: 'v-stadium', img: 'photo-ember-circle-1-bundle.jpg',  w: 300, h: 620, pos: 'center' },
+  { mask: 'soft-rect', img: 'photo-ember-circle-2-bundle.jpg',  w: 540, h: 400, pos: 'center' },
+  { mask: 'h-stadium', img: 'photo-hero-chairs-bundle.jpg',     w: 640, h: 320, pos: 'right'  },
 ];
 
 const maskRadius = (mask) => {

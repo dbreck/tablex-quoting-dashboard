@@ -25,7 +25,10 @@ const SpaceRow = ({ n, name, tag, last }) => (
       fontFamily: 'var(--font-body)',
       fontSize: 14, fontWeight: 600,
       letterSpacing: '0.18em',
-      color: 'var(--tx-stone-500)'
+      color: 'var(--tx-stone-500)',
+      /* nitpick 2026-06-05: mirror the arrow side — keep the number off the
+         hover wash's left edge */
+      paddingLeft: 28
     }}>{n}</div>
     <div style={{
       fontFamily: 'var(--font-display)',
@@ -44,7 +47,10 @@ const SpaceRow = ({ n, name, tag, last }) => (
     <div style={{
       fontFamily: 'var(--font-body)',
       fontSize: 20, color: 'var(--tx-iron)',
-      textAlign: 'right'
+      textAlign: 'right',
+      /* nitpick 2026-06-05: breathing room so the hover wash isn't flush
+         against the arrow tip */
+      paddingRight: 28
     }}>→</div>
   </a>
 );

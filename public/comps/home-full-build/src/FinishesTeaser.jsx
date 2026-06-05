@@ -7,10 +7,10 @@ const POWDER_SWATCHES = [
 
 
 const LAMINATE_BLOCKS = [
-{ name: 'Ashwood Beige',    img: 'laminate-ashwood-beige.png' },
-{ name: 'Asian Sand',       img: 'laminate-asian-sand.png' },
-{ name: 'Brazilwood',       img: 'laminate-brazilwood.png' },
-{ name: 'Colombian Walnut', img: 'laminate-colombian-walnut.png' }];
+{ name: 'Ashwood Beige',    img: 'laminate-ashwood-beige-bundle.png' },
+{ name: 'Asian Sand',       img: 'laminate-asian-sand-bundle.png' },
+{ name: 'Brazilwood',       img: 'laminate-brazilwood-bundle.png' },
+{ name: 'Colombian Walnut', img: 'laminate-colombian-walnut-bundle.png' }];
 
 
 const FinishesTeaser = () =>
