@@ -178,7 +178,9 @@ export default function LaminatesTab() {
 
       {/* Count */}
       <p className="text-xs text-slate-500 mb-3">
-        Showing {filtered.length} of 66 laminates
+        Showing {filtered.length} of {laminateCatalog.length} laminates
+        {" · "}
+        {laminateCatalog.filter((f) => f.isStock).length} stocked
       </p>
 
       {/* Grid */}
@@ -210,13 +212,39 @@ export default function LaminatesTab() {
                 {typeof f.upchargePct === "number" && f.upchargePct > 0 && (
                   <span className="text-xs text-slate-500">+{f.upchargePct}%</span>
                 )}
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                    f.isStock
+                      ? "bg-green-100 text-green-800"
+                      : f.mustStock
+                        ? "bg-amber-100 text-amber-800"
+                        : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {f.isStock ? "In stock" : f.mustStock ? "Stocking soon" : "Special order"}
+                </span>
               </div>
-              {f.hasMatchingEdgeband === true && (
+              {/* Edgeband state (priority: named substitute > stocked > planned > custom quote) */}
+              {f.edgebandRef ? (
+                <div className="flex items-center gap-1 pt-1">
+                  <Check className="h-3 w-3 text-amber-600" />
+                  <span className="text-[10px] text-slate-500">Edge: {f.edgebandRef}</span>
+                </div>
+              ) : f.edgebandStocked ? (
                 <div className="flex items-center gap-1 pt-1">
                   <Check className="h-3 w-3 text-green-600" />
-                  <span className="text-[10px] text-slate-500">Matching edge</span>
+                  <span className="text-[10px] text-slate-500">
+                    Matching edge
+                    {typeof f.bandingUpchargePct === "number" && f.bandingUpchargePct > 0
+                      ? ` +${f.bandingUpchargePct}%`
+                      : ""}
+                  </span>
                 </div>
-              )}
+              ) : f.edgebandMustStock ? (
+                <div className="pt-1 text-[10px] text-slate-500">Edge band: stocking soon</div>
+              ) : f.bandingUpchargePct === "custom" ? (
+                <div className="pt-1 text-[10px] text-slate-500">Edge band: custom quote</div>
+              ) : null}
             </div>
           </div>
         ))}

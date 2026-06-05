@@ -599,6 +599,15 @@ export default function ConfiguratorPage() {
                               )}
                             </div>
                           )}
+                          {finish.brand && finish.isStock === false && (
+                            <div
+                              className={`text-[10px] font-medium ${
+                                finish.mustStock ? "text-amber-700" : "text-slate-500"
+                              }`}
+                            >
+                              {finish.mustStock ? "Stocking soon" : "Special order"}
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="px-1.5 py-1">
