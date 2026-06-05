@@ -5,12 +5,15 @@
 // overflow cards Kayla drew (Occasional / Dining). We show all 5 — 3-up on desktop
 // with the last 2 wrapping to the next row.
 const COLLECTIONS = [
-{ name: 'App', tag: 'Work-from-anywhere small tables.', img: 'photo-collection-app-bundle.jpg' },
-{ name: 'Solo', tag: 'Individual focus stations.', img: 'photo-collection-solo-bundle.jpg' },
-{ name: 'Outdoor', tag: 'Weather-rated for patios + campuses.', img: 'photo-ember-circle-2-bundle.jpg' },
-{ name: 'Occasional', tag: 'Lounge + lobby + statement tables.', img: 'photo-ember-circle-1-bundle.jpg' },
-{ name: 'Dining', tag: 'Café + hospitality + employee dining.', img: 'photo-trig-render.png' },
-{ name: 'Conference', tag: 'Boardroom + breakout + huddle.', img: 'photo-featured-bases.png', bgPos: 'right center' }];
+// 2026-06-05: real product shots from Drive "Assets / Product Shots"
+// (App·Solo direct; Outdoor=Element Outdoor pub; Occasional=Exclaim round;
+//  Dining=Primary round; Conference=Ultra rect — mapped via series-catalog apps)
+{ name: 'App', tag: 'Work-from-anywhere small tables.', img: 'collection-app.jpg' },
+{ name: 'Solo', tag: 'Individual focus stations.', img: 'collection-solo.jpg' },
+{ name: 'Outdoor', tag: 'Weather-rated for patios + campuses.', img: 'collection-outdoor.jpg' },
+{ name: 'Occasional', tag: 'Lounge + lobby + statement tables.', img: 'collection-occasional.jpg' },
+{ name: 'Dining', tag: 'Café + hospitality + employee dining.', img: 'collection-dining.jpg' },
+{ name: 'Conference', tag: 'Boardroom + breakout + huddle.', img: 'collection-conference.jpg' }];
 
 
 const CollectionCard = ({ name, tag, img, bgPos }) =>
