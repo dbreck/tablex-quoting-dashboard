@@ -98,9 +98,13 @@ strong { font-family: var(--font-display); font-weight: 700; }
   letter-spacing: 0.05em;
   border-radius: 999px;
   padding: 17px 36px;
-  /* cc-3 — optical vertical centering of button text */
+  /* cc-3 + nitpick 2026-06-05 — leading-trim optical centering.
+     Pills are ALWAYS lowercase (casing rule), so trim to x-height (`ex`),
+     not cap height — with `cap alphabetic` the box reserves ascender room
+     lowercase glyphs never use and the text sits visually low. */
   text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
+  text-box-edge: ex alphabetic;
+  text-box: trim-both ex alphabetic;
   cursor: pointer;
   border: 2px solid transparent;
   transition: background var(--dur-ui) var(--ease-out-quart),
