@@ -23,7 +23,7 @@ Regenerate with `/arch-map` when the architecture drifts.
 
 The authoritative TableX brand bundle lives at `docs/TableX Design System/Design Finals/`. It's the upload set for the published claude.ai/design Design System.
 
-**Status (2026-05-26):** DS published + validated (A/B/C) + distinctiveness pass done. `00-DESIGN-SYSTEM.md` §8a "Distinctiveness mandates" (M1–M6, surface-tiered) breaks the "warm-field + orange + black = Anthropic" recipe — direction is *contrast & depth, not cooling*. Grade claude.ai/design handoffs at the CODE level (curl the tarball → grep tokens/fonts/shadows). Handoffs are read-to-grade only — never implement design output in this repo; production impl → `tablex-site`. **Session 3 (Public Marketing wireframing) in progress; the A2 Home design was scrapped 2026-05-26 (overlap/clip cruft from iterating) — restart Home fresh.** Full state + fresh-start carry-list: auto-memory `project-claude-design-ds-published.md`.
+**Status (2026-06-06):** DS published + validated + §8a distinctiveness pass. **Home LANDED** (Kayla-recreation trunk, 5/27), Brian's feedback iterated (6/5), and served as a **multi-file JSX bundle** at `public/comps/home-full-build/` — nitpick fixes are direct `src/*.jsx` edits there (exception to "never implement design output here"; production impl still → `tablex-site`). Grade claude.ai/design handoffs at the CODE level (grep tokens/fonts/shadows). Next page: `/about` (`15-ABOUT-KICKOFF.md`, manufacturing-scrubbed). Content honesty (Brian 6/5): **zero manufacturing in Jasper** (shipping/distribution only — no welders/shop-floor/tours copy ever) and **617/12,338 stats banned on public surfaces** (ClearPH pitch-deck only). State: auto-memory `project-claude-design-ds-published.md` + `project-comps-home-bundle-v2.md`.
 
 - Brand source-of-truth: `Brand-Quick-Guide.png` (6 Pantone swatches + Acumin Pro specimens), `Home-01.png` (canonical homepage hi-fi), `TableX.fig`
 - Authoritative master spec: `00-DESIGN-SYSTEM.md` (palette, type, anti-AI-slop block)
@@ -50,6 +50,7 @@ npm run lint     # eslint
 ## Invariants worth preserving
 
 - **Hours are canonical; days are derived** (`hoursToDays = h / 8` rounded to 0.5). Baselines stored in days.
+- **Laminate pricing: summary tab of the 2026 sheet is authoritative** (Brian 6/5) — Core = "Wilsonart 2 or More" list, Select = +15%, Luxe = +35% (rounded up within category; Luxe *patterns* print +20, pending call). Detail tabs feed stock/banding fields only. `hasMatchingEdgeband` is OFFER-level (always false for patterns). Full rulings in `src/data/finish-catalog.ts` header.
 - **Task IDs** are `${deliverableId}-r${idx}` (seeded) or `nanoid(10)` (user-created). Monday's External ID column must match one of these — never title.
 - **Zustand selectors must return stable refs** — derive new arrays/objects inside `useMemo` in the hook body, not in the selector. Otherwise React error #185.
 - **Scope (frozen quote) vs Tasks (working reality) are separate layers** — `getScopeStatus()` reads overrides; `computeDeliverableStatus()` rolls up from tasks. Keep these paths distinct.
