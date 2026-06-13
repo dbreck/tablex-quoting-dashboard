@@ -34,7 +34,7 @@ export interface FinishOption {
   itemNumber?: string;
   subCategory?: LaminateSubCategory;
   priceTier?: LaminatePriceTier;
-  upchargePct?: number;             // laminate upcharge % over priceBasis: 0 (Core), 15 (Select), 35 (Luxe) — except Luxe PATTERNS print +20 on the summary tab (pending call confirmation vs the verbal Luxe=+35 rule)
+  upchargePct?: number;             // laminate upcharge % over priceBasis: 0 (Core), 15 (Select), 35 (Luxe). Luxe = +35 across the board incl. patterns (Brian's "round up to highest markup in category" rule; resolved 2026-06-13 — the summary tab's printed +20 for the 5 Luxe patterns was superseded)
   hasMatchingEdgeband?: boolean;    // TableX OFFERS a matching edgeband. Woodgrains/solids: mirrors edgebandStocked. Patterns: ALWAYS false (Brian 6/5 — matching pattern bands not offered, customers pick a solid edgeband) even where the manufacturer stocks one (see edgebandStocked).
   isStock?: boolean;                // laminate currently stocked (sheet "Stock Laminate")
   mustStock?: boolean;              // TableX "must stock" mandate for the laminate (may not be stocked yet)
@@ -116,8 +116,10 @@ export const chromeFinish: FinishOption = {
 //    2 or More" list, Select = +15%, Luxe = +35% — deliberately rounded UP to
 //    the highest markup within each category. The detail tabs were a separate
 //    manufacturer-facing working sheet (stock/banding data still comes from them).
-//  - ⚠ OPEN (next call): the 5 Luxe PATTERNS print +20% on the summary tab,
-//    which contradicts the verbal Luxe=+35 rule — catalog keeps +20 as printed.
+//  - RESOLVED 2026-06-13: the 5 Luxe PATTERNS now use +35% (was +20% as printed
+//    on the summary tab). Brian's categorical "round up to the highest markup in
+//    each category" rule governs; the summary tab's +20 was the printed-conflict.
+//    Receipt-confirm noted to Brian so he can object if the +20 was intentional.
 //  - Patterns get NO matching edgebands as an OFFER ("ugly, very few want
 //    them") — customers pick a solid edgeband. The manufacturer stocks 3
 //    (4783-60/4623-60/4942-38, see edgebandStocked) but TableX won't offer them.
@@ -295,15 +297,15 @@ export const hplFinishes: FinishOption[] = [
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
   laminate('lam-4943-38', 'Classic Linen', '#bbb094', 'hpl', 'pattern', 'Wilsonart', '4943-38', 'Core', 0, false, false,
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
-  laminate('lam-4941K-18', 'Cosmic Strandz', '#3e3834', 'hpl', 'pattern', 'Wilsonart', '4941K-18', 'Luxe', 20, false, false,
+  laminate('lam-4941K-18', 'Cosmic Strandz', '#3e3834', 'hpl', 'pattern', 'Wilsonart', '4941K-18', 'Luxe', 35, false, false,
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
-  laminate('lam-4940K-18', 'Astro Strandz', '#6a6460', 'hpl', 'pattern', 'Wilsonart', '4940K-18', 'Luxe', 20, false, false,
+  laminate('lam-4940K-18', 'Astro Strandz', '#6a6460', 'hpl', 'pattern', 'Wilsonart', '4940K-18', 'Luxe', 35, false, false,
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
-  laminate('lam-4939K-18', 'Vapor Strandz', '#a8a4a0', 'hpl', 'pattern', 'Wilsonart', '4939K-18', 'Luxe', 20, false, false,
+  laminate('lam-4939K-18', 'Vapor Strandz', '#a8a4a0', 'hpl', 'pattern', 'Wilsonart', '4939K-18', 'Luxe', 35, false, false,
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: true }),
-  laminate('lam-5023K-19', 'Nightfall', '#1a1a20', 'hpl', 'pattern', 'Wilsonart', '5023K-19', 'Luxe', 20, false, false,
+  laminate('lam-5023K-19', 'Nightfall', '#1a1a20', 'hpl', 'pattern', 'Wilsonart', '5023K-19', 'Luxe', 35, false, false,
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
-  laminate('lam-5024K-19', 'Blackbird', '#232326', 'hpl', 'pattern', 'Wilsonart', '5024K-19', 'Luxe', 20, false, false,
+  laminate('lam-5024K-19', 'Blackbird', '#232326', 'hpl', 'pattern', 'Wilsonart', '5024K-19', 'Luxe', 35, false, false,
     { priceBasis: 'Wilsonart 2 or More', bandingUpchargePct: 'custom', bandingNote: 'if stocking program put in place for banding then 15% upcharge', mustStock: true, edgebandStocked: false, edgebandMustStock: false }),
 ];
 
