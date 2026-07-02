@@ -342,38 +342,38 @@ export const allFinishes: FinishOption[] = [
 
 // ---------------------------------------------------------------------------
 // Edge Types
+//
+// Mark's ruling (2026-07-02, handwritten markup — docs/doc02638220260701112630.pdf):
+// the legacy 8-type list (T-Mold, Urethane Band, Rubber T-Mold, Wood/Vinyl
+// Bullnose, Phenolic, No Edge, Self Edge) is NOT the TableX offer. The offer
+// is exactly two: 3mm PVC (standard band) and Knife Edge (per the TableX
+// drawing — 31.73° underside bevel, 1.191″ tapering to a 0.512″ face).
+// Phenolic is available as a CUSTOM QUOTE only (profile reads close to 3mm
+// PVC); Self Edge is possible but deliberately not promoted. Historical quote
+// requests store edge display NAMES (not ids), so old records render as-is.
 // ---------------------------------------------------------------------------
 export const edgeTypes: EdgeType[] = [
-  { id: 'self-edge', name: 'Self Edge', description: 'Matching laminate applied to edge' },
-  { id: 't-mold', name: 'T-Mold', description: 'PVC T-shaped edge banding' },
-  { id: 'urethane-band', name: 'Urethane Band', description: 'Durable urethane bumper edge' },
-  { id: 'wood-bullnose', name: 'Wood Bullnose', description: 'Solid wood rounded edge profile' },
-  { id: 'vinyl-bullnose', name: 'Vinyl Bullnose', description: 'Vinyl rounded edge profile' },
-  { id: 'rubber-t-mold', name: 'Rubber T-Mold', description: 'Rubber T-shaped edge banding' },
-  { id: 'phenolic', name: 'Phenolic', description: 'Chemical-resistant phenolic edge' },
-  { id: 'no-edge', name: 'No Edge', description: 'No edge treatment' },
+  { id: 'pvc-3mm', name: '3mm PVC', description: 'Standard 3mm PVC edge band' },
+  { id: 'knife-edge', name: 'Knife Edge', description: 'Beveled underside profile — tapers to a thin front edge' },
 ];
 
 // ---------------------------------------------------------------------------
 // Edge Type → Material mapping (for 3D viewer)
 // ---------------------------------------------------------------------------
 const EDGE_TYPE_FINISHES: Record<string, FinishOption> = {
-  'self-edge':      { id: 'edge-self', name: 'Self Edge', category: 'hpl', hex: '#000000', roughness: 0.6, metalness: 0 }, // placeholder, replaced by top finish
-  'no-edge':        { id: 'edge-none', name: 'No Edge', category: 'hpl', hex: '#000000', roughness: 0.6, metalness: 0 },   // placeholder, replaced by top finish
-  't-mold':         { id: 'edge-tmold', name: 'T-Mold', category: 'hpl', hex: '#3a3a3a', roughness: 0.5, metalness: 0 },
-  'vinyl-bullnose': { id: 'edge-vinyl', name: 'Vinyl Bullnose', category: 'hpl', hex: '#404040', roughness: 0.5, metalness: 0 },
-  'urethane-band':  { id: 'edge-urethane', name: 'Urethane Band', category: 'hpl', hex: '#1a1a1a', roughness: 0.8, metalness: 0 },
-  'rubber-t-mold':  { id: 'edge-rubber', name: 'Rubber T-Mold', category: 'hpl', hex: '#1a1a1a', roughness: 0.85, metalness: 0 },
-  'wood-bullnose':  { id: 'edge-wood', name: 'Wood Bullnose', category: 'hpl', hex: '#a0734a', roughness: 0.75, metalness: 0 },
-  'phenolic':       { id: 'edge-phenolic', name: 'Phenolic', category: 'hpl', hex: '#3d2b1f', roughness: 0.6, metalness: 0 },
+  // 3mm PVC band reads as a dark band distinct from the top (matches the old
+  // T-Mold PVC treatment).
+  'pvc-3mm': { id: 'edge-pvc-3mm', name: '3mm PVC', category: 'hpl', hex: '#3a3a3a', roughness: 0.5, metalness: 0 },
+  // knife-edge has no entry: the machined bevel exposes the top material, so
+  // getEdgeFinish returns null and the caller falls back to the top finish.
 };
 
 /**
- * Get the FinishOption for an edge type. For "self-edge" and "no-edge",
- * returns null — caller should use the top finish instead.
+ * Get the FinishOption for an edge type. Returns null when the edge shows the
+ * top material (knife-edge, or any unknown/legacy id) — caller should use the
+ * top finish instead.
  */
 export function getEdgeFinish(edgeTypeId: string): FinishOption | null {
-  if (edgeTypeId === 'self-edge' || edgeTypeId === 'no-edge') return null;
   return EDGE_TYPE_FINISHES[edgeTypeId] ?? null;
 }
 
