@@ -1,7 +1,26 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Quote, QuoteCustomer, DraftQuote, LineItem } from "@/types/quote-builder";
+import type { Quote, DraftQuote, LineItem } from "@/types/quote-builder";
 import { createClient } from "@/lib/supabase/client";
+
+// Working totals for the quote builder wizard. Written by TotalsStep (step 4)
+// and read by QuotePreview (step 5) — the two never mount at the same time.
+// Session-only: intentionally NOT persisted (see partialize below).
+export interface QuoteTotals {
+  subtotal: number;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  discountAmount: number;
+  freightZone?: number;
+  freightCost: number;
+  freightState?: string;
+  taxEnabled: boolean;
+  taxRate: number;
+  taxAmount: number;
+  grandTotal: number;
+  validUntil: string;
+  notes: string;
+}
 
 interface QuoteStore {
   quotes: Quote[];
@@ -14,6 +33,10 @@ interface QuoteStore {
   // Draft quote stays in localStorage
   draftQuote: DraftQuote | null;
   setDraftQuote: (draft: DraftQuote | null) => void;
+
+  // Draft totals live in memory only (session-scoped, like the old window global)
+  draftTotals: QuoteTotals | null;
+  setDraftTotals: (totals: QuoteTotals | null) => void;
   addLineItem: (item: LineItem) => void;
   removeLineItem: (itemId: string) => void;
   updateLineItem: (itemId: string, updates: Partial<LineItem>) => void;
@@ -261,6 +284,8 @@ export const useQuoteStore = create<QuoteStore>()(
       // Draft quote persists in localStorage
       draftQuote: null,
       setDraftQuote: (draft) => set({ draftQuote: draft }),
+      draftTotals: null,
+      setDraftTotals: (totals) => set({ draftTotals: totals }),
       addLineItem: (item) =>
         set((state) => ({
           draftQuote: state.draftQuote

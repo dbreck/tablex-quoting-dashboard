@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuoteStore } from "@/store/quote-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
 import {
-  freightZones,
   getZoneForState,
   stateNames,
   type FreightZone,
@@ -22,7 +21,7 @@ import {
 import { Truck, Percent, DollarSign, Calculator } from "lucide-react";
 
 export function TotalsStep() {
-  const { draftQuote, setDraftQuote } = useQuoteStore();
+  const { draftQuote, setDraftTotals } = useQuoteStore();
 
   const lineItems = draftQuote?.lineItems ?? [];
   const subtotal = lineItems.reduce((sum, item) => sum + item.totalPrice, 0);
@@ -53,51 +52,51 @@ export function TotalsStep() {
   // Grand total
   const grandTotal = subtotal - discountAmount + freightCost + taxAmount;
 
-  // Compute valid until date
-  const validUntil = new Date();
-  validUntil.setDate(validUntil.getDate() + validDays);
+  // Compute valid until date (memoized so the effect below only re-fires
+  // when validDays actually changes, not on every render)
+  const validUntil = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + validDays);
+    return d;
+  }, [validDays]);
+  const validUntilIso = validUntil.toISOString();
 
-  // Sync to draft whenever values change
-  function syncToDraft() {
-    if (!draftQuote) return;
-    setDraftQuote({
-      ...draftQuote,
-      _totals: {
-        subtotal,
-        discountType,
-        discountValue,
-        discountAmount,
-        freightZone: zone?.zone,
-        freightCost,
-        freightState: selectedState,
-        taxEnabled,
-        taxRate,
-        taxAmount,
-        grandTotal,
-        validUntil: validUntil.toISOString(),
-        notes,
-      },
-    } as typeof draftQuote & { _totals: unknown });
-  }
+  const freightZoneNumber = zone?.zone;
 
-  // Store totals on window for QuotePreview to access
-  if (typeof window !== "undefined") {
-    (window as unknown as Record<string, unknown>).__quoteTotals = {
+  // Sync totals to the quote store for QuotePreview (rendered on the next
+  // wizard step, after this component has unmounted) to read.
+  useEffect(() => {
+    setDraftTotals({
       subtotal,
       discountType,
       discountValue,
       discountAmount,
-      freightZone: zone?.zone,
+      freightZone: freightZoneNumber,
       freightCost,
       freightState: selectedState,
       taxEnabled,
       taxRate,
       taxAmount,
       grandTotal,
-      validUntil: validUntil.toISOString(),
+      validUntil: validUntilIso,
       notes,
-    };
-  }
+    });
+  }, [
+    setDraftTotals,
+    subtotal,
+    discountType,
+    discountValue,
+    discountAmount,
+    freightZoneNumber,
+    freightCost,
+    selectedState,
+    taxEnabled,
+    taxRate,
+    taxAmount,
+    grandTotal,
+    validUntilIso,
+    notes,
+  ]);
 
   // All states sorted
   const allStates = Object.entries(stateNames).sort(([, a], [, b]) =>

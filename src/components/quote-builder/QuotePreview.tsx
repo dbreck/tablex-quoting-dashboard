@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useQuoteStore } from "@/store/quote-store";
+import { useQuoteStore, type QuoteTotals } from "@/store/quote-store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,45 +9,26 @@ import { DISCOUNT_TIER_LABELS } from "@/types/quote-builder";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Save, FileCheck } from "lucide-react";
 
-interface QuoteTotals {
-  subtotal: number;
-  discountType: "percentage" | "fixed";
-  discountValue: number;
-  discountAmount: number;
-  freightZone?: number;
-  freightCost: number;
-  freightState?: string;
-  taxEnabled: boolean;
-  taxRate: number;
-  taxAmount: number;
-  grandTotal: number;
-  validUntil: string;
-  notes: string;
-}
-
 export function QuotePreview() {
   const router = useRouter();
-  const { draftQuote, addQuote, setDraftQuote } = useQuoteStore();
+  const { draftQuote, addQuote, setDraftQuote, draftTotals } = useQuoteStore();
 
   const customer = draftQuote?.customer;
   const lineItems = draftQuote?.lineItems ?? [];
   const tier = draftQuote?.discountTier ?? "50_20";
 
-  // Read totals from window (set by TotalsStep)
-  const totals: QuoteTotals =
-    typeof window !== "undefined"
-      ? ((window as unknown as Record<string, unknown>).__quoteTotals as QuoteTotals) ?? getDefaultTotals(lineItems)
-      : getDefaultTotals(lineItems);
+  // Read totals from the quote store (set by TotalsStep on the previous step)
+  const totals: QuoteTotals = draftTotals ?? getDefaultTotals(lineItems);
 
   const today = new Date().toISOString();
-  const validUntil = totals.validUntil || new Date(Date.now() + 30 * 86400000).toISOString();
+  const validUntil = totals.validUntil || getDefaultValidUntil();
 
   function handleSave(status: "draft" | "sent") {
     if (!draftQuote || !customer?.name || !customer?.company) return;
 
     addQuote({
       customer: {
-        id: customer.id || Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+        id: customer.id || generateCustomerId(),
         name: customer.name,
         company: customer.company,
         email: customer.email || "",
@@ -216,6 +197,15 @@ export function QuotePreview() {
   );
 }
 
+// Runs at save time (inside the click handler), not during render
+function generateCustomerId(): string {
+  return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+}
+
+function getDefaultValidUntil(): string {
+  return new Date(Date.now() + 30 * 86400000).toISOString();
+}
+
 function getDefaultTotals(
   lineItems: { totalPrice: number }[]
 ): QuoteTotals {
@@ -230,7 +220,7 @@ function getDefaultTotals(
     taxRate: 0,
     taxAmount: 0,
     grandTotal: subtotal,
-    validUntil: new Date(Date.now() + 30 * 86400000).toISOString(),
+    validUntil: getDefaultValidUntil(),
     notes: "",
   };
 }
