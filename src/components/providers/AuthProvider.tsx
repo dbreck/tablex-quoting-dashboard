@@ -49,6 +49,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  async function fetchProfile(userId: string) {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, email, full_name, role, organization_id, can_access_proposal, can_access_estimate")
+      .eq("id", userId)
+      .single();
+
+    setProfile(data as Profile | null);
+    setIsLoading(false);
+  }
+
   useEffect(() => {
     const supabase = createClient();
 
@@ -78,18 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  async function fetchProfile(userId: string) {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("profiles")
-      .select("id, email, full_name, role, organization_id, can_access_proposal, can_access_estimate")
-      .eq("id", userId)
-      .single();
-
-    setProfile(data as Profile | null);
-    setIsLoading(false);
-  }
 
   async function refreshProfile() {
     if (user) {

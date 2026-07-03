@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import { type Task, filterTasks, COLUMNS, compareTasksByDueDate } from "@/data/project-tracker";
-import { WORKSTREAMS, DELIVERABLES, getDeliverablesByWorkstream } from "@/data/project-phase2";
+import { WORKSTREAMS, getDeliverablesByWorkstream } from "@/data/project-phase2";
 import { useSprints } from "@/store/sprint-store";
 import { type GroupBy } from "./TasksToolbar";
 import { WorkstreamGroup } from "./WorkstreamGroup";
@@ -77,60 +77,12 @@ export function TasksListView({
     setLastSelectedId(null);
   }, []);
 
-  // ─── Render by group mode ──────────────────────────────────────────────────
-
-  if (groupBy === "workstream") {
-    return (
-      <>
-        <div className="space-y-1">
-          {WORKSTREAMS.map((ws) => {
-            const wsDeliverables = getDeliverablesByWorkstream(ws.id);
-            const wsTasks = filteredTasks.filter((t) =>
-              wsDeliverables.some((d) => d.id === t.deliverableId)
-            );
-            if (wsTasks.length === 0 && !showCompleted) return null;
-
-            const wsCollapsed = collapsedGroups.has(`ws-${ws.id}`);
-
-            return (
-              <WorkstreamGroup
-                key={ws.id}
-                workstream={ws}
-                tasks={wsTasks}
-                collapsed={wsCollapsed}
-                onToggle={() => onToggleGroup(`ws-${ws.id}`)}
-              >
-                {wsDeliverables.map((d) => {
-                  const dTasks = filteredTasks.filter((t) => t.deliverableId === d.id);
-                  if (dTasks.length === 0 && !showCompleted) return null;
-
-                  return (
-                    <DeliverableGroup
-                      key={d.id}
-                      deliverable={d}
-                      tasks={dTasks}
-                      allTasks={tasks}
-                      collapsed={collapsedGroups.has(`d-${d.id}`)}
-                      onToggle={() => onToggleGroup(`d-${d.id}`)}
-                      onOpenDetail={onOpenDetail}
-                      selectedIds={selectedIds}
-                      onSelect={handleSelect}
-                      wsColor={ws.color}
-                    />
-                  );
-                })}
-              </WorkstreamGroup>
-            );
-          })}
-        </div>
-        <BulkActionBar selectedIds={selectedIds} onClearSelection={clearSelection} />
-      </>
-    );
-  }
-
-  // ─── Flat group modes (assignee, status, priority) ─────────────────────────
+  // ─── Flat group derivation (assignee, status, sprint, priority) ────────────
+  // Hoisted above the workstream early return so hooks run unconditionally.
 
   const groups = useMemo(() => {
+    if (groupBy === "workstream") return []; // grouped path renders its own tree below
+
     if (groupBy === "assignee") {
       const memberGroups = team.map((m) => ({
         id: m.id,
@@ -189,6 +141,59 @@ export function TasksListView({
       tasks: filteredTasks.filter((t) => t.priority === p.id),
     })).filter((g) => g.tasks.length > 0);
   }, [groupBy, filteredTasks, team, sprints]);
+
+  // ─── Render by group mode ──────────────────────────────────────────────────
+
+  if (groupBy === "workstream") {
+    return (
+      <>
+        <div className="space-y-1">
+          {WORKSTREAMS.map((ws) => {
+            const wsDeliverables = getDeliverablesByWorkstream(ws.id);
+            const wsTasks = filteredTasks.filter((t) =>
+              wsDeliverables.some((d) => d.id === t.deliverableId)
+            );
+            if (wsTasks.length === 0 && !showCompleted) return null;
+
+            const wsCollapsed = collapsedGroups.has(`ws-${ws.id}`);
+
+            return (
+              <WorkstreamGroup
+                key={ws.id}
+                workstream={ws}
+                tasks={wsTasks}
+                collapsed={wsCollapsed}
+                onToggle={() => onToggleGroup(`ws-${ws.id}`)}
+              >
+                {wsDeliverables.map((d) => {
+                  const dTasks = filteredTasks.filter((t) => t.deliverableId === d.id);
+                  if (dTasks.length === 0 && !showCompleted) return null;
+
+                  return (
+                    <DeliverableGroup
+                      key={d.id}
+                      deliverable={d}
+                      tasks={dTasks}
+                      allTasks={tasks}
+                      collapsed={collapsedGroups.has(`d-${d.id}`)}
+                      onToggle={() => onToggleGroup(`d-${d.id}`)}
+                      onOpenDetail={onOpenDetail}
+                      selectedIds={selectedIds}
+                      onSelect={handleSelect}
+                      wsColor={ws.color}
+                    />
+                  );
+                })}
+              </WorkstreamGroup>
+            );
+          })}
+        </div>
+        <BulkActionBar selectedIds={selectedIds} onClearSelection={clearSelection} />
+      </>
+    );
+  }
+
+  // ─── Flat group modes (assignee, status, sprint, priority) ─────────────────
 
   return (
     <>

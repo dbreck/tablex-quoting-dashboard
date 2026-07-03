@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useCallback, useState } from "react";
+import { Suspense, useEffect, useRef, useCallback, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Center, Environment, ContactShadows, Bounds, useBounds } from "@react-three/drei";
 import { NeutralToneMapping } from "three";
@@ -9,7 +9,6 @@ import { Box } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FinishOption } from "@/data/finish-catalog";
 import { TableModel } from "./TableModel";
-import { ModelViewerSkeleton } from "./ModelViewerSkeleton";
 import { ViewerControls } from "./ViewerControls";
 
 export type EnvironmentPreset =
@@ -32,11 +31,13 @@ function BoundsRefresher({ modelKey }: { modelKey: string }) {
   const bounds = useBounds();
   const prevKey = useRef(modelKey);
 
-  if (modelKey !== prevKey.current) {
-    prevKey.current = modelKey;
-    // Schedule refresh after the new model mounts
-    requestAnimationFrame(() => bounds.refresh().clip().fit());
-  }
+  useEffect(() => {
+    if (modelKey !== prevKey.current) {
+      prevKey.current = modelKey;
+      // Schedule refresh after the new model mounts
+      requestAnimationFrame(() => bounds.refresh().clip().fit());
+    }
+  }, [modelKey, bounds]);
 
   return null;
 }
