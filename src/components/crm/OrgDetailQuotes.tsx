@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { DISCOUNT_TIER_LABELS, type Quote } from "@/types/quote-builder";
+import { type Quote } from "@/types/quote-builder";
 import { FileText } from "lucide-react";
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "success" | "warning" | "error"> = {

@@ -56,12 +56,67 @@ interface QueueRow {
   statusNormalized: string;
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// Shape of the metrics blob stored in Supabase `quote_queue_metrics.data`
+// (see src/data/quote-queue-metrics.json for the seed). Only the fields this
+// tab consumes are typed here.
+interface TurnaroundSummary {
+  averageHours: number;
+  averageDays: number;
+  medianHours: number;
+  medianDays: number;
+  count: number;
+}
+
+interface QuoteQueueMetrics {
+  turnaroundTimes: {
+    byYear: (TurnaroundSummary & { year: number })[];
+    special: TurnaroundSummary;
+    standard: TurnaroundSummary;
+  };
+  staffDistribution: {
+    staff: string;
+    total: number;
+    special: number;
+    specialPercent: number;
+    standard: number;
+    standardPercent: number;
+  }[];
+  revisions: {
+    quotesWithRevisions: number;
+    totalQuotesWithNumbers: number;
+    revisionRate: number;
+  };
+  yearOverYearGrowth: { year: number; quotes: number; growthRate: number | null }[];
+  peakAnalysis: {
+    dayOfWeek: { day: string; count: number; percent: number }[];
+    month: { month: string; count: number; percent: number }[];
+    quarterly: { quarter: string; months: string; count: number; percent: number }[];
+  };
+  dealerConcentration: {
+    totalUniqueDealers: number;
+    top10: {
+      dealers: { name: string; count: number; percent: number }[];
+      totalCount: number;
+      totalPercent: number;
+    };
+  };
+  dataReEntryAnalysis: {
+    totalQuotes: number;
+    totalManualDataEntryEvents: number;
+    averagePerQuote: number;
+    estimatedTimeSpent: {
+      minutesPerEntry: number;
+      totalMinutes: number;
+      totalHours: number;
+      workWeeks: number;
+    };
+  };
+}
+
 interface BottleneckAnalysisTabProps {
-  metrics: any;
+  metrics: QuoteQueueMetrics;
   queueData: QueueRow[];
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 // Colors
 const BRAND_GREEN = "#8dc63f";
@@ -70,14 +125,7 @@ const RED = "#ef4444";
 const AMBER = "#f59e0b";
 const BLUE = "#3b82f6";
 
-// Severity config for pain points
-const severityConfig = {
-  high: { color: "bg-red-500", text: "text-red-700", bg: "bg-red-50", border: "border-red-200", badge: "error" as const },
-  medium: { color: "bg-amber-500", text: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200", badge: "warning" as const },
-  low: { color: "bg-slate-400", text: "text-slate-600", bg: "bg-slate-50", border: "border-slate-200", badge: "secondary" as const },
-};
-
-export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysisTabProps) {
+export function BottleneckAnalysisTab({ metrics }: BottleneckAnalysisTabProps) {
   // All pain points flattened with step context
   const allPainPoints = useMemo(() => {
     return workflowSteps.flatMap((step) =>
@@ -91,8 +139,8 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
 
   // Turnaround by year (exclude 2026 incomplete)
   const turnaroundByYear = metrics.turnaroundTimes.byYear
-    .filter((y: any) => y.year <= 2025)
-    .map((y: any) => ({
+    .filter((y) => y.year <= 2025)
+    .map((y) => ({
       year: y.year.toString(),
       median: Math.round(y.medianHours * 10) / 10,
       average: Math.round(y.averageHours * 10) / 10,
@@ -100,7 +148,7 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
     }));
 
   // Staff workload radar data
-  const staffRadar = metrics.staffDistribution.slice(0, 4).map((s: any) => ({
+  const staffRadar = metrics.staffDistribution.slice(0, 4).map((s) => ({
     staff: s.staff,
     total: s.total,
     specialPct: s.specialPercent,
@@ -109,14 +157,14 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
   }));
 
   // Quarterly seasonality
-  const quarterlyData = metrics.peakAnalysis.quarterly.map((q: any) => ({
+  const quarterlyData = metrics.peakAnalysis.quarterly.map((q) => ({
     quarter: q.quarter,
     count: q.count,
     percent: q.percent,
   }));
 
   // Day of week data
-  const dayData = metrics.peakAnalysis.dayOfWeek.filter((d: any) => d.count > 50);
+  const dayData = metrics.peakAnalysis.dayOfWeek.filter((d) => d.count > 50);
 
   // Monthly heatmap values
   const monthlyData = metrics.peakAnalysis.month;
@@ -324,13 +372,13 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={metrics.yearOverYearGrowth.filter((y: any) => y.year <= 2025)}>
+                  <BarChart data={metrics.yearOverYearGrowth.filter((y) => y.year <= 2025)}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="year" />
                     <YAxis />
                     <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0" }} />
                     <Bar dataKey="quotes" name="Quotes" radius={[4, 4, 0, 0]}>
-                      {metrics.yearOverYearGrowth.filter((y: any) => y.year <= 2025).map((_: any, i: number) => (
+                      {metrics.yearOverYearGrowth.filter((y) => y.year <= 2025).map((_, i) => (
                         <Cell key={i} fill={i === 0 ? BRAND_GREEN : i === 1 ? BRAND_GREEN + "cc" : BRAND_GREEN + "88"} />
                       ))}
                     </Bar>
@@ -444,7 +492,7 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
                       formatter={(value) => [formatNumber(Number(value)), "Quotes"]}
                     />
                     <Bar dataKey="count" name="Quotes" radius={[4, 4, 0, 0]}>
-                      {dayData.map((entry: any, i: number) => (
+                      {dayData.map((entry, i) => (
                         <Cell
                           key={i}
                           fill={entry.day === "Wednesday" ? BRAND_GREEN : BRAND_GREEN + "88"}
@@ -604,7 +652,7 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
                       formatter={(value) => [formatNumber(Number(value)), "Quotes"]}
                     />
                     <Bar dataKey="count" name="Quotes" radius={[4, 4, 0, 0]}>
-                      {monthlyData.map((entry: any, i: number) => (
+                      {monthlyData.map((entry, i) => (
                         <Cell
                           key={i}
                           fill={entry.month === "Apr" ? BRAND_GREEN : entry.count > 300 ? BRAND_GREEN + "cc" : BRAND_GREEN + "66"}
@@ -624,7 +672,7 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {quarterlyData.map((q: any) => (
+                  {quarterlyData.map((q) => (
                     <div key={q.quarter} className="space-y-1">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-slate-900">{q.quarter}</p>
@@ -661,7 +709,7 @@ export function BottleneckAnalysisTab({ metrics, queueData }: BottleneckAnalysis
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {metrics.dealerConcentration.top10.dealers.map((d: any, i: number) => (
+                  {metrics.dealerConcentration.top10.dealers.map((d, i) => (
                     <div key={d.name} className="flex items-center gap-3">
                       <span className="text-xs text-slate-400 w-4 text-right">{i + 1}</span>
                       <div className="flex-1">

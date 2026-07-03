@@ -21,7 +21,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 import {
   Globe,
@@ -59,8 +58,6 @@ import {
 } from "@/data/wp-site-audit";
 
 // ── Chart colors ────────────────────────────────────────────────────
-
-const CHART_COLORS = ["#8dc63f", "#1a3c5c", "#f59e0b", "#6366f1", "#ec4899", "#10b981"];
 
 const ROLE_COLORS: Record<string, string> = {
   Administrator: "#1a3c5c",
@@ -268,7 +265,7 @@ function OverviewTab() {
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(value, name) => [
+                formatter={(value) => [
                   `${value?.toLocaleString()}`,
                   "Items",
                 ]}
@@ -618,7 +615,7 @@ function FormsTab() {
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(value, name) => [
+                formatter={(value) => [
                   `${value?.toLocaleString()}`,
                   "Entries",
                 ]}

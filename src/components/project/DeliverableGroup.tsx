@@ -3,7 +3,6 @@
 import { type Task, getDeliverableProgress, compareTasksByDueDate } from "@/data/project-tracker";
 import { useTeam } from "@/store/project-tracker-store";
 import { type Deliverable, PROJECT_PHASES } from "@/data/project-phase2";
-import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { TaskRow } from "./TaskRow";
 import { InlineTaskAdd } from "./InlineTaskAdd";

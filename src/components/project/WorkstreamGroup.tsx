@@ -1,7 +1,7 @@
 "use client";
 
 import { type Task } from "@/data/project-tracker";
-import { type WorkstreamMeta, type Deliverable } from "@/data/project-phase2";
+import { type WorkstreamMeta } from "@/data/project-phase2";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 interface WorkstreamGroupProps {

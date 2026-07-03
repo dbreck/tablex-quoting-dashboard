@@ -21,7 +21,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { personas, type Persona } from "@/data/user-personas";
+import { personas } from "@/data/user-personas";
 
 const personaIcons: Record<string, typeof Building2> = {
   Building2,

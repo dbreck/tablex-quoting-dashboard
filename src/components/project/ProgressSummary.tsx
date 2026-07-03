@@ -2,7 +2,6 @@
 
 import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
 import { WORKSTREAMS, DELIVERABLES } from "@/data/project-phase2";
-import { computeDeliverableStatus } from "@/data/project-tracker";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Clock, Circle, TrendingUp } from "lucide-react";
 

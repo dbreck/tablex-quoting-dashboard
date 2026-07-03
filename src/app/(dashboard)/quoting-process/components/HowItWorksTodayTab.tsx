@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { quoteProcessSteps, type PainPoint } from "@/data/quote-process-steps";
+import { quoteProcessSteps } from "@/data/quote-process-steps";
 import {
   BarChart3,
   Package,

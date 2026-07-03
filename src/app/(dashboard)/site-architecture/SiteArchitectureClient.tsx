@@ -734,9 +734,9 @@ function QuoteBackFlowTab() {
 
 function BackendStepCard({
   step,
-  accent,
 }: {
   step: V3PersonaFlow["steps"][0];
+  // `accent` is accepted (call sites pass it) but this card renders in fixed navy styling.
   accent: { bg: string; text: string; border: string; dot: string };
 }) {
   return (
@@ -759,10 +759,10 @@ function BackendStepCard({
 
 function DeliveryStepCard({
   step,
-  accent,
   persona,
 }: {
   step: V3PersonaFlow["steps"][0];
+  // `accent` is accepted (call sites pass it) but this card renders in fixed emerald styling.
   accent: { bg: string; text: string; border: string; dot: string };
   persona: string;
 }) {

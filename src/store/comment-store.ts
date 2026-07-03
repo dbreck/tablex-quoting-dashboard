@@ -36,19 +36,6 @@ interface CommentStore {
   getReplies: (parentId: string) => Comment[];
 }
 
-function toSnakeComment(comment: Partial<Comment>) {
-  return {
-    ...(comment.pagePath !== undefined && { page_path: comment.pagePath }),
-    ...(comment.markerX !== undefined && { marker_x: comment.markerX }),
-    ...(comment.markerY !== undefined && { marker_y: comment.markerY }),
-    ...(comment.content !== undefined && { content: comment.content }),
-    ...(comment.authorName !== undefined && { author_name: comment.authorName }),
-    ...(comment.authorEmail !== undefined && { author_email: comment.authorEmail }),
-    ...(comment.isResolved !== undefined && { is_resolved: comment.isResolved }),
-    ...(comment.parentId !== undefined && { parent_id: comment.parentId }),
-  };
-}
-
 function fromSnakeComment(row: Record<string, unknown>): Comment {
   return {
     id: row.id as string,

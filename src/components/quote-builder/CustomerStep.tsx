@@ -5,7 +5,6 @@ import { useQuoteStore } from "@/store/quote-store";
 import { useCrmStore } from "@/store/crm-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -18,7 +17,7 @@ import {
   type DiscountTier,
   type QuoteCustomer,
 } from "@/types/quote-builder";
-import { User, Building2, Mail, Phone, UserPlus, Plus } from "lucide-react";
+import { User, Building2, Mail, Phone, UserPlus } from "lucide-react";
 
 export function CustomerStep() {
   const { draftQuote, setDraftQuote } = useQuoteStore();

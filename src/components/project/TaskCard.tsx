@@ -9,7 +9,7 @@ import {
 } from "@/data/project-tracker";
 import { useTeam } from "@/store/project-tracker-store";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, GripVertical, MessageSquare, Calendar, AlertOctagon } from "lucide-react";
+import { CheckCircle2, Calendar, AlertOctagon } from "lucide-react";
 import { SprintBadge } from "./SprintBadge";
 
 const priorityDot: Record<string, string> = {

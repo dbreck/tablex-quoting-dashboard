@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +43,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-green mb-3 p-2.5">
-            <img src="/tablex-logomark.svg" alt="TableX" className="h-full w-full" />
+            <Image src="/tablex-logomark.svg" alt="TableX" width={56} height={56} className="h-full w-full" />
           </div>
           <h1 className="text-xl font-bold text-slate-900">TableX Dashboard</h1>
           <p className="text-sm text-slate-500 mt-1">Sign in to continue</p>

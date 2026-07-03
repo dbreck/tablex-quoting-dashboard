@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -29,9 +30,7 @@ import {
   FileStack,
   Building2,
   Settings,
-  User,
   Users,
-  Network,
   Inbox,
   ShieldAlert,
   ShoppingCart,
@@ -218,7 +217,8 @@ export function Sidebar() {
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
         <Link href="/project" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl p-1.5">
-            <img src="/tablex-logomark.svg" alt="TableX" className="h-full w-full" />
+            {/* unoptimized: SVG sources are rejected by the image optimizer unless dangerouslyAllowSVG is set */}
+            <Image src="/tablex-logomark.svg" alt="TableX" width={40} height={40} unoptimized className="h-full w-full" />
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">

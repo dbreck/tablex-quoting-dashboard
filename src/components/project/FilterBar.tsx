@@ -1,7 +1,6 @@
 "use client";
 
 import { useProjectTrackerStore, useTeam } from "@/store/project-tracker-store";
-import { COLUMNS } from "@/data/project-tracker";
 import { WORKSTREAMS } from "@/data/project-phase2";
 import { useSprints } from "@/store/sprint-store";
 import { Search, X } from "lucide-react";
@@ -39,7 +38,7 @@ export function FilterBar({ hideSprint = false }: FilterBarProps = {}) {
       {/* Assignee */}
       <select
         value={filters.assignee}
-        onChange={(e) => setFilter("assignee", e.target.value as any)}
+        onChange={(e) => setFilter("assignee", e.target.value)}
         className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
       >
         <option value="all">All Members</option>
@@ -51,7 +50,7 @@ export function FilterBar({ hideSprint = false }: FilterBarProps = {}) {
       {/* Workstream */}
       <select
         value={filters.workstream}
-        onChange={(e) => setFilter("workstream", e.target.value as any)}
+        onChange={(e) => setFilter("workstream", e.target.value)}
         className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
       >
         <option value="all">All Workstreams</option>
@@ -63,7 +62,7 @@ export function FilterBar({ hideSprint = false }: FilterBarProps = {}) {
       {/* Priority */}
       <select
         value={filters.priority}
-        onChange={(e) => setFilter("priority", e.target.value as any)}
+        onChange={(e) => setFilter("priority", e.target.value as typeof filters.priority)}
         className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-brand-green/50"
       >
         <option value="all">All Priorities</option>

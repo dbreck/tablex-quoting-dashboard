@@ -47,7 +47,6 @@ export function TaskRow({ task, onOpenDetail, selected, onSelect, showWorkstream
   const [expanded, setExpanded] = useState(false);
   const isDone = task.column === "done";
   const workstream = showWorkstream ? getWorkstreamForDeliverable(task.deliverableId) : null;
-  const assignee = team.find((m) => m.id === task.assignee);
   const completedSubtasks = task.subtasks.filter((s) => s.completed).length;
   const totalSubtasks = task.subtasks.length;
 

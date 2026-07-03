@@ -109,11 +109,10 @@ export function CommentSidebar({
           </p>
         )}
 
-        {filtered.map((comment, index) => (
+        {filtered.map((comment) => (
           <CommentCard
             key={comment.id}
             comment={comment}
-            number={topLevel.indexOf(comment) + 1}
             isSelected={selectedCommentId === comment.id}
             onSelect={() => onSelectComment(comment.id)}
             onResolve={() => resolveComment(comment.id)}
@@ -135,7 +134,6 @@ export function CommentSidebar({
 
 interface CommentCardProps {
   comment: Comment;
-  number: number;
   isSelected: boolean;
   onSelect: () => void;
   onResolve: () => void;
@@ -152,7 +150,6 @@ interface CommentCardProps {
 
 function CommentCard({
   comment,
-  number,
   isSelected,
   onSelect,
   onResolve,

@@ -5,7 +5,6 @@ import { GripVertical, Trash2, Plus, Clock, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { PainPointBadge } from "./PainPointBadge";
 import { OpportunityBadge } from "./OpportunityBadge";
 import type { JourneyPhase, JourneyPainPoint, JourneyOpportunity } from "@/types/customer-journey";
