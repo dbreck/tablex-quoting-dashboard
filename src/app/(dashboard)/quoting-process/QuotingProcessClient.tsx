@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HowItWorksTodayTab } from "./components/HowItWorksTodayTab";
 import { SalesOrderFlowTab } from "./components/SalesOrderFlowTab";
 import { PricingPipelineTab } from "./components/PricingPipelineTab";
-import { BottleneckAnalysisTab } from "./components/BottleneckAnalysisTab";
+import { BottleneckAnalysisTab, type QuoteQueueMetrics } from "./components/BottleneckAnalysisTab";
 import { WhatNeedsToChangeTab } from "./components/WhatNeedsToChangeTab";
 
 interface QueueRow {
@@ -58,13 +58,11 @@ interface ProfitRow {
   price_50_20_20: number | null;
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface QuotingProcessClientProps {
   profitData: ProfitRow[];
-  metrics: any;
+  metrics: QuoteQueueMetrics;
   queueData: QueueRow[];
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default function QuotingProcessClient({
   profitData,

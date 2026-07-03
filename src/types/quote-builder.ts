@@ -80,6 +80,25 @@ export interface DraftQuote {
   currentStep: number;
 }
 
+// Working totals for the quote builder wizard. Written by TotalsStep (step 4)
+// and read by QuotePreview (step 5) — the two never mount at the same time.
+// Held in the quote store's session-only draftTotals slot (not persisted).
+export interface QuoteTotals {
+  subtotal: number;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  discountAmount: number;
+  freightZone?: number;
+  freightCost: number;
+  freightState?: string;
+  taxEnabled: boolean;
+  taxRate: number;
+  taxAmount: number;
+  grandTotal: number;
+  validUntil: string;
+  notes: string;
+}
+
 // CRM Types
 
 export type OrganizationType = 'dealer' | 'end_customer' | 'rep_group';

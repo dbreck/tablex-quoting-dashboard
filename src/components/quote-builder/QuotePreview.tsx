@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useQuoteStore, type QuoteTotals } from "@/store/quote-store";
+import { useQuoteStore } from "@/store/quote-store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DISCOUNT_TIER_LABELS } from "@/types/quote-builder";
+import { DISCOUNT_TIER_LABELS, type QuoteTotals } from "@/types/quote-builder";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Save, FileCheck } from "lucide-react";
 

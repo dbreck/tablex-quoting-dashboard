@@ -1,26 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Quote, DraftQuote, LineItem } from "@/types/quote-builder";
+import type { Quote, DraftQuote, LineItem, QuoteTotals } from "@/types/quote-builder";
 import { createClient } from "@/lib/supabase/client";
 
-// Working totals for the quote builder wizard. Written by TotalsStep (step 4)
-// and read by QuotePreview (step 5) — the two never mount at the same time.
-// Session-only: intentionally NOT persisted (see partialize below).
-export interface QuoteTotals {
-  subtotal: number;
-  discountType: "percentage" | "fixed";
-  discountValue: number;
-  discountAmount: number;
-  freightZone?: number;
-  freightCost: number;
-  freightState?: string;
-  taxEnabled: boolean;
-  taxRate: number;
-  taxAmount: number;
-  grandTotal: number;
-  validUntil: string;
-  notes: string;
-}
+// Re-export for existing consumers; the canonical definition lives with the
+// other quote-builder types. draftTotals is session-only: intentionally NOT
+// persisted (see partialize below).
+export type { QuoteTotals } from "@/types/quote-builder";
 
 interface QuoteStore {
   quotes: Quote[];

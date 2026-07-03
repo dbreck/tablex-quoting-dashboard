@@ -67,7 +67,7 @@ interface TurnaroundSummary {
   count: number;
 }
 
-interface QuoteQueueMetrics {
+export interface QuoteQueueMetrics {
   turnaroundTimes: {
     byYear: (TurnaroundSummary & { year: number })[];
     special: TurnaroundSummary;

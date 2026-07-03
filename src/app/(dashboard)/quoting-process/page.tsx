@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import QuotingProcessClient from "./QuotingProcessClient";
+import type { QuoteQueueMetrics } from "./components/BottleneckAnalysisTab";
 
 export default async function QuotingProcessPage() {
   const supabase = await createClient();
@@ -54,7 +55,10 @@ export default async function QuotingProcessPage() {
     price_50_20_20: r.price_50_20_20 as number | null,
   }));
 
-  const metrics = metricsResult.data?.data || {};
+  // On fetch error this falls back to {} (pre-existing behavior; the
+  // Bottleneck tab would fail to render without its data either way), so the
+  // cast documents the expected happy-path shape rather than proving it.
+  const metrics = (metricsResult.data?.data || {}) as QuoteQueueMetrics;
 
   const queueData = (queueResult.data || []).map((r: Record<string, unknown>) => ({
     rowNum: (r.row_num as number) || 0,
