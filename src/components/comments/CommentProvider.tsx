@@ -7,6 +7,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { usePathname } from "next/navigation";
@@ -53,17 +54,29 @@ function isInteractive(el: HTMLElement): boolean {
 
 const CONTAINER_SELECTOR = "[data-comment-container]";
 
+// Hydration guard: false on the server / hydration render, true afterwards.
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export function CommentProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const containerRef = useRef<HTMLElement | null>(null);
-  const [mounted, setMounted] = useState(false);
+  // Client-only flag without a setState-in-effect: false during SSR/hydration,
+  // true once React resolves the client snapshot (same visible timing as the
+  // old `setMounted(true)` mount effect).
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot
+  );
 
   // Routes that iframe untrusted content (wireframes) — the dashboard's
   // overlay marker system can't reach inside an iframe, so suppress the
   // floating UI there. Each iframe brings its own commenting.
   const suppressOverlay = pathname.startsWith("/wireframes");
 
-  const [commentMode, setCommentMode] = useState(false);
+  const [commentMode, setCommentModeState] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(
     null
@@ -73,9 +86,19 @@ export function CommentProvider({ children }: { children: ReactNode }) {
     y: number;
   } | null>(null);
 
-  // Ensure client-only rendering for store access
+  // Leaving comment mode also clears the pending marker and selection.
+  // Every commentMode change flows through this setter (internal callers and
+  // context consumers), so the clear happens at event time instead of in a
+  // state-sync effect.
+  const setCommentMode = useCallback((v: boolean) => {
+    setCommentModeState(v);
+    if (!v) {
+      setPendingMarker(null);
+      setSelectedCommentId(null);
+    }
+  }, []);
+
   useEffect(() => {
-    setMounted(true);
     containerRef.current = document.querySelector(
       CONTAINER_SELECTOR
     ) as HTMLElement | null;
@@ -92,14 +115,6 @@ export function CommentProvider({ children }: { children: ReactNode }) {
       });
     }
   }, [pathname, loadComments, mounted]);
-
-  // Clear pending marker and selection when leaving comment mode
-  useEffect(() => {
-    if (!commentMode) {
-      setPendingMarker(null);
-      setSelectedCommentId(null);
-    }
-  }, [commentMode]);
 
   // Toggle crosshair cursor on the container
   useEffect(() => {
@@ -137,7 +152,7 @@ export function CommentProvider({ children }: { children: ReactNode }) {
     const next = !commentMode;
     setCommentMode(next);
     setSidebarOpen(next);
-  }, [commentMode]);
+  }, [commentMode, setCommentMode]);
 
   const handleMarkerClick = useCallback((id: string) => {
     setSelectedCommentId((prev) => (prev === id ? null : id));

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { ZodRawShape } from "zod";
 
 import { listSprints } from "./tools/list_sprints.js";
 import { getSprint } from "./tools/get_sprint.js";
@@ -10,9 +11,24 @@ import { getTask } from "./tools/get_task.js";
 import { listTeam } from "./tools/list_team.js";
 import { listDeliverables } from "./tools/list_deliverables.js";
 import { getBurndown } from "./tools/get_burndown.js";
-import type { ToolDefinition } from "./tools/types.js";
 
-const tools: Array<ToolDefinition<any>> = [
+/**
+ * Type-erased view of a ToolDefinition so tools with different input shapes
+ * can live in one array. The `never` parameter makes every concrete handler
+ * assignable here (function params are contravariant); the registration loop
+ * casts back at the call site, where the SDK has already validated `args`
+ * against the tool's own inputSchema.
+ */
+interface RegisteredToolDefinition {
+  name: string;
+  description: string;
+  inputSchema: ZodRawShape;
+  handler: (
+    args: never
+  ) => Promise<{ content: Array<{ type: "text"; text: string }> }>;
+}
+
+const tools: RegisteredToolDefinition[] = [
   listSprints,
   getSprint,
   currentSprint,
@@ -36,9 +52,9 @@ async function main() {
         description: tool.description,
         inputSchema: tool.inputSchema,
       },
-      async (args: any) => {
+      async (args) => {
         try {
-          return await tool.handler(args ?? {});
+          return await tool.handler((args ?? {}) as never);
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           return {

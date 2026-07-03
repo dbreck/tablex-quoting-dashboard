@@ -117,7 +117,7 @@ async function batchInsert(
 ): Promise<Record<string, unknown>[]> {
   if (DRY_RUN) {
     console.log(`  [DRY RUN] Would insert ${rows.length} ${label}`);
-    return rows.map((r) => ({
+    return rows.map(() => ({
       id: `dry-run-${Math.random().toString(36).slice(2)}`,
       order_number: `ORD-XXXX`,
     }));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,8 +37,17 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+// Hydration-safe "mounted" flag: false on the server/hydration render, true
+// immediately after mount — same render sequence as the old setState-in-effect
+// pattern, without the effect.
+const emptySubscribe = () => () => {};
+
 export default function CrmPage() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const { isAdmin } = useAuth();
   const {
     organizations,
@@ -47,7 +56,6 @@ export default function CrmPage() {
     loadFromSupabase: loadCrm,
     addOrganization,
     updateOrganization,
-    deleteOrganization,
     addContact,
     updateContact,
     deleteContact,
@@ -64,7 +72,6 @@ export default function CrmPage() {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    setMounted(true);
     loadCrm();
     loadQuotes();
   }, [loadCrm, loadQuotes]);
@@ -85,11 +92,6 @@ export default function CrmPage() {
 
   // Grouped view helpers
   const repGroups = filteredOrgs.filter((o) => o.type === "rep_group");
-  const affiliatedDealerIds = new Set(
-    filteredOrgs
-      .filter((o) => o.parentOrganizationId)
-      .map((o) => o.id)
-  );
   const unaffiliatedOrgs = filteredOrgs.filter(
     (o) => o.type !== "rep_group" && !o.parentOrganizationId
   );

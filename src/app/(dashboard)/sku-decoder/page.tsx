@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,17 +24,23 @@ const componentIcons: Record<string, React.ReactNode> = {
 
 function SkuDecoderContent() {
   const searchParams = useSearchParams();
-  const [input, setInput] = useState("");
-  const [parsed, setParsed] = useState<ParsedSku | null>(null);
+  const [input, setInput] = useState(() => searchParams.get("sku") ?? "");
+  const [parsed, setParsed] = useState<ParsedSku | null>(() => {
+    const sku = searchParams.get("sku");
+    return sku ? parseSku(sku) : null;
+  });
 
-  // Handle URL query param from catalog links
-  useEffect(() => {
+  // Handle URL query param from catalog links: when the URL changes,
+  // reset the input/parse from it (setState-during-render reset pattern).
+  const [prevSearchParams, setPrevSearchParams] = useState(searchParams);
+  if (searchParams !== prevSearchParams) {
+    setPrevSearchParams(searchParams);
     const sku = searchParams.get("sku");
     if (sku) {
       setInput(sku);
       setParsed(parseSku(sku));
     }
-  }, [searchParams]);
+  }
 
   function handleChange(value: string) {
     setInput(value);

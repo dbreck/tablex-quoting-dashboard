@@ -25,8 +25,8 @@ const Warranty = () => (
         }}>
           <span style={{ color: 'var(--tx-ember)', fontFamily: 'var(--font-display)' }}>“</span>
           50 years. On every leg, every leaf, every joint. If something we made fails
-          because of how we made it, we repair it or replace it. The warranty isn't a
-          marketing line — it's how we sleep at night.
+          because of how we made it, we repair it or replace it. The warranty isn&apos;t a
+          marketing line — it&apos;s how we sleep at night.
           <span style={{ color: 'var(--tx-ember)', fontFamily: 'var(--font-display)' }}>”</span>
         </div>
 

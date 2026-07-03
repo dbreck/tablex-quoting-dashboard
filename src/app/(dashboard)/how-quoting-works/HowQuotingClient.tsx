@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Header } from "@/components/layout/Header";
 import {
   Card,
   CardContent,
@@ -20,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { discountTierLabels } from "@/lib/pricing";
 import { freightZones } from "@/data/freight-zones";
-import { formatCurrency, formatPercent } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import {
   ArrowDown,
   Layers,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -45,6 +45,26 @@ const emptyForm: ContactFormData = {
   notes: "",
 };
 
+function initialFormData(
+  contact: Contact | null | undefined,
+  defaultOrgId: string | undefined
+): ContactFormData {
+  if (!contact) {
+    return { ...emptyForm, organizationId: defaultOrgId || "" };
+  }
+  return {
+    firstName: contact.firstName,
+    lastName: contact.lastName,
+    email: contact.email || "",
+    phone: contact.phone || "",
+    role: contact.role || "",
+    title: contact.title || "",
+    organizationId: contact.organizationId,
+    isPrimary: contact.isPrimary,
+    notes: contact.notes || "",
+  };
+}
+
 interface ContactFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -62,27 +82,24 @@ export function ContactForm({
   defaultOrgId,
   onSave,
 }: ContactFormProps) {
-  const [form, setForm] = useState<ContactFormData>(emptyForm);
+  const [form, setForm] = useState<ContactFormData>(() =>
+    initialFormData(contact, defaultOrgId)
+  );
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (contact) {
-      setForm({
-        firstName: contact.firstName,
-        lastName: contact.lastName,
-        email: contact.email || "",
-        phone: contact.phone || "",
-        role: contact.role || "",
-        title: contact.title || "",
-        organizationId: contact.organizationId,
-        isPrimary: contact.isPrimary,
-        notes: contact.notes || "",
-      });
-    } else {
-      setForm({ ...emptyForm, organizationId: defaultOrgId || "" });
-    }
+  // Reset the draft whenever the dialog re-opens or targets a different
+  // contact (setState-during-render reset pattern — replaces a state-sync
+  // effect; same triggers as the old [contact, open, defaultOrgId] deps).
+  const [prevReset, setPrevReset] = useState({ contact, open, defaultOrgId });
+  if (
+    prevReset.contact !== contact ||
+    prevReset.open !== open ||
+    prevReset.defaultOrgId !== defaultOrgId
+  ) {
+    setPrevReset({ contact, open, defaultOrgId });
+    setForm(initialFormData(contact, defaultOrgId));
     setErrors({});
-  }, [contact, open, defaultOrgId]);
+  }
 
   function handleSave() {
     const newErrors: Record<string, boolean> = {};

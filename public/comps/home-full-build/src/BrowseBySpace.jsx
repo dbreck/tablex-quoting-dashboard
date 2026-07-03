@@ -71,7 +71,7 @@ const BrowseBySpace = () => (
         <div>
           <div className="section-eyebrow" style={{ marginTop: 0, marginBottom: 18 }}>Browse by Space</div>
           <h2 className="h1" style={{ maxWidth: 720 }}>
-            Start with the room. We'll meet you there.
+            Start with the room. We&apos;ll meet you there.
           </h2>
         </div>
         <a href="#" className="cta-arrow" style={{ color: 'var(--tx-iron)' }}>

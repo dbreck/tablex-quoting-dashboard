@@ -87,14 +87,17 @@ export default function UsersClient() {
   const [newPassword, setNewPassword] = useState("");
   const [settingPassword, setSettingPassword] = useState(false);
 
-  const loadUsers = useCallback(async () => {
-    const res = await fetch("/api/admin/users");
-    if (res.ok) {
-      const data = await res.json();
-      setUsers(Array.isArray(data) ? data : data.users ?? []);
-    }
-    setLoading(false);
-  }, []);
+  const loadUsers = useCallback(
+    () =>
+      fetch("/api/admin/users").then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setUsers(Array.isArray(data) ? data : data.users ?? []);
+        }
+        setLoading(false);
+      }),
+    []
+  );
 
   useEffect(() => {
     loadUsers();

@@ -60,7 +60,7 @@ export default function QuoteDetailPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const { quotes, updateQuote, loadFromSupabase: loadQuotes } = useQuoteStore();
-  const { orders, createOrderFromQuote, getOrderByQuoteId, loadFromSupabase: loadOrders } = useOrderStore();
+  const { createOrderFromQuote, getOrderByQuoteId, loadFromSupabase: loadOrders } = useOrderStore();
   const { organizations, loadFromSupabase: loadCrm } = useCrmStore();
   const { requests: quoteRequests, loadFromSupabase: loadRequests } = useQuoteRequestStore();
   const [notes, setNotes] = useState("");

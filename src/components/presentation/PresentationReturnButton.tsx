@@ -1,20 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+
+// sessionStorage is an external store; same-tab writes don't fire "storage"
+// events, so there is nothing to subscribe to — the snapshot is re-read on
+// every render (navigation re-renders via usePathname, matching the previous
+// effect-on-pathname behavior).
+const emptySubscribe = () => () => {};
+
+function readHasSession() {
+  try {
+    return sessionStorage.getItem("present-slide") !== null;
+  } catch {
+    return false; // privacy mode
+  }
+}
 
 export function PresentationReturnButton() {
   const router = useRouter();
   const pathname = usePathname();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    // Only show on non-presentation pages when a presentation session is active
-    const hasSession = sessionStorage.getItem("present-slide") !== null;
-    const isPresenting = pathname === "/present";
-    setVisible(hasSession && !isPresenting);
-  }, [pathname]);
+  // Server snapshot is false (hidden), matching the old initial state.
+  const hasSession = useSyncExternalStore(
+    emptySubscribe,
+    readHasSession,
+    () => false
+  );
+  // Only show on non-presentation pages when a presentation session is active
+  const visible = hasSession && pathname !== "/present";
 
   if (!visible) return null;
 

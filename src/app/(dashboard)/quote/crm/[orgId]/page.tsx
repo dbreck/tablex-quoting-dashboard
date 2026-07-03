@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCrmStore } from "@/store/crm-store";
@@ -24,13 +24,22 @@ import {
 } from "@/components/ui/select";
 import { Activity as ActivityIcon, Network, Store } from "lucide-react";
 
+// Hydration-safe "mounted" flag: false on the server/hydration render, true
+// immediately after mount — same render sequence as the old setState-in-effect
+// pattern, without the effect.
+const emptySubscribe = () => () => {};
+
 export default function OrgDetailPage() {
   const params = useParams();
   const router = useRouter();
   const orgId = params.orgId as string;
   const { isAdmin } = useAuth();
 
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const {
     organizations,
     contacts,
@@ -49,7 +58,6 @@ export default function OrgDetailPage() {
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     loadCrm();
     loadQuotes();
   }, [loadCrm, loadQuotes]);

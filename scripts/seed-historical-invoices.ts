@@ -297,7 +297,6 @@ async function main() {
   console.log("\nPhase 3: Generating invoice data...");
 
   const invoiceRows: Record<string, unknown>[] = [];
-  let totalSubtotal = 0;
   let totalFreight = 0;
   let totalAmount = 0;
   const statusCounts: Record<string, number> = { paid: 0, sent: 0, draft: 0, overdue: 0 };
@@ -353,7 +352,6 @@ async function main() {
     invoiceRows.push(row);
 
     // Stats
-    totalSubtotal += subtotal;
     totalFreight += freight;
     totalAmount += total;
     statusCounts[statusResult.status]++;

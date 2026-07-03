@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { SlideNav } from "@/components/presentation/SlideNav";
 import { SlideTransition } from "@/components/presentation/SlideTransition";
@@ -30,23 +30,34 @@ const SLIDES = [
   ThankYouSlide,
 ];
 
+// Stable no-op subscription for useSyncExternalStore (the "value" never changes).
+const emptySubscribe = () => () => {};
+
+// Restore slide index from sessionStorage (client only; server/hydration render is gated by `ready`).
+function restoreSlideIndex(): number {
+  if (typeof window === "undefined") return 0;
+  const saved = sessionStorage.getItem("present-slide");
+  if (saved) {
+    const idx = parseInt(saved, 10);
+    if (idx >= 0 && idx < SLIDES.length) {
+      return idx;
+    }
+  }
+  return 0;
+}
+
 export function PresentationClient() {
   const router = useRouter();
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(restoreSlideIndex);
   const [direction, setDirection] = useState<"left" | "right">("right");
-  const [ready, setReady] = useState(false);
-
-  // Restore slide index from sessionStorage on mount
-  useEffect(() => {
-    const saved = sessionStorage.getItem("present-slide");
-    if (saved) {
-      const idx = parseInt(saved, 10);
-      if (idx >= 0 && idx < SLIDES.length) {
-        setCurrent(idx);
-      }
-    }
-    setReady(true);
-  }, []);
+  // false on the server and during hydration, true once mounted on the client —
+  // nothing renders until then, so the sessionStorage-restored `current` never
+  // causes a hydration mismatch.
+  const ready = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   // Persist current slide to sessionStorage
   useEffect(() => {

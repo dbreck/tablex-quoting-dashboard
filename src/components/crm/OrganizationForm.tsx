@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -51,6 +51,23 @@ const emptyForm: OrgFormData = {
   notes: "",
 };
 
+function initialFormData(
+  organization: Organization | null | undefined
+): OrgFormData {
+  if (!organization) return emptyForm;
+  return {
+    name: organization.name,
+    type: organization.type,
+    parentOrganizationId: organization.parentOrganizationId || "",
+    defaultTier: organization.defaultTier,
+    phone: organization.phone || "",
+    email: organization.email || "",
+    address: organization.address || "",
+    website: organization.website || "",
+    notes: organization.notes || "",
+  };
+}
+
 interface OrganizationFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -64,29 +81,22 @@ export function OrganizationForm({
   organization,
   onSave,
 }: OrganizationFormProps) {
-  const [form, setForm] = useState<OrgFormData>(emptyForm);
+  const [form, setForm] = useState<OrgFormData>(() =>
+    initialFormData(organization)
+  );
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const organizations = useCrmStore((s) => s.organizations);
   const repGroups = organizations.filter((o) => o.type === "rep_group");
 
-  useEffect(() => {
-    if (organization) {
-      setForm({
-        name: organization.name,
-        type: organization.type,
-        parentOrganizationId: organization.parentOrganizationId || "",
-        defaultTier: organization.defaultTier,
-        phone: organization.phone || "",
-        email: organization.email || "",
-        address: organization.address || "",
-        website: organization.website || "",
-        notes: organization.notes || "",
-      });
-    } else {
-      setForm(emptyForm);
-    }
+  // Reset the draft whenever the dialog re-opens or targets a different
+  // organization (setState-during-render reset pattern — replaces a
+  // state-sync effect; same triggers as the old [organization, open] deps).
+  const [prevReset, setPrevReset] = useState({ organization, open });
+  if (prevReset.organization !== organization || prevReset.open !== open) {
+    setPrevReset({ organization, open });
+    setForm(initialFormData(organization));
     setErrors({});
-  }, [organization, open]);
+  }
 
   function handleSave() {
     const newErrors: Record<string, boolean> = {};

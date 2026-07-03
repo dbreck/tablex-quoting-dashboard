@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import { Copy, RotateCcw, Eye, EyeOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { defaultJourney } from "@/data/default-journey";
@@ -14,25 +21,36 @@ function genId() {
   return Math.random().toString(36).substring(2, 9);
 }
 
+// Hydration-safe "on the client" flag: false during SSR and the hydration
+// render, true after mount — so server and client markup stay in sync.
+const emptySubscribe = () => () => {};
+function useHydrated() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 export function JourneyBoard() {
-  const [journey, setJourney] = useState<CustomerJourney | null>(null);
+  const hydrated = useHydrated();
+  // Journey loaded from localStorage once we're on the client (replaces the
+  // old load-on-mount effect; same visible sequence: spinner, then board).
+  const initialJourney = useMemo<CustomerJourney | null>(() => {
+    if (!hydrated) return null;
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? (JSON.parse(stored) as CustomerJourney) : defaultJourney;
+    } catch {
+      return defaultJourney;
+    }
+  }, [hydrated]);
+  const [journeyState, setJourneyState] = useState<CustomerJourney | null>(null);
+  // Edits win over the loaded value.
+  const journey = journeyState ?? initialJourney;
   const [workshopMode, setWorkshopMode] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState(false);
   const dragIndexRef = useRef<number | null>(null);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setJourney(JSON.parse(stored));
-      } else {
-        setJourney(defaultJourney);
-      }
-    } catch {
-      setJourney(defaultJourney);
-    }
-  }, []);
 
   // Save to localStorage on change
   useEffect(() => {
@@ -41,49 +59,61 @@ export function JourneyBoard() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   }, [journey]);
 
-  const updatePhase = useCallback((index: number, updated: JourneyPhase) => {
-    setJourney((prev) => {
-      if (!prev) return prev;
-      const phases = [...prev.phases];
-      phases[index] = updated;
-      return { ...prev, phases };
-    });
-  }, []);
+  const updatePhase = useCallback(
+    (index: number, updated: JourneyPhase) => {
+      setJourneyState((prev) => {
+        const base = prev ?? initialJourney;
+        if (!base) return prev;
+        const phases = [...base.phases];
+        phases[index] = updated;
+        return { ...base, phases };
+      });
+    },
+    [initialJourney]
+  );
 
-  const deletePhase = useCallback((index: number) => {
-    if (!window.confirm("Delete this phase? This cannot be undone.")) return;
-    setJourney((prev) => {
-      if (!prev) return prev;
-      const phases = prev.phases.filter((_, i) => i !== index);
-      // Re-order
-      phases.forEach((p, i) => (p.order = i));
-      return { ...prev, phases };
-    });
-  }, []);
+  const deletePhase = useCallback(
+    (index: number) => {
+      if (!window.confirm("Delete this phase? This cannot be undone.")) return;
+      setJourneyState((prev) => {
+        const base = prev ?? initialJourney;
+        if (!base) return prev;
+        const phases = base.phases.filter((_, i) => i !== index);
+        // Re-order
+        phases.forEach((p, i) => (p.order = i));
+        return { ...base, phases };
+      });
+    },
+    [initialJourney]
+  );
 
-  const addPhase = useCallback((atIndex: number) => {
-    setJourney((prev) => {
-      if (!prev) return prev;
-      const newPhase: JourneyPhase = {
-        id: `phase-${genId()}`,
-        name: "",
-        description: "",
-        actor: "Customer",
-        touchpoints: [],
-        actions: [],
-        thoughts: [],
-        emotion: "neutral",
-        emotionIntensity: 0,
-        painPoints: [],
-        opportunities: [],
-        order: atIndex,
-      };
-      const phases = [...prev.phases];
-      phases.splice(atIndex, 0, newPhase);
-      phases.forEach((p, i) => (p.order = i));
-      return { ...prev, phases };
-    });
-  }, []);
+  const addPhase = useCallback(
+    (atIndex: number) => {
+      setJourneyState((prev) => {
+        const base = prev ?? initialJourney;
+        if (!base) return prev;
+        const newPhase: JourneyPhase = {
+          id: `phase-${genId()}`,
+          name: "",
+          description: "",
+          actor: "Customer",
+          touchpoints: [],
+          actions: [],
+          thoughts: [],
+          emotion: "neutral",
+          emotionIntensity: 0,
+          painPoints: [],
+          opportunities: [],
+          order: atIndex,
+        };
+        const phases = [...base.phases];
+        phases.splice(atIndex, 0, newPhase);
+        phases.forEach((p, i) => (p.order = i));
+        return { ...base, phases };
+      });
+    },
+    [initialJourney]
+  );
 
   function handleDragStart(index: number) {
     return (e: React.DragEvent) => {
@@ -110,13 +140,14 @@ export function JourneyBoard() {
       const fromIndex = dragIndexRef.current;
       if (fromIndex === null || fromIndex === targetIndex) return;
 
-      setJourney((prev) => {
-        if (!prev) return prev;
-        const phases = [...prev.phases];
+      setJourneyState((prev) => {
+        const base = prev ?? initialJourney;
+        if (!base) return prev;
+        const phases = [...base.phases];
         const [moved] = phases.splice(fromIndex, 1);
         phases.splice(targetIndex, 0, moved);
         phases.forEach((p, i) => (p.order = i));
-        return { ...prev, phases };
+        return { ...base, phases };
       });
 
       dragIndexRef.current = null;
@@ -140,7 +171,7 @@ export function JourneyBoard() {
   function resetToDefault() {
     if (!window.confirm("Reset to the default journey? All edits will be lost.")) return;
     const fresh = { ...defaultJourney, lastModified: new Date().toISOString() };
-    setJourney(fresh);
+    setJourneyState(fresh);
   }
 
   // Loading state while reading localStorage

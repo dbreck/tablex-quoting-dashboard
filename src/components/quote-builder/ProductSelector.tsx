@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useQuoteStore } from "@/store/quote-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +47,7 @@ export function ProductSelector() {
 
   const [products, setProducts] = useState<CatalogRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [fetchedKey, setFetchedKey] = useState<string | null>(null);
   const [uniqueSeries, setUniqueSeries] = useState<string[]>([]);
   const [uniqueShapes, setUniqueShapes] = useState<string[]>([]);
 
@@ -71,38 +71,47 @@ export function ProductSelector() {
     loadFilters();
   }, []);
 
-  // Fetch products with search, filters, pagination
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    const supabase = createClient();
-
-    let query = supabase
-      .from("product_catalog")
-      .select("sku, series, shape_name, size, list_price, price_50_20, price_50_20_5, price_50_20_10, price_50_20_15, price_50_20_20", { count: "exact" });
-
-    if (search) {
-      query = query.or(`sku.ilike.%${search}%,series.ilike.%${search}%,shape_name.ilike.%${search}%`);
-    }
-    if (seriesFilter.length > 0) {
-      query = query.in("series", seriesFilter);
-    }
-    if (shapeFilter.length > 0) {
-      query = query.in("shape_name", shapeFilter);
-    }
-
-    query = query
-      .order("sku")
-      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
-    const { data, count } = await query;
-    setProducts((data as CatalogRow[]) || []);
-    setTotalCount(count || 0);
-    setLoading(false);
-  }, [search, seriesFilter, shapeFilter, page]);
+  // Fetch products with search, filters, pagination.
+  // `loading` is derived: we are loading whenever the last completed fetch does
+  // not match the current query params (avoids a sync setState in the effect).
+  const queryKey = JSON.stringify({ search, seriesFilter, shapeFilter, page });
+  const loading = fetchedKey !== queryKey;
 
   useEffect(() => {
+    let cancelled = false;
+    const supabase = createClient();
+
+    async function fetchProducts() {
+      let query = supabase
+        .from("product_catalog")
+        .select("sku, series, shape_name, size, list_price, price_50_20, price_50_20_5, price_50_20_10, price_50_20_15, price_50_20_20", { count: "exact" });
+
+      if (search) {
+        query = query.or(`sku.ilike.%${search}%,series.ilike.%${search}%,shape_name.ilike.%${search}%`);
+      }
+      if (seriesFilter.length > 0) {
+        query = query.in("series", seriesFilter);
+      }
+      if (shapeFilter.length > 0) {
+        query = query.in("shape_name", shapeFilter);
+      }
+
+      query = query
+        .order("sku")
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+      const { data, count } = await query;
+      if (cancelled) return;
+      setProducts((data as CatalogRow[]) || []);
+      setTotalCount(count || 0);
+      setFetchedKey(queryKey);
+    }
+
     fetchProducts();
-  }, [fetchProducts]);
+    return () => {
+      cancelled = true;
+    };
+  }, [search, seriesFilter, shapeFilter, page, queryKey]);
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 

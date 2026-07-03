@@ -22,7 +22,7 @@ const DualCTA = () => (
           margin: '20px auto 32px',
           maxWidth: 380, textAlign: 'center'
         }}>
-          Something custom? We'll have it back the next business day.
+          Something custom? We&apos;ll have it back the next business day.
         </p>
         <a href="#" className="btn btn--ember">start a quote</a>
       </div>
@@ -36,12 +36,12 @@ const DualCTA = () => (
         <div className="label-caps" style={{ color: 'var(--tx-stone-600)', marginBottom: 18 }}>
           Find your rep
         </div>
-        <div className="h1" style={{ color: 'var(--tx-iron)' }}>We'll route you to your rep.</div>
+        <div className="h1" style={{ color: 'var(--tx-iron)' }}>We&apos;ll route you to your rep.</div>
         <p className="lede" style={{
           margin: '20px auto 32px',
           maxWidth: 380, textAlign: 'center'
         }}>
-          Enter your zip — or straight to us if your territory doesn't have one yet.
+          Enter your zip — or straight to us if your territory doesn&apos;t have one yet.
         </p>
         <a href="#" className="btn btn--ghost-light">enter your zip</a>
       </div>

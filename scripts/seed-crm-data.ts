@@ -675,7 +675,7 @@ async function phase4_seedContacts(existingOrgs: DbOrg[]) {
   const contactRows: Record<string, unknown>[] = [];
   const skippedNoOrg: string[] = [];
 
-  for (const [email, { entry, orgId, orgName }] of byEmail) {
+  for (const [email, { entry, orgId }] of byEmail) {
     if (!orgId) {
       skippedNoOrg.push(`${entry.contactName} <${email}> (company: ${entry.companyName})`);
       unmatchedContacts.push({
@@ -717,8 +717,7 @@ async function phase4_seedContacts(existingOrgs: DbOrg[]) {
 function phase5_generateReports(
   junkFiltered: { name: string; reason: string }[],
   unmatchedGfCompanies: { name: string; count: number }[],
-  gfEntries: GfEntry[],
-  existingOrgs: DbOrg[]
+  gfEntries: GfEntry[]
 ) {
   console.log("\n=== Phase 5: Generate Reports ===");
 
@@ -1179,7 +1178,7 @@ async function main() {
 
   // Phase 5: Reports
   const gfEntries = loadJson<GfEntry[]>("gf-quote-requests.json");
-  phase5_generateReports(junkFiltered, unmatchedGfCompanies, gfEntries, existingOrgs);
+  phase5_generateReports(junkFiltered, unmatchedGfCompanies, gfEntries);
 
   // Phase 6: Rep group hierarchy
   await phase6_setRepGroupHierarchy(existingOrgs);

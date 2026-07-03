@@ -23,7 +23,7 @@ const Nav = () => {
   const links = ['PRODUCTS', 'SPACES', 'FINISHES', 'RESOURCES', 'ABOUT'];
 
   return (
-    <React.Fragment>
+    <>
       <nav style={{
         position: 'fixed',
         top: 0, left: 0, right: 0,
@@ -118,7 +118,7 @@ const Nav = () => {
           <a href="#" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, textDecoration: 'none' }}>Login · Account · Contact</a>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

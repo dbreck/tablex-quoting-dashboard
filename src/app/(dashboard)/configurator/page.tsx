@@ -187,35 +187,23 @@ export default function ConfiguratorPage() {
     return getAvailableShapes(series);
   }, [series]);
 
+  // Auto-select first shape / size / base when none is explicitly selected.
+  // Derived during render (instead of setState-in-effect) so the auto-select
+  // UX is identical but without cascading renders.
+  const effectiveShape = shape || availableShapes[0] || "";
+
   const availableSizes = useMemo(() => {
-    if (!series || !shape) return [];
-    return getAvailableSizes(series, shape);
-  }, [series, shape]);
+    if (!series || !effectiveShape) return [];
+    return getAvailableSizes(series, effectiveShape);
+  }, [series, effectiveShape]);
 
   const availableBases = useMemo(() => {
-    if (!series || !shape) return [];
-    return getAvailableBases(series, shape);
-  }, [series, shape]);
+    if (!series || !effectiveShape) return [];
+    return getAvailableBases(series, effectiveShape);
+  }, [series, effectiveShape]);
 
-  // Auto-select first shape + first size when series changes
-  useEffect(() => {
-    if (availableShapes.length > 0 && !shape) {
-      setShape(availableShapes[0]);
-    }
-  }, [availableShapes, shape]);
-
-  useEffect(() => {
-    if (availableSizes.length > 0 && !size) {
-      setSize(availableSizes[0]);
-    }
-  }, [availableSizes, size]);
-
-  // Auto-select first base when none is selected
-  useEffect(() => {
-    if (availableBases.length > 0 && !base) {
-      setBase(availableBases[0]);
-    }
-  }, [availableBases, base]);
+  const effectiveSize = size || availableSizes[0] || "";
+  const effectiveBase = base || availableBases[0] || "";
 
   // Preload textures for the selected top material category
   useEffect(() => {
@@ -234,9 +222,9 @@ export default function ConfiguratorPage() {
   // Resolve model URL — only when shape+size+base are all selected
   const { url: modelUrl, supplierBaseUrl, isSupplierBase, isVerifiedCombo } = useModelUrl({
     series,
-    shape,
-    size,
-    base,
+    shape: effectiveShape,
+    size: effectiveSize,
+    base: effectiveBase,
   });
 
   // Reset dependent selections when parent changes
@@ -287,9 +275,9 @@ export default function ConfiguratorPage() {
                 <p className="text-xs text-slate-400 text-center mt-2">
                   {!series
                     ? "Select a series to get started"
-                    : !shape
+                    : !effectiveShape
                       ? "Choose a shape to preview"
-                      : !size || !base
+                      : !effectiveSize || !effectiveBase
                         ? "Select size and base to load 3D model"
                         : "3D model not available for this configuration"}
                 </p>
@@ -353,7 +341,7 @@ export default function ConfiguratorPage() {
               className="flex items-center gap-1 text-sm font-medium text-slate-700 mb-1.5 cursor-pointer hover:text-slate-900"
             >
               {shapesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              Shape{shape ? `: ${SHAPE_NAMES[shape] || shape}` : ""}
+              Shape{effectiveShape ? `: ${SHAPE_NAMES[effectiveShape] || effectiveShape}` : ""}
             </button>
             {shapesOpen && availableShapes.length > 0 ? (
               <div className="grid grid-cols-4 gap-2">
@@ -362,7 +350,7 @@ export default function ConfiguratorPage() {
                     key={code}
                     onClick={() => handleShapeChange(code)}
                     className={`flex flex-col items-center gap-1 rounded-lg border p-2.5 text-xs font-medium transition-colors cursor-pointer ${
-                      shape === code
+                      effectiveShape === code
                         ? "border-brand-green bg-brand-green/5 text-brand-green"
                         : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     }`}
@@ -387,12 +375,12 @@ export default function ConfiguratorPage() {
               Size
             </label>
             <Select
-              value={size}
+              value={effectiveSize}
               onValueChange={setSize}
-              disabled={!shape}
+              disabled={!effectiveShape}
             >
               <SelectTrigger>
-                <SelectValue placeholder={shape ? "Select size" : "Select shape first"} />
+                <SelectValue placeholder={effectiveShape ? "Select size" : "Select shape first"} />
               </SelectTrigger>
               <SelectContent>
                 {availableSizes.map((raw) => (
@@ -436,12 +424,12 @@ export default function ConfiguratorPage() {
               </Popover>
             </div>
             <Select
-              value={base}
+              value={effectiveBase}
               onValueChange={setBase}
-              disabled={!shape}
+              disabled={!effectiveShape}
             >
               <SelectTrigger>
-                <SelectValue placeholder={shape ? "Select base" : "Select shape first"} />
+                <SelectValue placeholder={effectiveShape ? "Select base" : "Select shape first"} />
               </SelectTrigger>
               <SelectContent>
                 {availableBases.map((code) => {
@@ -676,7 +664,7 @@ export default function ConfiguratorPage() {
             <Button
               className="w-full"
               size="lg"
-              disabled={!series || !shape || !size || !base}
+              disabled={!series || !effectiveShape || !effectiveSize || !effectiveBase}
               onClick={() => setQuoteModalOpen(true)}
             >
               <ShoppingCart className="h-5 w-5" />
@@ -696,11 +684,11 @@ export default function ConfiguratorPage() {
             config={{
               seriesCode: series,
               seriesName: SERIES_NAMES[series] || series,
-              shapeCode: shape,
-              shapeName: SHAPE_NAMES[shape] || shape,
-              size,
-              baseCode: base,
-              baseName: BASE_NAMES[base] || base,
+              shapeCode: effectiveShape,
+              shapeName: SHAPE_NAMES[effectiveShape] || effectiveShape,
+              size: effectiveSize,
+              baseCode: effectiveBase,
+              baseName: BASE_NAMES[effectiveBase] || effectiveBase,
               baseFinish: baseFinish.name,
               topMaterial,
               topFinish: topFinish.name,

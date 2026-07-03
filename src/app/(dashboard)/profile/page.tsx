@@ -22,7 +22,7 @@ export default function ProfilePage() {
   const supabase = createClient();
 
   // Profile form state
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<{
     type: "success" | "error";
@@ -45,12 +45,15 @@ export default function ProfilePage() {
     }
   }, [isLoading, user, router]);
 
-  // Populate form when profile loads
-  useEffect(() => {
+  // Populate form when profile loads/refreshes (setState-during-render reset
+  // pattern, keyed on profile object identity like the previous effect).
+  const [lastProfile, setLastProfile] = useState(profile);
+  if (profile !== lastProfile) {
+    setLastProfile(profile);
     if (profile?.full_name) {
       setFullName(profile.full_name);
     }
-  }, [profile]);
+  }
 
   async function handleSaveProfile() {
     if (!user) return;

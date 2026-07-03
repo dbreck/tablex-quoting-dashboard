@@ -1,6 +1,8 @@
 // StatStrip.jsx — Pattern #17 — Slash-divided proof strip.
 // cc-7 (Danny): make this big and scroll in an infinite marquee.
 // Two identical tracks side-by-side, translateX(-50%) over 40s; pause on hover.
+// React is a browser global (UMD script in index.html); bind Fragment locally for JSX.
+const { Fragment } = React;
 const STATS = [
   '16 Series',
   '31 Paints',
@@ -22,7 +24,7 @@ const Track = ({ ariaHidden }) => (
       flex: '0 0 auto'
     }}>
     {STATS.map((s, i) => (
-      <React.Fragment key={i}>
+      <Fragment key={i}>
         <span style={{
           fontFamily: 'var(--font-display)',
           fontWeight: 400,
@@ -30,7 +32,7 @@ const Track = ({ ariaHidden }) => (
           fontSize: 'inherit'
         }}>{ACCENT_BEFORE.has(i) ? '*' : '/'}</span>
         <span style={{ color: 'var(--tx-iron)' }}>{s}</span>
-      </React.Fragment>
+      </Fragment>
     ))}
   </div>
 );

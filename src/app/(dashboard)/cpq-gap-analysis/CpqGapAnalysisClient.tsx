@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useMemo, useSyncExternalStore } from "react";
 import { Header } from "@/components/layout/Header";
 import {
   Card,
@@ -777,25 +777,58 @@ function DataArchTab() {
 const STORAGE_KEY_COMPLETED = "cpq-gap-completed";
 const STORAGE_KEY_DECISIONS = "cpq-gap-decisions";
 
-function usePersistedSet(key: string): [Set<number>, (id: number) => void] {
-  const [items, setItems] = useState<Set<number>>(new Set());
+// localStorage-backed external store: components subscribe via
+// useSyncExternalStore so hydration stays mismatch-free (server snapshot is
+// null, stored values appear right after mount — same visible behavior as the
+// previous hydrate-in-effect approach, without setState inside an effect).
+const storageListeners = new Set<() => void>();
 
-  useEffect(() => {
+function subscribeToPersistedStorage(callback: () => void) {
+  storageListeners.add(callback);
+  return () => {
+    storageListeners.delete(callback);
+  };
+}
+
+function emitPersistedStorageChange() {
+  storageListeners.forEach((cb) => cb());
+}
+
+function readPersistedStorage(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function usePersistedSet(key: string): [Set<number>, (id: number) => void] {
+  const raw = useSyncExternalStore(
+    subscribeToPersistedStorage,
+    () => readPersistedStorage(key),
+    () => null
+  );
+
+  const items = useMemo(() => {
     try {
-      const stored = localStorage.getItem(key);
-      if (stored) setItems(new Set(JSON.parse(stored)));
-    } catch {}
-  }, [key]);
+      return raw ? new Set<number>(JSON.parse(raw)) : new Set<number>();
+    } catch {
+      return new Set<number>();
+    }
+  }, [raw]);
 
   const toggle = useCallback(
     (id: number) => {
-      setItems((prev) => {
-        const next = new Set(prev);
-        if (next.has(id)) next.delete(id);
-        else next.add(id);
-        localStorage.setItem(key, JSON.stringify([...next]));
-        return next;
-      });
+      let current: number[] = [];
+      try {
+        const stored = localStorage.getItem(key);
+        if (stored) current = JSON.parse(stored);
+      } catch {}
+      const next = new Set<number>(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      localStorage.setItem(key, JSON.stringify([...next]));
+      emitPersistedStorageChange();
     },
     [key]
   );
@@ -806,24 +839,32 @@ function usePersistedSet(key: string): [Set<number>, (id: number) => void] {
 function usePersistedMap(
   key: string
 ): [Record<number, string>, (id: number, value: string) => void] {
-  const [items, setItems] = useState<Record<number, string>>({});
+  const raw = useSyncExternalStore(
+    subscribeToPersistedStorage,
+    () => readPersistedStorage(key),
+    () => null
+  );
 
-  useEffect(() => {
+  const items = useMemo(() => {
     try {
-      const stored = localStorage.getItem(key);
-      if (stored) setItems(JSON.parse(stored));
-    } catch {}
-  }, [key]);
+      return raw ? (JSON.parse(raw) as Record<number, string>) : {};
+    } catch {
+      return {};
+    }
+  }, [raw]);
 
   const select = useCallback(
     (id: number, value: string) => {
-      setItems((prev) => {
-        const next = { ...prev };
-        if (next[id] === value) delete next[id];
-        else next[id] = value;
-        localStorage.setItem(key, JSON.stringify(next));
-        return next;
-      });
+      let current: Record<number, string> = {};
+      try {
+        const stored = localStorage.getItem(key);
+        if (stored) current = JSON.parse(stored);
+      } catch {}
+      const next = { ...current };
+      if (next[id] === value) delete next[id];
+      else next[id] = value;
+      localStorage.setItem(key, JSON.stringify(next));
+      emitPersistedStorageChange();
     },
     [key]
   );

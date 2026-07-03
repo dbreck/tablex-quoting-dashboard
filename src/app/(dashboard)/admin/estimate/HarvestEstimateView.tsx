@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Pencil, ShieldCheck, Plus, Printer } from "lucide-react";

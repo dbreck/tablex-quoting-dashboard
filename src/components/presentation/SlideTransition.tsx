@@ -10,9 +10,16 @@ interface SlideTransitionProps {
 
 export function SlideTransition({ children, slideKey, direction }: SlideTransitionProps) {
   const [visible, setVisible] = useState(false);
+  const [prevSlideKey, setPrevSlideKey] = useState(slideKey);
+
+  // Reset visibility during render when the slide changes (React's documented
+  // "adjust state when a prop changes" pattern) instead of setState in the effect.
+  if (prevSlideKey !== slideKey) {
+    setPrevSlideKey(slideKey);
+    setVisible(false);
+  }
 
   useEffect(() => {
-    setVisible(false);
     const raf = requestAnimationFrame(() => {
       requestAnimationFrame(() => setVisible(true));
     });

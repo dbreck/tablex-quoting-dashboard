@@ -104,61 +104,6 @@ function collectGlbFiles(dir: string): GlbFile[] {
   return files.sort((a, b) => a.storagePath.localeCompare(b.storagePath));
 }
 
-async function listExistingFiles(
-  supabaseUrl: string,
-  serviceKey: string,
-  prefix: string = "",
-): Promise<Set<string>> {
-  const existing = new Set<string>();
-  let offset = 0;
-  const limit = 1000;
-
-  while (true) {
-    const response = await fetch(
-      `${supabaseUrl}/storage/v1/object/list/${BUCKET}`,
-      {
-        method: "POST",
-        headers: {
-          apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prefix,
-          limit,
-          offset,
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error(`Failed to list files: ${response.status} ${text}`);
-      break;
-    }
-
-    const items = (await response.json()) as { name: string; id?: string }[];
-    if (items.length === 0) break;
-
-    for (const item of items) {
-      // For directory items, recurse to list contents
-      if (!item.id) {
-        const subItems = await listExistingFiles(supabaseUrl, serviceKey, prefix ? `${prefix}/${item.name}` : item.name);
-        for (const sub of subItems) {
-          existing.add(sub);
-        }
-      } else {
-        existing.add(prefix ? `${prefix}/${item.name}` : item.name);
-      }
-    }
-
-    if (items.length < limit) break;
-    offset += limit;
-  }
-
-  return existing;
-}
-
 async function uploadFile(
   supabaseUrl: string,
   serviceKey: string,
@@ -227,7 +172,7 @@ async function main() {
   console.log();
 
   let uploaded = 0;
-  let skipped = 0;
+  const skipped = 0;
   let failed = 0;
 
   for (let i = 0; i < glbFiles.length; i++) {

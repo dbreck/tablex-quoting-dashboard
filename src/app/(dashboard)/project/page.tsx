@@ -2,8 +2,7 @@
 
 import { useProjectTrackerStore } from "@/store/project-tracker-store";
 import { ProgressSummary } from "@/components/project/ProgressSummary";
-import { DELIVERABLES, WORKSTREAMS } from "@/data/project-phase2";
-import { computeDeliverableStatus, COLUMNS } from "@/data/project-tracker";
+import { COLUMNS } from "@/data/project-tracker";
 import Link from "next/link";
 import { ArrowRight, KanbanSquare, GanttChart, ListChecks, Server, FileText, ExternalLink } from "lucide-react";
 

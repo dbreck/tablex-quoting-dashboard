@@ -37,7 +37,7 @@ const QuickShip = () => (
           <div style={{ borderTop: '1px solid rgba(10,10,10,0.12)' }}>
             {/* nitpick 2026-06-05: rows are deep links to series pages — clickable,
                 with the same hover-wash + breathing-room affordance as Browse by Space */}
-            {ELIGIBLE.map((s, i) => (
+            {ELIGIBLE.map((s) => (
               <a key={s} href="#" className="qs-series-row" style={{
                 display: 'flex',
                 alignItems: 'baseline',

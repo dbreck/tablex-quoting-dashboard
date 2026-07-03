@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
@@ -48,9 +48,18 @@ const STATUS_OPTIONS: { value: InvoiceStatus; label: string }[] = [
   { value: "void", label: "Void" },
 ];
 
+// Hydration-safe "mounted" flag: false on the server/hydration render, true
+// immediately after mount — same render sequence as the old setState-in-effect
+// pattern, without the effect.
+const emptySubscribe = () => () => {};
+
 export default function InvoiceDetailPage() {
   const params = useParams();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const { invoices, updateInvoice, loadFromSupabase: loadInvoices } = useInvoiceStore();
   const { orders, loadFromSupabase: loadOrders } = useOrderStore();
   const { quotes, loadFromSupabase: loadQuotes } = useQuoteStore();
@@ -65,7 +74,6 @@ export default function InvoiceDetailPage() {
   const invoiceId = params.id as string;
 
   useEffect(() => {
-    setMounted(true);
     loadInvoices();
     loadOrders();
     loadQuotes();

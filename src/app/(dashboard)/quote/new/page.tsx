@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useQuoteStore } from "@/store/quote-store";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,14 +21,19 @@ const STEPS = [
   { id: "review", label: "Review", number: 5 },
 ];
 
+// Hydration-safe "mounted" flag: false on the server/hydration render, true
+// immediately after mount — same render sequence as the old setState-in-effect
+// pattern, without the effect.
+const emptySubscribe = () => () => {};
+
 export default function NewQuotePage() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const { draftQuote, setDraftQuote } = useQuoteStore();
   const [activeStep, setActiveStep] = useState(0);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Initialize draft on mount if none exists
   useEffect(() => {

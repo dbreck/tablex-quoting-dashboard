@@ -528,6 +528,7 @@ export default function SetupTrackerView() {
         const parsed = JSON.parse(stored) as TrackerState;
         // Merge with defaults so new services added later still appear
         const merged = { ...buildInitialState(), ...parsed };
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time post-mount hydration from localStorage; a lazy useState initializer would read storage during the SSR-hydration render and mismatch the server HTML
         setState(merged);
       }
     } catch {

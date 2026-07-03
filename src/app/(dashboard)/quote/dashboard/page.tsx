@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuoteStore } from "@/store/quote-store";
@@ -24,12 +24,20 @@ const statusBadge: Record<string, "secondary" | "info" | "success" | "error"> = 
   rejected: "error",
 };
 
+// Hydration-safe "mounted" flag: false on the server/hydration render, true
+// immediately after mount — same render sequence as the old setState-in-effect
+// pattern, without the effect.
+const emptySubscribe = () => () => {};
+
 export default function QuoteDashboardPage() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   const { quotes, loadFromSupabase } = useQuoteStore();
 
   useEffect(() => {
-    setMounted(true);
     loadFromSupabase();
   }, [loadFromSupabase]);
 

@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { buildWaterfallData, discountTierLabels } from "@/lib/pricing";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -99,17 +98,6 @@ export default function PricingClient({ profitData }: PricingClientProps) {
     const values = waterfallData.map((item) =>
       item.type === "total" ? item.value : item.value
     );
-    const colors = waterfallData.map((item) => {
-      switch (item.type) {
-        case "cost": return "#ef4444";
-        case "markup": return "#8dc63f";
-        case "discount": return "#f59e0b";
-        case "total": return "#1a3c5c";
-        case "profit": return "#10b981";
-        default: return "#94a3b8";
-      }
-    });
-
     return [{
       type: "waterfall" as const,
       orientation: "v" as const,
