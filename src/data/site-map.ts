@@ -84,17 +84,6 @@ const publicMarketing: SiteMapGroup = {
       contentNodeRef: "sa-about-story",
     },
     {
-      id: "about-manufacturing",
-      route: "/about/manufacturing",
-      label: "Manufacturing",
-      description: "Made in USA, Midwest facility.",
-      audience: "public",
-      owner: "payload",
-      approval: "pending",
-      parentId: "about",
-      contentNodeRef: "sa-about-mfg",
-    },
-    {
       id: "about-warranty",
       route: "/about/warranty",
       label: "50-Year Warranty",

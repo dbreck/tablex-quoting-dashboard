@@ -200,8 +200,8 @@ export const architectureSections: ArchSection[] = [
       { id: "about-story", label: "Our Story" },
       {
         id: "about-mfg",
-        label: "Manufacturing",
-        description: "Made in USA, Midwest facility",
+        label: "Shipping & Origin",
+        description: "Shipped & distributed from Jasper, Indiana",
       },
       { id: "about-warranty", label: "50-Year Warranty" },
       {
