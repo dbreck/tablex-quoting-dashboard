@@ -43,6 +43,9 @@ yarn-error.log*
 # supabase
 supabase/.temp/
 
+# local MCP config (personal project refs / server list — not for the repo)
+.mcp.json
+
 # CAD/3D model working files (DWG, DXF, GLB originals — GLBs served from Supabase)
 /catalog/
 

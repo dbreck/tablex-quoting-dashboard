@@ -12,6 +12,8 @@ import { useSignOffsHydration } from "@/hooks/useSignOffsHydration";
 import { useSignOffsRealtime } from "@/hooks/useSignOffsRealtime";
 import { useAssetsHydration } from "@/hooks/useAssetsHydration";
 import { useAssetsRealtime } from "@/hooks/useAssetsRealtime";
+import { useLaunchTimelineHydration } from "@/hooks/useLaunchTimelineHydration";
+import { useLaunchTimelineRealtime } from "@/hooks/useLaunchTimelineRealtime";
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
@@ -25,6 +27,8 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   useSignOffsRealtime();
   useAssetsHydration();
   useAssetsRealtime();
+  useLaunchTimelineHydration();
+  useLaunchTimelineRealtime();
 
   if (!profile?.can_access_proposal) return null;
 
