@@ -43,18 +43,15 @@ export function OverviewSection() {
     <div className="space-y-8">
       <SectionIntro title="Where we are">
         <p>
-          <strong className="text-gray-900">The website is functionally complete.</strong> Every
-          public page, the 3D configurator, the quoting pipeline, all three logged-in portals
-          (dealer, rep, TableX operations), the CRM, and the Xero connection are built and running
-          on the staging address today. Nothing on this page is planned work — it all exists and
-          can be clicked right now.
+          All website functionality is built and running on the staging address: every public
+          page, the 3D configurator, the quoting pipeline, the three logged-in portals (dealer,
+          rep, TableX operations), the CRM, and the Xero connection.
         </p>
         <p>
-          What separates us from go-live is <strong className="text-gray-900">not code</strong>.
-          It&rsquo;s a short infrastructure switch-over on our side (pointing tablex.com at the new
-          site), and a set of content and business inputs on the TableX side — sign-off, a handful
-          of decisions, and the real files and data listed under{" "}
-          <em>What we need from TableX</em>.
+          Remaining go-live work falls in two groups: an infrastructure switch-over on our side
+          (pointing tablex.com at the new site), and content and business inputs from TableX —
+          sign-off, several decisions, and the files and data listed under{" "}
+          <em>What We Need</em>.
         </p>
       </SectionIntro>
 
@@ -73,7 +70,7 @@ export function OverviewSection() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            To go live — our side (days, not weeks)
+            To go live — our side
           </h3>
           <div className="mt-4">
             {CUTOVER_STEPS.map((s, i) => (
@@ -109,9 +106,8 @@ export function OverviewSection() {
             ))}
           </ul>
           <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-500">
-            Everything else we need (photography, resource files, news content, 3D assets…) makes
-            the site better but does <strong>not</strong> hold the launch — full list on the last
-            tab.
+            Remaining items (photography, resource files, news content, 3D assets) are not
+            launch-gating — full list on the What We Need tab.
           </p>
         </Card>
       </div>
@@ -127,11 +123,10 @@ export function SiteMapSection() {
   const counts = siteMapCounts();
   return (
     <div className="space-y-8">
-      <SectionIntro title="Every part of the site, and where it stands">
+      <SectionIntro title="Functional areas and status">
         <p>
-          Green means built, working, and verified on staging. Amber means the functionality is
-          live but part of its content or data is still to come. Gray means the feature is fully
-          built and waiting only on content.
+          Green: built and verified on staging. Amber: functionality live, part of its content or
+          data still to come. Gray: fully built, waiting only on content.
         </p>
       </SectionIntro>
 
@@ -197,11 +192,10 @@ export function SpexSection() {
     <div className="space-y-8">
       <SectionIntro title="Spex Studio — 3D model coverage">
         <p>
-          Every table combination the configurator offers is <strong>quotable today</strong>. The
-          gap is purely visual: of the {total.toLocaleString()} offered combinations, 72% render a
-          real 3D preview and the rest show a placeholder until we have the geometry. Closing the
-          gap needs a small, specific set of files from Neal — listed below with exactly how much
-          each one unlocks.
+          Every combination the configurator offers is quotable. The gap is visual: of the{" "}
+          {total.toLocaleString()} offered combinations, 72% render a 3D preview and the rest show
+          a placeholder until the geometry exists. The files required are listed below; each entry
+          shows how many combinations it unlocks.
         </p>
       </SectionIntro>
 
@@ -222,11 +216,11 @@ export function SpexSection() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            Ask 1 — six base models ({askOneTotal} combos for 6 files)
+            Ask 1 — six base models (unlock {askOneTotal} combinations)
           </h3>
           <p className="mt-2 text-sm text-gray-600">
-            Our code can draw any rectangular, square, round, or oval top — it just needs one clean
-            model of each base style to put underneath. Best value first:
+            The viewer draws rectangular, square, round, and oval tops in code; it requires one
+            model per base style. Ranked by combinations unlocked:
           </p>
           <div className="mt-4 space-y-2.5">
             {MISSING_BASES.map((b) => (
@@ -247,9 +241,9 @@ export function SpexSection() {
               Ask 2 — the offer lists for six series
             </h3>
             <p className="mt-2 text-sm text-gray-600">
-              These series have no 3D at all yet (still quotable). Before any modeling, we need
-              the <strong>data</strong>: which shapes, sizes, and bases each one actually offers.
-              With the lists — and the six bases from Ask 1 — most render with zero extra modeling.
+              These series have no 3D entries yet (still quotable). The first requirement is data,
+              not modeling: which shapes, sizes, and bases each series offers. With those lists
+              and the six bases from Ask 1, most combinations render without additional modeling.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {SERIES_NO_3D.map((s) => (
@@ -264,12 +258,12 @@ export function SpexSection() {
           </Card>
           <Card>
             <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-              What Neal should NOT model
+              Out of scope for modeling
             </h3>
             <p className="mt-2 text-sm text-gray-600">
-              Tabletops (drawn parametrically, including knife-edge), D-Shape/Boat outlines (we
-              recommend handling those in code on our side — 438 combos, zero modeling hours),
-              and any textures or materials — finishes are applied in code.
+              Tabletops (drawn parametrically, including knife-edge), D-Shape and Boat outlines
+              (438 combinations — planned as code on our side), and all textures and materials —
+              finishes are applied in code.
             </p>
           </Card>
         </div>
@@ -299,13 +293,12 @@ export function SpexSection() {
 export function ResourcesSection() {
   return (
     <div className="space-y-8">
-      <SectionIntro title="The Resources section — built, and waiting for files">
+      <SectionIntro title="Resources — pages built, no files published">
         <p>
-          All five resource pages are live with honest &ldquo;email us and we&rsquo;ll send
-          it&rdquo; states — we deliberately publish <strong>no placeholder downloads and no
-          unverifiable claims</strong>. Every real file TableX hands us goes straight onto its
-          page. Today the count of published files is zero, so this section is effectively a
-          request list.
+          All five resource pages are live. Each currently shows an interim state that routes
+          requests to the contact form; no downloadable files or unverified claims are published.
+          Zero files are published today. Files received from TableX publish without additional
+          development.
         </p>
       </SectionIntro>
 
@@ -335,11 +328,11 @@ export function ResourcesSection() {
         </table>
       </Card>
 
-      <Card className="border-amber-200 bg-amber-50">
-        <p className="text-sm text-amber-900">
-          <strong>The good news:</strong> there is zero development work between receiving these
-          files and publishing them. The dealer portal&rsquo;s Downloads page shares the same
-          pipeline — one drop of files lights up both.
+      <Card>
+        <p className="text-sm text-gray-600">
+          The dealer portal&rsquo;s Downloads page shares the same file pipeline — one set of
+          files populates both surfaces. No development sits between receiving files and
+          publishing them.
         </p>
       </Card>
     </div>
@@ -353,14 +346,12 @@ export function ResourcesSection() {
 export function XeroSection() {
   return (
     <div className="space-y-8">
-      <SectionIntro title="Xero — connected, read-only, already useful">
+      <SectionIntro title="Xero — connected, read-only">
         <p>
-          The site is connected to TableX&rsquo;s Xero account today.{" "}
-          <strong className="text-gray-900">
-            It only reads — by construction, it cannot write anything back to Xero.
-          </strong>{" "}
-          It mirrors contacts and open receivable balances into the CRM so the operations team
-          sees who owes what next to each account, without leaving the site.
+          The site is connected to TableX&rsquo;s Xero account. The integration reads only — by
+          construction it cannot write anything back to Xero. It mirrors contacts and open
+          receivable balances into the CRM, so each account&rsquo;s outstanding balance is visible
+          on its organization page.
         </p>
       </SectionIntro>
 
@@ -412,11 +403,11 @@ export function XeroSection() {
               The review queue
             </h3>
             <p className="mt-2 text-sm text-gray-600">
-              Anything the sync can&rsquo;t match automatically waits in a queue where the team
-              can <strong>Link</strong> it to an existing organization, <strong>Create</strong> a
-              new dealer org from it, or <strong>Ignore</strong> it. Filters narrow the queue to
-              contacts with open balances or to Xero-flagged customers — the fast path for
-              separating real dealers from one-off vendors.
+              Contacts the sync can&rsquo;t match automatically wait in a queue with three
+              actions: <strong>Link</strong> to an existing organization, <strong>Create</strong>{" "}
+              a new dealer org, or <strong>Ignore</strong>. Filters narrow the queue to contacts
+              with open balances or to Xero-flagged customers, separating dealers from one-off
+              vendors.
             </p>
           </Card>
           <Card>
@@ -435,9 +426,9 @@ export function XeroSection() {
               <li className="flex gap-2">
                 <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
                 <span>
-                  <strong className="text-gray-800">After clean books:</strong> one sync + a pass
-                  through the customers filter imports the real dealer roster — names, addresses,
-                  phones — with no re-typing.
+                  <strong className="text-gray-800">After clean books:</strong> one sync plus a
+                  pass through the customers filter imports the dealer roster — names, addresses,
+                  phones.
                 </span>
               </li>
               <li className="flex gap-2">
@@ -471,11 +462,10 @@ export function QuotesCrmSection() {
     <div className="space-y-8">
       <SectionIntro title="How a quote moves through TableX operations">
         <p>
-          A dealer builds tables in Spex Studio, submits the cart, and from that moment the quote
-          desk drives everything from <span className="font-mono text-xs">/ops/quotes</span>. Six
-          stages, clear ownership at each step, email notifications on every hand-off — and no
-          dollar amounts ever shown on the site itself. Pricing travels in the quote PDF and the
-          desk&rsquo;s note.
+          A dealer builds tables in Spex Studio and submits the cart; from that point the quote
+          desk works from <span className="font-mono text-xs">/ops/quotes</span>. Six stages, an
+          owner at each step, an email on each hand-off. No dollar amounts render on the site —
+          pricing travels in the quote PDF and the desk note.
         </p>
       </SectionIntro>
 
@@ -579,11 +569,10 @@ export function NeedsSection() {
 
   return (
     <div className="space-y-8">
-      <SectionIntro title="Everything we&rsquo;re waiting on, in one place">
+      <SectionIntro title="Outstanding inputs">
         <p>
-          Split by urgency: the first group gates the launch itself; the second makes the site
-          better and can land any time — each item goes live as soon as we receive it, with no
-          development in between.
+          Two groups: items that gate the launch, and items that can land any time. Each publishes
+          on receipt; none requires development.
         </p>
       </SectionIntro>
 

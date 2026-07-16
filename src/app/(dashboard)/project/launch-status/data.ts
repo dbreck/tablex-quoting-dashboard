@@ -61,7 +61,7 @@ export const SITE_MAP: AreaGroup[] = [
         name: "Find a Rep",
         routes: ["/find-rep"],
         status: "partial",
-        note: "Live with an honest fallback (ZIP → contact form). Rep directory needs territory data from TableX.",
+        note: "Live with a fallback (ZIP → contact form). Rep directory needs territory data from TableX.",
       },
       {
         name: "Resources",
@@ -173,7 +173,7 @@ export const SERIES_NO_3D = ["Revel", "App", "Element", "Artisan", "Solo", "Trig
 export const SPEX_FILE_SPEC = [
   "GLB format, real-world scale in meters",
   "Base only — no tabletop, no floor plane",
-  "One representative mid-size variant per base style is enough",
+  "One representative mid-size variant per base style",
   "No materials, textures, or UVs — finishes are applied in code",
   "Sitting on the ground plane (feet at zero)",
 ];
@@ -195,7 +195,7 @@ export const RESOURCES: ResourceRow[] = [
     name: "Brochures & Spec Sheets",
     offering: "Series brochures, full-line catalog, finish library PDFs",
     have: false,
-    state: "Page live with an honest “email us and we’ll send it same-day” state",
+    state: "Page live; requests route to the contact form",
     needs: "The actual PDFs from TableX (per-series brochures + catalog)",
   },
   {
@@ -223,7 +223,7 @@ export const RESOURCES: ResourceRow[] = [
     name: "Sustainability",
     offering: "Environmental data, certifications",
     have: false,
-    state: "Deliberate placeholder — we publish nothing we can’t verify",
+    state: "Placeholder by design; nothing unverified is published",
     needs: "Verified certifications / data TableX is comfortable publishing",
   },
 ];
@@ -272,13 +272,13 @@ export const QUOTE_STAGES: QuoteStage[] = [
     key: "submitted",
     label: "Submitted",
     actor: "Dealer",
-    desc: "Dealer names the project and submits for pricing. The desk is emailed instantly.",
+    desc: "Dealer names the project and submits for pricing. The desk is emailed.",
   },
   {
     key: "quoted",
     label: "Quoted",
     actor: "TableX",
-    desc: "The desk prices it, writes a note to the dealer, attaches the quote PDF, and hits Send. Dealer gets “Your quote is ready.”",
+    desc: "The desk prices it, writes a note to the dealer, attaches the quote PDF, and sends. The dealer is emailed that the quote is ready.",
   },
   {
     key: "revising",
@@ -296,7 +296,7 @@ export const QUOTE_STAGES: QuoteStage[] = [
     key: "archived",
     label: "Archived",
     actor: "TableX",
-    desc: "Desk archives completed or dead quotes to keep the board clean.",
+    desc: "Desk archives completed or inactive quotes.",
   },
 ];
 
@@ -309,7 +309,7 @@ export const OPS_ACTIONS = [
   },
   {
     name: "Request changes",
-    detail: "Bounces the quote back to the dealer with a note explaining what to change.",
+    detail: "Returns the quote to the dealer with a note explaining what to change.",
   },
   {
     name: "Archive quote",
@@ -326,7 +326,7 @@ export const QUOTE_NOTIFICATIONS = [
 
 export const CRM_POINTS = [
   "Every dealer, rep group, and direct account is an organization with a pricing tier (50/20 family). Tier changes are audited — who, when, before/after, and why.",
-  "Contacts live under each org; giving a contact portal access is one click. Reps are contacts on a rep-group org.",
+  "Contacts live under each org; portal access is granted per contact. Reps are contacts on a rep-group org.",
   "Rep coverage is explicit: assign a rep to the dealers they own, and their portal scopes to exactly those dealers — including quote PDFs.",
   "Each org page shows its full quote history, an activity feed (calls, emails, notes), and its live Xero receivables balance.",
   "No dollar figures render anywhere on the site — pricing travels only in the quote PDF and the desk note.",
@@ -358,25 +358,25 @@ export const NEEDS: NeedItem[] = [
   },
   {
     what: "sales@tablex.com mailbox",
-    why: "Quote notifications currently fall through to digital@tablex.com by design; flips to sales@ the moment it exists",
+    why: "Quote notifications currently route to digital@tablex.com; switches to sales@ once the mailbox exists",
     owner: "TableX IT",
     launchBlocking: false,
   },
   {
     what: "Rep territory data (who covers which states/zips)",
-    why: "Unlocks the real Find-a-Rep directory — this data exists nowhere else (we checked Xero: it’s not there)",
+    why: "Required for the Find-a-Rep directory; confirmed not present in Xero or any system we have",
     owner: "Brian",
     launchBlocking: false,
   },
   {
     what: "News / press content",
-    why: "The News section and its CMS are live and waiting — zero articles authored",
+    why: "The News section and its CMS are live; zero articles authored",
     owner: "Brian / marketing",
     launchBlocking: false,
   },
   {
     what: "Resource files: brochures, CAD, install guides, price lists, sustainability data",
-    why: "All five Resources pages are live with honest empty states — every real file we receive goes straight up",
+    why: "All five Resources pages are live with interim states; files publish on receipt",
     owner: "TableX",
     launchBlocking: false,
   },
@@ -388,13 +388,13 @@ export const NEEDS: NeedItem[] = [
   },
   {
     what: "6 base models + series offer lists for Spex Studio",
-    why: "Six model files light up 408 dead combinations; offer lists unlock six series with no 3D",
+    why: "Six model files unlock 408 combinations; offer lists unlock six series with no 3D",
     owner: "Neal (3D)",
     launchBlocking: false,
   },
   {
     what: "Photography: outdoor/Element, Elite series, finish close-ups",
-    why: "Placeholder boxes swap for real shots wherever they exist — Element and outdoor settings have zero coverage today",
+    why: "Element and outdoor settings have zero photo coverage; placeholders swap out as shots arrive",
     owner: "Caleb",
     launchBlocking: false,
   },
