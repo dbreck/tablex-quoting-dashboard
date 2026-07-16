@@ -69,7 +69,9 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 
 ## Current state (2026-07-15)
 
-**Repos:** tablex-site `main` = `596d746` (prod ● live-verified, auto-deploys from `main`). Dashboard `main` = `c10c89c` (Vercel hub `danny@clearph.com`, repo `github.com/dbreck/tablex-quoting-dashboard`).
+**Repos:** tablex-site `main` = `596d746` (prod ● live-verified, auto-deploys from `main`). Dashboard `main` = `92f78c7` (Vercel hub `danny@clearph.com`, repo `github.com/dbreck/tablex-quoting-dashboard`).
+
+**7/15–16 arc:** Xero contact capture shipped (see Xero ruling below) · **territory-from-Xero = definitively NO** (live probe: 0 tracking categories, 0 contact groups, 0 tracked line items, 13 suppliers all vendors — Find-a-Rep stays gated on Brian's territory list; probe re-runnable post-books) · **DASHBOARD: Launch Status mini-site** `/project/launch-status` (7 tabs, Brian-facing functionality report, 7/16 meeting; content lives in its `data.ts` — update status THERE, components just render; copy is deliberately clinical per Danny — no persuasive framing; all 7 tabs live-verified).
 
 **tablex-site is feature-complete and pre-launch.** Every public route + all 4 portals (dealer / rep / ops / spex) built, verified, prod-green. `robots` still `Disallow: /` (pre-launch guard) — flip `NEXT_PUBLIC_SITE_LAUNCHED` + redeploy at cutover. Launch runbook: `tablex-site/docs/launch-checklist.md`. Remaining to launch:
 - **Danny:** Adobe Fonts kit `juc1jwq` allowlist tablex.com+www & republish · Vercel Domains (apex decision) · legacy-WP afterlife · DNS cutover (**DON'T touch MX/M365**) · Supabase Auth `site_url` + redirect allowlist · Xero prod redirect URI (`https://tablex.com/api/xero/callback` + flip `XERO_REDIRECT_URI`).
@@ -87,6 +89,8 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - CD quote-to-cash diagram session: `docs/agendas/2026-07-10-quote-xero-flow.{json,-cd-prompt.md}` → export to `tablex-site/docs/diagrams/`.
 - Xero real dealer import waits on Brian's cleaned books (~7/17) — the capture side is DONE (`596d746`, 7/15): sync persists IsCustomer/IsSupplier + picked mailing address + phone, `/ops/xero` has a Customers filter. Import = one sync + triage once books land. NOTE: Xero flags IsCustomer only after an ACCREC invoice exists — pre-migration books flag just 34 (30 already linked); expect the real number only from the cleaned books. A test import of the 30 AR-bearing dealers is live in tablex-site `organizations` as `source='xero-test'` (reversible: `delete … where source='xero-test'`).
 - /about pull-quote says "Brian Craig, CEO" but signature = VP Sales & Marketing (Danny's call, left as-is).
+- **/resources hub StatStrip claims "16 brochures / Full CAD library" with ZERO backing files** (found 7/16 — repo has no PDFs/DWGs anywhere) — content-honesty violation candidate; flagged to Danny, awaiting the word to fix on tablex-site.
+- After the 7/16 Brian meeting: stamp new decisions into the tracker `decisions` table + refresh `/project/launch-status` `data.ts`.
 
 **Sprint 6 = `sprint-Vx6Lqn`** (7/09→7/22). Launch `web-5-r3` detached + undated (Aug; video possibly Sep 1). Backlog human-gated: `s4-mfg-decision` (Brian), locator data, news content, portal E2E.
 
