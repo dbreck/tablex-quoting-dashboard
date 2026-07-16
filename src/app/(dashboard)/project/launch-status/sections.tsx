@@ -331,8 +331,7 @@ export function ResourcesSection() {
       <Card>
         <p className="text-sm text-gray-600">
           The dealer portal&rsquo;s Downloads page shares the same file pipeline — one set of
-          files populates both surfaces. No development sits between receiving files and
-          publishing them.
+          files populates both surfaces.
         </p>
       </Card>
     </div>
@@ -346,7 +345,7 @@ export function ResourcesSection() {
 export function XeroSection() {
   return (
     <div className="space-y-8">
-      <SectionIntro title="Xero — connected, read-only">
+      <SectionIntro title="Xero — connected but read-only">
         <p>
           The site is connected to TableX&rsquo;s Xero account. The integration reads only — by
           construction it cannot write anything back to Xero. It mirrors contacts and open
@@ -569,10 +568,10 @@ export function NeedsSection() {
 
   return (
     <div className="space-y-8">
-      <SectionIntro title="Outstanding inputs">
+      <SectionIntro title="Everything we still need to receive">
         <p>
           Two groups: items that gate the launch, and items that can land any time. Each publishes
-          on receipt; none requires development.
+          on receipt.
         </p>
       </SectionIntro>
 
