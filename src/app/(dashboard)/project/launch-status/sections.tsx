@@ -41,7 +41,7 @@ export function OverviewSection() {
   const blocking = NEEDS.filter((n) => n.launchBlocking);
   return (
     <div className="space-y-8">
-      <SectionIntro title="Where we are, in plain English">
+      <SectionIntro title="Where we are">
         <p>
           <strong className="text-gray-900">The website is functionally complete.</strong> Every
           public page, the 3D configurator, the quoting pipeline, all three logged-in portals
