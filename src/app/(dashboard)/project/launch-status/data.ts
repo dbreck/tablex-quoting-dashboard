@@ -66,8 +66,8 @@ export const SITE_MAP: AreaGroup[] = [
       {
         name: "Resources",
         routes: ["/resources", "+5 subpages"],
-        status: "partial",
-        note: "All pages built; zero downloadable files yet — see the Resources tab",
+        status: "done",
+        note: "63 real PDFs live (7/19): price book + sections, brochures, install + care, warranty — see the Resources tab",
       },
     ],
   },
@@ -101,7 +101,7 @@ export const SITE_MAP: AreaGroup[] = [
       { name: "Dealer home + account", routes: ["/dealer", "/dealer/account"], status: "done" },
       { name: "Quotes (status + PDF download)", routes: ["/dealer/quotes"], status: "done" },
       { name: "Tier pricing view", routes: ["/dealer/pricing"], status: "done" },
-      { name: "Downloads", routes: ["/dealer/downloads"], status: "partial", note: "Surface built; waits on the same real files as /resources" },
+      { name: "Downloads", routes: ["/dealer/downloads"], status: "partial", note: "Surface built; the /resources library is live (7/19) — wire this surface to the same files" },
       { name: "Orders", routes: ["/dealer/orders"], status: "done" },
     ],
   },
@@ -179,7 +179,8 @@ export const SPEX_FILE_SPEC = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Resources inventory (verified against the repo — zero real files)   */
+/* Resources inventory (updated 2026-07-19 — 63 PDFs migrated from the */
+/* legacy site's public pages into a public storage bucket)            */
 /* ------------------------------------------------------------------ */
 
 export interface ResourceRow {
@@ -193,31 +194,31 @@ export interface ResourceRow {
 export const RESOURCES: ResourceRow[] = [
   {
     name: "Brochures & Spec Sheets",
-    offering: "Series brochures, full-line catalog, finish library PDFs",
-    have: false,
-    state: "Page live; requests route to the contact form",
-    needs: "The actual PDFs from TableX (per-series brochures + catalog)",
+    offering: "2024 Look Book, 10 series brochures, 8 product sheets, 8 option sheets",
+    have: true,
+    state: "27 PDFs downloadable — carried from the legacy site's brochures page",
+    needs: "Refreshed editions as TableX produces them (current set is the legacy site's)",
   },
   {
-    name: "CAD Downloads",
-    offering: "DWG, Revit families, 3D models per series",
-    have: false,
-    state: "Page live; requests route to the contact form",
-    needs: "CAD file library from TableX engineering",
+    name: "CAD & Symbol Libraries",
+    offering: "TableX symbol/spec data on ProjectMatrix + My Resource Library",
+    have: true,
+    state: "Reframed honestly: external platform doors + request-a-file. No self-hosted CAD library exists (legacy site had none either)",
+    needs: "Nothing — unless TableX wants a self-hosted DWG/Revit library someday",
   },
   {
     name: "Price Lists",
-    offering: "Dealer net price lists (login-gated)",
-    have: false,
-    state: "Gate page live; no lists uploaded",
-    needs: "Current price list PDFs (Mark review pending)",
+    offering: "Jan 5, 2026 LIST price book — complete + 19 sections, freight program",
+    have: true,
+    state: "Public downloads, matching the legacy site's public list pricing; dealer NET pricing stays unpublished",
+    needs: "New book editions as they're issued (drop in a new dated bucket folder)",
   },
   {
-    name: "Installation Guides",
-    offering: "Per-series assembly + install instructions",
-    have: false,
-    state: "Page live; requests route to the contact form",
-    needs: "Install guide documents from TableX",
+    name: "Installation & Care",
+    offering: "9 assembly/install guides, 6 surface care guides, 2025 Warranty",
+    have: true,
+    state: "16 PDFs downloadable (page renamed from Installation Guides)",
+    needs: "Guides for series not covered yet; refreshed editions from TableX",
   },
   {
     name: "Sustainability",
@@ -375,8 +376,8 @@ export const NEEDS: NeedItem[] = [
     launchBlocking: false,
   },
   {
-    what: "Resource files: brochures, CAD, install guides, price lists, sustainability data",
-    why: "All five Resources pages are live with interim states; files publish on receipt",
+    what: "Sustainability data (the one Resources page still empty)",
+    why: "Brochures, price lists, install + care shipped 7/19 (63 PDFs from the legacy site); sustainability publishes only verified data",
     owner: "TableX",
     launchBlocking: false,
   },
