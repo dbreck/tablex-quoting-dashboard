@@ -21,6 +21,25 @@ Regenerate with `/arch-map` when the architecture drifts.
 
 ## Design system (claude.ai/design bundle)
 
+**▶ Working the DS? Start at `docs/TableX Design System/ds-live/SYNC-NOTES.md`.** That directory is a
+1:1 local mirror of the live claude.ai/design project (`278dcca1-d9ba-4193-a33e-33374cb52ff5`), synced
+2026-07-25 — 50 cards across 7 groups (Brand · Colors · Type · Spacing · Components · Application ·
+UI Kit). Serve it with `cd "docs/TableX Design System/ds-live" && python3 serve.py` → http://localhost:4321
+(the gallery rescans on every reload). Memory: [[project-design-system-sync]] + [[project-tablex-ds-drift-corrections]].
+
+- **`_ds_bundle.js` is the compiled artifact the cards actually render** — the `.jsx` files are source.
+  Editing source alone leaves every rendered card stale. Patch both. Reorders (not just relabels) must
+  be applied in the bundle too or props mispair with labels.
+- **Pull path:** `DesignSync` is **main-session only** (absent from the subagent registry — a fan-out
+  cannot fetch), and design-*system* projects have **no zip export**. Use the app's own
+  `OmeletteService/GetFile` RPC from a logged-in tab, then strip the `data-omelette-injected`
+  style/script pair it inserts after `<head>`. **Push path:** `finalize_plan` (requires `writes` AND
+  `deletes`) → `write_files` with `localPath`, which reads from disk so content never enters context.
+- **Fonts/assets are already local** — all 8 Acumin `.otf` + 13 of 15 photos in
+  `public/comps/home-full-build/`; the rest in `Design Finals/`. Don't try to fetch them.
+- The top-level `preview/`, `ui_kits/website/`, `colors_and_type.css` in that folder are the
+  **superseded FreightSans generation** — archaeology. Never merge them with `ds-live`.
+
 The authoritative TableX brand bundle lives at `docs/TableX Design System/Design Finals/` — the upload set for the published claude.ai/design Design System. **DS is published + validated.** Grade claude.ai/design handoffs at the CODE level (grep tokens/fonts/shadows). Home landed as a multi-file JSX bundle at `public/comps/home-full-build/` — nitpick fixes are direct `src/*.jsx` edits there (exception to "never implement design output here"; production impl → `tablex-site`). Content-honesty bans apply (see Standing rulings). State: memory `project-claude-design-ds-published.md` + `project-comps-home-bundle-v2.md`.
 
 - Brand source-of-truth: `Brand-Quick-Guide.png` (6 Pantone swatches + Acumin Pro specimens), `Home-01.png`/`Home-01.jpg` (canonical homepage hi-fi — the `.jpg` is the usable 2.6MB export), `TableX.fig`
@@ -57,6 +76,19 @@ npm run lint     # eslint
 - **`DELIVERABLES` in `src/data/project-phase2.ts` is static** — never mutate at runtime. Put mutable fields in `DeliverableOverride` in the store.
 - **Permission gates are client-side layouts** (`AuthProvider.isAdmin`, `profile.can_access_proposal`). Middleware only enforces "logged in"; API routes that take privileged actions must re-verify via `createAdminClient()`.
 
+## "ship it" — straight to production (startup mode, 7/25)
+
+**"ship it" / "make it live" / "push it live" = merge to `main`, push, confirm the Vercel production
+deploy went green.** No PR, no review gate, no staging hop — `tablex-site` `main` auto-deploys to
+prod and Danny wants to see real changes on the real site. Flow: commit on a branch → `git merge
+--ff-only` into `main` (a fast-forward means the tree is identical to what was already built, so no
+re-build; anything else gets a combined local build first) → `git push origin main` → poll
+`vercel ls` until the Production row reads `● Ready` → spot-check live. GitHub's PR-required rule on
+`main` gets bypassed on push — that warning is expected here, not a problem. This authorizes
+**deploys only**: destructive migrations, DNS/MX, and anything else on the confirm-first list still
+get surfaced. Interim rule — revisit when real dev/staging procedures land.
+Memory: [[feedback-ship-it-straight-to-prod]].
+
 ## Cross-repo orchestration (this dashboard → tablex-site)
 
 This dashboard is the **orchestrator** for tablex-site execution work. The PM tracker (`project_tasks` in Supabase `ofweciopslhrepobqpco`) is the canonical task store. Sibling repo lives at `~/Applications/tablex-site` (repo `TableX-Inc/tablex-site`, Vercel `dbreckxs-projects/tablex-site`).
@@ -66,6 +98,19 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Briefs reference tracker IDs verbatim** so the agent can mark `subtasks` / `acceptance_criteria` jsonb without title matching. Never paraphrase task titles.
 - **Workflow charter** at `~/.claude/plans/woolly-booping-sonnet.md`. Memory: `feedback-cross-repo-brief-workflow.md`.
 - **Stay-vanilla rules accumulate.** Every off-rails event in the executing agent becomes a numbered rule in the next brief's pre-flight.
+
+## Current state (2026-07-25)
+
+**tablex-site `main` = `7a7b539`, both commits LIVE on prod** (deployments `fn5vdvh5f`, `fwtignepw`). Two systems codified the same way — **a shared module derives the answer so a call site cannot get it wrong**; extend those modules, never hand-roll:
+
+- **`src/lib/slash-strip.ts`** — Pattern #17 punctuation (`a26dd92`). See the standing ruling below. 19 instances existed, 15 were wrong; 3 surfaces hand-rolled it inline. Fixed a live "31 paints" (should be 40).
+- **`src/lib/series-imagery.ts`** — photography category from LAYOUT CONTEXT (`7a7b539`). See the standing ruling below. Verified live: **zero Real Shots on any product or editorial surface.** Memory [[project-imagery-taxonomy]] + [[reference-tablex-photography-library]].
+
+**DS pushed to claude.ai/design `278dcca1`** (18 files, read back to verify): slash-strip rule card, imagery §6 + Patterns 14/15/19/21, `imagery-direction.html` rebuilt, series card / FeaturedCollections / EmberBand off macro crops onto real ColorBlock. Also fixed there: a **"Process / maker — shop floor… we give tours" imagery lane that told agents to commission banned photography**; `photo-collection-app.jpg` ≡ `photo-ember-circle-1.jpg` **byte-identical** (one asset doing three jobs → new "one asset, one role" rule); **Adobe kit ID said `ucn5jze`** (Peregrine — TableX is `juc1jwq`).
+
+**⛔ Two Kive.ai AI-GENERATED images sit in the Drive real-photo library** — `Vertical Real Shots/New 6-15-26/{Justice,Ultra}/Generated with Kive.ai - kive-image-*.png`. All 16 folders swept; only these two. **That folder is the recommended import source for Revel's missing in-use shot** — quarantine before importing. No evidence either reached the site.
+
+**Owed to Danny/Brian:** series-page hero (15 pages of full-bleed Real Shots — portrait ColorBlock into a landscape slot, design call) · Ember-band→ColorBlock was my call, revertible · **`01-BRAND-VOICE-AND-COPY-LIBRARY.md` still carries "Our welders are welders… we give tours", "FROM THE SHOP FLOOR" as an approved eyebrow, and §11 "we make the tables, in our Midwest shop"** (imagery instructions fixed; copy is Brian-adjacent) · delete the 2 Kive files · ColorBlock shoot for Justice/Puddle/Artisan/Elite. **Check `EliteXL.jpg` + `RevelXL2.jpg` first — both exist unused in Drive and may already answer two of Caleb's asks in `photography-coverage-gaps.md`.**
 
 ## Current state (2026-07-23)
 
@@ -142,6 +187,10 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 **Pricing:** `Tablex_Pricing_6.10.24.xlsx` = component/top pricing only (no per-series base price) → **prices stay OFF cards; no dollar figures render anywhere.** Quote pricing travels in the attached PDF + `desk_note` free text. Dealer tier discount (50/20) is a stateable fact; list price is public. Don't revisit without a real base-price source. (Laminate invariant: see Invariants above.)
 
 **Sitewide conventions (7/22):** terminal quote+rep sections render `QuoteRepCTA` — never inline doors. The "Your ___" marquee order is Table/Space/Project/Vision/Way everywhere. Display name is **SpeX Studio** (capital X) in all copy; routes/identifiers stay `spex`/`Spex*`. Home TriBlock = intent doors SEE IT / SPEC IT / SELL IT with `hoverLight`.
+
+**Photography taxonomy (Danny 7/25) — the category is chosen by the LAYOUT, not the photo:** **ColorBlock** (product on a solid color field) → EDITORIAL (series cards, index rows, collection cards, editorial bands, series heroes) · **Trans Shadow** (cutout + shadow) → STANDALONE PRODUCT (catalog/browse tiles, spec contexts, configurator tiles, comparison rows) · **Real Shots** (real rooms) → **IN-SITU ONLY, in situ or in a carousel — NEVER to depict a series of tables** · **Materials macro** (edge/finish/joinery/hardware) → spec contexts only, banned from editorial and product-identity slots. **Never author the choice — derive it:** `seriesImage(slug, context)` in `tablex-site/src/lib/series-imagery.ts`. Field mapping: `colorBlockImage`/`laneImage`=ColorBlock · `spexImage`/`configRender`=Trans Shadow · **`heroImage`/`inUseImage`=Real Shots**. GOTCHAS: ColorBlock is **portrait (~0.80)** and most slots are landscape → `object-cover` discards ~40%, so always apply the per-series `colorBlockPos` · **`NoGhostImage` is BELOW-FOLD ONLY** (its own docstring); above the fold its lazy reveal never fires and the image silently never loads — use `Image` + `priority` · `spexImage` is 16/16, `colorBlockImage` only 12/16 (`COLORBLOCK_GAPS`).
+
+**Slash-strip punctuation is a GRAMMAR (Pattern #17, codified 7/25 from Kayla's Figma):** `/` joins items **inside one list** (same kind of thing); `*` divides **one list from the next** (Ember). A looping strip ends on `*` — the seam between cycles is a list boundary. Corollaries: one homogeneous list → no internal `*`; all-dissimilar items → every separator is `*`; a static strip has no seam; **a separator never leads a strip**; never `•` `|` `·` `—`. If an item seems to need its own inner separator it is two items — split it. **Never author separators — derive them:** `slashTokens(groups)` in `tablex-site/src/lib/slash-strip.ts` is the single source (`StatStrip` takes `groups`, not the old index-based `accentBefore`); the DS mirror is `ui_kits/tablex-marketing/StatStrip.jsx` + card `preview/slash-strip-variants.html`. Four scales, sized by role: marquee `clamp(40px,5.6vw,96px)` · compact 30px · metadata 13px · eyebrow 12px/+0.18em. Homogeneous strips legitimately render with **no Ember at all**.
 
 **Design / fidelity:** a claude.ai/design comp port is DONE only at **0 real deltas at BOTH 1920×1080 AND 1280×800** (memory `feedback-comp-assembly-fidelity.md`). **The Ops App Language is /ops-ONLY — portals do NOT adopt it (Danny 7/12); don't re-propose.** Sitewide motion/interaction uses the shared butter primitives (`src/components/motion/*`, `src/lib/use-prefers-reduced-motion.ts`) — extend them, never hand-roll folds/image-reveals/reduced-motion probes. Replicate the comp's layout MECHANISM, not its 1920-resolved values — use the fluid `.text-h1/.text-lede` utilities + `--spacing-container/section` steps. Build agents get comp SCREENSHOTS, not just JSX. `/products/browse` = e-comm utility surface (Forge-hero / checkbox-pill); `/products`, `/finishes`, `/spaces` stay editorial. Nav dropdowns deliberately omitted (DS Don'ts — hub pages ARE the megamenu).
 
