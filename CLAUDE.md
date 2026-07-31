@@ -99,6 +99,35 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Workflow charter** at `~/.claude/plans/woolly-booping-sonnet.md`. Memory: `feedback-cross-repo-brief-workflow.md`.
 - **Stay-vanilla rules accumulate.** Every off-rails event in the executing agent becomes a numbered rule in the next brief's pre-flight.
 
+## Current state (2026-07-31) — /products/browse TRANS SHADOW TILES ⚠ UNCOMMITTED (joins the 7/30 hub-hero batch)
+
+**Danny-driven browse redesign, verified local (:3000, tsc+lint clean), NOT committed — same "ship it"-gated working tree as the hub-hero sweep below.** Session log `2026-07-31-tablex-quoting-dashboard-browse-trans-shadow-tiles`.
+
+- **NEW Trans Shadow generation is canonical sitewide:** Drive `Product Shots/Square Product Shots/Square Trans Shadow/` masters → `public/images/products/<slug>-trans.webp` (16 files, cwebp q85 @1600px); all 16 `spexImage` fields repointed with source-filename comments (old `<slug>-spex.webp` June gen left on disk unused). Ripple ACCEPTED: SpeX studio grid, series-page Configure-online spotlight, /products door art inherit (all `object-contain`; SpeX grid spot-verified — upgrade).
+- **Browse tiles (Danny's spec):** `aspect-[533/630]` exact (0.846 — 533=13×41, doesn't reduce) · flat `bg-canvas` ground · `object-contain p-[3%]` · base `scale-[1.2]`/hover `1.24` · page body `bg-canvas`→`bg-white` so tiles read as fields. Foundation spotlight = same treatment at `scale-[1.7]` (landscape panel × square render fits by height).
+- **Hover crossfade to the series ColorBlock** — Danny's deliberate editorial-on-product-surface exception to the 7/25 taxonomy (commented in code). Via `seriesImage(slug,"editorial")`, renders ONLY when `category==="colorblock"`; `colorBlockPos` centers the table; fade lives on a wrapper div so it can't fight NoGhostImage's load reveal.
+- Gotchas: `motion-reduce:transform-none` would strip a base transform scale — use `motion-reduce:group-hover:scale-[…]` to freeze instead · square masters have baked margins, so bigger-than-contain = transform scale (overflow-hidden guards) · NoGhostImage tiles screenshot EMPTY pre-paint (wait ~2s, re-shoot).
+
+## Current state (2026-07-30 EVE) — HUB-HERO SWEEP ⚠ ENTIRELY UNCOMMITTED IN tablex-site
+
+**Danny-driven design sweep, ALL verified local (:3000, tsc+lint clean) but NOT committed/pushed — he never said "ship it". Working tree holds ~12 changed files + 8 new webps. First act next session (on his word): commit → push → verify hook deploy → spot-check the hero pages (pre-paint trap!).** Full detail: session log `2026-07-30-tablex-quoting-dashboard-hub-hero-sweep-uncommitted`.
+
+- **ALL five hub pages now share the /products hero mechanism** (full-bleed 90vh, `-mt-[78px]`, dual scrim, `/ Hub / crumb` eyebrow, `.text-h1`/`.text-lede`, bottom-left copy): /spaces (ElementOutdoorReal4), /finishes (raking-light photo; walnut bookmatch tile experiment superseded, tile left on disk; chips HIDDEN inline `display:none` — may return; h1 now "Details Define the Space."), /resources (white-table shot, `center 55%`), /about (trig-cropped sage room; lede = Brian story phrases + ONE invented sentence — **Danny eyeball owed**). SiteHeader overlay list grew: +/spaces +/resources +/about.
+- **PullQuotePanel** (ALL consumers): single oversized Ember Acumin `“` opener — hung in left margin md+, stacked above on mobile; closing mark REMOVED. (Mirrored/U+201F alternates rejected: upside-down / fallback-font risk.)
+- **Series pages**: h1 ↔ eyebrow SWAPPED (name is the h1; headline rides the eyebrow). Surge hero → `surge-colorblock-3-crop.webp` (landscape).
+- **/products**: series-index numeric prefixes REMOVED; hero bg `center 40%`.
+- **/spaces**: Outdoor tile finally real (`space-outdoor.webp`, new `SpaceEntry.imagePos` field, `center 72%`) — outdoor coverage-gap slot closed; grid hairlines/links bottom-anchored (`mt-auto`), rows `gap-y-16/20`; divider band = classroom scene, `clamp(560px,72vh,840px)`.
+- **/spex-studio**: mask disc = AppColorblock2-crescent scene, `scale-[1.18]`, caption → App.
+- New gotchas: mid-turn pasted images live at `~/.claude/image-cache/<session-id>/N.png` · claude-in-chrome `resize_window` reflow lands LATE · `/finishes/laminates` hero NOT hub-matched (flagged, unanswered).
+
+## Current state (2026-07-31) — PL MASTER: ALL 8 ANSWERED · SURGE BUG FIXED AS JAN r3 · IMPORT HELD ON UPDATED WORKBOOK
+
+**Brian answered all 8 questions inline 7/31** (msg `19fb85d60a4bf673`; Solo side-ruling `19fb44539265f91c`). **Every confirmed rule + the full import/schema/tier-selector design is codified in `tablex-site/docs/plans/2026-pl-master-import.md` — the import session reads THAT.** Memory [[project-2026-pl-master-workbook]]; workbook still in `~/Downloads/`, ⚠ internal COST master, never publish.
+
+- **Surge "outlier" was OUR book's bug, FIXED LIVE:** Brian's "$989 is essentially our cost… PDF shows $2,049" → verified against `1.5.26-TableX-Pricelist.pdf`: 9 Surge FD/NE rows had absorbed their Static sibling's 3P/3K/3W at extraction (sibling of the 7/22 size-corrections family — sizes were re-read, prices weren't; book-wide sweep confirms exactly 9 rows). Published as **"January 2026 List (r3)"** (`b5d1ffdd-…`, effective 7/31) via `scripts/pricing/apply-surge-price-correction.ts`; live API confirms r3 active. Corrections table: `data/pricing/2026-01-list/price-corrections-2026-07-31.md`. Public SpeX never served a wrong number (STATIC-preferred); desk book-refs did. ⚠ regenerated `spex-model-map.json` + report sit UNCOMMITTED in tablex-site (rows identical, provenance header only — ride along with the next ship).
+- **Confirmed rules (highlights; full set in the plans doc):** tier $-adders deliberate (+15/+35% prices the TOP only — "Smith 3P WA 2+" col) · **knife edge = derived add-on** (50% rect/sq / 35% rounded of that col, round up, Ultra NA) · round all lists UP to whole dollars · casters $111=4, disc bases 5, Exclaim/App NA, Elite pending Mark · **Fundamental DISCONTINUED** (manual/on-request only) · VertiGo RA eliminated · conflicts = Revel scratch rows + Example tab (series/function tab wins) · **Solo → NEW series code 11; 33 becomes exclusively Element** (Element-33 wiring unblocked, do at import; ⛔ bucket `33/` GLBs = Fundamental geometry, re-key first).
+- **Import HELD on Brian's UPDATED workbook:** must add Elite VTR + D-shape families, rounds verdict (his "only Trig's 6" answer misses the ~226 RD/drum models the Jan book prices — challenged), SL/Squircle pricing (75 models), 377-new-model verdicts, ACCESSORIES→OPTIONS relabel, Solo renumbered 11, Elite caster review. **Follow-up draft `r-6197595079564996918` awaiting Danny's review/send.** Tier picker builds AFTER import.
+
 ## Current state (2026-07-30)
 
 **tablex-site `main` = `050b6df`, ALL LIVE** (7 hook-fired prod deploys, each verified; session log `2026-07-30-tablex-quoting-dashboard-colorblock-heroes-products-feedback`):
