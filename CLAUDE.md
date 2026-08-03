@@ -99,6 +99,15 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Workflow charter** at `~/.claude/plans/woolly-booping-sonnet.md`. Memory: `feedback-cross-repo-brief-workflow.md`.
 - **Stay-vanilla rules accumulate.** Every off-rails event in the executing agent becomes a numbered rule in the next brief's pre-flight.
 
+## Current state (2026-08-02→03) — SPEX STUDIO 2.0 VISUALS = PROD DEFAULT (`ff0ba6f`, reconciled 8/03)
+
+**8/02 autonomous cloud run (branch `claude/spex-studio-configurator-visuals-lcdp0v`, fast-forwarded onto tablex-site `main` = `ff0ba6f`; hook prod deploys green 8/03; Danny reviewed live and ruled "flip 2.0 to be the default"). Read `tablex-site/docs/reports/2026-08-02-spex-studio-visuals-run.md` before touching Spex visuals.** Memory [[project-spex-studio-visuals-2]].
+
+- **Studio mode** (`visuals.ts` `DEFAULT_SPEX_VISUALS="studio"`): Lightformer env → local cubemap (no CDN HDRs) · dual footprint-fitted contact shadows (mushy blob gone) · **physical-inch UV/texture pipeline** (1 UV unit = 1″; fixes laminate scale drift + 1.6× grain stretch; mirrored-repeat bookmatch) · warm seamless-cyc backdrop · **drafting-grid floor** (12″/60″, render-layer-1-isolated). **Classic is byte-identical behind `?visuals=classic`** (0-pixel verified; param read from the NAVIGATION TIMING entry, not `location.search` — replaceState rewrites the query first); rollback = flip the constant.
+- **Built-then-REMOVED same day at Danny's rulings:** Spaces scene backdrops ("a bit of a bust" — design kept in the report as history) · dashed witness-lines floor (`d8cc185` in branch history) · the soft-launch landing beta band (removed with the default flip).
+- **Gotchas:** drei 10.7.7 ContactShadows — ANY `position` y-offset (even 0.001) renders the bake EMPTY, planes stay exactly y=0 · floor-plane geometry must set `layers` explicitly (bakes run layer-0 cameras; three.js layers don't inherit) · physical-UV fixes are studio-only (classic keeps the wrong math bug-for-bug).
+- **Open:** 3 laminates on diamond-chip fallback (Nordic Linen + 2 Formica woodgrains — no vendor sheets) · 1280px scans soft at extreme zoom · revisit `envMapIntensity` if chrome bases ship. Also on main from 8/01: `whereItFitsSpaces` curated lists + corner-aware Catmull-Rom silhouettes (`abf71a8`, `e5a6842`).
+
 ## Current state (2026-07-31) — /products/browse TRANS SHADOW TILES — SHIPPED 7/31 PM (`74dc57a`)
 
 **Danny-driven browse redesign — ~~uncommitted~~ SHIPPED with the hub-hero sweep as `74dc57a` (see the 7/31 PM ship note under the PL MASTER block); all live spot-checks pass.** Session log `2026-07-31-tablex-quoting-dashboard-browse-trans-shadow-tiles`.
