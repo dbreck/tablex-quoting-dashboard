@@ -119,6 +119,18 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-18) — PATTERN #17 RULES BAKED INTO DS + SITE POLICED (tablex-site `main`=`5640fc2`, both deploys ● Ready, live-verified)
+
+**Full detail: memory [[project-pattern17-policing-2026-08-18]] + vault session log.** Two DS pushes (16 writes, plans `…b9c4a8ee83d7` / `…054f85202713`) + two prod commits (`067e487` grammar/glyphs/scale, `5640fc2` compare row + compact weight).
+
+- **DS now STATES the StatStrip rules** it previously only implied — scale ladder, fixed colors, variant selection, and the NEW ground rule (see Standing rulings above). `03-COMPONENT-PATTERNS.md` #17 was REWRITTEN (it still taught the retired positional asterisk + leading separators + 22–28px scale — and SKILL.md routes generation at the pattern docs, so that stale text was what the design tool actually read).
+- **⚠ `_ds_manifest.json` drift is now a THREE-instance pattern, and it's the highest-value thing to check first.** The slash-strip rule card was registered `1080x1100` against a real 1720 — **the pane was clipping off the scale-ladder + Do/Don't sections, i.e. the rules Danny said didn't exist**. Now 2470 after the ground section. **After ANY `@dsCard` marker change, grep the manifest.** Measure card height in a browser (`document.querySelector('.card').getBoundingClientRect().height`) — don't estimate.
+- **The pane's "Add usage notes" field stores APP-SIDE ONLY** — nothing typed there reaches the file tree or survives regeneration. Durable rules go in the `@dsCard` subtitle + card body + pattern doc.
+- **Site swept on all four dimensions** (grammar / glyph / color / scale) across 31 files: leading separators gone from all 6 hub-hero crumbs + /products eyebrows + trait strips · Ember misassignment to `/` fixed · `·`/`&middot;` retired as a separator on every marketing surface (~70, incl. the whole accessory data layer) · scale ladder applied · counts derived from `laminateCatalog`/`powderCoatFinishes`. **`&middot;` entities evade a `·` grep — always grep both.**
+- **Exempt on purpose:** ops/portal surfaces + quote PDF (application layer) · styleguide "term · value" doc lockups.
+- **Owed to Danny:** FinishesTeaser dark strip is borderline (items white/78% = muted, but slashes stone-300 where the rule wants ~40% white) — one-line fix, NOT shipped · the home finishes fold jumped 15–18px → 30px and wants an eyeball.
+- **Gotcha:** polling `vercel ls` inside a shell loop with `grep` captures nothing (column mangling) — poll with `vercel inspect <url>`, or read the table unpiped.
+
 ## Current state (2026-08-14) — PUNCH-LIST AUDIT → BOARD + FINISHES PHOTOS SHIPPED (`main`=`e96eee5`, deploy ● Ready, live-verified)
 
 **Full detail: memory [[project-punchlist-finishes-2026-08-14]].** This deploy ALSO confirmed the 8/10 browse arc (`201382e`) green on prod — that flag is closed.
@@ -304,6 +316,17 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 **Sitewide conventions (7/22):** terminal quote+rep sections render `QuoteRepCTA` — never inline doors. The "Your ___" marquee order is Table/Space/Project/Vision/Way everywhere. Display name is **SpeX Studio** (capital X) in all copy; routes/identifiers stay `spex`/`Spex*`. Home TriBlock = intent doors SEE IT / SPEC IT / SELL IT with `hoverLight`.
 
 **Photography taxonomy (Danny 7/25) — the category is chosen by the LAYOUT, not the photo:** **ColorBlock** (product on a solid color field) → EDITORIAL (series cards, index rows, collection cards, editorial bands, series heroes) · **Trans Shadow** (cutout + shadow) → STANDALONE PRODUCT (catalog/browse tiles, spec contexts, configurator tiles, comparison rows) · **Real Shots** (real rooms) → **IN-SITU ONLY, in situ or in a carousel — NEVER to depict a series of tables** · **Materials macro** (edge/finish/joinery/hardware) → spec contexts only, banned from editorial and product-identity slots. **Never author the choice — derive it:** `seriesImage(slug, context)` in `tablex-site/src/lib/series-imagery.ts`. Field mapping: `colorBlockImage`/`laneImage`=ColorBlock · `spexImage`/`configRender`=Trans Shadow · **`heroImage`/`inUseImage`=Real Shots**. GOTCHAS: ColorBlock is **portrait (~0.80)** and most slots are landscape → `object-cover` discards ~40%, so always apply the per-series `colorBlockPos` · **`NoGhostImage` is BELOW-FOLD ONLY** (its own docstring); above the fold its lazy reveal never fires and the image silently never loads — use `Image` + `priority` · `spexImage` is 16/16, `colorBlockImage` only 12/16 (`COLORBLOCK_GAPS`).
+
+**Pattern #17 SCALE + GROUND (codified 8/18, DS pushed + site enforced `5640fc2`):** scale is a
+function of ROLE, never taste — the strip **IS** the fold → **marquee** (`clamp(40px,5.6vw,96px)`,
+full-bleed, loops, ends on the seam) · the strip sits **INSIDE** a fold, or under ~200px of vertical
+room → **compact** (30px `--t-h3-size`, static, centered, no seam) · spec/qualifier line → metadata
+13px body 500 · label line → eyebrow 12px/600/+0.18em. Metadata + eyebrow are typographic treatments,
+NOT variants of the component. **Ground:** white is canonical; on Iron/Forge bands only the ink flips
+— items white, `/` one step quieter than its items (stone-300 under full-white, ~40% white under
+muted items), `*` Ember on EVERY ground; photography counts as dark; **never on a Moss/Saddle
+structural block** (use an eyebrow label). At most one strip per fold. Memory
+[[project-pattern17-policing-2026-08-18]].
 
 **Slash-strip punctuation is a GRAMMAR (Pattern #17, codified 7/25 from Kayla's Figma):** `/` joins items **inside one list** (same kind of thing); `*` divides **one list from the next** (Ember). A looping strip ends on `*` — the seam between cycles is a list boundary. Corollaries: one homogeneous list → no internal `*`; all-dissimilar items → every separator is `*`; a static strip has no seam; **a separator never leads a strip**; never `•` `|` `·` `—`. If an item seems to need its own inner separator it is two items — split it. **Never author separators — derive them:** `slashTokens(groups)` in `tablex-site/src/lib/slash-strip.ts` is the single source (`StatStrip` takes `groups`, not the old index-based `accentBefore`); the DS mirror is `ui_kits/tablex-marketing/StatStrip.jsx` + card `preview/slash-strip-variants.html`. Four scales, sized by role: marquee `clamp(40px,5.6vw,96px)` · compact 30px · metadata 13px · eyebrow 12px/+0.18em. Homogeneous strips legitimately render with **no Ember at all**.
 
