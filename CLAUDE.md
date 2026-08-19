@@ -155,8 +155,8 @@ launch"), and had gone orphan — nothing linked to it, cards were non-links, 5 
 duplicated a series page or a `/spaces` use-case. History + the 4-item rebuild gate live in
 `tablex-site/docs/plans/collections-post-launch.md`; the page itself is recoverable at
 `git show 5640fc2:"src/app/(frontend)/products/collections/page.tsx"`. ⚠ `door-collections.webp`
-is NOT part of that set — it's live on `/products`. **Owed: a line to Brian**, since he said
-"after the launch," not "never." Memory [[project-collections-retired-2026-08-18]].
+is NOT part of that set — it's live on `/products`. Danny told Brian himself (8/19) — nothing
+owed there. Memory [[project-collections-retired-2026-08-18]].
 
 ## Current state (2026-08-18) — PATTERN #17 RULES BAKED INTO DS + SITE POLICED (tablex-site `main`=`5640fc2`, both deploys ● Ready, live-verified)
 
