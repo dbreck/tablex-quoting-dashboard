@@ -119,35 +119,34 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
-## QUEUED FOR NEXT SESSION (2026-08-18) — PLACEHOLDER REMEDIATION
+## Current state (2026-08-19) — PLACEHOLDER REMEDIATION EXECUTED (tablex-site `main`=`9d0b178`, deploys ● Ready, live-verified)
 
-**Danny will trigger this with something like "let's address our latest placeholder audit list of
-to dos." When he does: open `tablex-site/docs/plans/placeholder-remediation.md` and work it
-top-down — don't re-run discovery, the brief's pre-flight is the only sweep needed.** Findings:
-`tablex-site/docs/reports/2026-08-18-placeholder-image-audit.md`. Memory
-[[project-placeholder-audit-2026-08-18]]. tablex-site `main`=`106e7e6`, all pushed.
+**The 8/18 audit's 23 slots are fully dispositioned: 6 filled / 14 owned / 3 intentional.** Brief
+closed with final accounting inside (`tablex-site/docs/plans/placeholder-remediation.md`); memory
+[[project-placeholder-audit-2026-08-18]] updated. Three commits: `3f7a912` (P0 sitemap +
+Revel in-use) · `4fd4ed5` (spaces fold wiring) · `9d0b178` (docs).
 
-- **23 visible placeholder slots / 12 routes** from a 74-route sweep. Zero missing files, zero
-  asset 404s. The useful split is by what it takes to fix: **A · 12 hard-coded greyboxes with NO
-  image wiring** (7 of them the SAME slot — the "What works here" 520×651 fold on every
-  `/spaces/*` detail page, right under the hero; plus `/about` ×1, `/about/warranty` ×2 joint+leg
-  macros, `/finishes/solid-surface` ×2 grain tiles) · **B · 8 data-gap slots that self-heal from a
-  field** (`/series/revel` `inUseImage` + **7 accessory families** in `accessories.ts`) · **C · 3
-  deliberate drawn laminate diamonds** (no vendor sheet exists — leave alone).
-- **⛔ Do not re-litigate two closed findings:** the home EmberBand `colorblock-{exclaim-2,revel,
-  stretch}` `naturalWidth:0` trio is a **FALSE POSITIVE** (lazy images at y≈8640 in the marquee;
-  they load when scrolled in, `decode()` succeeds at 1600×2008) · the butcher-block grain crops
-  genuinely do not exist (the 3 assets on disk are scene shots already used on the same pages).
-- **Two calls Danny owes:** wire-vs-redesign the `/spaces` fold (wiring = a 2nd image field on
-  `SpaceEntry`, which today carries exactly ONE image; 7 identical grey rectangles may want a
-  type treatment instead) · whether the new gaps go into `photography-coverage-gaps.md` (that doc
-  is the forward-as-is Caleb ask, so adding = sending).
-- **Biggest unblocking lead: Caleb's 8/11 V2 Drive drop has never been inspected** — may fill
-  several of the 7 accessory families with zero code change. Local Drive mount only; ⛔ never pull
-  image binaries through the Drive MCP. Power/data families ride the Byrne thread instead
-  (nudge Conor Regin) and the Dekko imagery-rights answer is still a pre-launch blocker.
-- **Free win queued as P0:** `/spex-studio/revel` is in `sitemap.xml` but 404s (Revel left the
-  configurator 7/22; the spex route list was never filtered). One line in `src/app/sitemap.ts`.
+- **Filled (6):** `/series/revel` in-use (`revel-inuse.webp` ← Drive `New 6-15-26/Revel/Revel2.png`
+  — the "blocked on photography" call was stale, the asset existed) + **5 of 7 `/spaces/*` "What
+  works here" folds** (Danny ruled: wire it). New `SpaceEntry.detailImage`; scenes pre-cropped
+  1120×1400 at the table's focal center (no `detailPos` field needed); public-spaces + healthcare
+  keep the honest greybox fallback.
+- **KEY DISCOVERY: Drive `Horizontal Real Shots/WHERE IT FITS/` (Caleb, 8/13–18)** — 17
+  use-case-keyed in-situ scenes (Workplace ×6, Café ×3, Outdoor ×3, Training ×3, Conference ×2),
+  shot for exactly the spaces fold. Also: the 8/11 "V2 drop" = 44 files, ALL table imagery
+  (ColorBlock/Trans/WhiteBG) — zero accessory content; the Dropbox Modesty Panel folder holds only
+  the in-use Exclaim shot + an opaque-panel Revel shot that matches no null family honestly.
+- **Owned greyboxes (14) all have a named owner in `photography-coverage-gaps.md`** (Danny approved
+  "add all"): spaces ×2 → gap #1 · about/warranty macros ×3 → #2 (no macro exists anywhere in
+  Drive/Dropbox) · butcher-block grain ×2 → #3 (the new 8/13 `ButcherBlock3`+`_Extended.tif` are
+  still SCENES — re-confirmed, keep not re-litigating) · 5 accessory panel families → #4 ·
+  Daisylink infeeds + data keystones → **Byrne thread: nudge REPLY DRAFTED `r-6804022004425057828`**
+  (to Conor, cc Mark/Brian/wiser; files + imagery-rights ask) — **Danny reviews/sends.**
+- **P0 shipped:** sitemap spex entries now derive through the `inConfigurator` gate;
+  `/spex-studio/revel` gone from `sitemap.xml` (16 spex lines = hub + 15).
+- **Gotchas:** a killed-then-restarted `next start` can silently lose the port race to the OLD
+  server — `lsof` + process start-time before trusting a verification curl · zsh does NOT
+  word-split unquoted `$VAR` in `for` loops (a sweep loop silently ran zero routes).
 
 **Also 8/18: `/products/collections` DELETED** (`b95bac0`, live 404). It was Brian's own 3/19
 idea, parked by his own card #99 ("Series not Collection... introduce Collections after the
