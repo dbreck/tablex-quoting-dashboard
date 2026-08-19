@@ -119,6 +119,45 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## QUEUED FOR NEXT SESSION (2026-08-18) — PLACEHOLDER REMEDIATION
+
+**Danny will trigger this with something like "let's address our latest placeholder audit list of
+to dos." When he does: open `tablex-site/docs/plans/placeholder-remediation.md` and work it
+top-down — don't re-run discovery, the brief's pre-flight is the only sweep needed.** Findings:
+`tablex-site/docs/reports/2026-08-18-placeholder-image-audit.md`. Memory
+[[project-placeholder-audit-2026-08-18]]. tablex-site `main`=`106e7e6`, all pushed.
+
+- **23 visible placeholder slots / 12 routes** from a 74-route sweep. Zero missing files, zero
+  asset 404s. The useful split is by what it takes to fix: **A · 12 hard-coded greyboxes with NO
+  image wiring** (7 of them the SAME slot — the "What works here" 520×651 fold on every
+  `/spaces/*` detail page, right under the hero; plus `/about` ×1, `/about/warranty` ×2 joint+leg
+  macros, `/finishes/solid-surface` ×2 grain tiles) · **B · 8 data-gap slots that self-heal from a
+  field** (`/series/revel` `inUseImage` + **7 accessory families** in `accessories.ts`) · **C · 3
+  deliberate drawn laminate diamonds** (no vendor sheet exists — leave alone).
+- **⛔ Do not re-litigate two closed findings:** the home EmberBand `colorblock-{exclaim-2,revel,
+  stretch}` `naturalWidth:0` trio is a **FALSE POSITIVE** (lazy images at y≈8640 in the marquee;
+  they load when scrolled in, `decode()` succeeds at 1600×2008) · the butcher-block grain crops
+  genuinely do not exist (the 3 assets on disk are scene shots already used on the same pages).
+- **Two calls Danny owes:** wire-vs-redesign the `/spaces` fold (wiring = a 2nd image field on
+  `SpaceEntry`, which today carries exactly ONE image; 7 identical grey rectangles may want a
+  type treatment instead) · whether the new gaps go into `photography-coverage-gaps.md` (that doc
+  is the forward-as-is Caleb ask, so adding = sending).
+- **Biggest unblocking lead: Caleb's 8/11 V2 Drive drop has never been inspected** — may fill
+  several of the 7 accessory families with zero code change. Local Drive mount only; ⛔ never pull
+  image binaries through the Drive MCP. Power/data families ride the Byrne thread instead
+  (nudge Conor Regin) and the Dekko imagery-rights answer is still a pre-launch blocker.
+- **Free win queued as P0:** `/spex-studio/revel` is in `sitemap.xml` but 404s (Revel left the
+  configurator 7/22; the spex route list was never filtered). One line in `src/app/sitemap.ts`.
+
+**Also 8/18: `/products/collections` DELETED** (`b95bac0`, live 404). It was Brian's own 3/19
+idea, parked by his own card #99 ("Series not Collection... introduce Collections after the
+launch"), and had gone orphan — nothing linked to it, cards were non-links, 5 of 8 groupings
+duplicated a series page or a `/spaces` use-case. History + the 4-item rebuild gate live in
+`tablex-site/docs/plans/collections-post-launch.md`; the page itself is recoverable at
+`git show 5640fc2:"src/app/(frontend)/products/collections/page.tsx"`. ⚠ `door-collections.webp`
+is NOT part of that set — it's live on `/products`. **Owed: a line to Brian**, since he said
+"after the launch," not "never." Memory [[project-collections-retired-2026-08-18]].
+
 ## Current state (2026-08-18) — PATTERN #17 RULES BAKED INTO DS + SITE POLICED (tablex-site `main`=`5640fc2`, both deploys ● Ready, live-verified)
 
 **Full detail: memory [[project-pattern17-policing-2026-08-18]] + vault session log.** Two DS pushes (16 writes, plans `…b9c4a8ee83d7` / `…054f85202713`) + two prod commits (`067e487` grammar/glyphs/scale, `5640fc2` compare row + compact weight).
