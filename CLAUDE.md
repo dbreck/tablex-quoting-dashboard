@@ -119,6 +119,30 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-19 PM) — BROWSE CARDS (JSI) + TOP SHAPE FACET (tablex-site `main`=`2d14af3` PUSHED, deploy unverified by request)
+
+**/products/browse series cards reworked to Danny's JSI spec + rail gained a "Top shape" facet.**
+Memory [[project-browse-redesign-2026-08-09]] (8/19 update block) has the detail.
+
+- **Cards:** trait pills → Pattern #17 metadata slash line (`slashTokens`, 13px) · identical
+  swatch row + "106 finishes" REMOVED (same value on all 16 — Danny hasn't eyeballed, revertible) ·
+  EXPLORE (outline → series page) + SPEX STUDIO (Ember pill → `/spex-studio/{slug}`, gated
+  `inConfigurator` — Revel Explore-only). **Supersedes the P3 "enhanced Configure/Compare pills"
+  ruling.** Card = outer div + Link block + sibling buttons (Link can't nest interactive children).
+- **NEW `src/data/series-shape-facet.ts` is server-only by inheritance** (series-shapes →
+  spex-book-map): computed in browse `page.tsx`, passed as plain records; client `import type`
+  ONLY. Route stays static+ISR 5m. Labels normalized (Rectangular/Soft Rect→Rectangle ·
+  Racetrack Oval→Racetrack · D-Shaped→D-Shape · Squircle→Slab); `?shape=` pass-through like
+  `?app=`. Build-time throw guards against future tile truncation.
+- **Facets NOT added without Brian/Mark:** casters (Elite answer pending) · price · height ·
+  base type — Special T has them, our data can't back them honestly.
+- **Deploy `e1v9hnod6` was Building at hand-off — Danny waived verification; glance next session.**
+- **Also 8/19 PM:** the 8/11 "TableX Top Shapes" artifact's SVG downloads fixed (blob `<a download>`
+  is sandbox-inert; now uses the `downloads` capability — which is ⛔ on publicly-shared artifacts,
+  so Danny turned public sharing off; share pins also freeze viewers on old versions). 12 shape
+  SVGs uploaded to Drive folder "Table-Top Shapes" (`1PPB9yDgmxyZD0D6ZDPZBbh5z6-vHqh_4`) — that's
+  the team distribution path now.
+
 ## Current state (2026-08-19) — PLACEHOLDER REMEDIATION EXECUTED (tablex-site `main`=`9f0c833`, deploys ● Ready)
 
 **The 8/18 audit's 23 slots are fully dispositioned: 7 filled / 13 owned / 3 intentional.** Brief
