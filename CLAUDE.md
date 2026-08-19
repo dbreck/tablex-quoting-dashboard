@@ -119,29 +119,38 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
-## Current state (2026-08-19) — PLACEHOLDER REMEDIATION EXECUTED (tablex-site `main`=`9d0b178`, deploys ● Ready, live-verified)
+## Current state (2026-08-19) — PLACEHOLDER REMEDIATION EXECUTED (tablex-site `main`=`9f0c833`, deploys ● Ready)
 
-**The 8/18 audit's 23 slots are fully dispositioned: 6 filled / 14 owned / 3 intentional.** Brief
+**The 8/18 audit's 23 slots are fully dispositioned: 7 filled / 13 owned / 3 intentional.** Brief
 closed with final accounting inside (`tablex-site/docs/plans/placeholder-remediation.md`); memory
-[[project-placeholder-audit-2026-08-18]] updated. Three commits: `3f7a912` (P0 sitemap +
-Revel in-use) · `4fd4ed5` (spaces fold wiring) · `9d0b178` (docs).
+[[project-placeholder-audit-2026-08-18]] updated. Five commits: `3f7a912` (P0 sitemap +
+Revel in-use) · `4fd4ed5` (spaces fold wiring) · `9d0b178` (docs) · `23c487d`+`9f0c833`
+(/about story fold — Danny's `built-around-people-01.jpeg`, `~/Documents/Clear ph/Clients/
+TableX/Assets/About/`, served as `about-story.webp`; Danny live-verified the last deploy).
 
-- **Filled (6):** `/series/revel` in-use (`revel-inuse.webp` ← Drive `New 6-15-26/Revel/Revel2.png`
+- **Filled (7):** `/series/revel` in-use (`revel-inuse.webp` ← Drive `New 6-15-26/Revel/Revel2.png`
   — the "blocked on photography" call was stale, the asset existed) + **5 of 7 `/spaces/*` "What
   works here" folds** (Danny ruled: wire it). New `SpaceEntry.detailImage`; scenes pre-cropped
   1120×1400 at the table's focal center (no `detailPos` field needed); public-spaces + healthcare
-  keep the honest greybox fallback.
+  keep the honest greybox fallback. Plus the /about story card (8/19 PM).
 - **KEY DISCOVERY: Drive `Horizontal Real Shots/WHERE IT FITS/` (Caleb, 8/13–18)** — 17
   use-case-keyed in-situ scenes (Workplace ×6, Café ×3, Outdoor ×3, Training ×3, Conference ×2),
   shot for exactly the spaces fold. Also: the 8/11 "V2 drop" = 44 files, ALL table imagery
   (ColorBlock/Trans/WhiteBG) — zero accessory content; the Dropbox Modesty Panel folder holds only
   the in-use Exclaim shot + an opaque-panel Revel shot that matches no null family honestly.
-- **Owned greyboxes (14) all have a named owner in `photography-coverage-gaps.md`** (Danny approved
-  "add all"): spaces ×2 → gap #1 · about/warranty macros ×3 → #2 (no macro exists anywhere in
+- **Owned greyboxes (13) all have a named owner in `photography-coverage-gaps.md`** (Danny approved
+  "add all"): spaces ×2 → gap #1 · warranty joint/leg macros ×2 → #2 (no macro exists anywhere in
   Drive/Dropbox) · butcher-block grain ×2 → #3 (the new 8/13 `ButcherBlock3`+`_Extended.tif` are
   still SCENES — re-confirmed, keep not re-litigating) · 5 accessory panel families → #4 ·
   Daisylink infeeds + data keystones → **Byrne thread: nudge REPLY DRAFTED `r-6804022004425057828`**
-  (to Conor, cc Mark/Brian/wiser; files + imagery-rights ask) — **Danny reviews/sends.**
+  (to Conor, cc Mark/Brian/wiser; files + imagery-rights ask) — **send still owed, or Mark
+  pushes Conor directly (floated in the 8/19 team email).**
+- **8/19 team email SENT** (`r3476890660610392634`, Danny sent post-meeting): open items by
+  owner with page links — Brian (OSU sign-off, manufactur- OK, territories, news, fits/casters/
+  list exposure), Mark (r4 rows + grommet $45-vs-$89, codes 01/02/03/09/17/43 + Foundation 30,
+  Element-33 green light, T-vs-TT, Elite casters), Caleb (gaps #1–4 + Elite/Stretch/finishes-hero),
+  Kayla (home hero, poem fold, about hero, two-Ember, ops caps), launch date reset. **Answers to
+  these drive the next sessions.**
 - **P0 shipped:** sitemap spex entries now derive through the `inConfigurator` gate;
   `/spex-studio/revel` gone from `sitemap.xml` (16 spex lines = hub + 15).
 - **Gotchas:** a killed-then-restarted `next start` can silently lose the port race to the OLD
