@@ -119,6 +119,26 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-25) — CALEB PHOTO ANSWERS DRAFTED + BRIAN'S MiA PIVOT (no code)
+
+**Caleb's 8/19 spec questions (open-items thread `1a01a9504dcc7180`) answered in Gmail draft
+`r-296426095177948346` — SEND OWED** (he nudged 8/24; Danny promised "asap today" and didn't).
+Draft answers, grounded in tablex-site data: spaces scenes → Public Spaces = Puddle/Exclaim,
+Healthcare = Foundation/Justice (from `series-detail.ts` `whereItFitsSpaces`; landscape OK, we
+crop 4:5 at the table) · **warranty joint = pillar-to-legs structural WELD** (my call — matches
+the "Frames, legs, structural joints" coverage row; Danny may swap to the underside mount) ·
+grain = wood edge-to-edge, NO props (his attached refs = Freepik props-flat-lays → redirected to
+the /finishes hero designer's-desk ask) · panels = Neal renders fine, match the 2 live on-white
+shots, same table/angle across all five. Older-asks priority: Elite in-situ → Stretch classroom
+→ finishes hero. Gotcha: Gmail MCP has no attachment-fetch tool — filenames only.
+
+**⚠ Brian 8/21 (same thread): wants OFF "Made in America"** — FTC-compliance nerves (competitors
+think they're import-only; a future import decision could kill the seal). Proposal: **"Family
+Owned & Operated" + a non-flag icon.** Danny acked 8/24, NOT scoped. Touches
+/about/made-in-america, the footer seal, and the MiA standing ruling below — likely supersedes
+the pending per-line assembly-vs-origin verification. Byrne nudge `r-6804022004425057828` still
+unsent (hard launch blocker). Memory [[project-placeholder-audit-2026-08-18]].
+
 ## Current state (2026-08-19 PM) — BROWSE CARDS (JSI) + TOP SHAPE FACET (tablex-site `main`=`2d14af3` PUSHED, deploy unverified by request)
 
 **/products/browse series cards reworked to Danny's JSI spec + rail gained a "Top shape" facet.**
@@ -372,7 +392,7 @@ owed there. Memory [[project-collections-retired-2026-08-18]].
 ## Standing rulings & recurring gotchas
 
 **Content honesty — hard bans on public surfaces (a comp/DS never overrides these):**
-- ZERO manufacturing in Jasper — ships/distributes only (no welders/shop-floor/tours copy). **Made-in-America (Brian 7/09, APPLIED 7/14): the seal is BACK in the footer (footer-only — image renders ONLY in the footer + on `/about/made-in-america`; elsewhere text links), About links to the details page (replaces the killed mfg page — `dec-mfg-page`). Seal claim RETAINED but PENDING Brian's per-line assembly-vs-origin verification — the MiA page deliberately makes NO per-line claims (routes origin questions to reps); if verification comes back mixed, revisit page prose + seal together. "MiA" is no longer a banned grep term (welder/manufactur*/mass-produced still are).** Footer also carries "Shipped from Jasper, Indiana".
+- ZERO manufacturing in Jasper — ships/distributes only (no welders/shop-floor/tours copy). **⚠ 8/21: Brian wants OFF MiA entirely → "Family Owned & Operated" + non-flag icon (FTC nerves; see the 8/25 block) — the ruling below is now pending replacement, don't build on it.** **Made-in-America (Brian 7/09, APPLIED 7/14): the seal is BACK in the footer (footer-only — image renders ONLY in the footer + on `/about/made-in-america`; elsewhere text links), About links to the details page (replaces the killed mfg page — `dec-mfg-page`). Seal claim RETAINED but PENDING Brian's per-line assembly-vs-origin verification — the MiA page deliberately makes NO per-line claims (routes origin questions to reps); if verification comes back mixed, revisit page prose + seal together. "MiA" is no longer a banned grep term (welder/manufactur*/mass-produced still are).** Footer also carries "Shipped from Jasper, Indiana".
 - `617` / `12,338` stats banned on public surfaces (ClearPH pitch-deck only).
 - "mass-produced" + the `manufactur-` stem are banned (Danny 7/04) — **EXCEPTION 7/22: Brian's own authored card copy carries the stem on /about + /about/warranty** (shipped verbatim, pending his sign-off). Don't scrub those instances, don't write NEW ones.
 - "Configurable SKUs" → "Configurations". No fabricated SKUs anywhere; Spex shows a real-catalog **configuration code**, never an invented SKU / price / lead-time — **don't "fix" these as bugs.**
