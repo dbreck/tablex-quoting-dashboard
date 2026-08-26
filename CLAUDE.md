@@ -119,6 +119,24 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-26 PM) — FEEDBACK-BOARD TO DO SWEPT, 44 CARDS (tablex-site `main`=`b807605`, deploy ● Ready, live-verified via alias)
+
+**The board's To Do column is down to one card.** Two commits: `b714faf` (Danny's 30 imagery
+cards #355–387 — `inUseImagePos: center bottom` ×10 · colorblock swaps ×8 (App/Element/Exclaim/
+VertiGo/Surge/Solo/Trig/Foundation, real shots + ColorBock @2560w) · NEW `spexImageScale` 1.35 ×6 ·
+Foundation+Element configRender → nested Trans Shadow renders · Primary 80%/Ultra 73%) + `b807605`
+(all 14 Site Audit PR#4/PR#5 cards #326–354, four parallel agents — highlights: SpecSheet `inert` ·
+Xero mid-run 401 refresh + batched suggestion writes · `getActivePriceBook` React `cache()` +
+`s-maxage=300` · desk feeds `resolveSpexPricing` its batched lookup via new `prefetched` param +
+`accessoryModelCandidates` · **NEW `src/lib/series-links.ts`** owns the SpeX gate + hrefs (8 sites
+migrated — extend it, never hand-roll) · browse explore pill `tabIndex=-1` + hover scoped
+`group-has-[[data-series-link]:hover]`). 43 cards → review w/ comments; **#372 Exclaim
+privacy-shield configRender stays todo — the shot in the slot is the ONLY such asset anywhere
+(Drive+Dropbox verified); re-render ask filed in coverage-gaps #4.** #364 (SpeX qualifier line)
+answered in comment — Danny to rule keep/cut/reword. Selector→fold map for future pin cards +
+gotchas (deployment URLs 302 behind Vercel auth — verify via `tablex-site.vercel.app`):
+memory [[project-board-todo-sweep-2026-08-26]].
+
 ## Current state (2026-08-26) — WHERE IT FITS SCENES SHIPPED ON 13 SERIES PAGES (tablex-site `main`=`d62fe3b`, deploy ● Ready, live-verified)
 
 **Caleb completed 33 of 41 rows on the "TableX Series Pages - Real Shot List" sheet
