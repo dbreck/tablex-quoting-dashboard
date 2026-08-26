@@ -119,6 +119,22 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-26) — WHERE IT FITS SCENES SHIPPED ON 13 SERIES PAGES (tablex-site `main`=`d62fe3b`, deploy ● Ready, live-verified)
+
+**Caleb completed 33 of 41 rows on the "TableX Series Pages - Real Shot List" sheet
+(`1lh3dqg7BXKjhaAsl9WqOAJsqqsEn3fpoOd0DwioiJtQ`) — all processed and live.** Four parallel
+agents visually QC'd all 43 Drive files (8000×4500), picked variants, cropped 4:3 at the
+table's focal center, converted to `public/images/products/<slug>-<space>.webp` (cwebp q85,
+1600×1200, 32 new files); wired via the existing `whereItFitsImages` field in
+`series-detail.ts` (source filename commented per entry; Foundation's 2 XL entries kept).
+**Element outdoor — the site's oldest photography gap — is CLOSED.** Unshot sheet rows
+(honest space-photo fallback keeps rendering): Revel-Training · Justice-Training ·
+VertiGo ×2 · Solo-Workplace/Training · Trig ×2. **Danny-eyeball flags (shipped as-is,
+swappable):** Ultra-Workplace has an Apple-logo MacBook prop · Surge-Workplace whiteboard =
+garbled AI pseudo-text · Justice-Cafe menu board reads "MOCNA" · Elite-Conference reads
+private-office not conference. Variant picks + rationale: memory
+[[project-where-it-fits-shipped-2026-08-26]].
+
 ## Current state (2026-08-25) — CALEB PHOTO ANSWERS DRAFTED + BRIAN'S MiA PIVOT (no code)
 
 **Caleb's 8/19 spec questions (open-items thread `1a01a9504dcc7180`) answered in Gmail draft
