@@ -119,6 +119,31 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-26 NIGHT) — DEKKO 3D FILES → SPEX ACCESSORY VIEWER SHIPPED (tablex-site `main`=`00ff5f8`, deploy ● Ready, live-verified)
+
+**Byrne delivered the Dekko STEP CAD (15 files, Villa+Cove) and it went from raw delivery to
+prod the same night**: SpeX viewer now renders Villa corded + Villa Daisylink GLBs under the
+tabletop and procedural grommets at p.231 placement-letter locations. Full detail + gotchas in
+memory [[reference-spex-3d-accessory-assets]] (8/26 block); reports:
+`tablex-site/docs/reports/2026-08-26-spex-accessory-geometry-pilot.md` + `identification-report.md`
+and `conversion-report.md` in `~/Documents/Clear ph/Clients/TableX/3D Files/Dekko/`.
+
+- **Key facts:** all 7 numeric-named STEPs = Dekko PUBLIC part numbers (3 are Daisylink Sys-42
+  bases — the empty "Daisy Link & Connectors" zip only owes interconnects: infeeds/Daisy-T/
+  keystones; Danny requested resend). 12 GLBs converted (cascadio+trimesh, meters/Z-up, mating-
+  plane origin, `acc_body/face/cord/metal` meshes) and uploaded to `glb-models/accessories/`;
+  2 wired, 10 await passes. **Villa anchor = UNDERSIDE (body entirely z≤0 — the 8/04 "deck
+  protrudes" assumption was wrong); Cove + grommet covers = TOP-surface drop-ins (unwired).**
+  Grommets are procedural, never the VIL-GROM GLBs (those are Villa system covers).
+- **Neal re-scope EXECUTED:** fresh Gmail draft `r3126663444885169282` (To Neal CC Brian,
+  casters-only: LC-SC/LC1.5/SLC.3, stem-top origin) — **Danny send owed**; the 8/04 brief doc is
+  now internal reference only.
+- **Open:** Byrne resend + imagery rights (STILL unanswered, pre-launch blocker — re-raise with
+  Conor together) · grommet letters on round tops = Mark/Brian question (viewer clamps into the
+  silhouette as fallback) · remaining viewer passes (Cove anchors, -PD power placement letters,
+  double kits, finish codes) listed in the pilot report · pre-existing `Toast.tsx`
+  `react-hooks/refs` lint error (8/26 sweep, non-blocking).
+
 ## Current state (2026-08-26 PM) — FEEDBACK-BOARD TO DO SWEPT, 44 CARDS (tablex-site `main`=`b807605`, deploy ● Ready, live-verified via alias)
 
 **The board's To Do column is down to one card.** Two commits: `b714faf` (Danny's 30 imagery
