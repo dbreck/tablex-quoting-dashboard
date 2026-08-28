@@ -119,6 +119,31 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
+## Current state (2026-08-28) — DAISYLINK RESEND INCORPORATED + MERCHANDISED SERIES ORDER (tablex-site local `main`=`27b6762`, ⚠ 2 commits UNPUSHED)
+
+**Byrne's "Daisy Link & Connectors" resend (5 STEPs) is fully in SpeX Studio; /products +
+nav series order is now merchandised. Ship both on Danny's word** (interrupted by a reboot;
+next queued task = /products card image swaps). Detail: memory
+[[reference-spex-3d-accessory-assets]] (8/28 block) + vault session log.
+
+- **`64d9c3e` series order:** `marketedSeries` = **Foundation, Ultra, Elite, Trig** first
+  (same set as browse `FEATURED`), rest alpha — drives /products hub + nav mega panel;
+  `seriesCatalog` untouched (dashboard-port order). No Brian ruling on ranking exists (the
+  April FLAGSHIP/VALUE/QUICK-SHIP badge ask died unanswered; the OLD site nav was itself
+  merchandised: Ultra/Foundation/Fundamental/Trig top) — **Danny emailing Brian for the real
+  ranking**; browse's post-featured tail still catalog-order (offered alpha, unruled).
+- **`27b6762` DaisyLink:** 5 STEPs identified from PRODUCT roots (`42AP1 20A`=VAP plug
+  infeed · `42 FF`=kit-included 12.3″ FF cable · `DAISY-T`=VT-MFM · HDMI/RJ45 keystones),
+  converted (new origin semantics: under-table hardware = z0 at part top; keystones =
+  flange face) + uploaded to `glb-models/accessories/`. Viewer: `geometry.companions` +
+  **"top" anchor** — both Villa units render their flush cover (acc_villa-grom-f) in the
+  tabletop, DL kit adds one FF cable. **Honesty rule: companions = ONLY what the SKU ships
+  with; infeed/Daisy-T/keystones stay unrendered (no picker entry) but GLBs are bucket-ready.**
+  Browser-verified 36/60/96, studio+classic, no console errors. Pipeline artifacts +
+  8/28 report section in `~/Documents/Clear ph/Clients/TableX/3D Files/Dekko/_converted-glb/`.
+- Residual CAD gaps (Cove 6″ round · hinged grommet · FM jumpers · Villa 2C/convenience DL ·
+  Cove DL USB plates) listed in conversion-report.md; imagery rights + Neal draft send still open.
+
 ## Current state (2026-08-26 NIGHT) — DEKKO 3D FILES → SPEX ACCESSORY VIEWER SHIPPED (tablex-site `main`=`00ff5f8`, deploy ● Ready, live-verified)
 
 **Byrne delivered the Dekko STEP CAD (15 files, Villa+Cove) and it went from raw delivery to
