@@ -119,11 +119,27 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
-## Current state (2026-08-28) — DAISYLINK RESEND INCORPORATED + MERCHANDISED SERIES ORDER (tablex-site local `main`=`27b6762`, ⚠ 2 commits UNPUSHED)
+## Current state (2026-08-28 PM) — HOME LOOK BOOK STACK CARDS + ENVIRONMENTAL BAND SHIPPED (tablex-site `main`=`9c9d08c`, deploy ● Ready, live-verified)
+
+**All 5 home "Featured Collections" stack-card panels (App/Solo/Element/Stretch/Exclaim) now
+carry Look Book real-shot crops; the Revel/Occasional card is REMOVED; EnvironmentalBand =
+`element-feature-02-4k.png` arch scene @ `object-[center_75%]`.** This push also carried the
+morning's `64d9c3e`+`27b6762` (below) — nothing unpushed. Memory
+[[project-home-lookbook-cards-2026-08-28]] has the reusable crop pipeline + final colorPos set.
+
+- Cards = `public/images/home/lookbook-<slug>.webp` (1600w portrait ~0.77): lookbook left-page
+  framing then **~15% looser** (Danny's standing preference). Only App's source needed hflip
+  (in-scene readable text = flip test). New optional `StackCard.alt`; staircase peek count now
+  derives from `CARDS.length - 1` (was hardcoded for 6 cards).
+- **`photo-featured-bases.png` provenance settled:** the 1080p June claude.ai/design comp asset
+  IS the original — nothing larger exists (Drive/videos/legacy swept). Bigger = re-generate.
+- Danny eyeball owed: Stretch card headline sits on a light beige ceiling (weakest white-text
+  ground); scrim = one-liner if wanted.
+
+## Current state (2026-08-28 AM) — DAISYLINK RESEND INCORPORATED + MERCHANDISED SERIES ORDER (pushed with the PM ship)
 
 **Byrne's "Daisy Link & Connectors" resend (5 STEPs) is fully in SpeX Studio; /products +
-nav series order is now merchandised. Ship both on Danny's word** (interrupted by a reboot;
-next queued task = /products card image swaps). Detail: memory
+nav series order is now merchandised.** Detail: memory
 [[reference-spex-3d-accessory-assets]] (8/28 block) + vault session log.
 
 - **`64d9c3e` series order:** `marketedSeries` = **Foundation, Ultra, Elite, Trig** first
