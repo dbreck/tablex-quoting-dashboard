@@ -50,6 +50,7 @@ import {
   AppWindow,
   CheckCircle2,
   Map as MapIcon,
+  MessageSquareQuote,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
@@ -70,6 +71,7 @@ const projectNavItems = [
   { name: "Timeline", href: "/project/timeline", icon: GanttChart },
   { name: "Launch Timeline", href: "/project/launch-timeline", icon: Rocket },
   { name: "Launch Status", href: "/project/launch-status", icon: Gauge },
+  { name: "Rep Demo Findings", href: "/project/rep-demo", icon: MessageSquareQuote },
   { name: "Tasks", href: "/project/tasks", icon: ListChecks },
   { name: "Sprints", href: "/project/sprints", icon: Calendar },
   { name: "Board", href: "/project/board", icon: KanbanSquare },
