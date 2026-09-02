@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import { nanoid } from "nanoid";
-import { Check, ChevronDown, ExternalLink, MessageSquare, Send } from "lucide-react";
+import { Check, ChevronDown, ExternalLink, FileDiff, MessageSquare, Send } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
   findingKey,
@@ -62,6 +62,10 @@ export default function RepDemoFindingsPage() {
             Fixes, ruled requirements, post-launch items, and open decisions from the September 2
             web and configurator demo with Adam, Joe, Chris, and Mike. Click a title to open it;
             check it off when it ships; notes save for everyone.{" "}
+            <span className="inline-flex items-center gap-1 whitespace-nowrap text-gray-400">
+              <FileDiff className="h-3 w-3" aria-hidden />
+              <span className="text-xs">= likely a change order</span>
+            </span>{" "}
             <a
               href={firefliesLink()}
               target="_blank"
@@ -171,8 +175,15 @@ function FindingRow({ item }: { item: FindingItem }) {
           aria-controls={`finding-${item.id}`}
           className="flex min-w-0 flex-1 items-start gap-3 text-left"
         >
-          <span className="mt-0.5 w-9 shrink-0 font-mono text-[11px] font-semibold text-gray-400">
+          <span className="mt-0.5 flex w-14 shrink-0 items-center gap-1.5 font-mono text-[11px] font-semibold text-gray-400">
             {item.id}
+            {item.changeOrder && (
+              <FileDiff
+                className="h-3 w-3 text-amber-500/80"
+                aria-label="Likely a change order"
+                role="img"
+              />
+            )}
           </span>
           <span className="min-w-0 flex-1">
             <span
@@ -219,7 +230,7 @@ function FindingRow({ item }: { item: FindingItem }) {
       )}
 
       {open && (
-        <div id={`finding-${item.id}`} className="border-t border-gray-100 bg-gray-50/50 px-4 py-4 pl-[3.75rem]">
+        <div id={`finding-${item.id}`} className="border-t border-gray-100 bg-gray-50/50 px-4 py-4 pl-[5rem]">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <div className="space-y-4">
               {item.said && (

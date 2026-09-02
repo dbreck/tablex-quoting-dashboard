@@ -37,6 +37,9 @@ export interface FindingItem {
   build: string;
   /** Extra caution / status line. */
   note?: string;
+  /** Outside the original SOW (Website · Portal · CRM · CPQ · read-only Xero
+   * sync) — likely a change order. Rendered as a subtle mark, no tooltip. */
+  changeOrder?: boolean;
 }
 
 export interface FindingGroup {
@@ -137,6 +140,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "R-2",
+        changeOrder: true,
         title: "Edit after sending creates a revision, with history",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "Once I’ve created the quote, I’ll be able to go back in and click an edit button, edit it, and it creates me a revision? — Brian: “Revision, that’s correct.”",
@@ -159,6 +163,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "R-4",
+        changeOrder: true,
         title: "Accepting requires a PO number and an uploaded PO file",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "We still want that purchase order from the dealer, not accept it here. — Brian: “I would rather them upload it in their system so it’s there. I’m trying to eliminate anything that could be missed in email.” — Danny: “Whatever notification they got would have a link to bring them right in here where they attach it.”",
@@ -181,6 +186,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "R-6",
+        changeOrder: true,
         title: "A product image beside each line on the quote, with an on/off toggle",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "How difficult would it be to add the image next to each item, where they can see which item is close? Or you could toggle that on or off.",
@@ -203,6 +209,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "R-8",
+        changeOrder: true,
         title: "Quote a laminate tier without a specific laminate, but block the work order until one is chosen",
         tags: [
           { kind: "req", label: "Requirement" },
@@ -236,6 +243,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
     items: [
       {
         id: "P-1",
+        changeOrder: true,
         title: "Freight: rules-based delivered pricing now, live carrier quotes later",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "Will this calculate freight, or will we have a spot to show that? — Brian: “We have levels of freight of what they would pay. Those rules we can put in. If they’re needing an actual freight quote, that’ll be a little different. We just don’t want them under the minimum.”",
@@ -247,6 +255,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-2",
+        changeOrder: true,
         title: "Export a quote as a SIF file for the dealer’s own quoting system",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "What about the dealer being able to download the quote as a SIF file to upload into their quote system?",
@@ -258,6 +267,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-3",
+        changeOrder: true,
         title: "Spec and price a table without logging in, for designers and after-hours dealer salespeople",
         tags: [
           { kind: "req", label: "Requirement" },
@@ -272,6 +282,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-4",
+        changeOrder: true,
         title: "30-day expiry reminder to rep and dealer, with a way to kill a quote and see the kill rate",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "If you have a reminder on this at 30 days, it’s a great reminder to you or the dealer that there’s a quote out there, and if it’s no good they can kill it. What’s our percentage of kill? Nobody really ever knew.",
@@ -283,6 +294,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-5",
+        changeOrder: true,
         title: "The portal becomes the hub: messaging per quote or invoice, ship dates, invoices",
         tags: [{ kind: "phase2", label: "Phase 2" }],
         said: "I would like to add messaging to that hub so they could message about that specific invoice, and it’s transparent for all of us. We’ll put ship dates in there, the estimated ship date and when it shipped, and invoices would show up in that hub as well.",
@@ -294,6 +306,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-6",
+        changeOrder: true,
         title: "Bill of materials generated with the work order",
         tags: [{ kind: "phase2", label: "Phase 2" }],
         said: "Something we will be working on in phase two is making certain we can get a bill of material with that as well.",
@@ -305,6 +318,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-7",
+        changeOrder: true,
         title: "Orders flowing into accounting was promised to the reps",
         tags: [{ kind: "decision", label: "Expectation to scope" }],
         said: "They can place the order from this system, and it goes right to us, and actually into our software programs that goes into our accounting. It works with everything.",
@@ -327,6 +341,7 @@ export const REP_DEMO_FINDINGS: FindingGroup[] = [
       },
       {
         id: "P-9",
+        changeOrder: true,
         title: "Deactivate a dealer’s user when they leave, and let dealers manage their own people",
         tags: [{ kind: "req", label: "Requirement" }],
         said: "What happens if that designer leaves? They’ve got their own password to get into the portal. We need to make sure we manage that, because they leave with that password and zip right over to brand A, B, and C.",
