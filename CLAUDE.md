@@ -119,7 +119,7 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
-## Current state (2026-09-04 PM) — SPEX LOCKING CASTERS RENDER FROM TABLEX'S OWN CAD (tablex-site branch `feat/spex-casters`, LOCAL — status line updated at commit)
+## Current state (2026-09-04 PM) — SPEX LOCKING CASTERS RENDER FROM TABLEX'S OWN CAD (tablex-site branch `feat/spex-casters` = `80ac1ea`, LOCAL + UNPUSHED — build green, 11-case browser matrix green; "ship it" = ff-merge into `main` + push; dev server for Danny's eyeball on :3001)
 
 **Danny's ask: "VertiGO defaults to showing casters — copy those and reuse the files when someone selects casters as an accessory." Done. Read memory [[project-spex-casters-2026-09-04]] + report `tablex-site/docs/reports/2026-09-04-spex-casters.md`.**
 
