@@ -124,7 +124,9 @@ This dashboard is the **orchestrator** for tablex-site execution work. The PM tr
 - **Client review email DRAFTED, NOT SENT** — Gmail draft `r1328118608952568301`, To Brian/Mark/Kayla, CC Arabella.
 - ~~NEXT SESSION = /products/accessories REDESIGN~~ **SUPERSEDED 8/09 — see the "8/09 BROWSE TWO-MODE REDESIGN PLANNED" block below.** The 8/04 prompt (`docs/accessories-redesign-prompt-2026-08-04.md`) produced the wireframe round whose option 1c became the new direction; that prompt is now superseded by `docs/browse-redesign-prompt-2026-08-09.md`. Sticky category nav already shipped (`0e8cae6`). **Data layer is fully decoupled — a rebuild is a page-file change and nothing else.**
 
-## Current state (2026-09-12) — NEWS + EVENTS NEWSROOM SHIPPED: SIX LAYOUTS + THE FULL DESIGN INDEX + PREV/NEXT RAIL (tablex-site `main`=`5e3f418`, ff-merged from `feat/news-events` on Danny's "ship it all", pushed; idle `tablex-site-main-wt` worktree removed; checkout on `main`)
+## Current state (2026-09-12) — NEWS + EVENTS NEWSROOM LIVE: SIX LAYOUTS + THE FULL DESIGN INDEX + PREV/NEXT RAIL (tablex-site `main`=`f150811`, deploy `li3ncfl0b` ● Ready, live-verified; idle `tablex-site-main-wt` worktree removed; checkout on `main`)
+
+**⚠ `src/payload-types.ts` is now TRACKED in git.** It was gitignored, so the first prod deploy (`4ez1e0ut8`) failed type-checking on the first `@/payload-types` import — Vercel never had the file. After any Payload collection change: `pnpm generate:types` and COMMIT the result with the change.
 
 **Read memory [[project-news-events-2026-09-12]].** The claude.ai/design "News + Events" project (`8cf2e9e8-…`, `News + Journal v3.dc.html`, read via DesignSync `get_file` — works on regular projects) is implemented as a Payload-authored template with **six editorial layouts**. Prod Supabase is ALREADY migrated (v1 + v2) + seeded; the live `/news` keeps its placeholder until the branch ships.
 
