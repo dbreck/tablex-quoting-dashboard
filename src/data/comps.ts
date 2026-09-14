@@ -27,7 +27,7 @@ export const comps: Comp[] = [
     // Multi-file bundle (index.html + live JSX components) — replaced the old
     // single-file blob export 2026-06-05 so fixes can be made directly in src/.
     file: "/comps/home-full-build/index.html",
-    thumb: "/comps/thumbs/comps-home-full-build-html.png",
+    thumb: "/comps/thumbs/comps-home-full-build-html.webp",
     date: "2026-06-05",
     tool: "claude.ai/design",
     tags: ["Home", "Marketing"],

@@ -58,7 +58,7 @@ export interface EdgeType {
 // ---------------------------------------------------------------------------
 const powderCoat = (id: string, name: string, hex: string): FinishOption => ({
   id, name, category: 'powder-coat', hex, roughness: 0.4, metalness: 0.1,
-  normalMapUrl: '/textures/powder-coat/orange-peel-normal.png',
+  normalMapUrl: '/textures/powder-coat/orange-peel-normal.webp',
 });
 
 export const powderCoatFinishes: FinishOption[] = [
@@ -316,16 +316,16 @@ export const laminateCatalog: FinishOption[] = [...tflFinishes, ...hplFinishes];
 // Solid Surface
 // ---------------------------------------------------------------------------
 export const solidSurfaceFinishes: FinishOption[] = [
-  { id: 'ss-white', name: 'Solid Surface White', category: 'solid-surface', hex: '#f5f5f5', roughness: 0.3, metalness: 0, normalMapUrl: '/textures/solid-surface/white-normal.png' },
-  { id: 'ss-gray', name: 'Solid Surface Gray', category: 'solid-surface', hex: '#a0a0a0', roughness: 0.3, metalness: 0, normalMapUrl: '/textures/solid-surface/gray-normal.png' },
+  { id: 'ss-white', name: 'Solid Surface White', category: 'solid-surface', hex: '#f5f5f5', roughness: 0.3, metalness: 0, normalMapUrl: '/textures/solid-surface/white-normal.webp' },
+  { id: 'ss-gray', name: 'Solid Surface Gray', category: 'solid-surface', hex: '#a0a0a0', roughness: 0.3, metalness: 0, normalMapUrl: '/textures/solid-surface/gray-normal.webp' },
 ];
 
 // ---------------------------------------------------------------------------
 // Butcher Block
 // ---------------------------------------------------------------------------
 export const butcherBlockFinishes: FinishOption[] = [
-  { id: 'bb-natural', name: 'Butcher Block Natural', category: 'butcher-block', hex: '#c49a6c', roughness: 0.8, metalness: 0, textureUrl: '/textures/butcher-block/natural-color.webp', normalMapUrl: '/textures/butcher-block/natural-normal.png' },
-  { id: 'bb-walnut', name: 'Butcher Block Walnut', category: 'butcher-block', hex: '#5c3a21', roughness: 0.8, metalness: 0, textureUrl: '/textures/butcher-block/walnut-color.webp', normalMapUrl: '/textures/butcher-block/walnut-normal.png' },
+  { id: 'bb-natural', name: 'Butcher Block Natural', category: 'butcher-block', hex: '#c49a6c', roughness: 0.8, metalness: 0, textureUrl: '/textures/butcher-block/natural-color.webp', normalMapUrl: '/textures/butcher-block/natural-normal.webp' },
+  { id: 'bb-walnut', name: 'Butcher Block Walnut', category: 'butcher-block', hex: '#5c3a21', roughness: 0.8, metalness: 0, textureUrl: '/textures/butcher-block/walnut-color.webp', normalMapUrl: '/textures/butcher-block/walnut-normal.webp' },
 ];
 
 // ---------------------------------------------------------------------------
