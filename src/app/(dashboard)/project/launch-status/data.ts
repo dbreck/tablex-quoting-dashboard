@@ -372,7 +372,7 @@ export const TEAM: Role[] = [
   {
     who: "Sam + Patty",
     role: "The quote desk",
-    beforehand: ["Log in to /ops with the new accounts", "Watch the staff training videos (quote desk flows)"],
+    beforehand: ["Log in to /ops with the new accounts", "Watch the staff training videos (Help → Training videos in /ops, live 9/18)"],
     monday: ["Work the first real quote requests and self-quotes as they arrive", "Confirm a tablex.com email sends and receives at 7:35", "Flag anything odd to Danny immediately"],
   },
   {
