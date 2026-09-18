@@ -40,7 +40,7 @@ export const PHASES: Phase[] = [
     key: "prep",
     when: "Thu 9/18 – Fri 9/19",
     title: "Infra prep + sign-off",
-    summary: "Fonts allowlist, Vercel domains, DNS snapshot, TTLs lowered, Brian's final walkthrough, news placeholders resolved.",
+    summary: "Fonts allowlist, Vercel domains, DNS snapshot, TTLs lowered, Brian's final walkthrough.",
     tone: "now",
   },
   {
@@ -166,12 +166,6 @@ export const RUNBOOK: RunbookGroup[] = [
         tracker: "web-brian-final-signoff",
       },
       {
-        title: "News: rewrite or unpublish the 7 placeholder posts",
-        detail: "Brian's 3 real posts are live. The placeholders must not be public on launch day.",
-        owner: "Brian",
-        status: "open",
-      },
-      {
         title: "Final hand-QA: keyboard, reduced motion, iPad, Safari, mobile drawer",
         detail: "Last pass on the frozen build.",
         owner: "Kayla",
@@ -180,7 +174,7 @@ export const RUNBOOK: RunbookGroup[] = [
       },
       {
         title: "Go / no-go call",
-        detail: "Brian + Danny, Sunday evening. Criteria: sign-off in, placeholders gone, infra prep all green, rollback snapshot saved.",
+        detail: "Brian + Danny, Sunday evening. Criteria: sign-off in, infra prep all green, rollback snapshot saved.",
         owner: "Brian + Danny",
         status: "open",
       },
@@ -366,7 +360,7 @@ export const TEAM: Role[] = [
   {
     who: "Brian",
     role: "Owns the go decision",
-    beforehand: ["Final full-site walkthrough + sign-off (due Sunday)", "News: rewrite or unpublish the 7 placeholder posts", "Open copy rulings + Southern NJ rep call"],
+    beforehand: ["Final full-site walkthrough + sign-off (due Sunday)", "Open copy rulings + Southern NJ rep call"],
     monday: ["Available 7:00–9:00 AM for the green light or a hold", "Dealer + rep announcement (recommend Tuesday)", "Field any customer-facing questions"],
   },
   {
@@ -418,7 +412,6 @@ export interface OpenItem {
 
 export const OPEN_ITEMS: OpenItem[] = [
   { what: "Brian's final walkthrough + sign-off", why: "The go / no-go gate", owner: "Brian", due: "Sun 9/20", gate: true, status: "open" },
-  { what: "7 placeholder news posts rewritten or unpublished", why: "Cannot be public on launch day", owner: "Brian", due: "Sun 9/20", gate: true, status: "open" },
   { what: "Infra prep list green (fonts, Vercel domains, zone export, TTLs, backups)", why: "Monday's hour depends on it", owner: "Danny", due: "Fri 9/19", gate: true, status: "open" },
   { what: "Staff accounts for Jim, Caleb, Richie", why: "Everyone who needs the desk or portal has a login", owner: "Danny", due: "Fri 9/19", gate: false, status: "open" },
   { what: "Feedback widget back on", why: "Off while training videos record; returns in the launch deploy", owner: "Danny", due: "Mon 9/21", gate: false, status: "open" },
@@ -436,6 +429,7 @@ export const OPEN_ITEMS: OpenItem[] = [
 /* ------------------------------------------------------------------ */
 
 export const SHIPPED = [
+  "News: 3 real posts live, placeholders removed (9/18)",
   "Launch punch list shipped 9/17: final wordmark everywhere, branded HTML email, GTM + GA4, rollback runbook, deploy process",
   "Login rework: password-first sign-in, self-serve reset, invites land on set-password; auth email templates on the live domain",
   "Self-serve customer accounts + list-price self-quotes; ordering requires an account, PO optional",

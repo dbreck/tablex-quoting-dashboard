@@ -119,7 +119,7 @@ export function OverviewSection() {
               ))}
             </ul>
             <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-500">
-              If any gate is red Sunday evening, we hold and pick the next early-morning slot. Nothing about the
+              If either gate is red Sunday evening, we hold and pick the next early-morning slot. Nothing about the
               plan changes; only the date.
             </p>
           </Card>
@@ -429,7 +429,7 @@ export function OpenItemsSection() {
     <div className="space-y-8">
       <SectionIntro title="Everything still open">
         <p>
-          The three gates decide whether Monday happens. The rest are real but do not move the date; each has an owner
+          The two gates decide whether Monday happens. The rest are real but do not move the date; each has an owner
           and a due window.
         </p>
       </SectionIntro>
