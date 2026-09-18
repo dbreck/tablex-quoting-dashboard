@@ -1,283 +1,145 @@
 "use client";
 
 /**
- * Launch Status — the seven tab sections. Pure presentation over ./data.
+ * Launch Status — the six tab sections. Pure presentation over ./data.
  */
 
 import {
-  CRM_POINTS,
-  CUTOVER_STEPS,
-  MISSING_BASES,
-  NEEDS,
-  OPS_ACTIONS,
-  QUOTE_NOTIFICATIONS,
-  QUOTE_STAGES,
-  RESOURCES,
-  SERIES_NO_3D,
-  SITE_MAP,
-  SPEX_COVERAGE,
-  SPEX_FILE_SPEC,
-  XERO_STATS,
-  XERO_SYNC_STEPS,
-  siteMapCounts,
+  COMMS,
+  DNS_RECORDS,
+  DNS_RULES,
+  GO_LIVE,
+  OPEN_ITEMS,
+  PHASES,
+  ROLLBACK,
+  ROLLBACK_NOTES,
+  RUNBOOK,
+  SHIPPED,
+  TEAM,
 } from "./data";
 import {
-  BarRow,
   Card,
-  CompositionBar,
+  CardHeading,
   FlowStep,
+  OwnerChip,
   SectionIntro,
   StatTile,
   StatusChip,
-  STATUS_META,
+  Warning,
 } from "./components";
+
+const TONE: Record<string, { ring: string; badge: string; label: string }> = {
+  past: { ring: "border-emerald-200 bg-emerald-50/60", badge: "bg-emerald-500 text-white", label: "Done" },
+  now: { ring: "border-brand-green bg-white shadow-sm ring-2 ring-brand-green/20", badge: "bg-brand-green text-white", label: "Now" },
+  next: { ring: "border-gray-200 bg-white", badge: "bg-gray-200 text-gray-700", label: "Next" },
+  day: { ring: "border-brand-navy bg-brand-navy text-white", badge: "bg-white text-brand-navy", label: "Go-live" },
+  after: { ring: "border-gray-200 bg-gray-50", badge: "bg-gray-200 text-gray-700", label: "After" },
+};
 
 /* ================================================================== */
 /* 1 · Overview                                                        */
 /* ================================================================== */
 
 export function OverviewSection() {
-  const counts = siteMapCounts();
-  const blocking = NEEDS.filter((n) => n.launchBlocking);
+  const allSteps = RUNBOOK.flatMap((g) => g.steps);
+  const mondaySteps = RUNBOOK.filter((g) => g.title.startsWith("Monday —")).flatMap((g) => g.steps);
+  const gates = OPEN_ITEMS.filter((i) => i.gate);
   return (
     <div className="space-y-8">
-      <SectionIntro title="Where we are">
-        <p>
-          All website functionality is built and running on the staging address: every public
-          page, the 3D configurator, the quoting pipeline, the three logged-in portals (dealer,
-          rep, TableX operations), the CRM, and the Xero connection.
-        </p>
-        <p>
-          Remaining go-live work falls in two groups: an infrastructure switch-over on our side
-          (pointing tablex.com at the new site), and content and business inputs from TableX —
-          sign-off, several decisions, and the files and data listed under{" "}
-          <em>What We Need</em>.
-        </p>
-      </SectionIntro>
+      {/* Hero banner */}
+      <div className="overflow-hidden rounded-2xl bg-brand-navy text-white">
+        <div className="grid gap-6 p-6 md:grid-cols-[1fr_auto] md:items-end md:p-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">tablex.com go-live</p>
+            <h2 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">{GO_LIVE.date}</h2>
+            <p className="mt-2 max-w-xl text-sm text-white/80">{GO_LIVE.window}</p>
+          </div>
+          <div className="text-sm text-white/70 md:text-right">
+            <p>Decided: {GO_LIVE.decidedBy}</p>
+            <p className="mt-1">Plan updated {GO_LIVE.updated}</p>
+          </div>
+        </div>
+      </div>
 
+      {/* Phase strip */}
+      <div className="grid gap-3 md:grid-cols-5">
+        {PHASES.map((p) => {
+          const t = TONE[p.tone];
+          const dark = p.tone === "day";
+          return (
+            <div key={p.key} className={`flex flex-col rounded-xl border p-4 ${t.ring}`}>
+              <div className="flex items-center justify-between gap-2">
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${t.badge}`}>
+                  {t.label}
+                </span>
+                <span className={`text-[11px] font-medium ${dark ? "text-white/70" : "text-gray-500"}`}>{p.when}</span>
+              </div>
+              <p className={`mt-3 text-sm font-bold ${dark ? "text-white" : "text-gray-900"}`}>{p.title}</p>
+              <p className={`mt-1 text-xs leading-relaxed ${dark ? "text-white/80" : "text-gray-600"}`}>{p.summary}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Tiles */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile value="60+" label="Pages live" sub="Public site, portals, and operations" accent />
-        <StatTile value="16" label="Series pages" sub="Plus 8 collections and 7 space types" />
-        <StatTile value="4" label="Login roles" sub="Admin · staff · dealer · rep" />
-        <StatTile
-          value={`${Math.round((counts.done / counts.total) * 100)}%`}
-          label="Functional areas done"
-          sub={`${counts.done} of ${counts.total} — see the Site Map tab`}
-          accent
-        />
+        <StatTile value="3" label="Days to go-live" sub="Thursday → Monday morning" accent />
+        <StatTile value="2" label="DNS records change" sub="Apex A + www CNAME. Email untouched." />
+        <StatTile value={`${mondaySteps.length}`} label="Monday steps" sub="~6:00 to 8:00 AM, one person" />
+        <StatTile value={`${gates.length}`} label="Go / no-go gates" sub={`${allSteps.length} tracked steps in total`} accent />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            To go live — our side
-          </h3>
+          <CardHeading>Monday in five moves</CardHeading>
           <div className="mt-4">
-            {CUTOVER_STEPS.map((s, i) => (
-              <FlowStep
-                key={s.step}
-                n={i + 1}
-                title={s.step}
-                detail={s.detail}
-                last={i === CUTOVER_STEPS.length - 1}
-              />
+            {[
+              { t: "Point the domain at the new site", d: "Two Cloudflare records. Email stays exactly where it is." },
+              { t: "Certificates issue", d: "Vercel secures tablex.com and www — a few minutes." },
+              { t: "Move the logins + Xero to tablex.com", d: "One Supabase setting, one Xero callback." },
+              { t: "Flip the launch flag, redeploy", d: "Opens the site to search engines. Feedback widget comes back." },
+              { t: "Verify, then tell the team", d: "Routes, redirects, fonts, forms, auth, email. Green light ~8:00 AM." },
+            ].map((s, i, arr) => (
+              <FlowStep key={s.t} n={i + 1} title={s.t} detail={s.d} last={i === arr.length - 1} />
             ))}
           </div>
         </Card>
-        <Card>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            Launch-gating from TableX
-          </h3>
-          <ul className="mt-4 space-y-3">
-            {blocking.map((n) => (
-              <li key={n.what} className="flex gap-3">
-                <span
-                  aria-hidden
-                  className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-500"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{n.what}</p>
-                  <p className="text-sm text-gray-600">
-                    {n.why} <span className="text-gray-400">·</span>{" "}
-                    <span className="font-medium text-gray-500">{n.owner}</span>
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-500">
-            Remaining items (photography, resource files, news content, 3D assets) are not
-            launch-gating — full list on the What We Need tab.
-          </p>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-/* ================================================================== */
-/* 2 · Site map                                                        */
-/* ================================================================== */
-
-export function SiteMapSection() {
-  const counts = siteMapCounts();
-  return (
-    <div className="space-y-8">
-      <SectionIntro title="Functional areas and status">
-        <p>
-          Green: built and verified on staging. Amber: functionality live, part of its content or
-          data still to come. Gray: fully built, waiting only on content.
-        </p>
-      </SectionIntro>
-
-      <Card>
-        <CompositionBar
-          total={counts.total}
-          segments={[
-            { label: STATUS_META.done.label, value: counts.done, color: STATUS_META.done.bar },
-            {
-              label: STATUS_META.partial.label,
-              value: counts.partial,
-              color: STATUS_META.partial.bar,
-            },
-            {
-              label: STATUS_META.blocked.label,
-              value: counts.blocked,
-              color: STATUS_META.blocked.bar,
-            },
-          ]}
-        />
-      </Card>
-
-      <div className="space-y-6">
-        {SITE_MAP.map((group) => (
-          <div key={group.title}>
-            <div className="mb-3 flex items-baseline gap-3">
-              <h3 className="text-base font-bold text-gray-900">{group.title}</h3>
-              <p className="text-xs text-gray-500">{group.blurb}</p>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {group.areas.map((area) => (
-                <div
-                  key={area.name}
-                  className="flex flex-col rounded-lg border border-gray-200 bg-white p-4"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-gray-900">{area.name}</p>
-                    <StatusChip status={area.status} />
-                  </div>
-                  <p className="mt-1 font-mono text-[11px] text-gray-400">
-                    {area.routes.join(" · ")}
-                  </p>
-                  {area.note && <p className="mt-2 text-xs text-gray-600">{area.note}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ================================================================== */
-/* 3 · Spex 3D assets                                                  */
-/* ================================================================== */
-
-export function SpexSection() {
-  const total = SPEX_COVERAGE.native + SPEX_COVERAGE.procedural + SPEX_COVERAGE.missing;
-  const maxUnlock = Math.max(...MISSING_BASES.map((b) => b.unlocks));
-  const askOneTotal = MISSING_BASES.reduce((s, b) => s + b.unlocks, 0);
-  return (
-    <div className="space-y-8">
-      <SectionIntro title="Spex Studio — 3D model coverage">
-        <p>
-          Every combination the configurator offers is quotable. The gap is visual: of the{" "}
-          {total.toLocaleString()} offered combinations, 72% render a 3D preview and the rest show
-          a placeholder until the geometry exists. The files required are listed below; each entry
-          shows how many combinations it unlocks.
-        </p>
-      </SectionIntro>
-
-      <Card>
-        <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">
-          How the {total.toLocaleString()} combinations render today
-        </h3>
-        <CompositionBar
-          total={total}
-          segments={[
-            { label: "Real CAD model", value: SPEX_COVERAGE.native, color: "bg-emerald-500" },
-            { label: "Drawn by code", value: SPEX_COVERAGE.procedural, color: "bg-sky-500" },
-            { label: "Placeholder (no 3D yet)", value: SPEX_COVERAGE.missing, color: "bg-amber-500" },
-          ]}
-        />
-      </Card>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            Ask 1 — six base models (unlock {askOneTotal} combinations)
-          </h3>
-          <p className="mt-2 text-sm text-gray-600">
-            The viewer draws rectangular, square, round, and oval tops in code; it requires one
-            model per base style. Ranked by combinations unlocked:
-          </p>
-          <div className="mt-4 space-y-2.5">
-            {MISSING_BASES.map((b) => (
-              <BarRow
-                key={b.code}
-                label={b.name}
-                value={b.unlocks}
-                max={maxUnlock}
-                suffix="combos unlock"
-              />
-            ))}
-          </div>
-        </Card>
-
         <div className="space-y-6">
           <Card>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-              Ask 2 — the offer lists for six series
-            </h3>
-            <p className="mt-2 text-sm text-gray-600">
-              These series have no 3D entries yet (still quotable). The first requirement is data,
-              not modeling: which shapes, sizes, and bases each series offers. With those lists
-              and the six bases from Ask 1, most combinations render without additional modeling.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {SERIES_NO_3D.map((s) => (
-                <span
-                  key={s}
-                  className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700"
-                >
-                  {s}
-                </span>
+            <CardHeading>Go / no-go gates — due Sunday night</CardHeading>
+            <ul className="mt-4 space-y-3">
+              {gates.map((g) => (
+                <li key={g.what} className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{g.what}</p>
+                    <p className="text-xs text-gray-500">{g.why}</p>
+                  </div>
+                  <OwnerChip owner={g.owner} />
+                </li>
               ))}
-            </div>
+            </ul>
+            <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-500">
+              If any gate is red Sunday evening, we hold and pick the next early-morning slot. Nothing about the
+              plan changes; only the date.
+            </p>
           </Card>
           <Card>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-              Out of scope for modeling
-            </h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Tabletops (drawn parametrically, including knife-edge), D-Shape and Boat outlines
-              (438 combinations — planned as code on our side), and all textures and materials —
-              finishes are applied in code.
+            <CardHeading>If something goes wrong</CardHeading>
+            <p className="mt-3 text-sm text-gray-600">
+              Three rollback levels, fastest first. Level 1 puts the previous build back in under two minutes without
+              touching the domain. Only a failed DNS cutover reaches Level 3. Details on the Rollback tab.
             </p>
           </Card>
         </div>
       </div>
 
       <Card>
-        <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-          File spec (matches our existing pipeline)
-        </h3>
-        <ul className="mt-3 grid gap-2 text-sm text-gray-600 sm:grid-cols-2">
-          {SPEX_FILE_SPEC.map((s) => (
-            <li key={s} className="flex gap-2">
-              <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
-              {s}
+        <CardHeading>Already shipped for launch</CardHeading>
+        <ul className="mt-4 grid gap-x-8 gap-y-2 md:grid-cols-2">
+          {SHIPPED.map((s) => (
+            <li key={s} className="flex gap-2.5 text-sm text-gray-700">
+              <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+              <span>{s}</span>
             </li>
           ))}
         </ul>
@@ -287,257 +149,196 @@ export function SpexSection() {
 }
 
 /* ================================================================== */
-/* 4 · Resources                                                       */
+/* 2 · Cutover runbook                                                 */
 /* ================================================================== */
 
-export function ResourcesSection() {
+export function RunbookSection() {
   return (
     <div className="space-y-8">
-      <SectionIntro title="Resources — pages built, no files published">
+      <SectionIntro title="The runbook, in order">
         <p>
-          All five resource pages are live. Each currently shows an interim state that routes
-          requests to the contact form; no downloadable files or unverified claims are published.
-          Zero files are published today. Files received from TableX publish without additional
-          development.
+          Five groups: two before Monday, two on Monday morning, one for the week after. Each step names its owner.
+          Times are approximate and assume a 6:00 AM ET start.
         </p>
       </SectionIntro>
 
+      {RUNBOOK.map((g) => (
+        <Card key={g.title} className="p-0">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-gray-100 px-5 py-4">
+            <div>
+              <h3 className="text-base font-bold text-gray-900">{g.title}</h3>
+              <p className="mt-0.5 text-sm text-gray-500">{g.blurb}</p>
+            </div>
+            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">{g.when}</span>
+          </div>
+          <ol className="divide-y divide-gray-100">
+            {g.steps.map((s) => (
+              <li key={s.title} className="flex gap-4 px-5 py-3.5">
+                <span className="w-12 shrink-0 pt-0.5 text-right text-xs font-bold tabular-nums text-gray-400">
+                  {s.time ?? ""}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-semibold text-gray-900">{s.title}</p>
+                    <OwnerChip owner={s.owner} />
+                    <StatusChip status={s.status} />
+                  </div>
+                  <p className="mt-1 text-sm text-gray-600">{s.detail}</p>
+                  {s.tracker && (
+                    <p className="mt-1 font-mono text-[11px] text-gray-400">{s.tracker}</p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* 3 · Cloudflare DNS                                                  */
+/* ================================================================== */
+
+export function DnsSection() {
+  return (
+    <div className="space-y-8">
+      <SectionIntro title="Cloudflare domain switchover">
+        <p>
+          tablex.com is managed at Cloudflare and currently points at the old WordPress host. Monday changes two
+          records so the domain serves the new site from Vercel. Everything else in the zone stays as is.
+        </p>
+      </SectionIntro>
+
+      <Warning title="Email is not part of this cutover.">
+        tablex.com mail runs on Microsoft 365. The MX, SPF, DMARC and autodiscover records are not touched, and neither
+        are the Resend records that send the site&rsquo;s own email. The zone is exported on Friday so any mistake can be
+        restored in minutes.
+      </Warning>
+
       <Card className="overflow-x-auto p-0">
-        <table className="w-full min-w-[720px] text-sm">
-          <thead>
-            <tr className="border-b border-gray-200 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-              <th className="px-5 py-3">Page</th>
-              <th className="px-5 py-3">What it will offer</th>
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <tr>
+              <th className="px-5 py-3">Record</th>
               <th className="px-5 py-3">Today</th>
-              <th className="px-5 py-3">What we need</th>
+              <th className="px-5 py-3">Monday</th>
+              <th className="px-5 py-3">Changes?</th>
             </tr>
           </thead>
-          <tbody>
-            {RESOURCES.map((r) => (
-              <tr key={r.name} className="border-b border-gray-100 last:border-0">
-                <td className="px-5 py-3.5 align-top">
-                  <p className="font-semibold text-gray-900">{r.name}</p>
-                  <StatusChip status="blocked" />
+          <tbody className="divide-y divide-gray-100">
+            {DNS_RECORDS.map((r) => (
+              <tr key={`${r.host}-${r.type}`} className={r.touch ? "bg-amber-50/40" : ""}>
+                <td className="px-5 py-3">
+                  <p className="font-semibold text-gray-900">{r.host}</p>
+                  <p className="text-xs text-gray-500">{r.type}</p>
                 </td>
-                <td className="px-5 py-3.5 align-top text-gray-600">{r.offering}</td>
-                <td className="px-5 py-3.5 align-top text-gray-600">{r.state}</td>
-                <td className="px-5 py-3.5 align-top font-medium text-gray-800">{r.needs}</td>
+                <td className="px-5 py-3 text-gray-700">{r.today}</td>
+                <td className="px-5 py-3 text-gray-700">
+                  {r.monday}
+                  {r.note && <p className="text-xs text-gray-500">{r.note}</p>}
+                </td>
+                <td className="px-5 py-3">
+                  {r.touch ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700">
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber-500" /> Yes
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-[11px] font-semibold text-gray-600">
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-gray-400" /> No
+                    </span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </Card>
 
-      <Card>
-        <p className="text-sm text-gray-600">
-          The dealer portal&rsquo;s Downloads page shares the same file pipeline — one set of
-          files populates both surfaces.
-        </p>
-      </Card>
-    </div>
-  );
-}
-
-/* ================================================================== */
-/* 5 · Xero                                                            */
-/* ================================================================== */
-
-export function XeroSection() {
-  return (
-    <div className="space-y-8">
-      <SectionIntro title="Xero — connected but read-only">
-        <p>
-          The site is connected to TableX&rsquo;s Xero account. The integration reads only — by
-          construction it cannot write anything back to Xero. It mirrors contacts and open
-          receivable balances into the CRM, so each account&rsquo;s outstanding balance is visible
-          on its organization page.
-        </p>
-      </SectionIntro>
-
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile
-          value={XERO_STATS.contactsCached.toLocaleString()}
-          label="Contacts mirrored"
-          sub="Refreshed on every sync"
-          accent
-        />
-        <StatTile
-          value={String(XERO_STATS.customersLinked)}
-          label="Dealers linked"
-          sub="Xero contact ↔ CRM organization"
-        />
-        <StatTile
-          value={XERO_STATS.withAddress.toLocaleString()}
-          label="With mailing address"
-          sub="Captured for the dealer directory"
-        />
-        <StatTile
-          value={String(XERO_STATS.openArRows)}
-          label="Open A/R balances"
-          sub="Visible on each org’s CRM page"
-        />
-      </div>
-
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            What the Sync button does (today, on demand)
-          </h3>
-          <div className="mt-4">
-            {XERO_SYNC_STEPS.map((s, i) => (
-              <FlowStep
-                key={s.step}
-                n={i + 1}
-                title={s.step}
-                detail={s.detail}
-                last={i === XERO_SYNC_STEPS.length - 1}
-              />
-            ))}
-          </div>
-        </Card>
-
-        <div className="space-y-6">
-          <Card>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-              The review queue
-            </h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Contacts the sync can&rsquo;t match automatically wait in a queue with three
-              actions: <strong>Link</strong> to an existing organization, <strong>Create</strong>{" "}
-              a new dealer org, or <strong>Ignore</strong>. Filters narrow the queue to contacts
-              with open balances or to Xero-flagged customers, separating dealers from one-off
-              vendors.
-            </p>
-          </Card>
-          <Card>
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-              In production
-            </h3>
-            <ul className="mt-3 space-y-2.5 text-sm text-gray-600">
-              <li className="flex gap-2">
-                <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
-                <span>
-                  <strong className="text-gray-800">Now → books migration (~Jul 17):</strong> the
-                  books are mid-migration, so today&rsquo;s data is mostly conversion artifacts. A
-                  date-cutoff filter keeps that noise out of the receivables numbers.
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
-                <span>
-                  <strong className="text-gray-800">After clean books:</strong> one sync plus a
-                  pass through the customers filter imports the dealer roster — names, addresses,
-                  phones.
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
-                <span>
-                  <strong className="text-gray-800">Phase two (green-lit for August):</strong>{" "}
-                  deeper integration — pushing accepted quotes toward invoicing and reading payment
-                  status back. Scoped separately; nothing here depends on it.
-                </span>
-              </li>
-            </ul>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ================================================================== */
-/* 6 · Quotes & CRM                                                    */
-/* ================================================================== */
-
-const ACTOR_STYLE: Record<string, string> = {
-  Dealer: "bg-sky-50 text-sky-700 border-sky-200",
-  TableX: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Either: "bg-gray-100 text-gray-600 border-gray-200",
-};
-
-export function QuotesCrmSection() {
-  return (
-    <div className="space-y-8">
-      <SectionIntro title="How a quote moves through TableX operations">
-        <p>
-          A dealer builds tables in Spex Studio and submits the cart; from that point the quote
-          desk works from <span className="font-mono text-xs">/ops/quotes</span>. Six stages, an
-          owner at each step, an email on each hand-off. No dollar amounts render on the site —
-          pricing travels in the quote PDF and the desk note.
-        </p>
-      </SectionIntro>
-
-      <Card>
-        <h3 className="mb-5 text-sm font-bold uppercase tracking-wide text-gray-500">
-          The pipeline (quote numbers look like TX-2026-0042)
-        </h3>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
-          {QUOTE_STAGES.map((s, i) => (
-            <div key={s.key} className="relative rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] font-bold text-gray-400">STEP {i + 1}</span>
-                <span
-                  className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${ACTOR_STYLE[s.actor]}`}
-                >
-                  {s.actor}
-                </span>
-              </div>
-              <p className="mt-1.5 text-sm font-bold text-gray-900">{s.label}</p>
-              <p className="mt-1 text-xs leading-relaxed text-gray-600">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-4 text-xs text-gray-500">
-          Revising loops back to Submitted as many times as needed; Archive is available to the
-          desk at any point.
-        </p>
-      </Card>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            What the desk can do on a quote
-          </h3>
-          <ul className="mt-4 space-y-4">
-            {OPS_ACTIONS.map((a) => (
-              <li key={a.name}>
-                <p className="text-sm font-semibold text-gray-900">{a.name}</p>
-                <p className="mt-0.5 text-sm text-gray-600">{a.detail}</p>
+          <CardHeading>Ground rules</CardHeading>
+          <ul className="mt-4 space-y-3">
+            {DNS_RULES.map((r) => (
+              <li key={r} className="flex gap-2.5 text-sm text-gray-700">
+                <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-navy" />
+                <span>{r}</span>
               </li>
             ))}
           </ul>
         </Card>
         <Card>
-          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-            Who gets emailed, when
-          </h3>
-          <table className="mt-3 w-full text-sm">
-            <tbody>
-              {QUOTE_NOTIFICATIONS.map((n) => (
-                <tr key={n.event} className="border-b border-gray-100 last:border-0">
-                  <td className="py-2.5 pr-3 font-medium text-gray-800">{n.event}</td>
-                  <td className="py-2.5 text-gray-600">{n.who}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="mt-3 text-xs text-gray-500">
-            Reps see their assigned dealers&rsquo; quotes read-only — including the final PDF —
-            but never act on them.
-          </p>
+          <CardHeading>What visitors experience</CardHeading>
+          <div className="mt-4 space-y-3 text-sm text-gray-700">
+            <p>
+              With the TTL lowered on Friday, most visitors see the new site within five minutes of the change. A few
+              corporate resolvers may hold the old address a little longer, so a short mixed window is normal, not a
+              problem.
+            </p>
+            <p>
+              Old bookmarks and search results keep working: 203 legacy URLs are mapped to their new pages and redirect
+              permanently.
+            </p>
+            <p>
+              The staging address (tablex-site.vercel.app) keeps serving the same site, so nothing anyone has open
+              breaks mid-morning.
+            </p>
+          </div>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* 4 · Rollback                                                        */
+/* ================================================================== */
+
+export function RollbackSection() {
+  return (
+    <div className="space-y-8">
+      <SectionIntro title="Rollback — three levels, fastest first">
+        <p>
+          Every level is written down so it can be run under pressure by someone who is not Danny. Pick the level that
+          matches the problem; do not skip ahead to DNS unless DNS is the problem.
+        </p>
+      </SectionIntro>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        {ROLLBACK.map((l) => (
+          <Card key={l.level} className={l.touchesDns ? "border-rose-200" : ""}>
+            <div className="flex items-center justify-between">
+              <span
+                className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white ${
+                  l.touchesDns ? "bg-rose-600" : "bg-brand-navy"
+                }`}
+              >
+                {l.level}
+              </span>
+              <span className="text-xs font-semibold text-gray-500">{l.time}</span>
+            </div>
+            <h3 className="mt-3 text-base font-bold text-gray-900">{l.name}</h3>
+            <p className="mt-2 text-xs font-bold uppercase tracking-wide text-gray-400">When</p>
+            <p className="mt-0.5 text-sm text-gray-700">{l.when}</p>
+            <p className="mt-3 text-xs font-bold uppercase tracking-wide text-gray-400">How</p>
+            <p className="mt-0.5 text-sm text-gray-700">{l.how}</p>
+            <p className="mt-3 text-xs font-bold uppercase tracking-wide text-gray-400">Decides</p>
+            <p className="mt-0.5 text-sm text-gray-700">{l.decides}</p>
+            <p className={`mt-4 text-xs font-semibold ${l.touchesDns ? "text-rose-700" : "text-emerald-700"}`}>
+              {l.touchesDns ? "Touches DNS (web records only)" : "No DNS change"}
+            </p>
+          </Card>
+        ))}
       </div>
 
       <Card>
-        <h3 className="text-sm font-bold uppercase tracking-wide text-gray-500">
-          The CRM underneath it
-        </h3>
-        <ul className="mt-4 grid gap-3 lg:grid-cols-2">
-          {CRM_POINTS.map((p) => (
-            <li key={p} className="flex gap-2 text-sm text-gray-600">
-              <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
-              {p}
+        <CardHeading>Good to know</CardHeading>
+        <ul className="mt-4 space-y-3">
+          {ROLLBACK_NOTES.map((n) => (
+            <li key={n} className="flex gap-2.5 text-sm text-gray-700">
+              <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-navy" />
+              <span>{n}</span>
             </li>
           ))}
         </ul>
@@ -547,57 +348,119 @@ export function QuotesCrmSection() {
 }
 
 /* ================================================================== */
-/* 7 · What we need from TableX                                        */
+/* 5 · Team                                                            */
 /* ================================================================== */
 
-export function NeedsSection() {
-  const blocking = NEEDS.filter((n) => n.launchBlocking);
-  const rest = NEEDS.filter((n) => !n.launchBlocking);
-
-  const NeedRow = ({ n }: { n: (typeof NEEDS)[number] }) => (
-    <div className="flex flex-col gap-1 rounded-lg border border-gray-200 bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-semibold text-gray-900">{n.what}</p>
-        <span className="shrink-0 rounded-full bg-brand-navy px-2.5 py-0.5 text-[11px] font-semibold text-white">
-          {n.owner}
-        </span>
-      </div>
-      <p className="text-sm text-gray-600">{n.why}</p>
-    </div>
-  );
-
+export function TeamSection() {
   return (
     <div className="space-y-8">
-      <SectionIntro title="Everything we still need to receive">
+      <SectionIntro title="Who does what">
         <p>
-          Two groups: items that gate the launch, and items that can land any time. Each publishes
-          on receipt.
+          One person runs the switch. Everyone else has a short list before Monday and a short list on Monday. The
+          desk is the first place a real problem would show up, so Sam and Patty are the eyes that morning.
         </p>
       </SectionIntro>
 
-      <div>
-        <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-gray-900">
-          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-          Gates the launch ({blocking.length})
-        </h3>
-        <div className="grid gap-3 lg:grid-cols-2">
-          {blocking.map((n) => (
-            <NeedRow key={n.what} n={n} />
-          ))}
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {TEAM.map((t) => (
+          <Card key={t.who}>
+            <h3 className="text-base font-bold text-gray-900">{t.who}</h3>
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">{t.role}</p>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-gray-400">Before Monday</p>
+            <ul className="mt-1.5 space-y-1.5">
+              {t.beforehand.map((b) => (
+                <li key={b} className="flex gap-2 text-sm text-gray-700">
+                  <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-gray-400">Monday</p>
+            <ul className="mt-1.5 space-y-1.5">
+              {t.monday.map((m) => (
+                <li key={m} className="flex gap-2 text-sm text-gray-700">
+                  <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-navy" />
+                  <span>{m}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        ))}
       </div>
 
-      <div>
-        <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-gray-900">
-          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-          Lands whenever ready ({rest.length})
-        </h3>
-        <div className="grid gap-3 lg:grid-cols-2">
-          {rest.map((n) => (
-            <NeedRow key={n.what} n={n} />
-          ))}
+      <Card className="p-0">
+        <div className="border-b border-gray-100 px-5 py-4">
+          <h3 className="text-base font-bold text-gray-900">Communication plan</h3>
+          <p className="mt-0.5 text-sm text-gray-500">Few messages, clear senders, one channel for problems.</p>
         </div>
+        <ul className="divide-y divide-gray-100">
+          {COMMS.map((c) => (
+            <li key={c.when + c.what} className="grid gap-1 px-5 py-3.5 md:grid-cols-[180px_1fr_260px] md:items-center">
+              <span className="text-sm font-semibold text-gray-900">{c.when}</span>
+              <span className="text-sm text-gray-700">{c.what}</span>
+              <span className="text-xs text-gray-500 md:text-right">{c.who}</span>
+            </li>
+          ))}
+        </ul>
+      </Card>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* 6 · Open items                                                      */
+/* ================================================================== */
+
+export function OpenItemsSection() {
+  const gates = OPEN_ITEMS.filter((i) => i.gate);
+  const rest = OPEN_ITEMS.filter((i) => !i.gate);
+  const Row = ({ i }: { i: (typeof OPEN_ITEMS)[number] }) => (
+    <li className="grid gap-2 px-5 py-3.5 md:grid-cols-[1fr_140px_110px_90px] md:items-center">
+      <div>
+        <p className="text-sm font-semibold text-gray-900">{i.what}</p>
+        <p className="text-xs text-gray-500">{i.why}</p>
       </div>
+      <span className="text-xs font-medium text-gray-700">{i.owner}</span>
+      <span className="text-xs text-gray-500">{i.due}</span>
+      <StatusChip status={i.status} />
+    </li>
+  );
+  return (
+    <div className="space-y-8">
+      <SectionIntro title="Everything still open">
+        <p>
+          The three gates decide whether Monday happens. The rest are real but do not move the date; each has an owner
+          and a due window.
+        </p>
+      </SectionIntro>
+
+      <Card className="p-0">
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+          <h3 className="text-base font-bold text-gray-900">Go / no-go gates</h3>
+          <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+            {gates.length} items · due Sunday
+          </span>
+        </div>
+        <ul className="divide-y divide-gray-100">
+          {gates.map((i) => (
+            <Row key={i.what} i={i} />
+          ))}
+        </ul>
+      </Card>
+
+      <Card className="p-0">
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+          <h3 className="text-base font-bold text-gray-900">Not blocking, still owed</h3>
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+            {rest.length} items
+          </span>
+        </div>
+        <ul className="divide-y divide-gray-100">
+          {rest.map((i) => (
+            <Row key={i.what} i={i} />
+          ))}
+        </ul>
+      </Card>
     </div>
   );
 }

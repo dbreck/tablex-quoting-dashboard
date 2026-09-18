@@ -4,36 +4,22 @@
  * Launch Status — shared visual primitives.
  *
  * Status colors are semantic and always paired with a label (never color
- * alone): emerald = done, amber = partial, slate = waiting on content.
+ * alone): emerald = done, sky = ready, amber = open, rose = blocked.
  */
 
-import type { AreaStatus } from "./data";
+import type { ItemStatus } from "./data";
 
 export const STATUS_META: Record<
-  AreaStatus,
-  { label: string; dot: string; chip: string; bar: string }
+  ItemStatus,
+  { label: string; dot: string; chip: string }
 > = {
-  done: {
-    label: "Done",
-    dot: "bg-emerald-500",
-    chip: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    bar: "bg-emerald-500",
-  },
-  partial: {
-    label: "Partial",
-    dot: "bg-amber-500",
-    chip: "bg-amber-50 text-amber-700 border-amber-200",
-    bar: "bg-amber-500",
-  },
-  blocked: {
-    label: "Needs content",
-    dot: "bg-slate-400",
-    chip: "bg-slate-100 text-slate-600 border-slate-200",
-    bar: "bg-slate-400",
-  },
+  done: { label: "Done", dot: "bg-emerald-500", chip: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  ready: { label: "Ready", dot: "bg-sky-500", chip: "bg-sky-50 text-sky-700 border-sky-200" },
+  open: { label: "To do", dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700 border-amber-200" },
+  blocked: { label: "Blocked", dot: "bg-rose-500", chip: "bg-rose-50 text-rose-700 border-rose-200" },
 };
 
-export function StatusChip({ status }: { status: AreaStatus }) {
+export function StatusChip({ status }: { status: ItemStatus }) {
   const m = STATUS_META[status];
   return (
     <span
@@ -41,6 +27,14 @@ export function StatusChip({ status }: { status: AreaStatus }) {
     >
       <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${m.dot}`} />
       {m.label}
+    </span>
+  );
+}
+
+export function OwnerChip({ owner }: { owner: string }) {
+  return (
+    <span className="inline-flex shrink-0 items-center rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
+      {owner}
     </span>
   );
 }
@@ -100,72 +94,6 @@ export function StatTile({
   );
 }
 
-/**
- * Horizontal composition bar. Every segment is direct-labeled below the bar
- * (label + count), so color is never the only encoding.
- */
-export function CompositionBar({
-  segments,
-  total,
-}: {
-  segments: { label: string; value: number; color: string }[];
-  total: number;
-}) {
-  return (
-    <div>
-      <div className="flex h-8 w-full gap-0.5 overflow-hidden rounded-lg">
-        {segments.map((s) => (
-          <div
-            key={s.label}
-            className={`${s.color} min-w-[2px] transition-all`}
-            style={{ width: `${(s.value / total) * 100}%` }}
-            title={`${s.label}: ${s.value.toLocaleString()}`}
-          />
-        ))}
-      </div>
-      <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5">
-        {segments.map((s) => (
-          <span key={s.label} className="inline-flex items-center gap-2 text-sm text-gray-700">
-            <span aria-hidden className={`h-2.5 w-2.5 rounded-sm ${s.color}`} />
-            <span className="font-medium">{s.label}</span>
-            <span className="tabular-nums text-gray-500">
-              {s.value.toLocaleString()} ({Math.round((s.value / total) * 100)}%)
-            </span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/** Labeled horizontal bar in a ranked list (value bar + direct label). */
-export function BarRow({
-  label,
-  value,
-  max,
-  suffix,
-}: {
-  label: string;
-  value: number;
-  max: number;
-  suffix: string;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="w-28 shrink-0 text-sm font-medium text-gray-700">{label}</span>
-      <div className="h-5 flex-1 rounded bg-gray-100">
-        <div
-          className="flex h-5 items-center rounded bg-brand-green pl-2"
-          style={{ width: `${Math.max((value / max) * 100, 8)}%` }}
-        >
-          <span className="text-[11px] font-bold text-white tabular-nums">{value}</span>
-        </div>
-      </div>
-      <span className="w-24 shrink-0 text-right text-xs text-gray-500">{suffix}</span>
-    </div>
-  );
-}
-
 /** Numbered step in a vertical flow. */
 export function FlowStep({
   n,
@@ -173,7 +101,7 @@ export function FlowStep({
   detail,
   last = false,
 }: {
-  n: number;
+  n: number | string;
   title: string;
   detail: string;
   last?: boolean;
@@ -193,6 +121,23 @@ export function FlowStep({
         <p className="text-sm font-semibold text-gray-900">{title}</p>
         <p className="mt-0.5 text-sm text-gray-600">{detail}</p>
       </div>
+    </div>
+  );
+}
+
+/** Small uppercase heading used inside cards. */
+export function CardHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">{children}</h3>
+  );
+}
+
+/** Callout band for the one warning that matters. */
+export function Warning({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-rose-200 bg-rose-50 p-5">
+      <p className="text-sm font-bold text-rose-800">{title}</p>
+      <div className="mt-1.5 text-sm leading-relaxed text-rose-900/80">{children}</div>
     </div>
   );
 }

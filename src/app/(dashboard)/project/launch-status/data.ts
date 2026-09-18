@@ -1,426 +1,447 @@
 /**
- * Launch Status — content data for the Brian-facing functionality report.
+ * Launch Status — tablex.com go-live plan for Monday 2026-09-21.
  *
- * Everything here is ground-truth from the tablex-site repo + live prod checks
- * (2026-07-16). Scope is FUNCTIONALITY ONLY — no design work, no testing/smoke
- * items. When status changes, edit here; the page components just render.
+ * Rewritten 2026-09-18 for the team meeting. Source of truth for the mechanics is
+ * tablex-site/docs/launch-checklist.md + docs/launch-rollback.md; tracker ids are
+ * the Sprint 8 `web-cutover-*` rows. When something changes, edit HERE — the page
+ * components only render.
  */
 
-export type AreaStatus = "done" | "partial" | "blocked";
+export type ItemStatus = "done" | "ready" | "open" | "blocked";
 
-export interface SiteArea {
-  name: string;
-  routes: string[];
-  status: AreaStatus;
+export const GO_LIVE = {
+  date: "Monday, September 21, 2026",
+  window: "Early hours ET — Danny sets the exact start; plan below assumes 6:00 AM",
+  decidedBy: "Brian 9/08 · Mark + Jim concurred · Danny confirmed 9/09",
+  updated: "September 18, 2026",
+};
+
+/* ------------------------------------------------------------------ */
+/* Countdown phases (Overview)                                          */
+/* ------------------------------------------------------------------ */
+
+export interface Phase {
+  key: string;
+  when: string;
+  title: string;
+  summary: string;
+  tone: "past" | "now" | "next" | "day" | "after";
+}
+
+export const PHASES: Phase[] = [
+  {
+    key: "built",
+    when: "Through Wed 9/17",
+    title: "Build complete",
+    summary: "Site, portals, quoting, CRM, SpeX, analytics, branded email — all shipped to the staging address.",
+    tone: "past",
+  },
+  {
+    key: "prep",
+    when: "Thu 9/18 – Fri 9/19",
+    title: "Infra prep + sign-off",
+    summary: "Fonts allowlist, Vercel domains, DNS snapshot, TTLs lowered, Brian's final walkthrough, news placeholders resolved.",
+    tone: "now",
+  },
+  {
+    key: "freeze",
+    when: "Sat 9/19 – Sun 9/20",
+    title: "Code freeze",
+    summary: "No new features deploy. Fixes only. Final hand-QA. Go / no-go call by Sunday evening.",
+    tone: "next",
+  },
+  {
+    key: "cutover",
+    when: "Mon 9/21 · ~6:00–8:00 AM",
+    title: "Cutover",
+    summary: "Cloudflare DNS → Vercel, certs, auth + Xero origins, launch flag, redeploy, verification sweep.",
+    tone: "day",
+  },
+  {
+    key: "watch",
+    when: "Mon 9/21 – Fri 9/25",
+    title: "Week-one watch",
+    summary: "404s, Search Console, first real quotes through the desk, dealer announcement, fast fixes.",
+    tone: "after",
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/* Runbook (Cutover tab)                                                */
+/* ------------------------------------------------------------------ */
+
+export interface RunbookStep {
+  title: string;
+  detail: string;
+  owner: string;
+  status: ItemStatus;
+  time?: string;
+  tracker?: string;
+}
+
+export interface RunbookGroup {
+  title: string;
+  when: string;
+  blurb: string;
+  steps: RunbookStep[];
+}
+
+export const RUNBOOK: RunbookGroup[] = [
+  {
+    title: "Before Monday — infra prep",
+    when: "Thu 9/18 → Fri 9/19",
+    blurb: "Everything here can happen days ahead and none of it changes what visitors see today.",
+    steps: [
+      {
+        title: "Adobe Fonts: allow tablex.com + www on kit juc1jwq, republish",
+        detail: "Typekit kits are domain-scoped. Without this, Acumin silently falls back to a system font the moment DNS moves.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-cutover-fonts",
+      },
+      {
+        title: "Vercel: add tablex.com + www.tablex.com to the tablex-site project",
+        detail: "Recommend apex (tablex.com) as canonical with www redirecting to it — matches how www already points at the apex today. Vercel will show both hosts as pending until DNS flips.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-cutover-vercel-domains",
+      },
+      {
+        title: "Cloudflare: export the tablex.com DNS zone",
+        detail: "The snapshot is what a rollback restores to. Saved outside the zone (repo + vault).",
+        owner: "Danny",
+        status: "open",
+      },
+      {
+        title: "Cloudflare: lower TTL on apex A + www CNAME to 5 minutes",
+        detail: "Done a day ahead so resolvers pick up Monday's change quickly — and so a rollback is quick too.",
+        owner: "Danny",
+        status: "open",
+      },
+      {
+        title: "Supabase: confirm plan tier + backups on the site database",
+        detail: "There is no point-in-time recovery today. Decide whether to upgrade before launch; at minimum confirm the nightly backup exists.",
+        owner: "Danny",
+        status: "open",
+      },
+      {
+        title: "Legacy WordPress: keep Flywheel running 30 days after launch",
+        detail: "It is the rollback target and holds the Gravity Forms archive (warranty, freight, spiff, quote requests). Export those entries + uploads before the window closes.",
+        owner: "Danny + Brian",
+        status: "open",
+        tracker: "web-legacy-wp-afterlife",
+      },
+      {
+        title: "Revert demo-mode auth + rotate QA passwords",
+        detail: "Training fixtures (danny+dealer / danny+rep / Heartland test dealer) stay for staff practice; demo passwords get rotated.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-demo-auth-revert",
+      },
+      {
+        title: "Staff accounts: Jim, Caleb, Richie",
+        detail: "Patty + Sam created 9/17 (passwords shared out-of-band). Brian + Mark are admins already.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-user-roster",
+      },
+      {
+        title: "Feedback widget back on",
+        detail: "Hidden on prod right now so the staff training videos record clean. Re-enable in the launch deploy.",
+        owner: "Danny",
+        status: "open",
+      },
+    ],
+  },
+  {
+    title: "Before Monday — content + approvals",
+    when: "Due Sun 9/20",
+    blurb: "The go / no-go gate. If these are not green Sunday night, we hold.",
+    steps: [
+      {
+        title: "Brian's final full-site walkthrough + sign-off",
+        detail: "Public site, SpeX, a quote round trip, the desk, the portals. Open copy rulings resolved on the same pass.",
+        owner: "Brian",
+        status: "open",
+        tracker: "web-brian-final-signoff",
+      },
+      {
+        title: "News: rewrite or unpublish the 7 placeholder posts",
+        detail: "Brian's 3 real posts are live. The placeholders must not be public on launch day.",
+        owner: "Brian",
+        status: "open",
+      },
+      {
+        title: "Final hand-QA: keyboard, reduced motion, iPad, Safari, mobile drawer",
+        detail: "Last pass on the frozen build.",
+        owner: "Kayla",
+        status: "open",
+        tracker: "web-launch-hand-qa",
+      },
+      {
+        title: "Go / no-go call",
+        detail: "Brian + Danny, Sunday evening. Criteria: sign-off in, placeholders gone, infra prep all green, rollback snapshot saved.",
+        owner: "Brian + Danny",
+        status: "open",
+      },
+    ],
+  },
+  {
+    title: "Monday — the switch",
+    when: "~6:00 → 7:00 AM ET",
+    blurb: "About an hour of hands-on work. Nothing here touches email.",
+    steps: [
+      {
+        time: "6:00",
+        title: "Cloudflare DNS: point the web records at Vercel",
+        detail: "Apex A → Vercel's address, www CNAME → cname.vercel-dns.com, DNS-only (grey cloud). MX, SPF, DMARC, autodiscover and the Resend records are NOT touched.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-cutover-dns-0921",
+      },
+      {
+        time: "6:05",
+        title: "Wait for Vercel to issue certificates",
+        detail: "Both hostnames read Valid in the Vercel domains panel. Usually minutes with the TTL lowered on Friday.",
+        owner: "Danny",
+        status: "open",
+      },
+      {
+        time: "6:20",
+        title: "Supabase Auth: site_url → https://tablex.com",
+        detail: "One setting. Every login, reset, invite and signup email builds its link from it (templates were rebuilt for this on 9/16). Takes effect after a 3–5 minute lag.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-cutover-auth-origins",
+      },
+      {
+        time: "6:25",
+        title: "Xero app: add the tablex.com callback URL + flip the env var",
+        detail: "Read-only sync keeps working; this only affects re-authorizing the connection.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-cutover-xero-redirect",
+      },
+      {
+        time: "6:30",
+        title: "Flip the launch flag and redeploy",
+        detail: "NEXT_PUBLIC_SITE_LAUNCHED=true is baked in at build time, so the redeploy is what actually opens the site to search engines. Same deploy re-enables the feedback widget.",
+        owner: "Danny",
+        status: "open",
+        tracker: "web-cutover-robots-flip",
+      },
+    ],
+  },
+  {
+    title: "Monday — verification sweep",
+    when: "~7:00 → 8:00 AM ET",
+    blurb: "Prove it before anyone is told. Any red here decides the rollback level (see Rollback).",
+    steps: [
+      { time: "7:00", title: "Every route answers 200 on tablex.com", detail: "Scripted sweep of the public routes plus a hand check of home, a series page, SpeX, /quote/cart, /login.", owner: "Danny", status: "open" },
+      { time: "7:05", title: "robots.txt allows + sitemap.xml lists the site", detail: "And no page carries noindex.", owner: "Danny", status: "open" },
+      { time: "7:10", title: "Legacy URLs redirect", detail: "Sample of the 203 mapped old-site URLs land on the right new pages.", owner: "Danny", status: "open" },
+      { time: "7:15", title: "Fonts render as Acumin", detail: "Proves the Adobe allowlist took.", owner: "Danny", status: "open" },
+      { time: "7:20", title: "Forms deliver", detail: "Contact + quote request from prod arrive in the desk inbox.", owner: "Danny", status: "open" },
+      { time: "7:25", title: "Auth round trip on tablex.com", detail: "Password reset email link lands on tablex.com; throwaway customer signup → confirm → My quotes → order request without PO. Delete the throwaway.", owner: "Danny", status: "open" },
+      { time: "7:35", title: "Email still works", detail: "Send + receive on a tablex.com mailbox. Confirms DNS hygiene on the M365 records.", owner: "Danny + Sam", status: "open" },
+      { time: "7:40", title: "OG preview + a quote PDF", detail: "Paste tablex.com into a link preview; open one quote PDF and check the wordmark + pricing.", owner: "Danny + Mark", status: "open" },
+      { time: "8:00", title: "Green light to the team", detail: "Danny messages Brian, Mark, Sam, Patty: live, verified, what to watch for.", owner: "Danny", status: "open" },
+    ],
+  },
+  {
+    title: "Monday morning → week one",
+    when: "Mon 9/21 → Fri 9/25",
+    blurb: "Small, fast fixes. No feature work until the watch week closes.",
+    steps: [
+      { title: "Google Search Console: verify tablex.com, submit the sitemap", detail: "The property may already exist from the old site.", owner: "Danny", status: "open" },
+      { title: "Desk watch: first real quote requests and self-quotes", detail: "Sam + Patty work them in /ops; Danny on call for anything that looks wrong.", owner: "Sam + Patty", status: "open" },
+      { title: "404 report from Vercel logs", detail: "Catch any legacy URL the redirect map missed; add redirects same day.", owner: "Danny", status: "open" },
+      { title: "Dealer + rep announcement", detail: "Brian's call on timing. Recommend Tuesday, after 24 hours of clean traffic.", owner: "Brian", status: "open" },
+      { title: "Search Console coverage check", detail: "Old URLs dropping out, new URLs indexing.", owner: "Danny", status: "open" },
+      { title: "Legacy Gravity Forms export", detail: "Warranty, freight, spiff and quote-request entries + 1.7 GB of uploads out of WordPress before it is shut down (due 10/21).", owner: "Danny", status: "open", tracker: "web-legacy-forms-export" },
+    ],
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/* Cloudflare / DNS (DNS tab)                                           */
+/* ------------------------------------------------------------------ */
+
+export interface DnsRecord {
+  host: string;
+  type: string;
+  today: string;
+  monday: string;
+  touch: boolean;
   note?: string;
 }
 
-export interface AreaGroup {
-  title: string;
-  blurb: string;
-  areas: SiteArea[];
-}
-
-/** The full functional surface of tablex.com, grouped the way Brian thinks about it. */
-export const SITE_MAP: AreaGroup[] = [
-  {
-    title: "Public marketing site",
-    blurb: "What every visitor sees — no login.",
-    areas: [
-      { name: "Homepage", routes: ["/"], status: "done" },
-      {
-        name: "About",
-        routes: ["/about", "/about/careers", "/about/contracts", "/about/warranty", "/about/made-in-america"],
-        status: "done",
-        note: "Made-in-America page live; seal claim awaiting Brian's per-line origin verification",
-      },
-      { name: "Contact", routes: ["/contact"], status: "done" },
-      {
-        name: "Products hub + browse",
-        routes: ["/products", "/products/browse", "/products/collections", "/products/compare", "/products/accessories"],
-        status: "done",
-        note: "All 16 series indexed; filterable browse; side-by-side compare",
-      },
-      { name: "Series pages (16)", routes: ["/series/[slug]"], status: "done" },
-      { name: "Spaces (7 environments)", routes: ["/spaces", "/spaces/[slug]"], status: "done" },
-      {
-        name: "Finishes",
-        routes: ["/finishes", "/finishes/laminates", "/finishes/powder-coats", "/finishes/edge-bands", "/finishes/custom", "/finishes/solid-surface"],
-        status: "done",
-        note: "63 real laminate chips; a few photography placeholders remain",
-      },
-      { name: "Quick-Ship", routes: ["/quick-ship"], status: "done" },
-      { name: "Site search", routes: ["/search"], status: "done" },
-      {
-        name: "News",
-        routes: ["/news", "/news/[slug]"],
-        status: "blocked",
-        note: "Fully built with a CMS behind it — zero articles written. Needs content from TableX.",
-      },
-      {
-        name: "Find a Rep",
-        routes: ["/find-rep"],
-        status: "partial",
-        note: "Live with a fallback (ZIP → contact form). Rep directory needs territory data from TableX.",
-      },
-      {
-        name: "Resources",
-        routes: ["/resources", "+5 subpages"],
-        status: "done",
-        note: "63 real PDFs live (7/19): price book + sections, brochures, install + care, warranty — see the Resources tab",
-      },
-    ],
-  },
-  {
-    title: "Spex Studio (3D configurator)",
-    blurb: "Configure a table in 3D, save it, share it, add it to a quote.",
-    areas: [
-      { name: "Configurator shell", routes: ["/spex-studio", "/spex-studio/[series]"], status: "done", note: "10 series fully configurable in 3D" },
-      { name: "Share links", routes: [".../share/[token]"], status: "done" },
-      {
-        name: "3D model coverage",
-        routes: ["3,038 offered combinations"],
-        status: "partial",
-        note: "72% render in 3D today; the rest are quotable with a placeholder — see the Spex 3D tab",
-      },
-    ],
-  },
-  {
-    title: "Quoting",
-    blurb: "How a configured table becomes a quote request.",
-    areas: [
-      { name: "Quote landing + quick quote", routes: ["/quote", "/quote/quick"], status: "done" },
-      { name: "Quote cart (from Spex)", routes: ["/quote/cart"], status: "done" },
-      { name: "Email notifications to the desk", routes: ["Resend → sales@ at launch"], status: "done" },
-    ],
-  },
-  {
-    title: "Dealer portal",
-    blurb: "Logged-in dealers: quotes, pricing, downloads.",
-    areas: [
-      { name: "Dealer home + account", routes: ["/dealer", "/dealer/account"], status: "done" },
-      { name: "Quotes (status + PDF download)", routes: ["/dealer/quotes"], status: "done" },
-      { name: "Tier pricing view", routes: ["/dealer/pricing"], status: "done" },
-      { name: "Downloads", routes: ["/dealer/downloads"], status: "partial", note: "Surface built; the /resources library is live (7/19) — wire this surface to the same files" },
-      { name: "Orders", routes: ["/dealer/orders"], status: "done" },
-    ],
-  },
-  {
-    title: "Rep portal",
-    blurb: "Territory reps: their dealers, their dealers' quotes.",
-    areas: [
-      { name: "Rep home + dealer roster", routes: ["/rep", "/rep/dealers"], status: "done", note: "Strictly scoped — a rep sees only assigned dealers" },
-      { name: "Dealer detail + quote PDFs", routes: ["/rep/dealers/[org]", "/rep/quotes/[id]"], status: "done", note: "PDF access is dealer-isolated (verified live)" },
-      { name: "Invite a dealer", routes: ["/rep/invite"], status: "done" },
-    ],
-  },
-  {
-    title: "TableX operations (/ops)",
-    blurb: "The internal desk — staff + admin only.",
-    areas: [
-      { name: "Quote desk", routes: ["/ops/quotes", "/ops/quotes/[id]"], status: "done", note: "See the Quotes & CRM tab for the full pipeline" },
-      { name: "CRM — organizations", routes: ["/ops/orgs", "/ops/orgs/[id]"], status: "done", note: "Contacts, activity log, audited tier changes, rep assignments" },
-      { name: "User management + invites", routes: ["/ops/users"], status: "done" },
-      { name: "Xero sync + review queue", routes: ["/ops/xero"], status: "done", note: "See the Xero tab" },
-      { name: "News CMS (Payload)", routes: ["/admin"], status: "done", note: "Ready for TableX to author articles" },
-    ],
-  },
-  {
-    title: "Accounts & infrastructure",
-    blurb: "The plumbing under all of it.",
-    areas: [
-      { name: "Login (magic link + password)", routes: ["/login"], status: "done" },
-      { name: "Roles: admin / staff / dealer / rep", routes: ["role-gated everywhere"], status: "done" },
-      { name: "Legacy URL redirects (203 mapped)", routes: ["old site → new"], status: "done" },
-      { name: "SEO (sitemap, meta, OG images)", routes: ["/sitemap.xml", "/robots.txt"], status: "done", note: "Search engines deliberately blocked until launch day" },
-    ],
-  },
+/** Live-checked 2026-09-18 AM (dig). Nameservers are Cloudflare's. */
+export const DNS_RECORDS: DnsRecord[] = [
+  { host: "tablex.com", type: "A", today: "141.193.213.10 / .11 (Flywheel — old WordPress)", monday: "Vercel (76.76.21.21 or per Vercel's domain panel)", touch: true, note: "DNS-only / grey cloud" },
+  { host: "www", type: "CNAME", today: "tablex.com", monday: "cname.vercel-dns.com", touch: true, note: "DNS-only / grey cloud" },
+  { host: "tablex.com", type: "MX", today: "tablex-com.mail.protection.outlook.com", monday: "unchanged", touch: false, note: "Microsoft 365 email" },
+  { host: "autodiscover", type: "CNAME", today: "Microsoft 365", monday: "unchanged", touch: false },
+  { host: "tablex.com", type: "TXT (SPF)", today: "Microsoft 365 + Resend", monday: "unchanged", touch: false },
+  { host: "_dmarc", type: "TXT", today: "current policy", monday: "unchanged", touch: false },
+  { host: "Resend records", type: "TXT / CNAME", today: "forms@tablex.com sending", monday: "unchanged", touch: false, note: "Site + auth email sender" },
 ];
 
-export function siteMapCounts() {
-  const all = SITE_MAP.flatMap((g) => g.areas);
-  return {
-    total: all.length,
-    done: all.filter((a) => a.status === "done").length,
-    partial: all.filter((a) => a.status === "partial").length,
-    blocked: all.filter((a) => a.status === "blocked").length,
-  };
-}
-
-/* ------------------------------------------------------------------ */
-/* Spex Studio 3D coverage (from docs/spex-3d-needs-2026-07-02.md)     */
-/* ------------------------------------------------------------------ */
-
-export const SPEX_COVERAGE = {
-  native: 1798, // real per-combo CAD models (10 series)
-  procedural: 389, // code-drawn top + stand-in base model
-  missing: 851, // quotable, but the viewer shows a placeholder
-};
-
-/** ASK 1 — one clean model per base style; each file lights up many combos. */
-export const MISSING_BASES = [
-  { code: "T", name: "T-Base", unlocks: 227 },
-  { code: "L", name: "L-Leg", unlocks: 65 },
-  { code: "Y", name: "Y-Base", unlocks: 56 },
-  { code: "DR", name: "Drum Base", unlocks: 26 },
-  { code: "QD", name: "Quad Disc", unlocks: 24 },
-  { code: "X", name: "X-Base", unlocks: 10 },
-];
-
-/** ASK 3 — series with zero 3D entries (still fully quotable). */
-export const SERIES_NO_3D = ["Revel", "App", "Element", "Artisan", "Solo", "Trig"];
-
-export const SPEX_FILE_SPEC = [
-  "GLB format, real-world scale in meters",
-  "Base only — no tabletop, no floor plane",
-  "One representative mid-size variant per base style",
-  "No materials, textures, or UVs — finishes are applied in code",
-  "Sitting on the ground plane (feet at zero)",
+export const DNS_RULES = [
+  "Two records change. Everything else in the zone is left exactly as exported.",
+  "Email is on Microsoft 365 and is not part of this cutover. If email breaks Monday, something was touched that should not have been — restore from the export.",
+  "DNS-only (grey cloud) for the two web records. Vercel terminates TLS and serves the site; Cloudflare's proxy adds nothing here and can interfere with certificate issuance.",
+  "TTLs are lowered to 5 minutes on Friday so Monday's change propagates quickly and a rollback is just as quick.",
+  "The old WordPress host stays running for 30 days. That is what makes a DNS rollback meaningful.",
 ];
 
 /* ------------------------------------------------------------------ */
-/* Resources inventory (updated 2026-07-19 — 63 PDFs migrated from the */
-/* legacy site's public pages into a public storage bucket)            */
+/* Rollback (Rollback tab)                                              */
 /* ------------------------------------------------------------------ */
 
-export interface ResourceRow {
+export interface RollbackLevel {
+  level: number;
   name: string;
-  offering: string;
-  have: boolean;
-  state: string;
-  needs: string;
+  when: string;
+  how: string;
+  time: string;
+  decides: string;
+  touchesDns: boolean;
 }
 
-export const RESOURCES: ResourceRow[] = [
+export const ROLLBACK: RollbackLevel[] = [
   {
-    name: "Brochures & Spec Sheets",
-    offering: "2024 Look Book, 10 series brochures, 8 product sheets, 8 option sheets",
-    have: true,
-    state: "27 PDFs downloadable — carried from the legacy site's brochures page",
-    needs: "Refreshed editions as TableX produces them (current set is the legacy site's)",
+    level: 1,
+    name: "App rollback",
+    when: "The site is broken but the domain is fine — errors, a bad deploy, auth misbehaving after a code change.",
+    how: "Vercel instant rollback to the previous production build. Fix forward on a branch, redeploy.",
+    time: "Under 2 minutes",
+    decides: "Danny",
+    touchesDns: false,
   },
   {
-    name: "CAD & Symbol Libraries",
-    offering: "TableX symbol/spec data on ProjectMatrix + My Resource Library",
-    have: true,
-    state: "Reframed honestly: external platform doors + request-a-file. No self-hosted CAD library exists (legacy site had none either)",
-    needs: "Nothing — unless TableX wants a self-hosted DWG/Revit library someday",
+    level: 2,
+    name: "Launch-flag rollback",
+    when: "The launch flag itself caused the problem — indexing too early, a launch-gated feature misbehaving.",
+    how: "Set the flag back to false and redeploy. Site keeps serving on tablex.com, hidden from search engines again.",
+    time: "One build (~5 minutes)",
+    decides: "Danny",
+    touchesDns: false,
   },
   {
-    name: "Price Lists",
-    offering: "Jan 5, 2026 LIST price book — complete + 19 sections, freight program",
-    have: true,
-    state: "Public downloads, matching the legacy site's public list pricing; dealer NET pricing stays unpublished",
-    needs: "New book editions as they're issued (drop in a new dated bucket folder)",
-  },
-  {
-    name: "Installation & Care",
-    offering: "9 assembly/install guides, 6 surface care guides, 2025 Warranty",
-    have: true,
-    state: "16 PDFs downloadable (page renamed from Installation Guides)",
-    needs: "Guides for series not covered yet; refreshed editions from TableX",
-  },
-  {
-    name: "Sustainability",
-    offering: "Environmental data, certifications",
-    have: false,
-    state: "Placeholder by design; nothing unverified is published",
-    needs: "Verified certifications / data TableX is comfortable publishing",
+    level: 3,
+    name: "DNS rollback",
+    when: "tablex.com will not resolve, certificates will not issue, or the cutover itself is the problem.",
+    how: "Restore the two web records from Friday's zone export. Revert Supabase site_url and the Xero callback. Old WordPress serves again.",
+    time: "5–15 minutes to propagate",
+    decides: "Danny, Brian informed immediately",
+    touchesDns: true,
   },
 ];
 
-/* ------------------------------------------------------------------ */
-/* Xero integration facts (live-verified 2026-07-15)                   */
-/* ------------------------------------------------------------------ */
-
-export const XERO_STATS = {
-  contactsCached: 1457,
-  customersFlagged: 34,
-  customersLinked: 30,
-  withAddress: 1436,
-  withPhone: 1245,
-  openArRows: 30,
-};
-
-export const XERO_SYNC_STEPS = [
-  { step: "Refresh the secure connection", detail: "Tokens rotate on every sync; nothing is ever written back to Xero." },
-  { step: "Pull every contact", detail: "Name, email, customer/supplier flag, mailing address, phone — cached in our database." },
-  { step: "Auto-link exact matches", detail: "A Xero contact whose name exactly matches one unlinked CRM organization links itself." },
-  { step: "Pull open receivables", detail: "Outstanding invoice balances summarized per contact (a date cutoff hides pre-migration conversion artifacts)." },
-  { step: "Queue the rest for review", detail: "Everything unmatched lands in the review queue: Link to an existing org, Create a new dealer org, or Ignore." },
+export const ROLLBACK_NOTES = [
+  "Try Level 1 first. It covers most 'the site is broken' cases and touches nothing customers depend on.",
+  "Data is the one thing a rollback does not undo. Quotes, orgs and contacts live in Supabase; there is no point-in-time recovery today, so backups are confirmed before Monday.",
+  "The full runbook is written so someone other than Danny could run it: tablex-site/docs/launch-rollback.md.",
 ];
 
 /* ------------------------------------------------------------------ */
-/* Quote pipeline + CRM (verbatim from the shipped code)               */
+/* Team (Team tab)                                                      */
 /* ------------------------------------------------------------------ */
 
-export interface QuoteStage {
-  key: string;
-  label: string;
-  actor: "Dealer" | "TableX" | "Either";
-  desc: string;
+export interface Role {
+  who: string;
+  role: string;
+  monday: string[];
+  beforehand: string[];
 }
 
-/** The six quote statuses, in pipeline order (the same timeline all three roles see). */
-export const QUOTE_STAGES: QuoteStage[] = [
+export const TEAM: Role[] = [
   {
-    key: "draft",
-    label: "Draft",
-    actor: "Dealer",
-    desc: "Every table saved in Spex Studio lands on the dealer’s open draft quote — one cart per dealer.",
+    who: "Danny",
+    role: "Runs the cutover",
+    beforehand: ["Infra prep list (fonts, Vercel domains, zone export, TTLs, backups)", "Staff accounts + demo-auth revert", "Sunday go / no-go with Brian"],
+    monday: ["DNS switch, certs, auth + Xero origins, launch deploy", "Verification sweep", "Rollback decision (Levels 1–2 alone; Level 3 with Brian informed)", "8:00 AM green light message"],
   },
   {
-    key: "submitted",
-    label: "Submitted",
-    actor: "Dealer",
-    desc: "Dealer names the project and submits for pricing. The desk is emailed.",
+    who: "Brian",
+    role: "Owns the go decision",
+    beforehand: ["Final full-site walkthrough + sign-off (due Sunday)", "News: rewrite or unpublish the 7 placeholder posts", "Open copy rulings + Southern NJ rep call"],
+    monday: ["Available 7:00–9:00 AM for the green light or a hold", "Dealer + rep announcement (recommend Tuesday)", "Field any customer-facing questions"],
   },
   {
-    key: "quoted",
-    label: "Quoted",
-    actor: "TableX",
-    desc: "The desk prices it, writes a note to the dealer, attaches the quote PDF, and sends. The dealer is emailed that the quote is ready.",
+    who: "Mark",
+    role: "Pricing + product truth",
+    beforehand: ["Confirm the Sept price book questions still open (accessories, freight, Ultra D-shape, Artisan sizes)", "Review the Artisan shelf on SpeX"],
+    monday: ["Spot-check one SpeX price and one quote PDF on tablex.com", "Watch Xero — internal go-live has been running since 9/14"],
   },
   {
-    key: "revising",
-    label: "Revising",
-    actor: "Either",
-    desc: "Desk can request changes with a note; the dealer re-submits. Loops as many times as needed.",
+    who: "Sam + Patty",
+    role: "The quote desk",
+    beforehand: ["Log in to /ops with the new accounts", "Watch the staff training videos (quote desk flows)"],
+    monday: ["Work the first real quote requests and self-quotes as they arrive", "Confirm a tablex.com email sends and receives at 7:35", "Flag anything odd to Danny immediately"],
   },
   {
-    key: "accepted",
-    label: "Accepted",
-    actor: "Dealer",
-    desc: "Dealer accepts the quote — the desk is emailed and it’s ready for order entry.",
+    who: "Kayla",
+    role: "Design QA",
+    beforehand: ["Final hand-QA on the frozen build: keyboard, reduced motion, iPad, Safari, mobile drawer"],
+    monday: ["Visual pass on tablex.com once live"],
   },
   {
-    key: "archived",
-    label: "Archived",
-    actor: "TableX",
-    desc: "Desk archives completed or inactive quotes.",
-  },
-];
-
-/** What the desk (ops) can actually do, per the shipped action set. */
-export const OPS_ACTIONS = [
-  {
-    name: "Send quote",
-    detail:
-      "Requires a desk note (goes to the dealer verbatim) and optionally attaches the quote PDF (stored privately; the dealer downloads it from their portal). Can re-send with a corrected PDF at any time.",
-  },
-  {
-    name: "Request changes",
-    detail: "Returns the quote to the dealer with a note explaining what to change.",
-  },
-  {
-    name: "Archive quote",
-    detail: "Closes it out. No email fires — internal housekeeping.",
+    who: "Caleb · Jim · Richie",
+    role: "Accounts + photography",
+    beforehand: ["Accounts created before Monday", "Caleb: remaining photography gaps are post-launch swaps"],
+    monday: ["Nothing required"],
   },
 ];
 
-export const QUOTE_NOTIFICATIONS = [
-  { event: "Dealer submits / re-submits", who: "Quote desk (sales@ at launch)" },
-  { event: "Desk sends the quote", who: "The dealer, reply-to routed back to the desk" },
-  { event: "Desk requests changes", who: "The dealer" },
-  { event: "Dealer accepts", who: "Quote desk" },
-];
-
-export const CRM_POINTS = [
-  "Every dealer, rep group, and direct account is an organization with a pricing tier (50/20 family). Tier changes are audited — who, when, before/after, and why.",
-  "Contacts live under each org; portal access is granted per contact. Reps are contacts on a rep-group org.",
-  "Rep coverage is explicit: assign a rep to the dealers they own, and their portal scopes to exactly those dealers — including quote PDFs.",
-  "Each org page shows its full quote history, an activity feed (calls, emails, notes), and its live Xero receivables balance.",
-  "No dollar figures render anywhere on the site — pricing travels only in the quote PDF and the desk note.",
+export const COMMS = [
+  { when: "Sunday evening", what: "Go / no-go", who: "Brian + Danny, by phone or text" },
+  { when: "Monday ~8:00 AM", what: "“We’re live” — verified, plus what to watch for", who: "Danny → Brian, Mark, Sam, Patty, Richie" },
+  { when: "Monday, all day", what: "Issue reports → Danny, one channel", who: "Everyone" },
+  { when: "Tuesday (recommended)", what: "Dealer + rep announcement: new site, SpeX Studio, dealer portal login", who: "Brian" },
+  { when: "Friday 9/25", what: "Week-one wrap: 404s, Search Console, first quotes, fix list", who: "Danny → team" },
 ];
 
 /* ------------------------------------------------------------------ */
-/* Outstanding inputs from TableX                                      */
+/* Open items (Open Items tab)                                          */
 /* ------------------------------------------------------------------ */
 
-export interface NeedItem {
+export interface OpenItem {
   what: string;
   why: string;
   owner: string;
-  launchBlocking: boolean;
+  due: string;
+  gate: boolean;
+  status: ItemStatus;
 }
 
-export const NEEDS: NeedItem[] = [
-  {
-    what: "Full-site walkthrough + sign-off",
-    why: "The go/no-go gate for cutover",
-    owner: "Brian",
-    launchBlocking: true,
-  },
-  {
-    what: "Per-line assembly-vs-origin verification",
-    why: "Confirms the Made-in-America seal claim; if mixed, we adjust the MiA page wording",
-    owner: "Brian",
-    launchBlocking: true,
-  },
-  {
-    what: "sales@tablex.com mailbox",
-    why: "Quote notifications currently route to digital@tablex.com; switches to sales@ once the mailbox exists",
-    owner: "TableX IT",
-    launchBlocking: false,
-  },
-  {
-    what: "Rep territory data (who covers which states/zips)",
-    why: "Required for the Find-a-Rep directory; confirmed not present in Xero or any system we have",
-    owner: "Brian",
-    launchBlocking: false,
-  },
-  {
-    what: "News / press content",
-    why: "The News section and its CMS are live; zero articles authored",
-    owner: "Brian / marketing",
-    launchBlocking: false,
-  },
-  {
-    what: "Sustainability data (the one Resources page still empty)",
-    why: "Brochures, price lists, install + care shipped 7/19 (63 PDFs from the legacy site); sustainability publishes only verified data",
-    owner: "TableX",
-    launchBlocking: false,
-  },
-  {
-    what: "Cleaned Xero books + confirmation of the dealer list",
-    why: "Migration lands ~Jul 17; one sync + a customers-filter pass then imports the real dealer roster",
-    owner: "Brian / bookkeeper",
-    launchBlocking: false,
-  },
-  {
-    what: "6 base models + series offer lists for Spex Studio",
-    why: "Six model files unlock 408 combinations; offer lists unlock six series with no 3D",
-    owner: "Neal (3D)",
-    launchBlocking: false,
-  },
-  {
-    what: "Photography: outdoor/Element, Elite series, finish close-ups",
-    why: "Element and outdoor settings have zero photo coverage; placeholders swap out as shots arrive",
-    owner: "Caleb",
-    launchBlocking: false,
-  },
-  {
-    what: "Price list review session",
-    why: "Verify the published list pricing before dealers see it",
-    owner: "Mark + Danny",
-    launchBlocking: true,
-  },
-  {
-    what: "Social profiles to link at launch",
-    why: "Footer social links go live with launch per the 7/09 decision",
-    owner: "TableX",
-    launchBlocking: false,
-  },
+export const OPEN_ITEMS: OpenItem[] = [
+  { what: "Brian's final walkthrough + sign-off", why: "The go / no-go gate", owner: "Brian", due: "Sun 9/20", gate: true, status: "open" },
+  { what: "7 placeholder news posts rewritten or unpublished", why: "Cannot be public on launch day", owner: "Brian", due: "Sun 9/20", gate: true, status: "open" },
+  { what: "Infra prep list green (fonts, Vercel domains, zone export, TTLs, backups)", why: "Monday's hour depends on it", owner: "Danny", due: "Fri 9/19", gate: true, status: "open" },
+  { what: "Staff accounts for Jim, Caleb, Richie", why: "Everyone who needs the desk or portal has a login", owner: "Danny", due: "Fri 9/19", gate: false, status: "open" },
+  { what: "Feedback widget back on", why: "Off while training videos record; returns in the launch deploy", owner: "Danny", due: "Mon 9/21", gate: false, status: "open" },
+  { what: "Demo-auth revert + QA password rotation", why: "Training fixtures stay, demo passwords go", owner: "Danny", due: "Fri 9/19", gate: false, status: "open" },
+  { what: "Cloudflare Turnstile keys in Vercel", why: "Spam protection on contact, quote and signup forms; forms work without it", owner: "Danny", due: "Week one", gate: false, status: "open" },
+  { what: "sales@tablex.com mailbox → desk notifications", why: "Desk email falls through to digital@tablex.com until it exists", owner: "TableX IT", due: "Whenever ready", gate: false, status: "open" },
+  { what: "Dekko power-tile renders: redistribution rights", why: "Four OEM renders on /products/accessories; asked 8/06, unanswered. Fallback: pull the four images before Monday.", owner: "Danny → Byrne (Conor Regin)", due: "Fri 9/19", gate: false, status: "blocked" },
+  { what: "Southern New Jersey rep: JMA or CFM", why: "Find-a-Rep routes to JMA today", owner: "Brian", due: "Week one", gate: false, status: "open" },
+  { what: "Legacy WordPress afterlife + Gravity Forms export", why: "Keep Flywheel 30 days for rollback; export claims/quote entries + 1.7 GB uploads by 10/21", owner: "Danny + Brian", due: "10/21", gate: false, status: "open" },
+  { what: "Sept price book confirmations", why: "Does the increase hit accessories, options, freight; Ultra D-shaped rows; Artisan 42×60 / 42×84; App -B / -S", owner: "Brian + Mark", due: "Week one", gate: false, status: "open" },
 ];
 
 /* ------------------------------------------------------------------ */
-/* Go-live: what WE still do (functionality/infra only)                */
+/* Already done (Overview)                                              */
 /* ------------------------------------------------------------------ */
 
-export const CUTOVER_STEPS = [
-  { step: "Point tablex.com at the new site", detail: "DNS change; email (Microsoft 365) is untouched", owner: "ClearPH" },
-  { step: "Authorize fonts for tablex.com", detail: "One-line change in the font service, then republish", owner: "ClearPH" },
-  { step: "Update login/redirect URLs", detail: "Magic-link emails must point at tablex.com instead of the staging address", owner: "ClearPH" },
-  { step: "Flip the launch switch", detail: "Un-hides the site from search engines and swaps quote notifications to sales@", owner: "ClearPH" },
-  { step: "Decide the old WordPress site’s fate", detail: "Archive it, or park it read-only at old.tablex.com", owner: "ClearPH + TableX" },
+export const SHIPPED = [
+  "Launch punch list shipped 9/17: final wordmark everywhere, branded HTML email, GTM + GA4, rollback runbook, deploy process",
+  "Login rework: password-first sign-in, self-serve reset, invites land on set-password; auth email templates on the live domain",
+  "Self-serve customer accounts + list-price self-quotes; ordering requires an account, PO optional",
+  "Test data cleansed 9/18: the quotes table is empty, the next real quote is TX-2026-0001",
+  "1,241 legacy tablex.com quote requests (2022 → today) imported into the site CRM on 160 organizations",
+  "Eleven staff training videos for the quote desk recorded and rendered",
+  "September 2026 price book is the one live book; Xero internal go-live has been running since 9/14",
+  "SpeX Studio realism, edge bands, casters, Artisan shelf, accessories — all on prod",
 ];
