@@ -210,8 +210,8 @@ export const RUNBOOK: RunbookGroup[] = [
       },
       {
         time: "6:25",
-        title: "Xero app: add the tablex.com callback URL + flip the env var",
-        detail: "Read-only sync keeps working; this only affects re-authorizing the connection.",
+        title: "Xero: nothing to flip on cutover day",
+        detail: "Since 9/20 the OAuth callback is derived from the request host, so tablex.com works the moment DNS lands — no env var, no redeploy. The one prerequisite is registering https://tablex.com/api/xero/callback and https://www.tablex.com/api/xero/callback on the Xero app 'TableX CRM Sync' at developer.xero.com (danny@clearph.com), which can happen any time before Monday. The read-only sync never touches the redirect URI, so it keeps running regardless.",
         owner: "Danny",
         status: "open",
         tracker: "web-cutover-xero-redirect",
