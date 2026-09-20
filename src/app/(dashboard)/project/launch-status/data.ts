@@ -210,10 +210,10 @@ export const RUNBOOK: RunbookGroup[] = [
       },
       {
         time: "6:25",
-        title: "Xero: nothing to flip on cutover day",
-        detail: "Since 9/20 the OAuth callback is derived from the request host, so tablex.com works the moment DNS lands — no env var, no redeploy. The one prerequisite is registering https://tablex.com/api/xero/callback and https://www.tablex.com/api/xero/callback on the Xero app 'TableX CRM Sync' at developer.xero.com (danny@clearph.com), which can happen any time before Monday. The read-only sync never touches the redirect URI, so it keeps running regardless.",
+        title: "Xero: nothing to do on cutover day",
+        detail: "Since 9/20 the OAuth callback is derived from the request host, so tablex.com works the moment DNS lands — no env var, no redeploy. Both tablex.com callbacks are already registered on the Xero app 'TableX CRM Sync' (done 9/20) alongside the vercel.app and localhost entries. The read-only sync never touches the redirect URI.",
         owner: "Danny",
-        status: "open",
+        status: "done",
         tracker: "web-cutover-xero-redirect",
       },
       {
