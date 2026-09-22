@@ -42,7 +42,7 @@ const TONE: Record<string, { ring: string; badge: string; label: string }> = {
 
 export function OverviewSection() {
   const allSteps = RUNBOOK.flatMap((g) => g.steps);
-  const mondaySteps = RUNBOOK.filter((g) => g.title.startsWith("Monday —")).flatMap((g) => g.steps);
+  const mondaySteps = RUNBOOK.filter((g) => g.title.startsWith("Sunday —")).flatMap((g) => g.steps);
   const gates = OPEN_ITEMS.filter((i) => i.gate);
   return (
     <div className="space-y-8">
@@ -83,15 +83,15 @@ export function OverviewSection() {
 
       {/* Tiles */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile value="3" label="Days to go-live" sub="Thursday → Monday morning" accent />
+        <StatTile value="LIVE" label="Since Sun 9/20" sub="20:05 ET · a day early" accent />
         <StatTile value="2" label="DNS records change" sub="Apex A + www CNAME. Email untouched." />
-        <StatTile value={`${mondaySteps.length}`} label="Monday steps" sub="~6:00 to 8:00 AM, one person" />
+        <StatTile value={`${mondaySteps.length}`} label="Cutover steps" sub="Ran 19:53–20:05 ET, one person" />
         <StatTile value={`${gates.length}`} label="Go / no-go gates" sub={`${allSteps.length} tracked steps in total`} accent />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeading>Monday in five moves</CardHeading>
+          <CardHeading>The switch in five moves</CardHeading>
           <div className="mt-4">
             {[
               { t: "Point the domain at the new site", d: "Two Cloudflare records. Email stays exactly where it is." },
@@ -106,7 +106,7 @@ export function OverviewSection() {
         </Card>
         <div className="space-y-6">
           <Card>
-            <CardHeading>Go / no-go gates — due Sunday night</CardHeading>
+            <CardHeading>Go / no-go gates (cleared)</CardHeading>
             <ul className="mt-4 space-y-3">
               {gates.map((g) => (
                 <li key={g.what} className="flex items-start justify-between gap-3">
@@ -119,8 +119,7 @@ export function OverviewSection() {
               ))}
             </ul>
             <p className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-500">
-              If either gate is red Sunday evening, we hold and pick the next early-morning slot. Nothing about the
-              plan changes; only the date.
+              Both gates cleared before the switch. Kept here as the record.
             </p>
           </Card>
           <Card>
@@ -206,8 +205,8 @@ export function DnsSection() {
     <div className="space-y-8">
       <SectionIntro title="Cloudflare domain switchover">
         <p>
-          tablex.com is managed at Cloudflare and currently points at the old WordPress host. Monday changes two
-          records so the domain serves the new site from Vercel. Everything else in the zone stays as is.
+          tablex.com is managed at Cloudflare and pointed at the old WordPress host. The cutover changed two
+          records so the domain serves the new site from Vercel. Everything else in the zone stayed as exported.
         </p>
       </SectionIntro>
 
@@ -222,8 +221,8 @@ export function DnsSection() {
           <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
             <tr>
               <th className="px-5 py-3">Record</th>
-              <th className="px-5 py-3">Today</th>
-              <th className="px-5 py-3">Monday</th>
+              <th className="px-5 py-3">Before</th>
+              <th className="px-5 py-3">After cutover</th>
               <th className="px-5 py-3">Changes?</th>
             </tr>
           </thead>
@@ -356,8 +355,8 @@ export function TeamSection() {
     <div className="space-y-8">
       <SectionIntro title="Who does what">
         <p>
-          One person runs the switch. Everyone else has a short list before Monday and a short list on Monday. The
-          desk is the first place a real problem would show up, so Sam and Patty are the eyes that morning.
+          One person ran the switch. Everyone else had a short list before Sunday and a short list on Sunday. The
+          desk was the first place a real problem would show up, so Sam and Patty were the eyes that morning.
         </p>
       </SectionIntro>
 
@@ -366,7 +365,7 @@ export function TeamSection() {
           <Card key={t.who}>
             <h3 className="text-base font-bold text-gray-900">{t.who}</h3>
             <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">{t.role}</p>
-            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-gray-400">Before Monday</p>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-gray-400">Before the switch</p>
             <ul className="mt-1.5 space-y-1.5">
               {t.beforehand.map((b) => (
                 <li key={b} className="flex gap-2 text-sm text-gray-700">
@@ -375,7 +374,7 @@ export function TeamSection() {
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-gray-400">Monday</p>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-gray-400">Cutover + week one</p>
             <ul className="mt-1.5 space-y-1.5">
               {t.monday.map((m) => (
                 <li key={m} className="flex gap-2 text-sm text-gray-700">
@@ -429,7 +428,7 @@ export function OpenItemsSection() {
     <div className="space-y-8">
       <SectionIntro title="Everything still open">
         <p>
-          The two gates decide whether Monday happens. The rest are real but do not move the date; each has an owner
+          The two gates decided whether to proceed; both cleared 9/20. The rest are real but do not move the date; each has an owner
           and a due window.
         </p>
       </SectionIntro>
@@ -437,8 +436,8 @@ export function OpenItemsSection() {
       <Card className="p-0">
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <h3 className="text-base font-bold text-gray-900">Go / no-go gates</h3>
-          <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-            {gates.length} items · due Sunday
+          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            {gates.length} items · cleared 9/20
           </span>
         </div>
         <ul className="divide-y divide-gray-100">
