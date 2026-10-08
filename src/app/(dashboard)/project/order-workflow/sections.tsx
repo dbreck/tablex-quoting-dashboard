@@ -482,7 +482,7 @@ export function BuildSection() {
             <span className="text-[10px] font-bold text-gray-500">1 : n</span>
           </div>
         </div>
-        <div className="mt-2 grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
           {MODEL_CHILDREN.map((m) => (
             <ModelCard key={m.name} m={m} />
           ))}
