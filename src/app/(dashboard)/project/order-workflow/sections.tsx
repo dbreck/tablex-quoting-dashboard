@@ -27,7 +27,7 @@ import {
   ROUND_TRIP_QUESTIONS,
   TODAY_LANES,
   TODAY_STEPS,
-  UNSEEN_FILES,
+  FILES_RECEIVED,
   type MatrixStatus,
   type ModelBox,
   type When,
@@ -59,15 +59,6 @@ function ArrowDown({ className = "text-gray-300" }: { className?: string }) {
     <svg aria-hidden viewBox="0 0 24 24" className={`h-5 w-5 shrink-0 ${className}`} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 4v15M6 13l6 6 6-6" />
     </svg>
-  );
-}
-
-function AmberNote({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
-      <p className="text-sm font-bold text-amber-900">{title}</p>
-      <div className="mt-1.5 text-sm leading-relaxed text-amber-900/80">{children}</div>
-    </div>
   );
 }
 
@@ -173,14 +164,19 @@ export function AskSection() {
         ))}
       </div>
 
-      <AmberNote title="Brian: please send the files as attachments">
-        <p>All of these are SharePoint links behind your login. We have not been able to open them yet:</p>
-        <ul className="mt-2 grid gap-1 sm:grid-cols-2">
-          {UNSEEN_FILES.map((f) => (
-            <li key={f} className="font-medium">· {f}</li>
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+        <p className="text-sm font-bold text-emerald-900">
+          <span aria-hidden>✓ </span>Files received 10/08
+        </p>
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+          {FILES_RECEIVED.map((f) => (
+            <li key={f.name} className="rounded-lg border border-emerald-200 bg-white px-3 py-2">
+              <p className="break-words text-xs font-bold text-emerald-900">{f.name}</p>
+              <p className="mt-0.5 text-xs text-emerald-900/70">{f.what}</p>
+            </li>
           ))}
         </ul>
-      </AmberNote>
+      </div>
     </div>
   );
 }
@@ -486,7 +482,7 @@ export function BuildSection() {
             <span className="text-[10px] font-bold text-gray-500">1 : n</span>
           </div>
         </div>
-        <div className="mt-2 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-2 grid gap-3 md:grid-cols-3 xl:grid-cols-5">
           {MODEL_CHILDREN.map((m) => (
             <ModelCard key={m.name} m={m} />
           ))}
@@ -671,7 +667,7 @@ export function QuestionsSection() {
         <CardHeading>After the call</CardHeading>
         <div className="mt-4">
           {[
-            { t: "Brian sends the files", d: "Five spreadsheets + cover sheet PDF as attachments." },
+            { t: "Map the files to the build", d: "Mark's tracker, cover sheet and packaging form become P1, P4 and P5 specs." },
             { t: "Danny sets phase dates", d: "P1 first; priority order from Brian." },
             { t: "Scope + estimate to Richie", d: "Second project-sized effort, quoted separately." },
           ].map((s, i, arr) => (

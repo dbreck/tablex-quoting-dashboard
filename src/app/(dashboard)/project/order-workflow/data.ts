@@ -10,7 +10,7 @@ export const MEETING = {
   title: "Sales Order Workflow",
   date: "Thursday, October 8, 2026 · 10:00 AM ET",
   attendees: "Brian Craig · Mark · Sam · Danny · Kayla · Arabella",
-  updated: "10/08 09:30 ET",
+  updated: "10/08 09:50 ET",
 };
 
 /* ------------------------------------------------------------------ */
@@ -60,7 +60,8 @@ export const BRIAN_ASKS: AskSection[] = [
     summary: "On accept, the system generates the production paperwork.",
     bullets: [
       "Work Order = the Sales Order with all pricing removed.",
-      "Production Cover Sheet auto-fills TableX SO#, Customer PO#, Dealer, Ship Date (current sheet attached as a PDF).",
+      "Production Cover Sheet auto-fills TableX SO#, Customer PO#, Dealer, Ship Date.",
+      "The real cover sheet (received 10/08) is Mark's purchasing worksheet: five checkboxes, vendor columns BASES / TOPS / OTHER with PO # and a cut-PO / drawings / acknowledged / proofed checklist, option-code grids, and a footer with rep, quote, disc, comm %, spiff and freight $.",
       "Both emailed automatically to production@tablex.com (TableX will create the mailbox).",
     ],
   },
@@ -90,6 +91,8 @@ export const BRIAN_ASKS: AskSection[] = [
     email: "Email 1",
     summary: "Mark runs it in ORDER STATUS.xlsx today. Move it into the system.",
     bullets: [
+      "The file (received 10/08) is an open-order + vendor-PO tracker: one row per SO, 48 open sales orders (12 marked shipped / ready), SO 11890–12160, ≈ $400k net open.",
+      "Columns: SO# · product-mix counts · Net Price · Cust PO# · Customer · PO Received · Ack. Ship Date · Shipped Date (date or \"R\") · per vendor (VALLEY bases, SMITH tops, OTHER ×2) PO / Due / Arrived · Review notes · City.",
       "SO Accepted → enters the schedule.",
       "Vendor PO# → added manually.",
       "Ship Date updated → schedule updates.",
@@ -104,6 +107,7 @@ export const BRIAN_ASKS: AskSection[] = [
     bullets: [
       "Today: Mark prints \"TablEx Packaging 3.xlsx\" with every order; Tony (Warehouse Manager) fills it out; it comes back to the office for invoicing; Patty tallies it for a P/L analysis.",
       "Ask: attach it to each SO, Mark updates the costs, Tony fills it in on screen, the backend calculates.",
+      "The form (received 10/08): Material · Cost (rate) · Quantity Used · Subtotal for ~14 materials (banding per ft, V-board, honeycomb, foam, shrink wrap, U-channel, skids…), a Total, then Pallets 1–6 with dimensions + weight.",
     ],
   },
   {
@@ -111,7 +115,8 @@ export const BRIAN_ASKS: AskSection[] = [
     email: "Email 3",
     summary: "A new price-book revision. Separate track from the order workflow.",
     bullets: [
-      "SpeX_Studio_Series_Action_Tracker.xlsx.",
+      "SpeX_Studio_Series_Action_Tracker.xlsx: 158 SpeX Studio change requests across 16 tabs (all pages + one per series). A separate parallel track.",
+      "Examples: picker order Shape → Size → Base Style; start with Full Table / Top Only / Base Only / Accessories Only; Power & Data as its own section; price fixes (locking casters $117, wire-management door $146); \"Counter Balance\" → \"Pneumatic\"; Slab → Squircle.",
       "TABLEX MASTER PRICING - OCTOBER 2026.xlsx = a new price-book revision.",
       "The September 2026 book is live today as the one book.",
     ],
@@ -121,12 +126,12 @@ export const BRIAN_ASKS: AskSection[] = [
 export const BRIAN_QUOTE =
   "Not every order has to begin with a Quote, but once a Sales Order exists, we want that order to become the single source of information throughout the remainder of the process.";
 
-export const UNSEEN_FILES = [
-  "ORDER STATUS.xlsx (production schedule)",
-  "Production Cover Sheet (PDF)",
-  "TablEx Packaging 3.xlsx",
-  "SpeX_Studio_Series_Action_Tracker.xlsx",
-  "TABLEX MASTER PRICING - OCTOBER 2026.xlsx",
+export const FILES_RECEIVED: { name: string; what: string }[] = [
+  { name: "ORDER STATUS.xlsx", what: "Open-order + vendor-PO tracker, 48 open SOs, 12 shipped / ready (11890–12160), ≈ $400k net open" },
+  { name: "Order Cover Sheet (PDF)", what: "Mark's one-page purchasing worksheet per SO" },
+  { name: "TablEx Packaging 3.xlsx", what: "Per-SO packaging cost form + pallet dims and weight" },
+  { name: "SpeX_Studio_Series_Action_Tracker.xlsx", what: "158 SpeX Studio change requests, 16 tabs" },
+  { name: "TABLEX MASTER PRICING - OCTOBER 2026.xlsx", what: "New price-book revision" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -228,7 +233,12 @@ export const MATRIX: MatrixRow[] = [
     status: "new",
     notes: "Code comments already reserve it as \"punch 36.4\".",
   },
-  { ask: "Production Cover Sheet", today: "Not built", status: "new", notes: "Waiting on the current cover sheet PDF." },
+  {
+    ask: "Production Cover Sheet",
+    today: "Paper purchasing worksheet",
+    status: "new",
+    notes: "Header = the four auto-fill fields. The rest (checkboxes, vendor PO checklists, option codes, rep / comm % / spiff footer) is a form completed in the app; option codes can derive from the configured lines.",
+  },
   {
     ask: "Email to production@tablex.com",
     today: "Not built; mailbox does not exist",
@@ -243,8 +253,18 @@ export const MATRIX: MatrixRow[] = [
     notes: "Ship-to address, site contact, need-by, mark-for, terms, ship method exist. No carrier or tracking.",
   },
   { ask: "Shipping photos", today: "Not built", status: "new", notes: "Can ride on typed attachments." },
-  { ask: "Production schedule", today: "Mark's ORDER STATUS.xlsx", status: "new", notes: "Nothing in the app." },
-  { ask: "Packaging cost sheet", today: "Paper worksheet", status: "new", notes: "No cost or P/L data anywhere in the app." },
+  {
+    ask: "Production schedule",
+    today: "Mark's ORDER STATUS.xlsx",
+    status: "new",
+    notes: "Nothing in the app. The sheet also tracks vendor POs (Valley, Smith, other) with PO / Due / Arrived per order.",
+  },
+  {
+    ask: "Packaging cost sheet",
+    today: "TablEx Packaging 3.xlsx, printed per order",
+    status: "new",
+    notes: "No cost or P/L data anywhere in the app. Form = rate × quantity per material + pallets with dims and weight.",
+  },
   { ask: "Estimated ship date", today: "Not tracked", status: "new", notes: "No ship_date / estimated_ship columns." },
 ];
 
@@ -303,7 +323,7 @@ export const ROUND_TRIP: RoundStage[] = [
     confirm: true,
     cells: [
       { lane: "production", text: "Issues vendor POs; builds / assembles", when: "today" },
-      { lane: "production", text: "Vendor PO # on the schedule; ship-date edits propagate", when: "future" },
+      { lane: "production", text: "Vendor POs (Valley, Smith, other) with PO / due / arrived; ship-date edits propagate", when: "future" },
     ],
   },
   {
@@ -368,10 +388,13 @@ export const ROUND_TRIP_QUESTIONS = [
   },
   {
     q: "SO numbering: reuse the TX-2026-#### quote number, or a separate SO series that matches the accounting system?",
-    context: "",
+    context: "Mark's tracker uses the accounting SO series (11890–12160); the orders table should store that number alongside the TX quote number.",
   },
-  { q: "Where does the estimated ship date come from?", context: "Mark's schedule? A standard lead time per series?" },
-  { q: "Commission / salesperson credit: who is \"the salesperson\" on an order, and where is that recorded today?", context: "" },
+  { q: "Where does the estimated ship date come from?", context: "Mark's tracker has an \"Ack. Ship Date\" column. Is that the promised date, and what moves it?" },
+  {
+    q: "Commission / salesperson credit: who is \"the salesperson\" on an order, and where is that recorded today?",
+    context: "Today it lives on paper: the cover sheet footer carries rep, comm % and spiff.",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -408,8 +431,9 @@ export const MODEL_CORE: ModelBox[] = [
 
 export const MODEL_CHILDREN: ModelBox[] = [
   { name: "order_shipments", role: "1:n per order", fields: ["carrier", "pro_number", "tracking_url", "picked_up_at"], tone: "new" },
+  { name: "order_vendor_pos", role: "1:n per order", fields: ["vendor (Valley, Smith, Byrne…)", "po_number", "issued_at", "due", "arrived_at"], tone: "new" },
   { name: "quote_attachments.kind", role: "Extend existing", fields: ["supporting", "shipping_photo", "po", "cover_sheet"], tone: "extend" },
-  { name: "packaging_costs", role: "Rates + entries", fields: ["rates set by Mark", "per-order entries by Tony", "computed total"], tone: "new" },
+  { name: "packaging_costs", role: "Rates + entries", fields: ["rates by Mark (per ft / piece / strip)", "per-order quantities by Tony", "pallets: dims + weight", "computed total"], tone: "new" },
   { name: "order_recipients", role: "Who gets the emails", fields: ["dealer primary", "rep principal", "salesperson credited", "extra"], tone: "new" },
 ];
 
@@ -460,21 +484,38 @@ export const PHASES: Phase[] = [
     title: "Production schedule",
     items: [
       "/ops/production board replacing ORDER STATUS.xlsx",
-      "Accepted → active; vendor PO #; ship-date edits; shipped drops off",
-      "Mark's spreadsheet columns once we have the file",
+      "Columns from Mark's sheet: SO# · product mix · net · Cust PO# · customer · PO received · Ack. ship date · shipped (or R = ready) · review notes · city",
+      "Vendor PO groups per order (Valley bases, Smith tops, other vendors): PO / due / arrived",
+      "Accepted → active; ship-date edits; shipped drops off",
+      "Later nicety: the \"Returned to stock\" list (finish, dealer, SO#, PO#)",
     ],
   },
   {
     key: "p5",
     label: "P5",
     title: "Packaging costs",
-    items: ["Mark's rate table", "Tony's per-order entry screen + auto total", "Patty's export / P&L view; margin per order next to the Xero invoice"],
+    items: [
+      "Mark's rate table with units (per foot / per piece / per strip)",
+      "Tony's per-order quantity rows + pallets 1–6 with dims and weight (also useful for freight) + auto total",
+      "Patty's export / P&L view; margin per order next to the Xero invoice",
+    ],
   },
   {
     key: "pricing",
     label: "Parallel",
     title: "OCTOBER 2026 master pricing import",
     items: ["New price-book revision from Brian's workbook", "Independent of P1–P5"],
+    track: "parallel",
+  },
+  {
+    key: "spex-tracker",
+    label: "Parallel",
+    title: "SpeX Studio action tracker (Oct 2026)",
+    items: [
+      "158 change requests across 16 tabs: all pages 20 · Surge 16 · Primary 15 · VertiGO 13 · Foundation 12 · Stretch 11 · Puddle 11 · Elite 9 · Justice 8 · Solo 8 · Trig 8 · Element 7 · Exclaim 7 · Artisan 5 · App 4 · Ultra 4",
+      "Picker order, start modes (Full Table / Top / Base / Accessories), Power & Data section, price fixes, renames",
+      "Per-series options: edge mount, offset T, radius corners, ganging brackets, chrome lead time, disc-base casters",
+    ],
     track: "parallel",
   },
   {
@@ -532,11 +573,11 @@ export const CHALLENGES: Challenge[] = [
     body: "TableX creates the mailbox. INKY PhishFence quarantines own-domain mail from outside senders, so the allow rule for send.tablex.com must land first.",
   },
   { title: "SO numbering", kind: "open", body: "Reuse the TX-2026-#### quote number, or a separate series that matches the accounting system." },
-  { title: "Estimated ship date source", kind: "open", body: "Mark's schedule, a standard lead time per series, or a desk entry on accept." },
+  { title: "Estimated ship date source", kind: "open", body: "Mark's tracker has an Ack. Ship Date per order. Confirm it is the promised date and what moves it." },
   {
-    title: "Files not yet seen",
+    title: "Cover sheet is really the purchasing worksheet",
     kind: "risk",
-    body: "ORDER STATUS.xlsx, the cover sheet PDF and TablEx Packaging 3.xlsx are SharePoint links behind Brian's login. Their columns shape P1, P4 and P5.",
+    body: "Brian named four auto-fill fields; the sheet also carries five checkboxes, vendor PO checklists, option-code grids and rep / comm % / spiff. The header auto-fills; the rest becomes a form the desk and Mark complete in the app.",
   },
   {
     title: "Scope size",
@@ -564,14 +605,15 @@ export const QUESTION_GROUPS: { who: string; questions: string[] }[] = [
       "SO numbering: reuse the quote number or a separate SO series?",
       "Should reps / principals see pricing on acknowledgments? (Rep surfaces are zero-dollar today.)",
       "Who is \"the salesperson\" on an order, and where is that recorded today?",
-      "Can you send the five spreadsheets + cover sheet PDF as attachments?",
     ],
   },
   {
     who: "For Mark",
     questions: [
       "Where does the estimated ship date come from? What is promised today?",
-      "Cover sheet fields beyond SO#, Customer PO#, Dealer, Ship Date?",
+      "Ack. Ship Date = the promised date? What moves it?",
+      "Is \"R\" in Shipped Date = ready to ship?",
+      "Which cover sheet checkboxes should the app tick automatically?",
       "Which ORDER STATUS.xlsx columns must the production board keep?",
       "Should production@ also get the packing slip?",
       "Packaging rates: how often do they change?",
