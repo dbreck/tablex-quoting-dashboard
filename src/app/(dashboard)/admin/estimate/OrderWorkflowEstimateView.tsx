@@ -351,15 +351,15 @@ export default function OrderWorkflowEstimateView() {
               <AnnotationIcon id="a" />
             </div>
             <p className="mb-2 text-xs leading-relaxed text-gray-600">
-              Eight weeks from kickoff on Monday 10/12, phase by phase, each one live on tablex.com before the next starts. Dates assume Mark and Sam review on staging within two business days.
+              Starting Friday 10/9. The order-to-ship flow is live Monday 10/19, the production board by Friday 10/23, packaging by Monday 10/26. Dates assume Mark and Sam review on staging the same day and production@ exists by Wednesday 10/14.
             </p>
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
               <table className="w-full text-left text-xs">
                 <tbody className="divide-y divide-gray-100">
                   {TIMELINE.map((t) => (
                     <tr key={t.week}>
-                      <td className="w-20 whitespace-nowrap px-3 py-1.5 font-semibold text-gray-700">{t.week}</td>
-                      <td className="w-24 whitespace-nowrap px-3 py-1.5 tabular-nums text-gray-500">{t.to}</td>
+                      <td className="w-40 whitespace-nowrap px-3 py-1.5 font-semibold text-gray-700">{t.week}</td>
+                      <td className="w-16 whitespace-nowrap px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-brand-green">{t.to}</td>
                       <td className="px-3 py-1.5 text-gray-700">{t.what}</td>
                     </tr>
                   ))}
@@ -404,8 +404,8 @@ export default function OrderWorkflowEstimateView() {
             </div>
             <ol className="mt-1.5 list-inside list-decimal space-y-1">
               <li className="text-xs text-gray-600"><span className="font-medium">Kickoff</span> — 40% ({formatCurrency(CORE_COST * 0.4)}) due upon signed agreement</li>
-              <li className="text-xs text-gray-600"><span className="font-medium">Sales Order, acknowledgments and shipping live</span> — 30% ({formatCurrency(CORE_COST * 0.3)}) ~Week 4</li>
-              <li className="text-xs text-gray-600"><span className="font-medium">Production schedule and packaging live</span> — 30% ({formatCurrency(CORE_COST * 0.3)}) ~Week 8</li>
+              <li className="text-xs text-gray-600"><span className="font-medium">Sales Order, acknowledgments and shipping live</span> — 30% ({formatCurrency(CORE_COST * 0.3)}) Mon 10/19</li>
+              <li className="text-xs text-gray-600"><span className="font-medium">Production schedule and packaging live</span> — 30% ({formatCurrency(CORE_COST * 0.3)}) Mon 10/26</li>
               <li className="text-xs text-gray-600"><span className="font-medium">Xero invoice mirror</span> — {formatCurrency(GATED_COST)} billed when it starts</li>
             </ol>
           </div>

@@ -78,7 +78,7 @@ export const SCENARIOS: Scenario[] = [
     title: "B · Bill the real hours",
     tag: "Human hours + model spend",
     price: AI_HUMAN_COST + AI_SPEND,
-    weeks: "3 to 4 weeks",
+    weeks: "~3 weeks",
     basis: `${AI_HUMAN_HOURS} human hrs at the rate card + $${AI_SPEND.toLocaleString()} model spend passed through`,
     realizedRate: Math.round((AI_HUMAN_COST + AI_SPEND) / AI_HUMAN_HOURS),
     pros: ["Nothing to explain. Every dollar maps to a thing that happened."],
@@ -94,7 +94,7 @@ export const SCENARIOS: Scenario[] = [
     title: "C · AI-assisted rate card",
     tag: "Fewer hours, higher rate",
     price: AI_HUMAN_HOURS * AI_ASSISTED_RATE + AI_SPEND,
-    weeks: "3 to 4 weeks",
+    weeks: "~3 weeks",
     basis: `${AI_HUMAN_HOURS} orchestration hrs at $${AI_ASSISTED_RATE} + model spend`,
     realizedRate: Math.round((AI_HUMAN_HOURS * AI_ASSISTED_RATE + AI_SPEND) / AI_HUMAN_HOURS),
     pros: ["Honest about the hours and the method", "A rate card we can reuse"],
@@ -109,11 +109,11 @@ export const SCENARIOS: Scenario[] = [
     title: "D · Fixed price per phase",
     tag: "Outcome, not hours",
     price: CORE_COST - 1800 - 2000,
-    weeks: "4 weeks",
+    weeks: "3 weeks · done by 10/26",
     basis: "Core phases priced as deliverables, no hours shown; discovery waved; Xero line gated separately",
     realizedRate: Math.round((CORE_COST - 1800 - 2000) / AI_HUMAN_HOURS),
     pros: [
-      "The client buys a working sales-order system in four weeks for about 10% less than the hours estimate. That is a visibly better deal than Scenario A.",
+      "The client buys a working sales-order system by 10/26 for about 10% less than the hours estimate. That is a visibly better deal than Scenario A.",
       "Hours never appear, so there is nothing to misrepresent. Speed becomes the thing we sell.",
       "Our realized rate on human time is 2x the rate card. That is the margin that pays for Fable.",
       "Fixed price moves the risk to us, which is the honest trade for the premium.",
@@ -155,9 +155,9 @@ export const THINKING: { title: string; paras: string[]; bullets?: string[] }[] 
   {
     title: "How to put it to Richie",
     paras: [
-      "Keep the number close to the traditional estimate, drop the hours column, halve the timeline, and sell the speed. $33,800 becomes a $30,000 fixed price for the core in four weeks, with the discovery waved and the Xero mirror quoted separately when it is real.",
+      "Keep the number close to the traditional estimate, drop the hours column, cut the timeline to three weeks, and sell the speed. $33,800 becomes a $30,000 fixed price for the core, live by 10/26, with the discovery waved and the Xero mirror quoted separately when it is real.",
       "Internally, track the real hours and the model spend on every job. That is how we learn what our true cost is and where the floor sits when the market moves.",
-      "For Brian, the pitch writes itself: the first phase is live on 10/19, the whole workflow before Thanksgiving, for less than the Phase 2 pace would have cost.",
+      "For Brian, the pitch writes itself: the desk goes live on the new sales-order flow Monday 10/19, the production board that week, packaging the week after, the whole thing done before Halloween, for less than the Phase 2 pace would have cost.",
     ],
   },
   {
@@ -167,3 +167,48 @@ export const THINKING: { title: string; paras: string[]; bullets?: string[] }[] 
 ];
 
 export { DEV_RATE, DESIGN_RATE, LINE_ITEMS, lineCost, TOTAL_COST, GATED_COST, CORE_COST };
+
+
+/* ------------------------------------------------------------------ */
+/* Note for Richie: what Brian asked for by 10/19, and whether we can  */
+/* ------------------------------------------------------------------ */
+
+export const RICHIE_NOTE: { title: string; sections: { heading: string; paras: string[]; bullets?: string[] }[] } = {
+  title: "What Brian wants by 10/19, and whether we can get there",
+  sections: [
+    {
+      heading: "What he answered",
+      paras: [
+        "The question on his tab was specifically \"When do you need the first phase live?\" He picked Mon 10/19 and wrote \"Hoping the updates could be made and tested next week.\" So on paper he committed only the first phase. But \"the updates\" reads like he means the whole ask, and he ranked P1–P5 without implying any waits between them. I would assume he pictures the desk working the new way on Monday the 19th, and would not be surprised by the production board arriving a few days later.",
+      ],
+    },
+    {
+      heading: "Could we do all of it by 10/19?",
+      paras: [
+        "The calendar is the problem, not the work. From tomorrow to Monday 10/19 is seven working days, and \"tested next week\" means it has to be on staging with Mark and Sam looking at it during the week of the 12th. The agent-team plan sums to about 20 working days of lines if they ran one after another, but they do not have to.",
+        "What I think is realistic if we power through, starting tomorrow:",
+      ],
+      bullets: [
+        "Live by Mon 10/19, confident: lines 1 to 4. Orders table and the SO series, the three documents and cover sheet, production@ email, recipients and acknowledgments, shipping and photos. Lines 1 and 2 run as parallel teams over the weekend of the 10th, lines 3 and 4 the following Tuesday to Thursday, staging smoke Friday the 16th, fast-forward to main over the weekend. That is the whole order-to-ship flow, which is what Sam and Mark touch daily.",
+        "Live by Fri 10/23, likely: line 5, the production board. It is one agent run plus Mark's review, and his review is the long pole.",
+        "Live by Mon 10/26: line 6, packaging and P/L. Small, but Tony and Patty need to look at it and they are the slowest reviewers.",
+        "Gated regardless: line 7, Xero.",
+      ],
+    },
+    {
+      heading: "Three things decide whether even that holds",
+      paras: [],
+      bullets: [
+        "production@ and the INKY allow rule. Client side, IT vendor involved, and the 9/21 reset emails took days to get released. Ask Brian to kick this off tomorrow, or the auto-emails land in quarantine on launch day.",
+        "Same-day reviews from Mark and Sam. The plan assumes they look at staging within a day. If they batch feedback to Friday, every phase slips a week.",
+        "Danny's own week. The human hours are about 50 for lines 1 to 4, concentrated in reviewing the change-order path, the cover sheet PDF against Mark's sheet, and a real phone at the dock for photos. That is most of a working week with nothing else in it.",
+      ],
+    },
+    {
+      heading: "Suggestion for the pitch",
+      paras: [
+        "Tell Brian the desk goes live on the new sales order flow Monday 10/19, the production board follows that week, packaging the week after, and the whole thing is done before Halloween instead of Thanksgiving. That is better than he asked for, it keeps the fixed-price number intact, and it gives you one honest dependency to hand him: production@ and the INKY rule by Wednesday.",
+      ],
+    },
+  ],
+};

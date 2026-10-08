@@ -48,8 +48,8 @@ export const ANNOTATIONS: Annotation[] = [
     type: "clarification",
     label: "First phase by 10/19",
     changed:
-      "Brian asked for the first phase live Monday 10/19. Line items 1 and 2 ship first (orders, SO series, Sales Order / Work Order / Packing Slip, production@ email); the cover sheet form and change orders follow in the next week.",
-    rationale: "P1 as a whole is more than one week. Naming the split keeps the 10/19 date honest.",
+      "Brian asked for the first phase live Monday 10/19. Lines 1 to 4 (the whole order-to-ship flow) go live that day; the production board follows by Friday 10/23 and packaging by Monday 10/26. Everything except the gated Xero line is done before Halloween.",
+    rationale: "Better than he asked for, and it hands him one honest dependency: production@ and the INKY allow rule by Wednesday 10/14.",
   },
   {
     id: "b",
@@ -96,7 +96,7 @@ export const ANNOTATIONS: Annotation[] = [
     type: "added",
     label: "Payment schedule",
     changed:
-      "Three milestones: 40% at kickoff, 30% when the Sales Order, acknowledgments and shipping are live (about week 4), 30% when the production schedule and packaging costs are live (about week 8). The gated Xero line is billed separately when it starts.",
+      "Three milestones: 40% at kickoff, 30% when the Sales Order, acknowledgments and shipping are live (Mon 10/19), 30% when the production board and packaging costs are live (Mon 10/26). The gated Xero line is billed separately when it starts.",
     rationale: "Ties payment to what the desk can use, not to calendar time.",
   },
   {
@@ -300,13 +300,13 @@ export const GATED_COST = LINE_ITEMS.filter((li) => li.gated).reduce((s, li) => 
 export const CORE_COST = TOTAL_COST - GATED_COST;
 
 export const TIMELINE = [
-  { week: "Wk 1–2", to: "10/19–10/23", what: "Sales Order core + documents (orders, SO series, SO / WO / Packing Slip, production@ email); cover sheet + change orders close out week 2" },
-  { week: "Wk 3", to: "10/30", what: "Acceptance recipients + acknowledgments" },
-  { week: "Wk 4", to: "11/06", what: "Shipping, tracking, photos · milestone 2" },
-  { week: "Wk 5–6", to: "11/20", what: "Production schedule board" },
-  { week: "Wk 7", to: "11/27", what: "Packaging costs + P/L" },
-  { week: "Wk 8", to: "12/04", what: "QA, training, launch · milestone 3" },
-  { week: "Gated", to: "TBD", what: "Xero invoice mirror once Patty invoices from Xero" },
+  { week: "Fri 10/9 – Sun 10/11", to: "", what: "Lines 1 + 2 as parallel agent teams: orders table, SO series from 13000, Sales Order / Work Order / Packing Slip, cover sheet, production@ email" },
+  { week: "Tue 10/13 – Thu 10/15", to: "", what: "Lines 3 + 4: recipients and acknowledgments, shipping, tracking, phone photos" },
+  { week: "Fri 10/16", to: "", what: "Staging smoke with Mark and Sam; fast-forward to production over the weekend" },
+  { week: "Mon 10/19", to: "LIVE", what: "The desk works the new sales-order flow: order to ship, lines 1–4 · milestone 2" },
+  { week: "Fri 10/23", to: "LIVE", what: "Line 5, production board (Mark's review is the long pole)" },
+  { week: "Mon 10/26", to: "LIVE", what: "Line 6, packaging costs + P/L (Tony and Patty review) · milestone 3" },
+  { week: "Gated", to: "TBD", what: "Line 7, Xero invoice mirror once Patty invoices from Xero" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -426,11 +426,11 @@ export const TALKING_POINTS: TalkingSection[] = [
     kicker: "Decide this with Richie",
     paras: [
       "Brian wrote that he is hoping the updates can be made and tested next week. That is Monday 10/19, before any estimate would normally be signed.",
-      "The timeline splits the first phase so lines 1 and 2 land by 10/19: the orders table, the SO series, the three PDFs and the production@ email. The cover sheet form and change orders follow in week 2.",
+      "The timeline now beats it: lines 1 to 4, the whole order-to-ship flow, live Monday 10/19; the production board by Friday 10/23; packaging by Monday 10/26. Done before Halloween instead of Thanksgiving.",
     ],
     bullets: [
-      "Starting Monday means starting on a verbal. Do we, and on what terms?",
-      "If we wait for a signature, 10/19 slips to roughly 10/26 and we should tell Brian now, not later.",
+      "Starting Friday 10/9 means starting on a verbal. Do we, and on what terms?",
+      "Three things decide whether it holds: production@ + the INKY allow rule by Wed 10/14 (client side), same-day reviews from Mark and Sam, and Danny's week being clear.",
     ],
   },
   {
@@ -463,8 +463,8 @@ export const TALKING_POINTS: TalkingSection[] = [
     id: "payment",
     title: "Payment shape",
     paras: [
-      "40% at kickoff, 30% when the Sales Order, acknowledgments and shipping are live around week 4, 30% when the production board and packaging are live around week 8. Each milestone is something the desk can use, not a calendar date.",
-      "Phase 2 used four equal quarters. Three unequal milestones fit an eight-week job better and front-load enough to cover the 10/19 push.",
+      "40% at kickoff, 30% when the Sales Order, acknowledgments and shipping are live on 10/19, 30% when the production board and packaging are live on 10/26. Each milestone is something the desk can use, not a calendar date.",
+      "Phase 2 used four equal quarters. Three unequal milestones fit a three-week job better and front-load enough to cover the sprint.",
     ],
   },
   {

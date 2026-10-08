@@ -15,6 +15,7 @@ import {
   AI_SPEND,
   LINE_ITEMS,
   RECOMMENDED,
+  RICHIE_NOTE,
   SCENARIOS,
   THINKING,
   TOTAL_COST,
@@ -175,11 +176,41 @@ export default function AiEstimatePage() {
           {RECOMMENDED.title.replace(/^[A-D] · /, "")}: {formatCurrency(RECOMMENDED.price)} fixed, {RECOMMENDED.weeks}, no hours shown.
         </p>
         <p className="mt-3 max-w-3xl text-[16px] leading-relaxed text-white/85">
-          About 10% under the traditional number, half the calendar, and a realized rate of {formatCurrency(RECOMMENDED.realizedRate)}
+          About 10% under the traditional number, three weeks instead of eight, and a realized rate of {formatCurrency(RECOMMENDED.realizedRate)}
           /hr on the time we actually spend. The client gets a better deal than the hours estimate. We get paid for the
           outcome and the speed instead of for time we no longer need. Discovery waved; the Xero mirror quoted separately when
           Patty invoices from Xero.
         </p>
+      </section>
+
+      {/* Note for Richie */}
+      <section className="rounded-2xl border border-amber-200 bg-amber-50/60 p-7">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-700">Note for Richie · written 10/08</p>
+        <h2 className="mt-1 text-2xl font-bold text-gray-900">{RICHIE_NOTE.title}</h2>
+        <div className="mt-5 space-y-7">
+          {RICHIE_NOTE.sections.map((sec) => (
+            <div key={sec.heading} className="max-w-3xl">
+              <h3 className="text-lg font-bold text-gray-900">{sec.heading}</h3>
+              <div className="mt-2 space-y-3">
+                {sec.paras.map((p, i) => (
+                  <p key={i} className="text-[17px] leading-[1.65] text-gray-800">
+                    {p}
+                  </p>
+                ))}
+              </div>
+              {sec.bullets && (
+                <ul className="mt-3 space-y-2.5">
+                  {sec.bullets.map((b) => (
+                    <li key={b} className="flex gap-3 text-[17px] leading-[1.6] text-gray-800">
+                      <span aria-hidden className="mt-[13px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Thinking */}
