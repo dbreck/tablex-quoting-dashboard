@@ -4,10 +4,12 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import CostMatrixView from "./CostMatrixView";
 import HarvestEstimateView from "./HarvestEstimateView";
+import OrderWorkflowEstimateView from "./OrderWorkflowEstimateView";
 
 const views = [
   { id: "cost-matrix", label: "Cost Matrix" },
   { id: "harvest", label: "Harvest Estimate" },
+  { id: "order-workflow", label: "Order Workflow Estimate" },
 ] as const;
 
 type ViewId = typeof views[number]["id"];
@@ -37,7 +39,7 @@ export default function AdminEstimatePage() {
         </div>
       </div>
 
-      {activeView === "cost-matrix" ? <CostMatrixView /> : <HarvestEstimateView />}
+      {activeView === "cost-matrix" ? <CostMatrixView /> : activeView === "harvest" ? <HarvestEstimateView /> : <OrderWorkflowEstimateView />}
     </div>
   );
 }
