@@ -6,6 +6,8 @@
  * ./sections.tsx.
  */
 
+import { salesOrderSteps } from "@/data/sales-order-steps";
+
 export const MEETING = {
   title: "Sales Order Workflow",
   date: "Thursday, October 8, 2026 · 10:00 AM ET",
@@ -638,3 +640,505 @@ export const QUESTION_GROUPS: { who: string; questions: string[] }[] = [
     ],
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* 7 · Homework (per-person question flows, answers persisted)         */
+/* ------------------------------------------------------------------ */
+
+export type Person = "brian" | "mark" | "sam" | "patty";
+
+export const PEOPLE: Record<Person, { name: string; first: string; role: string }> = {
+  brian: { name: "Brian Craig", first: "Brian", role: "VP Sales + Marketing" },
+  mark: { name: "Mark Fleck", first: "Mark", role: "Operations / Production" },
+  sam: { name: "Sam Sander", first: "Sam", role: "Customer service desk" },
+  patty: { name: "Patty Wollenmann", first: "Patty", role: "Accounting" },
+};
+
+export type AnswerType = "text" | "single" | "multi" | "rank" | "date" | "number";
+
+export type ContextBlock =
+  | { kind: "note"; title?: string; text: string }
+  | { kind: "list"; title?: string; items: string[]; ordered?: boolean }
+  | { kind: "facts"; title?: string; rows: [string, string][] }
+  | { kind: "table"; title?: string; headers: string[]; rows: string[][] }
+  | { kind: "cards"; title?: string; cards: { title: string; body: string; tag?: string }[] }
+  | { kind: "pre"; title?: string; text: string };
+
+export interface HomeworkOption {
+  id: string;
+  label: string;
+  hint?: string;
+}
+
+export interface HomeworkQuestion {
+  id: string;
+  type: AnswerType;
+  prompt: string;
+  why?: string;
+  options?: HomeworkOption[];
+  unit?: string;
+  rows?: number;
+  context?: ContextBlock[];
+}
+
+const opts = (...labels: string[]): HomeworkOption[] =>
+  labels.map((label) => ({
+    id: label
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, ""),
+    label,
+  }));
+
+const corePhases = PHASES.filter((p) => !p.track);
+const parallelPhases = PHASES.filter((p) => p.track === "parallel");
+const invoiceDecision = CHALLENGES.find((c) => c.title === "Invoice stays in Xero");
+
+const ORDER_STATUS_SAMPLE: ContextBlock = {
+  kind: "table",
+  title: "ORDER STATUS.xlsx · sample row",
+  headers: ["SO#", "Customer", "PO Received", "Ack. Ship", "Valley due", "Smith due", "Byrne due", "Dekko due", "Review"],
+  rows: [["12000", "Fleming", "6/5", "11/2", "8/19", "8/25", "7/31", "7/29", "Pushed to ship 11/2"]],
+};
+
+const ORDER_STATUS_COLUMNS = [
+  "SO#",
+  "Non-Nesting",
+  "Nesting",
+  "Bases Only",
+  "Tops Only",
+  "Misc",
+  "Net Price",
+  "Cust PO#",
+  "Customer",
+  "PO Received",
+  "Ack. Ship Date",
+  "Shipped Date",
+  "Valley PO / Due / Arrived",
+  "Smith PO / Due / Arrived",
+  "Other vendor 1 PO / Due / Arrived",
+  "Other vendor 2 PO / Due / Arrived",
+  "Review notes",
+  "City",
+  "Returned-to-stock list",
+];
+
+const BASE_CODES = "AH ASB BL CH CR EH EM F3 FD FR FT12 GF LC MP NE MMLC OS PB QC RA SH SK WM WMLC";
+const TOP_CODES = "reed 3P 3K drill GN.Q GR MP RC TJ PRE NE pack BB match marker extrusion PD Villa Cove";
+
+const COVER_SHEET_FACSIMILE = `SALES ORDER COVER SHEET
+Sales order # ____   PO date ____   Ship date ____   Dealer ____
+
+[ ] acknowledged customer   [ ] added to schedule   [ ] updated Queue
+[ ] production review       [ ] check 'ship to'
+
+BASES (Valley Design)   TOPS (Smith, Boos)   OTHER (up to 3 vendors)
+po # ____ date ____     po # ____ date ____  po # ____ date ____
+[ ] cut PO              [ ] cut PO           [ ] cut PO
+[ ] drawings req/sent   [ ] drawings         [ ] drawings
+[ ] been acknowledged   [ ] acknowledged     [ ] acknowledged
+[ ] proofed             [ ] proofed          [ ] proofed
+
+Base codes: ${BASE_CODES}
+Top codes:  ${TOP_CODES}
+
+Notes ____________   TIPS 2%  /  NEW DEALER
+rep __ quote __ disc __ comm % __ spiff __ freight $ __ Start __ End __`;
+
+const PACKAGING_RATES: ContextBlock = {
+  kind: "table",
+  title: "TablEx Packaging 3.xlsx · rates (9/14)",
+  headers: ["Material", "Rate"],
+  rows: [
+    ["Black Vinyl Banding", "$0.04 / ft"],
+    ["Steel Banding", "$0.08 / ft"],
+    ["Hard V-Board", "$1.08 / piece"],
+    ["Honeycomb", "$2.71 / strip (8 blocks) or $0.34 / block"],
+    ["Microfoam Squares", "$0.05 / ft"],
+    ["Quicksilver 6\"", "$0.184 / ft"],
+    ["Shrink Wrap 12\"", "$0.03588 / ft"],
+    ["Shrink Wrap 18\"", "$0.01792 / ft"],
+    ["Tissue Angle Pad", "$1.28 / piece"],
+    ["U-Channel", "$3.83 / strip or $0.64 / ft"],
+    ["Universal Skid Tray", "$6.02 / piece"],
+    ["Smith skid", "$17 / piece"],
+    ["Wooden Skid (TablEx skid / Other)", "free"],
+  ],
+};
+
+const PACKAGING_FORM: ContextBlock = {
+  kind: "list",
+  title: "The form, per sales order",
+  items: [
+    "Material Description · Cost (rate) · Quantity Used · Subtotal",
+    "Total",
+    "Pallet 1–6, each with dimensions + weight",
+  ],
+};
+
+const ROUND_TRIP_LATE: ContextBlock = {
+  kind: "cards",
+  title: "The round trip, stages 5–7",
+  cards: ROUND_TRIP.filter((s) => s.n >= 5).map((s) => ({
+    title: `${s.n} · ${s.title}`,
+    body: s.cells.map((c) => `${c.when === "future" ? "Future" : "Today"}: ${c.text}`).join("\n"),
+  })),
+};
+
+export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
+  brian: [
+    {
+      id: "brian-priority",
+      type: "rank",
+      prompt: "Put the five build phases in the order you want them.",
+      why: "The order sets what ships first and what we quote first.",
+      options: corePhases.map((p) => ({ id: p.key, label: `${p.label} · ${p.title}` })),
+      context: [
+        {
+          kind: "cards",
+          title: "The five phases",
+          cards: corePhases.map((p) => ({ title: `${p.label} · ${p.title}`, body: p.items.slice(0, 2).join("\n") })),
+        },
+        {
+          kind: "cards",
+          title: "Runs alongside",
+          cards: parallelPhases.map((p) => ({ title: p.title, body: p.items[0], tag: "Runs alongside" })),
+        },
+      ],
+    },
+    {
+      id: "brian-first-date",
+      type: "date",
+      prompt: "When do you need the first phase live?",
+      context: [
+        { kind: "list", title: `P1 is the Sales Order core`, items: corePhases[0].items },
+        { kind: "note", text: "Today is Thursday, October 8, 2026." },
+      ],
+    },
+    {
+      id: "brian-invoice",
+      type: "single",
+      prompt: "How should the app handle invoices?",
+      options: [
+        {
+          id: "mirror",
+          label: "Mirror Xero (app shows invoice # / status / paid; accounting stays the book of record)",
+          hint: "Recommended",
+        },
+        { id: "create", label: "App creates the Xero invoice (needs Xero write access, separate decision)" },
+        { id: "discuss", label: "Not sure, discuss" },
+      ],
+      context: [
+        { kind: "note", title: invoiceDecision?.title ?? "Invoice stays in Xero", text: invoiceDecision?.body ?? "" },
+        { kind: "cards", cards: ROUND_TRIP_NOTES.map((n) => ({ title: n.title, body: n.body })) },
+      ],
+    },
+    {
+      id: "brian-so-number",
+      type: "single",
+      prompt: "What should the Sales Order number be?",
+      options: [
+        { id: "reuse-tx", label: "Reuse the TX quote number as the SO number" },
+        { id: "separate", label: "Separate SO series matching the accounting system (11890–12160 today)" },
+        { id: "both", label: "Both: store the accounting SO # on the order and show both" },
+      ],
+      context: [
+        {
+          kind: "facts",
+          rows: [
+            ["Mark's tracker", "Accounting SO numbers 11890–12160"],
+            ["Quotes on tablex.com", "TX-2026-####"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "brian-rep-pricing",
+      type: "single",
+      prompt: "Should reps and principals see pricing on acknowledgments?",
+      options: opts("Yes", "No", "Dealer net only, no list"),
+      context: [
+        {
+          kind: "facts",
+          rows: [
+            ["Rep surfaces today", "Zero-dollar: no prices shown"],
+            ["Dealers today", "See net pricing on issued quotes"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "brian-salesperson",
+      type: "text",
+      prompt: "Who is \"the salesperson\" credited on an order, and who decides? Where should the app get it from?",
+      rows: 4,
+      context: [
+        {
+          kind: "facts",
+          rows: [
+            ["On paper today", "Cover sheet footer: rep · quote · disc · comm % · spiff"],
+            ["In the CRM", "Rep groups + rep contacts. No salesperson field."],
+          ],
+        },
+      ],
+    },
+    {
+      id: "brian-ack-recipients",
+      type: "multi",
+      prompt: "Confirm the acknowledgment recipients.",
+      options: opts(
+        "Person ordering",
+        "Dealer primary email",
+        "Sales group principal",
+        "Salesperson credited",
+        "Additional free-form recipient",
+        "production@",
+      ),
+      context: [
+        {
+          kind: "list",
+          title: "Your 10/07 email listed",
+          items: [
+            "Person Ordering (email on the SO)",
+            "Dealer (primary email on the dealer account)",
+            "Sales Group (Principal's email)",
+            "Salesperson (credited)",
+            "Additional Recipient (free-form name + email)",
+          ],
+        },
+      ],
+    },
+  ],
+  mark: [
+    {
+      id: "mark-ship-date",
+      type: "single",
+      prompt: "Where should the estimated ship date come from?",
+      why: "It goes on every acknowledgment email.",
+      options: [
+        { id: "mark-sets", label: "I set it on the order when I accept it" },
+        { id: "lead-time", label: "Standard lead time per series (we propose the date)" },
+        { id: "vendor-due", label: "Latest vendor Due date + buffer" },
+      ],
+      context: [
+        { kind: "list", title: "ORDER STATUS columns that matter", items: ["PO Received", "Ack. Ship Date", "Vendor Due / Arrived (Valley, Smith, other)"] },
+        ORDER_STATUS_SAMPLE,
+      ],
+    },
+    {
+      id: "mark-ack-ship",
+      type: "text",
+      prompt: "Is Ack. Ship Date the date promised to the dealer? What makes it move?",
+      rows: 3,
+      context: [
+        { kind: "list", title: "ORDER STATUS columns that matter", items: ["PO Received", "Ack. Ship Date", "Vendor Due / Arrived (Valley, Smith, other)"] },
+        ORDER_STATUS_SAMPLE,
+      ],
+    },
+    {
+      id: "mark-shipped-r",
+      type: "single",
+      prompt: "In Shipped Date, \"R\" means:",
+      options: opts("Ready to ship", "Released to warehouse", "Other (notes)"),
+      context: [{ kind: "note", text: "Shipped Date holds either a date or \"R\". 12 of the 48 open sales orders are marked shipped or ready." }],
+    },
+    {
+      id: "mark-schedule-columns",
+      type: "multi",
+      prompt: "Which columns must the production board keep?",
+      options: ORDER_STATUS_COLUMNS.map((c) => ({ id: c.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label: c })),
+      context: [
+        {
+          kind: "table",
+          title: "ORDER STATUS.xlsx header today",
+          headers: ["SO#", "Mix", "Net", "Cust PO#", "Customer", "PO Rec'd", "Ack. Ship", "Shipped"],
+          rows: [["", "Non-Nest · Nest · Bases · Tops · Misc", "", "", "", "", "", "date or R"]],
+        },
+        {
+          kind: "table",
+          headers: ["VALLEY", "SMITH", "OTHER", "OTHER", "Review", "City"],
+          rows: [["PO · Due · Arrived", "PO · Due · Arrived", "Vender · PO · Due · Arrived", "Vender · PO · Due · Arrived", "notes", ""]],
+        },
+        { kind: "note", text: "Sheet2: \"RETURNED TO STOCK\" (finish, dealer, SO#, PO#)." },
+      ],
+    },
+    {
+      id: "mark-cover-auto",
+      type: "multi",
+      prompt: "Which cover-sheet checkboxes should the app tick by itself?",
+      options: opts(
+        "acknowledged customer",
+        "added to schedule",
+        "updated Queue",
+        "production review",
+        "check 'ship to'",
+        "cut PO (per vendor)",
+        "drawings requested/sent",
+        "been acknowledged",
+        "proofed PO",
+      ),
+      context: [{ kind: "pre", title: "Your cover sheet, as text", text: COVER_SHEET_FACSIMILE }],
+    },
+    {
+      id: "mark-option-codes",
+      type: "text",
+      prompt:
+        "The cover sheet option codes (AH, ASB, BL, CH … reed, 3P, 3K, drill, GN.Q …): can we derive them from the configured lines, or do you tick them by judgment? Which ones need a person?",
+      rows: 4,
+      context: [
+        {
+          kind: "facts",
+          title: "Option-code grids",
+          rows: [
+            ["Bases", BASE_CODES],
+            ["Tops", TOP_CODES],
+          ],
+        },
+      ],
+    },
+    {
+      id: "mark-carriers",
+      type: "text",
+      prompt: "List the carriers for the dropdown (most used first).",
+      rows: 4,
+    },
+    {
+      id: "mark-packaging-rates",
+      type: "single",
+      prompt: "How often do packaging rates change?",
+      options: opts("Rarely (yearly)", "Quarterly", "Whenever a supplier changes price"),
+      context: [PACKAGING_RATES, PACKAGING_FORM],
+    },
+    {
+      id: "mark-production-slip",
+      type: "single",
+      prompt: "Should production@ also receive the packing slip?",
+      options: opts("Yes", "No", "Only on request"),
+    },
+  ],
+  sam: [
+    {
+      id: "sam-system",
+      type: "single",
+      prompt: "Which system do you key Sales Orders into today?",
+      options: opts("Sage", "Xero", "Both", "Something else"),
+      context: [
+        {
+          kind: "facts",
+          rows: [
+            ["Feb 2026 interviews", "Sage for sales orders"],
+            ["9/14", "Xero live internally"],
+            ["9/25", "You keyed SO #12150"],
+            ["Our Xero sync", "Sees 0 invoices Aug–Sep"],
+          ],
+        },
+      ],
+    },
+    {
+      id: "sam-so-steps",
+      type: "text",
+      prompt: "After you accept an order on tablex.com today, list the steps you do by hand, in order (what you type where).",
+      rows: 4,
+      context: [
+        {
+          kind: "list",
+          title: "What we heard in February",
+          ordered: true,
+          items: salesOrderSteps.map((s) => `${s.name} (${s.owner}, ${s.tool})`),
+        },
+      ],
+    },
+    {
+      id: "sam-tracking-owner",
+      type: "single",
+      prompt: "Who enters carrier + tracking after pickup?",
+      options: opts("Sam", "Tony", "Mark", "Whoever is there"),
+    },
+    {
+      id: "sam-packing-slip",
+      type: "single",
+      prompt: "What does the packing slip need to show?",
+      options: opts(
+        "Quantities + descriptions only",
+        "Quantities + descriptions + ship-to + PO",
+        "Same as the work order",
+      ),
+      context: [{ kind: "note", text: "Work Order = the Sales Order with all pricing removed." }],
+    },
+    {
+      id: "sam-photos",
+      type: "number",
+      unit: "photos",
+      prompt: "How many photos per shipment, typically? Who takes them, on what device?",
+      why: "Put the count in the box and the who / device in Notes.",
+    },
+    {
+      id: "sam-supporting-docs",
+      type: "multi",
+      prompt: "What supporting documents usually ride with an order?",
+      options: opts(
+        "Dealer PO",
+        "Drawings / approvals",
+        "Finish samples sign-off",
+        "Freight quote",
+        "COI / site requirements",
+        "Other (notes)",
+      ),
+    },
+  ],
+  patty: [
+    {
+      id: "patty-invoice-when",
+      type: "single",
+      prompt: "When is the invoice created?",
+      options: opts("At order acceptance", "At ship", "After delivery", "Other"),
+      context: [ROUND_TRIP_LATE],
+    },
+    {
+      id: "patty-invoice-system",
+      type: "single",
+      prompt: "Where is the invoice created?",
+      options: opts("Sage", "Xero", "Both", "Other (notes)"),
+    },
+    {
+      id: "patty-invoice-source",
+      type: "text",
+      prompt: "Which document do you work from to build the invoice, and what do you re-type?",
+      rows: 4,
+    },
+    {
+      id: "patty-terms",
+      type: "multi",
+      prompt: "Payment terms in use",
+      options: opts("Net 30", "Net 15", "Due on receipt", "Deposit / prepay for direct customers", "Credit card", "Other"),
+    },
+    {
+      id: "patty-payment-record",
+      type: "text",
+      prompt: "How is a payment recorded today (Receive Money? bank match?) and what would you want the app to show about it?",
+      rows: 4,
+      context: [
+        {
+          kind: "note",
+          title: "From your February interview",
+          text: "Invoices are emailed. Checks and ACH are entered via \"Receive Money\" and matched to deposits.",
+        },
+      ],
+    },
+    {
+      id: "patty-pl",
+      type: "multi",
+      prompt: "What does the packaging P/L analysis need from each order?",
+      options: opts(
+        "Packaging material total",
+        "Warehouse time",
+        "Freight cost",
+        "Commission",
+        "Invoice total",
+        "Pallet count/weight",
+        "Other",
+      ),
+      context: [PACKAGING_FORM, PACKAGING_RATES],
+    },
+  ],
+};

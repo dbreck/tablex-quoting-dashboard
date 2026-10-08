@@ -18,6 +18,7 @@ import {
   RoundTripSection,
   TodaySection,
 } from "./sections";
+import { BrianHomework, MarkHomework, PattyHomework, SamHomework } from "./homework";
 
 const TABS = [
   { key: "ask", label: "Brian's Ask", component: AskSection },
@@ -26,6 +27,10 @@ const TABS = [
   { key: "build", label: "The Build", component: BuildSection },
   { key: "challenges", label: "Challenges & Decisions", component: ChallengesSection },
   { key: "questions", label: "Questions for the Call", component: QuestionsSection },
+  { key: "hw-brian", label: "Brian", component: BrianHomework },
+  { key: "hw-mark", label: "Mark", component: MarkHomework },
+  { key: "hw-sam", label: "Sam", component: SamHomework },
+  { key: "hw-patty", label: "Patty", component: PattyHomework },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
