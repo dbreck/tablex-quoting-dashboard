@@ -12,7 +12,7 @@ export const MEETING = {
   title: "Sales Order Workflow",
   date: "Thursday, October 8, 2026 · 10:00 AM ET",
   attendees: "Brian Craig · Mark · Sam · Danny · Kayla · Arabella",
-  updated: "10/08 09:50 ET",
+  updated: "10/08 16:30 ET · all 28 homework answers in",
 };
 
 /* ------------------------------------------------------------------ */
@@ -421,11 +421,13 @@ export const MODEL_CORE: ModelBox[] = [
     name: "orders",
     role: "New. One per accepted quote.",
     fields: [
-      "so_number",
+      "so_number (accounting series, starts at 13000) + the TX quote number",
       "status: accepted · in_production · ready · shipped · invoiced · paid · closed",
-      "estimated_ship · ship_date · shipped_at",
+      "estimated_ship (4 wk · nesting 6 wk · Quick Ship 10 business days) · shipped_at",
+      "salesperson_contact_id (dropdown filtered to the dealer's sales group)",
+      "prepay_required (pre-invoice before production)",
       "production notes · vendor_po",
-      "xero_invoice_id / status / paid_at",
+      "xero_invoice_id / status / paid_at (once Patty invoices in Xero)",
     ],
     tone: "new",
   },
@@ -434,9 +436,9 @@ export const MODEL_CORE: ModelBox[] = [
 export const MODEL_CHILDREN: ModelBox[] = [
   { name: "order_shipments", role: "1:n per order", fields: ["carrier", "pro_number", "tracking_url", "picked_up_at"], tone: "new" },
   { name: "order_vendor_pos", role: "1:n per order", fields: ["vendor (Valley, Smith, Byrne…)", "po_number", "issued_at", "due", "arrived_at"], tone: "new" },
-  { name: "quote_attachments.kind", role: "Extend existing", fields: ["supporting", "shipping_photo", "po", "cover_sheet"], tone: "extend" },
-  { name: "packaging_costs", role: "Rates + entries", fields: ["rates by Mark (per ft / piece / strip)", "per-order quantities by Tony", "pallets: dims + weight", "computed total"], tone: "new" },
-  { name: "order_recipients", role: "Who gets the emails", fields: ["dealer primary", "rep principal", "salesperson credited", "extra"], tone: "new" },
+  { name: "quote_attachments.kind", role: "Extend existing", fields: ["customer_po", "change_note", "vendor_quote", "vendor_po_ack", "drawing", "electrical_po_ack", "freight_quote", "bol_pro", "shipping_photo", "cover_sheet"], tone: "extend" },
+  { name: "packaging_costs", role: "Rates + entries", fields: ["rates by Mark, effective-from dated (change whenever a supplier does)", "per-order quantities by Tony", "pallets: dims + weight", "computed total", "P/L row: freight, commission, SPIFF, dealer tier, invoice total"], tone: "new" },
+  { name: "order_recipients", role: "Who gets the emails", fields: ["person ordering", "dealer primary", "rep principal", "salesperson credited", "extra", "production@"], tone: "new" },
 ];
 
 export const MODEL_DECISION =
@@ -456,12 +458,13 @@ export const PHASES: Phase[] = [
     label: "P1",
     title: "Sales Order core",
     items: [
-      "orders table + SO number",
+      "orders table + SO number from the accounting series, starting at 13000 (the cutover marker); TX quote number printed on the SO",
       "\"Create order\" from a desk quote; \"New order\" without a quote",
+      "Estimated ship date proposed from lead time (4 weeks · Nesting 6 weeks · Quick Ship 10 business days); Mark moves it",
       "Change orders: re-open lines and pricing on an accepted order under a new revision snapshot",
-      "One PDF renderer with a document title + show-pricing flag → Quote / Sales Order / Work Order / Packing Slip",
-      "Production Cover Sheet",
-      "Auto-email Work Order + Cover Sheet to production@",
+      "One PDF renderer with a document title + show-pricing flag → Quote / Sales Order / Work Order / Packing Slip (Packing Slip = the Work Order)",
+      "Production Cover Sheet: header auto-fills TX SO#, Cust PO#, Dealer, Ship Date; the five desk checkboxes go away; option-code grid stays Mark's (BOM per SKU = a later phase)",
+      "Auto-email Cover Sheet + Work Order + Packing Slip to production@ (Mark)",
     ],
   },
   {
@@ -469,16 +472,24 @@ export const PHASES: Phase[] = [
     label: "P2",
     title: "People + acknowledgments",
     items: [
-      "Dealer primary contact, rep-group principal, salesperson credit, extra recipient",
-      "Supporting-docs prompt on Accept",
-      "Five-way acknowledgment with estimated ship date and links",
+      "Six recipients confirmed: person ordering, dealer primary, sales-group principal, salesperson credited, extra free-form, production@",
+      "Salesperson = dropdown on the order, filtered to the reps in the dealer's sales group; dealers with locations in different territories become one org per location (IDNA Louisville / IDNA Nashville)",
+      "Reps and principals SEE pricing on acknowledgments (Brian: yes)",
+      "Supporting-docs prompt on Accept with typed attachment kinds (customer PO, change notes, vendor quotes, vendor PO + ack, drawings, electrical PO + ack)",
+      "Acknowledgment with SO#, Cust PO#, estimated ship date and signed links",
     ],
   },
   {
     key: "p3",
     label: "P3",
     title: "Ship + track",
-    items: ["Carrier list, PRO / tracking", "Shipped status + \"has shipped\" email", "Shipping photos on the order"],
+    items: [
+      "Carriers: Central Transport · R&L Carriers · WATCO · UPS · Other (typed) · Customer Pick-Up",
+      "PRO / tracking entered by whoever is there (usually Patty, next day): no role gate beyond staff",
+      "Ready status (Mark's \"R\") → Shipped + \"has shipped\" email; ship date = the day it leaves the dock",
+      "Shipping photos: one per pallet, from Mark's phone, straight onto the order (replaces email-to-Patty + shared-server filing)",
+      "Post-ship attachments: freight quote, BOL + PRO#, packaging costs",
+    ],
   },
   {
     key: "p4",
@@ -486,10 +497,9 @@ export const PHASES: Phase[] = [
     title: "Production schedule",
     items: [
       "/ops/production board replacing ORDER STATUS.xlsx",
-      "Columns from Mark's sheet: SO# · product mix · net · Cust PO# · customer · PO received · Ack. ship date · shipped (or R = ready) · review notes · city",
+      "Columns Mark kept (16 of 19): SO# · Non-Nesting / Nesting / Bases Only / Tops Only / Misc · Net · Cust PO# · Customer · Ack. ship date · Shipped date (R = ready) · Valley / Smith / Other ×2 PO-Due-Arrived · Review notes. Dropped: PO Received, City, Returned-to-stock. Brian wants to consolidate further.",
       "Vendor PO groups per order (Valley bases, Smith tops, other vendors): PO / due / arrived",
       "Accepted → active; ship-date edits; shipped drops off",
-      "Later nicety: the \"Returned to stock\" list (finish, dealer, SO#, PO#)",
     ],
   },
   {
@@ -497,9 +507,9 @@ export const PHASES: Phase[] = [
     label: "P5",
     title: "Packaging costs",
     items: [
-      "Mark's rate table with units (per foot / per piece / per strip)",
+      "Mark's rate table with units (per foot / per piece / per strip), dated: rates change whenever a supplier changes price, orders keep the rate they used",
       "Tony's per-order quantity rows + pallets 1–6 with dims and weight (also useful for freight) + auto total",
-      "Patty's export / P&L view; margin per order next to the Xero invoice",
+      "Patty's P/L per order: packaging total · warehouse time · freight cost · commission · SPIFF · dealer tier · vendor charges · invoice total · accepted + shipped dates · customer · ship-to state · P/L total",
     ],
   },
   {
@@ -524,7 +534,11 @@ export const PHASES: Phase[] = [
     key: "xero",
     label: "Later",
     title: "Xero invoice mirroring",
-    items: ["Webhooks (already in backlog as web-xero-webhooks)", "Any Xero WRITE is a separate decision"],
+    items: [
+      "Invoices are still created in SAGE today (SO → invoice button, Patty adds freight + picks the Cust PO#); Xero is the destination, date not set",
+      "Webhooks (already in backlog as web-xero-webhooks) once invoices live in Xero",
+      "Create-in-Xero vs mirror: Brian said \"discuss\"; any Xero WRITE is a separate decision",
+    ],
     track: "later",
   },
 ];
@@ -557,7 +571,7 @@ export const CHALLENGES: Challenge[] = [
   {
     title: "Invoice stays in Xero",
     kind: "decided",
-    body: "One invoice number. Accounting is the book of record. Our Xero integration is read-only by rule. The app mirrors invoice status onto the SO.",
+    body: "One invoice number. Accounting is the book of record. Our Xero integration is read-only by rule. The app mirrors invoice status onto the SO. Caveat from Patty: invoices are created in Sage today and move to Xero on a date not yet set; until then the SO carries the invoice number by hand.",
   },
   {
     title: "Editing after acceptance = change orders",
@@ -574,12 +588,35 @@ export const CHALLENGES: Challenge[] = [
     kind: "risk",
     body: "TableX creates the mailbox. INKY PhishFence quarantines own-domain mail from outside senders, so the allow rule for send.tablex.com must land first.",
   },
-  { title: "SO numbering", kind: "open", body: "Reuse the TX-2026-#### quote number, or a separate series that matches the accounting system." },
-  { title: "Estimated ship date source", kind: "open", body: "Mark's tracker has an Ack. Ship Date per order. Confirm it is the promised date and what moves it." },
+  {
+    title: "SO numbering: accounting series from 13000",
+    kind: "decided",
+    body: "Brian: the SO# drives, tied to the accounting system, starting at 13000 so the cutover is obvious forever; the TX quote number prints on the SO.",
+  },
+  {
+    title: "Estimated ship date = lead time, Mark moves it",
+    kind: "decided",
+    body: "Mark: propose 4 weeks for everything, 6 for Nesting, 10 business days for Quick Ship. Ack. Ship Date is the promise; vendor back orders (laminate, edgeband, powder) or defects push it, and it can pull in if the customer agrees. Ship date = the day it leaves the dock.",
+  },
+  {
+    title: "Brian wants the first phase live Mon 10/19",
+    kind: "risk",
+    body: "\"Hoping the updates could be made and tested next week.\" P1 as scoped (orders, SO series, four documents, cover sheet, production@ email, change orders) is more than a week. Proposal: ship orders + SO# + Sales Order / Work Order / Packing Slip + production@ email by 10/19, cover sheet and change orders the week after.",
+  },
+  {
+    title: "Sage → Xero invoicing date",
+    kind: "open",
+    body: "Sam and Patty both key into Sage today (\"Sage currently, will be Xero\"). The Xero mirror and any webhook work wait on that date. Ask Patty when invoicing moves.",
+  },
+  {
+    title: "Create the Xero invoice, or mirror it?",
+    kind: "open",
+    body: "Brian answered \"not sure, discuss\". Recommendation stays mirror-only (read-only Xero rule); revisit after Patty invoices from Xero and the SO holds freight + Cust PO# (the two things she types today).",
+  },
   {
     title: "Cover sheet is really the purchasing worksheet",
     kind: "risk",
-    body: "Brian named four auto-fill fields; the sheet also carries five checkboxes, vendor PO checklists, option-code grids and rep / comm % / spiff. The header auto-fills; the rest becomes a form the desk and Mark complete in the app.",
+    body: "Mark settled it: the app fills TX SO#, Cust PO#, Dealer and Ship Date; the five desk checkboxes (Ack Cust, Add to Schedule, Updated Queue, Production Review, Check Ship To) disappear with the automation; the option-code grid stays his to tick (Reed can go) until a per-SKU BOM exists.",
   },
   {
     title: "Scope size",
@@ -588,57 +625,253 @@ export const CHALLENGES: Challenge[] = [
   },
   {
     title: "Who owns each step",
-    kind: "open",
-    body: "Desk vs Mark vs Tony vs Patty: who accepts, who sets ship dates, who enters tracking, who reconciles costs.",
+    kind: "decided",
+    body: "Desk (Sam) accepts and picks the salesperson · Mark confirms the ship date, ticks the option grid, takes one photo per pallet · whoever is there (usually Patty, next day) enters carrier + PRO · Tony fills packaging quantities · Patty reads the P/L and invoices.",
+  },
+  {
+    title: "Multi-location dealers cross rep territories",
+    kind: "decided",
+    body: "Brian's example: IDNA Louisville (Melissa Meeks & Associates) vs IDNA Nashville (IMG South). One dealer org per location so the salesperson dropdown filters correctly.",
   },
 ];
 
 /* ------------------------------------------------------------------ */
-/* 6 · Questions for the call                                          */
+/* 6 · Answers and rulings (homework complete 10/08)                   */
 /* ------------------------------------------------------------------ */
 
-export const QUESTION_GROUPS: { who: string; questions: string[] }[] = [
+export type RulingStatus = "decided" | "open" | "flag";
+
+export interface Ruling {
+  topic: string;
+  asked: string;
+  by: Person;
+  answer: string;
+  quote?: string;
+  build: string[];
+  status: RulingStatus;
+}
+
+export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] = [
   {
-    who: "For Brian",
-    questions: [
-      "Priority order of P1–P5?",
-      "Target date for the first phase?",
-      "Should the app CREATE the Xero invoice, or only mirror it?",
-      "SO numbering: reuse the quote number or a separate SO series?",
-      "Should reps / principals see pricing on acknowledgments? (Rep surfaces are zero-dollar today.)",
-      "Who is \"the salesperson\" on an order, and where is that recorded today?",
+    title: "Scope and timing",
+    sub: "Brian's priority and date",
+    rulings: [
+      {
+        topic: "Build order",
+        asked: "Priority order of P1–P5?",
+        by: "brian",
+        answer: "P1 → P2 → P3 → P4 → P5, as proposed.",
+        quote: "This would be my priority order.",
+        build: ["Phases stand as drawn. Pricing import and the SpeX tracker run in parallel."],
+        status: "decided",
+      },
+      {
+        topic: "First phase live",
+        asked: "When do you need the first phase live?",
+        by: "brian",
+        answer: "Monday, October 19.",
+        quote: "Hoping the updates could be made and tested next week.",
+        build: [
+          "Split P1: orders table, SO series, Sales Order / Work Order / Packing Slip PDFs and the production@ email ship by 10/19.",
+          "Cover sheet form and change orders follow the week after. Danny confirms the split with Brian.",
+        ],
+        status: "flag",
+      },
     ],
   },
   {
-    who: "For Mark",
-    questions: [
-      "Where does the estimated ship date come from? What is promised today?",
-      "Ack. Ship Date = the promised date? What moves it?",
-      "Is \"R\" in Shipped Date = ready to ship?",
-      "Which cover sheet checkboxes should the app tick automatically?",
-      "Which ORDER STATUS.xlsx columns must the production board keep?",
-      "Should production@ also get the packing slip?",
-      "Packaging rates: how often do they change?",
+    title: "Numbering and documents",
+    sub: "What the SO is, what prints, who gets it",
+    rulings: [
+      {
+        topic: "SO number",
+        asked: "Reuse the TX quote number, a separate series, or both?",
+        by: "brian",
+        answer: "Both. The SO# is the driver and belongs to the accounting series; start at 13000 so the cutover point is obvious; show the quote number on the SO.",
+        build: ["orders.so_number from a sequence starting at 13000.", "Quote number printed under the SO number on every document.", "Sage SO entry stops at the cutover; Sam keys nothing twice."],
+        status: "decided",
+      },
+      {
+        topic: "Cover sheet",
+        asked: "Which cover-sheet checkboxes should the app tick by itself?",
+        by: "mark",
+        answer: "None. Auto-fill only TX SO#, Cust PO#, Dealer, Ship Date. With the automation the five desk checkboxes are no longer needed. Mark handles the rest.",
+        build: ["Cover sheet = header auto-filled + option-code grid Mark ticks in the app (Reed removed).", "Phase 2 later: a BOM per SKU would tick the grid automatically; TableX has no BOM data today."],
+        status: "decided",
+      },
+      {
+        topic: "Packing slip + production@",
+        asked: "What does the packing slip show? Does production@ get it?",
+        by: "sam",
+        answer: "Packing slip = the Work Order (SO without pricing). Yes to production@: Mark receives Cover Sheet, Work Order and Packing Slip there.",
+        build: ["One renderer, three titles. production@ gets all three on accept.", "TableX creates production@tablex.com; the INKY allow rule for send.tablex.com must land first."],
+        status: "decided",
+      },
+      {
+        topic: "Supporting documents",
+        asked: "What rides with an order?",
+        by: "sam",
+        answer: "Internal, kept with the SO: cover sheet, sales order, customer PO, change notes, vendor quotes for custom laminates / finishes / accessories, vendor PO + acknowledgment PDF, top drawings, electrical PO + acknowledgment. After ship: freight quote, bill of lading + PRO#, packaging costs.",
+        build: ["quote_attachments.kind gets those names; the Accept prompt offers them as upload slots.", "Post-ship kinds unlock once the order is marked shipped."],
+        status: "decided",
+      },
     ],
   },
   {
-    who: "For Sam",
-    questions: [
-      "Which system do you key Sales Orders into today: Sage or Xero?",
-      "Common carriers for the dropdown?",
-      "Does the packing slip show quantities only?",
-      "How many photos per shipment, typically?",
-      "Who enters carrier + tracking after pickup?",
+    title: "People and acknowledgments",
+    sub: "Who is told, what they see",
+    rulings: [
+      {
+        topic: "Recipients",
+        asked: "Confirm the acknowledgment recipients.",
+        by: "brian",
+        answer: "All six: person ordering, dealer primary email, sales-group principal, salesperson credited, additional free-form recipient, production@.",
+        build: ["order_recipients rows per order; production@ is a fixed system recipient."],
+        status: "decided",
+      },
+      {
+        topic: "Pricing on acknowledgments",
+        asked: "Should reps and principals see pricing?",
+        by: "brian",
+        answer: "Yes.",
+        build: ["The acknowledgment carries dealer net for every recipient. Rep portal surfaces stay zero-dollar; only the email changes."],
+        status: "decided",
+      },
+      {
+        topic: "Salesperson credit",
+        asked: "Who is the salesperson on an order, and where does the app get it?",
+        by: "brian",
+        answer: "A dropdown on the order, listing only the reps in the sales group the dealer is connected to. The person entering knows who they worked with.",
+        quote: "IDNA's main location is in Louisville, KY (Melissa Meeks & Associates) … IDNA also has a location in Nashville, TN which would be IMG South. We may just need to set IDNA up twice.",
+        build: ["orders.salesperson_contact_id; options = contacts on the dealer's rep group (via rep_territories).", "Dealers with locations in different territories become one org per location."],
+        status: "decided",
+      },
     ],
   },
   {
-    who: "For Patty",
-    questions: [
-      "Who creates the invoice, when (at ship? at order?), and from which document?",
-      "Payment terms: Net 30? Deposits / prepay for direct customers? Credit card?",
-      "What does the packaging P/L analysis need from each order?",
+    title: "Ship and track",
+    sub: "Dates, carriers, photos",
+    rulings: [
+      {
+        topic: "Estimated ship date",
+        asked: "Where does it come from, and what moves it?",
+        by: "mark",
+        answer: "Standard lead time: 4 weeks for everything, 6 weeks for Nesting, 10 business days for Quick Ship. Ship date = the day it leaves the dock. Vendor supply (laminate, edgeband, powder back orders) or defects after production push it; it can ship early if the customer agrees.",
+        build: ["estimated_ship proposed from lead-time class on accept; Mark edits it on the order and the schedule.", "Every move is logged; a moved date can re-send the acknowledgment."],
+        status: "decided",
+      },
+      {
+        topic: "Carriers",
+        asked: "List the carriers for the dropdown.",
+        by: "mark",
+        answer: "Central Transport, R&L Carriers, WATCO, UPS, Other (typed in), Customer Pick-Up.",
+        build: ["order_shipments.carrier enum + free text for Other."],
+        status: "decided",
+      },
+      {
+        topic: "Ready and shipped",
+        asked: "What does \"R\" mean, and who enters tracking?",
+        by: "sam",
+        answer: "R = Ready to ship. Tracking is entered by whoever is there, typically Patty the next day.",
+        build: ["Order status gains ready between in_production and shipped.", "Any staff login can enter carrier + PRO; no role gate."],
+        status: "decided",
+      },
+      {
+        topic: "Shipping photos",
+        asked: "How many photos, who takes them?",
+        by: "sam",
+        answer: "One picture per pallet. Mark takes it on his phone, emails it to Patty, and she files it on the shared server under the SO#.",
+        build: ["Phone-friendly upload on the order page (camera capture), stored as shipping_photo on the SO. The email-and-file step disappears."],
+        status: "decided",
+      },
     ],
   },
+  {
+    title: "Production schedule",
+    sub: "What replaces ORDER STATUS.xlsx",
+    rulings: [
+      {
+        topic: "Columns",
+        asked: "Which columns must the production board keep?",
+        by: "mark",
+        answer: "16 of 19: SO#, Non-Nesting, Nesting, Bases Only, Tops Only, Misc, Net Price, Cust PO#, Customer, Ack. Ship Date, Shipped Date, Valley / Smith / Other ×2 PO-Due-Arrived, Review notes. Dropped: PO Received, City, Returned-to-stock list.",
+        quote: "Brian has a couple thoughts on how we might be able to eliminate a few columns while still have all of this info.",
+        build: ["/ops/production board with those columns; product-mix counts derive from the lines.", "Vendor PO groups per order. Brian's consolidation ideas go into the first review."],
+        status: "decided",
+      },
+    ],
+  },
+  {
+    title: "Accounting",
+    sub: "Patty and Sam on invoices, terms, payments",
+    rulings: [
+      {
+        topic: "System today",
+        asked: "Sage or Xero?",
+        by: "patty",
+        answer: "Sage, for both the SO and the invoice. \"Sage currently, will be Xero.\" No date given.",
+        build: ["Until invoicing moves, the SO carries the invoice number by hand and the Xero mirror waits.", "Ask Patty for the Xero invoicing date; it gates web-xero-invoice-mirror and web-xero-webhooks."],
+        status: "open",
+      },
+      {
+        topic: "Invoice creation",
+        asked: "When, from what, what is re-typed?",
+        by: "patty",
+        answer: "At ship. Sage has a button that turns the SO into an invoice; Patty types freight if needed, manually picks the Customer PO# for that SO, emails the customer from Sage and prints a copy.",
+        quote: "Brian: if all of this is housed within the electronic SO, we no longer need to print these documents.",
+        build: ["The SO already holds freight and the Cust PO#, so nothing is re-typed when invoicing moves to Xero.", "Create-in-Xero vs mirror stays open (Brian: discuss). Recommendation: mirror first."],
+        status: "open",
+      },
+      {
+        topic: "Terms",
+        asked: "Payment terms in use?",
+        by: "patty",
+        answer: "Net 30 for most. A select few prepay, which creates a pre-invoice before production starts.",
+        build: ["orders.prepay_required; a prepaid order waits in accepted until the pre-invoice is paid, then enters production."],
+        status: "decided",
+      },
+      {
+        topic: "Payments",
+        asked: "How is a payment recorded?",
+        by: "patty",
+        answer: "ACH or check arrives, Patty matches it to the printed Sage invoice and marks it paid in Sage.",
+        build: ["Paid status mirrors from Xero onto the SO once invoicing lives there; no manual paid toggle in the app."],
+        status: "decided",
+      },
+    ],
+  },
+  {
+    title: "Packaging and P/L",
+    sub: "Rates and the per-order analysis",
+    rulings: [
+      {
+        topic: "Rate changes",
+        asked: "How often do packaging rates change?",
+        by: "mark",
+        answer: "Whenever a supplier changes price.",
+        build: ["Rate table with effective-from dates; each order keeps the rate it was costed at."],
+        status: "decided",
+      },
+      {
+        topic: "P/L needs",
+        asked: "What does the packaging P/L analysis need from each order?",
+        by: "patty",
+        answer: "Packaging material total, warehouse time, freight cost, commission, invoice total, other. Plus SPIFF, dealer discount tier (50/20 …), date accepted and date shipped, customer name, vendor charges, ship-to state, P/L total.",
+        build: ["One P/L row per order from fields the SO already has (tier, dates, customer, ship-to, vendor POs) plus the packaging and commission entries; CSV export for Patty."],
+        status: "decided",
+      },
+    ],
+  },
+];
+
+export const SAM_TODAY =
+  "I type out the entire quote into an excel file. If ordered, I then retype into another excel file. Then I print the SO, WO, Packing Slip, any email or notes that need to accompany the job, add the cover sheet and add the customer and job info to the cover sheet, then add to schedule (which is another spreadsheet), then acknowledge customer via email, then lay on Mark's desk.";
+
+export const NEXT_STEPS = [
+  { t: "Confirm the 10/19 split with Brian", d: "Orders + SO series + three PDFs + production@ email first; cover sheet and change orders the week after." },
+  { t: "Patty: Xero invoicing date", d: "Gates the invoice mirror and webhooks. Until then the SO carries the invoice number by hand." },
+  { t: "TableX creates production@tablex.com", d: "Plus the INKY allow rule for send.tablex.com, or the auto-emails land in quarantine." },
+  { t: "Scope + estimate to Richie", d: "Second project-sized effort, quoted separately." },
 ];
 
 /* ------------------------------------------------------------------ */

@@ -14,7 +14,7 @@ import {
   AskSection,
   BuildSection,
   ChallengesSection,
-  QuestionsSection,
+  AnswersSection,
   RoundTripSection,
   TodaySection,
 } from "./sections";
@@ -26,7 +26,7 @@ const TABS = [
   { key: "round", label: "After Accept: the Round Trip", component: RoundTripSection },
   { key: "build", label: "The Build", component: BuildSection },
   { key: "challenges", label: "Challenges & Decisions", component: ChallengesSection },
-  { key: "questions", label: "Questions for the Call", component: QuestionsSection },
+  { key: "answers", label: "Answers & Rulings", component: AnswersSection },
   { key: "hw-brian", label: "Brian", component: BrianHomework },
   { key: "hw-mark", label: "Mark", component: MarkHomework },
   { key: "hw-sam", label: "Sam", component: SamHomework },

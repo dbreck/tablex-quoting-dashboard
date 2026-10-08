@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Order Workflow — the six tab sections. Pure presentation over ./data,
+ * Order Workflow — the tab sections (ask · today · round trip · build · challenges · answers). Pure presentation over ./data,
  * reusing the Launch Status primitives.
  */
 
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { salesOrderSteps } from "@/data/sales-order-steps";
 import {
   BRIAN_ASKS,
@@ -19,7 +19,10 @@ import {
   MODEL_DECISION,
   PHASES,
   PIPELINE,
-  QUESTION_GROUPS,
+  NEXT_STEPS,
+  PEOPLE,
+  RULING_GROUPS,
+  SAM_TODAY,
   REUSE,
   ROUND_LANES,
   ROUND_TRIP,
@@ -30,6 +33,7 @@ import {
   FILES_RECEIVED,
   type MatrixStatus,
   type ModelBox,
+  type RulingStatus,
   type When,
 } from "./data";
 import {
@@ -584,7 +588,7 @@ export function ChallengesSection() {
   return (
     <div className="space-y-8">
       <SectionIntro title="Challenges and decisions">
-        <p>Three decisions are already made. The rest need TableX input or carry risk to the schedule.</p>
+        <p>Homework is complete (28 of 28 answers, 10/08). Most of this is now decided; what is left is the Xero invoicing date, create-vs-mirror, and the 10/19 target.</p>
       </SectionIntro>
       <div className="grid grid-cols-3 gap-4">
         {(Object.keys(KIND_META) as (keyof typeof KIND_META)[]).map((k) => (
@@ -609,72 +613,99 @@ export function ChallengesSection() {
 }
 
 /* ================================================================== */
-/* 6 · Questions for the call                                          */
+/* 6 · Answers and rulings                                             */
 /* ================================================================== */
 
-export function QuestionsSection() {
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-  const total = QUESTION_GROUPS.reduce((n, g) => n + g.questions.length, 0);
-  const done = Object.values(checked).filter(Boolean).length;
-  const offsets = QUESTION_GROUPS.map((_, gi) =>
-    QUESTION_GROUPS.slice(0, gi).reduce((sum, g) => sum + g.questions.length, 0),
-  );
+const RULING_META: Record<RulingStatus, { label: string; chip: string; bar: string }> = {
+  decided: { label: "Decided", chip: "bg-emerald-50 text-emerald-700 border-emerald-200", bar: "bg-emerald-500" },
+  open: { label: "Still open", chip: "bg-amber-50 text-amber-700 border-amber-200", bar: "bg-amber-500" },
+  flag: { label: "Needs Danny", chip: "bg-rose-50 text-rose-700 border-rose-200", bar: "bg-rose-500" },
+};
+
+export function AnswersSection() {
+  const all = RULING_GROUPS.flatMap((g) => g.rulings);
+  const count = (st: RulingStatus) => all.filter((r) => r.status === st).length;
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <SectionIntro title="Questions for the call">
-          <p>Tick each one as it is answered. Nothing is saved; this is a live checklist.</p>
+        <SectionIntro title="Answers and rulings">
+          <p>
+            Every homework question was answered on 10/08 (Brian keyed all four tabs). Each card shows what was asked, the
+            answer, and what it changes in the build.
+          </p>
         </SectionIntro>
         <div className="rounded-xl bg-brand-navy px-5 py-3 text-white">
           <p className="text-2xl font-bold tabular-nums">
-            {done} <span className="text-base text-white/60">/ {total}</span>
+            28 <span className="text-base text-white/60">/ 28</span>
           </p>
           <p className="text-[11px] uppercase tracking-wide text-white/60">Answered</p>
         </div>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-        <div className="h-full rounded-full bg-brand-green transition-all" style={{ width: `${total ? (done / total) * 100 : 0}%` }} />
-      </div>
-      <div className="grid gap-6 lg:grid-cols-2">
-        {QUESTION_GROUPS.map((g, gi) => (
-          <Card key={g.who}>
-            <CardHeading>{g.who}</CardHeading>
-            <ul className="mt-3 space-y-1">
-              {g.questions.map((q, qi) => {
-                const n = offsets[gi] + qi + 1;
-                const id = `${g.who}:${q}`;
-                const on = !!checked[id];
-                return (
-                  <li key={id}>
-                    <label className={`flex cursor-pointer items-start gap-3 rounded-lg px-2 py-2 hover:bg-gray-50 ${on ? "opacity-60" : ""}`}>
-                      <input
-                        type="checkbox"
-                        checked={on}
-                        onChange={(e) => setChecked((c) => ({ ...c, [id]: e.target.checked }))}
-                        className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-brand-green,#16a34a)]"
-                      />
-                      <span className="w-5 shrink-0 text-xs font-bold tabular-nums text-gray-400">{n}.</span>
-                      <span className={`text-sm text-gray-800 ${on ? "line-through" : ""}`}>{q}</span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
-          </Card>
+      <div className="grid grid-cols-3 gap-4">
+        {(Object.keys(RULING_META) as RulingStatus[]).map((k) => (
+          <StatTile key={k} value={`${count(k)}`} label={RULING_META[k].label} accent={k === "decided"} />
         ))}
       </div>
-      <Card>
-        <CardHeading>After the call</CardHeading>
-        <div className="mt-4">
-          {[
-            { t: "Map the files to the build", d: "Mark's tracker, cover sheet and packaging form become P1, P4 and P5 specs." },
-            { t: "Danny sets phase dates", d: "P1 first; priority order from Brian." },
-            { t: "Scope + estimate to Richie", d: "Second project-sized effort, quoted separately." },
-          ].map((s, i, arr) => (
-            <FlowStep key={s.t} n={i + 1} title={s.t} detail={s.d} last={i === arr.length - 1} />
-          ))}
+
+      {RULING_GROUPS.map((g) => (
+        <div key={g.title}>
+          <div className="mb-3 flex items-baseline gap-3">
+            <h3 className="text-base font-bold text-gray-900">{g.title}</h3>
+            <span className="text-sm text-gray-500">{g.sub}</span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {g.rulings.map((r) => {
+              const m = RULING_META[r.status];
+              const who = PEOPLE[r.by];
+              return (
+                <Card key={r.topic} className="relative overflow-hidden pl-6">
+                  <span aria-hidden className={`absolute inset-y-0 left-0 w-1.5 ${m.bar}`} />
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${m.chip}`}>{m.label}</span>
+                    <OwnerChip owner={who.first} />
+                  </div>
+                  <p className="mt-3 text-base font-bold text-gray-900">{r.topic}</p>
+                  <p className="mt-1 text-xs text-gray-500">Asked: {r.asked}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-800">{r.answer}</p>
+                  {r.quote && (
+                    <blockquote className="mt-2 border-l-2 border-gray-200 pl-3 text-sm italic leading-relaxed text-gray-600">
+                      “{r.quote}”
+                    </blockquote>
+                  )}
+                  <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">In the build</p>
+                  <ul className="mt-1 space-y-1">
+                    {r.build.map((b) => (
+                      <li key={b} className="flex gap-2 text-sm text-gray-700">
+                        <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-brand-green" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              );
+            })}
+          </div>
         </div>
-      </Card>
+      ))}
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeading>Sam, today, after an order is accepted</CardHeading>
+          <blockquote className="mt-3 border-l-2 border-gray-200 pl-3 text-sm italic leading-relaxed text-gray-700">“{SAM_TODAY}”</blockquote>
+          <p className="mt-3 text-sm text-gray-600">
+            Two re-typings, five printouts, a second spreadsheet and a hand-written cover sheet. P1 removes all of it: the
+            quote becomes the order, the documents render from it, and production@ gets them.
+          </p>
+        </Card>
+        <Card>
+          <CardHeading>Next</CardHeading>
+          <div className="mt-4">
+            {NEXT_STEPS.map((st, i, arr) => (
+              <FlowStep key={st.t} n={i + 1} title={st.t} detail={st.d} last={i === arr.length - 1} />
+            ))}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
