@@ -11,6 +11,7 @@ const tabs = [
   { name: "Scope", href: "/admin/scope" },
   { name: "Timeline", href: "/admin/timeline" },
   { name: "Estimate", href: "/admin/estimate" },
+  { name: "Financials", href: "/admin/financials" },
   { name: "Infrastructure", href: "/admin/infrastructure" },
   { name: "Integrations", href: "/admin/integrations/monday" },
 ];

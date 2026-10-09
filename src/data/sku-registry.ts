@@ -67,6 +67,12 @@ export const baseCodes: Record<string, { name: string; description: string }> = 
   "FD": { name: "Folding", description: "Folding mechanism" },
   "FR": { name: "Frame", description: "Full frame base" },
   "U": { name: "U-Leg", description: "U-shaped leg" },
+  // Added 2026-10-09 from Q1 2026 Xero invoice lines (fin parser). Names are as
+  // invoiced; only the D disc base is described on an invoice line itself.
+  "D": { name: "Disc Base", description: "Disc base (e.g. 45D26, 99D32)" },
+  "QC": { name: "QC Base", description: "QC column base as invoiced (e.g. 44QC2)" },
+  "Q": { name: "Q Base", description: "Q base as invoiced (e.g. 71RD36Q2)" },
+  "H": { name: "H Base", description: "Pneumatic height-adjustable base as invoiced (e.g. 74TC2024H1524)" },
 };
 
 export const optionSuffixes: Record<string, { name: string; description: string }> = {
