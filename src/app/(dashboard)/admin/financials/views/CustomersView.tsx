@@ -160,7 +160,7 @@ export default function CustomersView({ data }: { data: FinancialsData }) {
           </div>
         </Panel>
 
-        <Panel title="New customers per year" caption="Year of each customer's first authorised or paid invoice in Xero (detail starts Oct 2020).">
+        <Panel title="New customers per year" caption="Year of each customer's first authorised or paid invoice in Xero (detail starts Aug 2020).">
           <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={conc.newPerYear} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>

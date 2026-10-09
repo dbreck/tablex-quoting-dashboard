@@ -17,7 +17,7 @@
  */
 
 export const SCOPES =
-  "offline_access accounting.invoices.read accounting.contacts.read accounting.reports.read";
+  "offline_access accounting.invoices.read accounting.contacts.read accounting.reports.profitandloss.read";
 
 export const AUTHORIZE_URL = "https://login.xero.com/identity/connect/authorize";
 const TOKEN_URL = "https://identity.xero.com/connect/token";

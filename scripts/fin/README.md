@@ -2,7 +2,7 @@
 
 Fills the `fin_*` tables (migration `supabase/migrations/029_financials.sql`, tracker
 Supabase `ofweciopslhrepobqpco`) that back `/admin/financials`. Revenue source of truth
-is the Xero org **TableX, LLC**: invoice detail Oct 2020 → Mar 2026, then P&L journal
+is the Xero org **TableX, LLC**: invoice detail Aug 2020 → Mar 2026, then P&L journal
 totals only (`fin_pl_monthly`).
 
 All Xero access is **read-only** (`.read` scopes, GET only).
@@ -60,7 +60,7 @@ lines are deleted and re-inserted on every pull.
 4. Run `npx tsx scripts/fin/xero-connect.ts`, approve **TableX, LLC** in the browser.
 
 Scopes requested: `offline_access accounting.invoices.read accounting.contacts.read
-accounting.reports.read` (granular scopes; apps made after March 2026 cannot get the
+accounting.reports.profitandloss.read` (granular scopes; apps made after March 2026 cannot get the
 retired broad `accounting.transactions.read`). This is a separate app from tablex-site's
 "TableX CRM Sync" so the two never fight over one rotating refresh token.
 

@@ -5,7 +5,7 @@
  *   npx tsx scripts/fin/reconcile.ts
  *
  * Exit 1 when any count is off by more than 1 %, any dollar sum by more than 0.5 %,
- * the first invoice is not in Oct 2020, or any invoice is dated after 2026-03-31.
+ * the first invoice is not in Aug 2020, or any invoice is dated after 2026-03-31.
  * The Q1-2026 line-class table is informational (parser health), never fails the run.
  */
 import { join } from "path";
@@ -18,7 +18,7 @@ const EXPECTED = {
   allTimePaid: { count: 3803, cents: 1_687_457_289 },
   paid2025: { count: 609, cents: 328_552_277 },
   paid2026Q1: { count: 121, cents: 49_883_765 },
-  firstInvoiceMonth: "2020-10",
+  firstInvoiceMonth: "2020-08", // ledger starts 2020-08-31 (verified by the 10/09 full pull; the connector summary said Oct)
   customers: 375,
   rowsAfterCutoff: 0,
   cutoff: "2026-03-31",

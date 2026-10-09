@@ -30,7 +30,7 @@ export default function FinancialsClient({ data }: { data: FinancialsData }) {
     <div>
       <Header
         title="TableX Financials"
-        subtitle={`Sales and timelines from Xero (invoice detail Oct 2020 – Mar 2026, P&L after) and the tablex.com snapshot · as of ${shortDate(data.asOf)}`}
+        subtitle={`Sales and timelines from Xero (invoice detail Aug 2020 – Mar 2026, P&L after) and the tablex.com snapshot · as of ${shortDate(data.asOf)}`}
       />
 
       {data.errors.length > 0 && activeView !== "health" && (
