@@ -37,8 +37,8 @@ export interface LineItem {
 }
 
 export const ESTIMATE_META = {
-  number: "Estimate #1301 (draft)",
-  date: "10/08/2026",
+  number: "Estimate #1372 (draft, Harvest 4121489)",
+  date: "10/09/2026",
   subject: "TableX | Sales Order Workflow\nQuote → Sales Order → Production → Shipment → Invoice",
 };
 
