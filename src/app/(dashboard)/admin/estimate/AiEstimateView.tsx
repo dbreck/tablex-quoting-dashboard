@@ -21,6 +21,7 @@ import {
   THINKING,
   TOTAL_COST,
   TRAD_HOURS,
+  XERO_MIRROR,
   lineCost,
 } from "@/data/order-workflow-estimate-ai";
 
@@ -110,6 +111,20 @@ export default function AiEstimateView() {
               </tr>
             </tfoot>
           </table>
+        </div>
+      </section>
+
+      {/* Xero mirror explainer (line 7) */}
+      <section className="rounded-2xl border border-gray-200 bg-gray-50/70 p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-gray-400">Line 7 · gated</p>
+        <h2 className="mt-1 text-lg font-bold text-gray-900">{XERO_MIRROR.title}</h2>
+        <div className="mt-4 grid gap-5 md:grid-cols-3">
+          {XERO_MIRROR.sections.map((sec) => (
+            <div key={sec.heading}>
+              <h3 className="text-sm font-bold text-gray-900">{sec.heading}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-gray-700">{sec.text}</p>
+            </div>
+          ))}
         </div>
       </section>
 

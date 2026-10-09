@@ -212,3 +212,25 @@ export const RICHIE_NOTE: { title: string; sections: { heading: string; paras: s
     },
   ],
 };
+
+/** Plain-language explainer for the gated line 7, rendered under the line table (Danny 10/09). */
+export const XERO_MIRROR: { title: string; sections: { heading: string; text: string }[] } = {
+  title: "What the Xero mirror is",
+  sections: [
+    {
+      heading: "What it is",
+      text:
+        "Once a Sales Order exists in the site app, the invoice for it is still created in accounting, not in the app. The mirror reads that invoice back from Xero and shows it on the Sales Order: invoice number, status and paid date. The desk never types or toggles those by hand.",
+    },
+    {
+      heading: "How it works",
+      text:
+        "Xero webhooks for Contacts and Invoices hit an endpoint with a signature check, and an idempotent worker feeds the existing read-only Xero sync. The app never writes to Xero. Creating the invoice from the app is out of scope, which keeps the standing read-only Xero rule.",
+    },
+    {
+      heading: "Why it is gated",
+      text:
+        "Sam and Patty confirmed on 10/08 that invoices are still created in Sage, and nobody has a date for the move to Xero. Mirroring Xero today would mirror nothing. The line starts only when Patty invoices from Xero and is billed when it starts. Until then the desk types the invoice number onto the Sales Order by hand.",
+    },
+  ],
+};
