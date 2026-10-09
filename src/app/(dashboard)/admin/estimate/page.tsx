@@ -5,8 +5,10 @@ import { cn } from "@/lib/utils";
 import CostMatrixView from "./CostMatrixView";
 import HarvestEstimateView from "./HarvestEstimateView";
 import OrderWorkflowEstimateView from "./OrderWorkflowEstimateView";
+import AiEstimateView from "./AiEstimateView";
 
 const views = [
+  { id: "ai", label: "AI-Assisted Estimate" },
   { id: "cost-matrix", label: "Cost Matrix" },
   { id: "harvest", label: "Harvest Estimate" },
   { id: "order-workflow", label: "Order Workflow Estimate" },
@@ -15,7 +17,7 @@ const views = [
 type ViewId = typeof views[number]["id"];
 
 export default function AdminEstimatePage() {
-  const [activeView, setActiveView] = useState<ViewId>("cost-matrix");
+  const [activeView, setActiveView] = useState<ViewId>("ai");
 
   return (
     <div>
@@ -39,7 +41,15 @@ export default function AdminEstimatePage() {
         </div>
       </div>
 
-      {activeView === "cost-matrix" ? <CostMatrixView /> : activeView === "harvest" ? <HarvestEstimateView /> : <OrderWorkflowEstimateView />}
+      {activeView === "ai" ? (
+        <AiEstimateView />
+      ) : activeView === "cost-matrix" ? (
+        <CostMatrixView />
+      ) : activeView === "harvest" ? (
+        <HarvestEstimateView />
+      ) : (
+        <OrderWorkflowEstimateView />
+      )}
     </div>
   );
 }
