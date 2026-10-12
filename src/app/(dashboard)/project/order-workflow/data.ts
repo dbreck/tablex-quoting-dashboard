@@ -10,9 +10,9 @@ import { salesOrderSteps } from "@/data/sales-order-steps";
 
 export const MEETING = {
   title: "Sales Order Workflow",
-  date: "Thursday, October 8, 2026 · 10:00 AM ET",
+  date: "Monday, October 12, 2026 · 11:00 AM ET · workflow walkthrough (first call Thu 10/08)",
   attendees: "Brian Craig · Mark · Sam · Danny · Kayla · Arabella",
-  updated: "10/08 16:30 ET · all 28 homework answers in",
+  updated: "10/12 10:45 ET · Brian: Xero starts with the new system, no Sage backfill (email 10:29)",
 };
 
 /* ------------------------------------------------------------------ */
@@ -532,12 +532,12 @@ export const PHASES: Phase[] = [
   },
   {
     key: "xero",
-    label: "Later",
+    label: "With P1",
     title: "Xero invoice mirroring",
     items: [
-      "Invoices are still created in SAGE today (SO → invoice button, Patty adds freight + picks the Cust PO#); Xero is the destination, date not set",
-      "Webhooks (already in backlog as web-xero-webhooks) once invoices live in Xero",
-      "Create-in-Xero vs mirror: Brian said \"discuss\"; any Xero WRITE is a separate decision",
+      "Brian 10/12: Xero starts WITH the new system. Every order the app creates is invoiced in Xero; Sage runs out its existing orders in parallel (two systems for a short period, no Sage → Xero transfer).",
+      "Mirror: the SO shows the Xero invoice number, status and paid date through the read-only sync; webhooks (web-xero-webhooks) make it live",
+      "Create-in-Xero vs mirror: Brian said \"discuss\"; any Xero WRITE is a separate decision. Mirror ships first; Patty keys the invoice in Xero from the SO.",
     ],
     track: "later",
   },
@@ -571,7 +571,7 @@ export const CHALLENGES: Challenge[] = [
   {
     title: "Invoice stays in Xero",
     kind: "decided",
-    body: "One invoice number. Accounting is the book of record. Our Xero integration is read-only by rule. The app mirrors invoice status onto the SO. Caveat from Patty: invoices are created in Sage today and move to Xero on a date not yet set; until then the SO carries the invoice number by hand.",
+    body: "One invoice number. Accounting is the book of record. Our Xero integration is read-only by rule. The app mirrors invoice status onto the SO. Brian 10/12: Xero invoicing starts with the first order the new system takes; Sage keeps only the orders already in it until they ship and are paid.",
   },
   {
     title: "Editing after acceptance = change orders",
@@ -605,13 +605,13 @@ export const CHALLENGES: Challenge[] = [
   },
   {
     title: "Sage → Xero invoicing date",
-    kind: "open",
-    body: "Sam and Patty both key into Sage today (\"Sage currently, will be Xero\"). The Xero mirror and any webhook work wait on that date. Ask Patty when invoicing moves.",
+    kind: "decided",
+    body: "Brian 10/12: \"Our plan was start Xero with the use of the new system … just run out Sage and any new order would be handled through Xero.\" The cutover date IS the P1 go-live (10/19). No existing Sage orders move; two systems run for a short period. The Xero mirror is unblocked.",
   },
   {
     title: "Create the Xero invoice, or mirror it?",
     kind: "open",
-    body: "Brian answered \"not sure, discuss\". Recommendation stays mirror-only (read-only Xero rule); revisit after Patty invoices from Xero and the SO holds freight + Cust PO# (the two things she types today).",
+    body: "Brian answered \"not sure, discuss\". Recommendation stays mirror-only (read-only Xero rule): Patty keys the invoice in Xero from the SO, which already holds freight + Cust PO# (the two things she types today). Revisit create-in-Xero after the first month on two systems.",
   },
   {
     title: "Cover sheet is really the purchasing worksheet",
@@ -809,9 +809,10 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
         topic: "System today",
         asked: "Sage or Xero?",
         by: "patty",
-        answer: "Sage, for both the SO and the invoice. \"Sage currently, will be Xero.\" No date given.",
-        build: ["Until invoicing moves, the SO carries the invoice number by hand and the Xero mirror waits.", "Ask Patty for the Xero invoicing date; it gates web-xero-invoice-mirror and web-xero-webhooks."],
-        status: "open",
+        answer: "Sage for both the SO and the invoice today. Brian 10/12: Xero starts with the new system. New orders are invoiced in Xero from day one; existing Sage orders run out in Sage; nothing is transferred.",
+        quote: "Our plan was start Xero with the use of the new system. We did not plan to shift current orders over into Xero … I know we would have to use two systems for a short period but operationally I feel this could be cleaner and easier.",
+        build: ["Cutover = P1 go-live. web-xero-invoice-mirror and web-xero-webhooks are no longer gated; the mirror ships alongside P1.", "The SO never carries a hand-typed invoice number; the Xero sync fills it."],
+        status: "decided",
       },
       {
         topic: "Invoice creation",
@@ -819,7 +820,7 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
         by: "patty",
         answer: "At ship. Sage has a button that turns the SO into an invoice; Patty types freight if needed, manually picks the Customer PO# for that SO, emails the customer from Sage and prints a copy.",
         quote: "Brian: if all of this is housed within the electronic SO, we no longer need to print these documents.",
-        build: ["The SO already holds freight and the Cust PO#, so nothing is re-typed when invoicing moves to Xero.", "Create-in-Xero vs mirror stays open (Brian: discuss). Recommendation: mirror first."],
+        build: ["The SO already holds freight and the Cust PO#, so Patty keys the Xero invoice from the SO with nothing re-typed.", "Create-in-Xero vs mirror stays open (Brian: discuss). Recommendation: mirror first; revisit after the first month."],
         status: "open",
       },
       {
@@ -837,6 +838,15 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
         answer: "ACH or check arrives, Patty matches it to the printed Sage invoice and marks it paid in Sage.",
         build: ["Paid status mirrors from Xero onto the SO once invoicing lives there; no manual paid toggle in the app."],
         status: "decided",
+      },
+      {
+        topic: "Xero gap, April → cutover",
+        asked: "Xero has no sales invoices after 3/31/26 (P&L journals only). Backfill from Sage, or Move My Ledger?",
+        by: "brian",
+        answer: "Confirmed: nothing has been posted to Xero since April. TableX does it themselves if at all (Move My Ledger was \"horrible to work with\"). No plan to move Sage orders into Xero; the Sage → Xero import was \"very time consuming and problematic.\"",
+        quote: "We want to do things ourselves. Move My Ledger was horrible to work with.",
+        build: ["Customer / series / rep reporting in Xero stays blind from April 2026 until TableX imports the Sage register (Xero sales-invoice CSV). Not our build.", "The financials dashboard reads fin_invoices from Xero only; the April → cutover months remain P&L totals."],
+        status: "flag",
       },
     ],
   },
@@ -869,7 +879,8 @@ export const SAM_TODAY =
 
 export const NEXT_STEPS = [
   { t: "Confirm the 10/19 split with Brian", d: "Orders + SO series + three PDFs + production@ email first; cover sheet and change orders the week after." },
-  { t: "Patty: Xero invoicing date", d: "Gates the invoice mirror and webhooks. Until then the SO carries the invoice number by hand." },
+  { t: "Xero cutover = P1 go-live (Brian 10/12)", d: "New orders invoice in Xero from the first SO the app issues; Sage runs out. Patty needs the Xero sales-invoice flow ready the same day." },
+  { t: "April → cutover Xero gap", d: "TableX's call whether to import the Sage register. Reporting by customer stays blind for those months otherwise." },
   { t: "TableX creates production@tablex.com", d: "Plus the INKY allow rule for send.tablex.com, or the auto-emails land in quarantine." },
   { t: "Scope + estimate to Richie", d: "Second project-sized effort, quoted separately." },
 ];
