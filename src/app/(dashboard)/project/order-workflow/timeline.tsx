@@ -411,16 +411,15 @@ export function TimelineSection() {
     <div className="space-y-6">
       <SectionIntro title="Three weeks, Wed 10/14 to Tue 11/03">
         <p>
-          The order workflow builds in three weeks for a fixed {TIMELINE.fixedPrice}. The first phase goes live on Brian&rsquo;s date, Mon 10/19,
+          The order workflow builds in three weeks. The first phase goes live on Brian&rsquo;s date, Mon 10/19,
           the same day Xero takes over invoicing and SpeX Studio is due back online. Hover a bar for its detail.
         </p>
       </SectionIntro>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatTile value="3 weeks" label={fmtRange(TIMELINE.kickoff, TIMELINE.end)} sub="Work starts Wednesday; today is Mon 10/12" />
-        <StatTile value={TIMELINE.fixedPrice} label="Fixed price" sub={TIMELINE.pricingNote} accent />
         <StatTile value="Mon 10/19" label="First phase live" sub="P1 core + Xero cutover; SpeX back ~10/19" />
-        <StatTile value={gates.map((g) => g.share).join(" / ")} label="Milestone gates" sub={gates.map((g) => `${g.share} ${markerWhen(g)}`).join(" · ")} />
+        <StatTile value={`${gates.length} milestones`} label="Acceptance points" sub={gates.map((g) => `${g.label.split(" · ")[0]} ${markerWhen(g)}`).join(" · ")} />
       </div>
 
       <Card className="hidden lg:block">

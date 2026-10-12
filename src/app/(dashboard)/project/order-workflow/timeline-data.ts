@@ -8,7 +8,7 @@
  * Supersedes the timeline in src/data/order-workflow-estimate-ai.ts
  * (lines 1-4 live 10/19, production board 10/23, packaging 10/26). The scope
  * lines are the same; the engagement is now 3 weeks, Wed 10/14 to Tue 11/03.
- * Money shows only as the $30,000 fixed total and the 40/30/30 gates. No hours.
+ * No money on this page: pricing is settled between Richie and Brian and is not discussed with TableX.
  */
 
 export type ISODate = `${number}-${number}-${number}`;
@@ -24,8 +24,6 @@ export const TIMELINE = {
   keyDate: "2026-10-19" as ISODate,
   keyDateLabel: "Mon 10/19: first phase live",
   end: "2026-11-03" as ISODate,
-  fixedPrice: "$30,000",
-  pricingNote: "Fixed price, settled between Richie Hughes and Brian. Paid in three gates; no hours.",
   weeks: [
     { key: "w1", label: "Week 1", start: "2026-10-14" as ISODate, end: "2026-10-20" as ISODate, theme: "P1 core live + SpeX relaunch" },
     { key: "w2", label: "Week 2", start: "2026-10-21" as ISODate, end: "2026-10-27" as ISODate, theme: "Acknowledgments, shipping, Xero mirror" },
@@ -50,7 +48,7 @@ export const LANES: Lane[] = [
   },
   { key: "xero", label: "Xero", sub: "Cutover + read-only mirror" },
   { key: "owes", label: "TableX owes", sub: "Inputs we wait on" },
-  { key: "gates", label: "Milestone gates", sub: "40 / 30 / 30 of $30,000" },
+  { key: "gates", label: "Milestone gates", sub: "Three acceptance points" },
 ];
 
 /**
@@ -91,7 +89,7 @@ export interface Marker {
   kind: MarkerKind;
   /** Approximate date ("~"). */
   approx?: boolean;
-  /** Gate share, e.g. "40%". */
+  /** Unused; kept so the marker shape is stable. */
   share?: string;
   assumed?: boolean;
 }
@@ -289,7 +287,6 @@ export const MARKERS: Marker[] = [
     label: "M1 · kickoff",
     detail: "Verbal start from Richie / Brian.",
     kind: "gate",
-    share: "40%",
   },
   {
     id: "m2",
@@ -298,7 +295,6 @@ export const MARKERS: Marker[] = [
     label: "M2 · P1 + SpeX",
     detail: "P1 live and the SpeX relaunch accepted.",
     kind: "gate",
-    share: "30%",
     approx: true,
   },
   {
@@ -308,7 +304,6 @@ export const MARKERS: Marker[] = [
     label: "M3 · handoff",
     detail: "P5 live and handoff.",
     kind: "gate",
-    share: "30%",
     approx: true,
   },
 ];
@@ -325,12 +320,12 @@ export const SPEX_RISK = {
   why: [
     "SpeX lands the same week as P1 and needs the same reviewers (Brian and Mark).",
     "The October price-book import and Mark's new catalog items change what orders carry, so a late or changed catalog can force rework on the order documents built in week 1.",
-    "M2 (30%) is defined as P1 live AND the SpeX relaunch accepted, so a SpeX slip moves that gate too.",
+    "M2 is defined as P1 live AND the SpeX relaunch accepted, so a SpeX slip moves that milestone too.",
   ],
   slips: [
     { what: "P1 cover sheet form + change orders", to: "Slide from week 2 into week 3 first." },
     { what: "Week 3 buffer", to: "Absorbs the rework; hardening shrinks to fit." },
-    { what: "M2 gate", to: "Waits for the SpeX relaunch to be accepted." },
+    { what: "M2 milestone", to: "Waits for the SpeX relaunch to be accepted." },
   ],
   holds: "Protected first: P1 core (orders, SO#, three PDFs, production@) and the Xero cutover on Mon 10/19.",
 };
