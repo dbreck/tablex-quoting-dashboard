@@ -1,13 +1,14 @@
 # Only matters for CLI deploys (`vercel deploy` / `vercel build`). Git-integration
 # builds clone the repo and never see these. Without this file the CLI tried to
 # upload the whole working tree — 7.6 GB, mostly catalog/ — on 2026-10-12.
-catalog/
-.next/
-node_modules/
-docs/
-Claude outputs/
-scratch/
-tmp/
-.playwright-mcp/
-*.log
+# Patterns are ROOT-ANCHORED on purpose: an unanchored `catalog/` also matched
+# `.next/server/app/(dashboard)/catalog/` and broke `vercel deploy --prebuilt`.
+# node_modules/ and .next/ are ignored by default; never list them here.
+/catalog/
+/docs/
+/Claude outputs/
+/scratch/
+/tmp/
+/.playwright-mcp/
+/*.log
 .DS_Store
