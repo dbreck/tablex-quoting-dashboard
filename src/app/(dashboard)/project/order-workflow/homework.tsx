@@ -389,9 +389,16 @@ function QuestionCard({
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
       <div className="rounded-2xl border border-gray-200 bg-white p-5 md:p-7">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-green">
-          Question {n} of {total}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-green">
+            Question {n} of {total}
+          </p>
+          {q.round === 2 && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">
+              Round 2 · added 10/12
+            </span>
+          )}
+        </div>
         <h3 className="mt-2 text-xl font-bold leading-snug text-gray-900 md:text-2xl">{q.prompt}</h3>
         {q.why && <p className="mt-2 text-sm text-gray-500">{q.why}</p>}
 

@@ -53,12 +53,12 @@ export function AskedAnswered() {
       <section className="rounded-2xl border border-brand-green/30 bg-brand-green/5 p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">For today: Monday 10/12, 11:00 AM</h2>
+            <h2 className="text-lg font-bold text-gray-900">Not reached on the 10/12 call → round-2 homework</h2>
             <p className="mt-1 text-sm text-gray-600">
-              Workflow walkthrough with Brian, Mark and Sam. Pure prep for the build; pricing is not on this agenda.
+              These are now on each person&rsquo;s tab (Brian · Mark · Sam · Patty), one at a time with the context needed to answer. Mark also has four follow-ups from his 10/09 catalog emails.
             </p>
           </div>
-          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">{TODAY_QUESTIONS.length} to settle</span>
+          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">{TODAY_QUESTIONS.length} carried over</span>
         </div>
         <ol className="mt-4 space-y-3">
           {TODAY_QUESTIONS.map((t, i) => (

@@ -12,7 +12,7 @@ export const MEETING = {
   title: "Sales Order Workflow",
   date: "Monday, October 12, 2026 · 11:00 AM ET · workflow walkthrough (first call Thu 10/08)",
   attendees: "Brian Craig · Mark · Sam · Danny · Kayla · Arabella",
-  updated: "10/12 · Mark's 10/09 SpeX catalog emails folded in",
+  updated: "10/12 PM · round-2 homework posted (not reached on the call)",
 };
 
 /* ------------------------------------------------------------------ */
@@ -963,7 +963,7 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
   },
 ];
 
-/** New questions for the 10/12 11:00 walkthrough (Brian · Mark · Sam). Pricing is NOT on this agenda. */
+/** Questions teed up for the 10/12 walkthrough. The call ran out of time, so they became ROUND-2 HOMEWORK (HOMEWORK entries with round: 2) on each person's tab. */
 export const TODAY_QUESTIONS: { for: Person | "all"; q: string; why: string }[] = [
   { for: "brian", q: "Confirm the 10/19 split: orders + SO# + Sales Order / Work Order / Packing Slip + production@ email first; cover sheet form and change orders the week after?", why: "P1 as scoped is more than a week. The split keeps Monday real." },
   { for: "all", q: "Day-one cutover: the first order the app issues is the first Xero invoice. Is Patty set up to raise a sales invoice in Xero from the SO on 10/19, and is the dealer list in Xero current enough?", why: "Brian 10/12: Xero starts with the new system. Our sync sees 1,590 Xero contacts; the invoice needs the right one." },
@@ -1027,6 +1027,8 @@ export interface HomeworkQuestion {
   unit?: string;
   rows?: number;
   context?: ContextBlock[];
+  /** 2 = asked after the 10/12 walkthrough (not reached on the call). */
+  round?: number;
 }
 
 const opts = (...labels: string[]): HomeworkOption[] =>
@@ -1256,6 +1258,51 @@ export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
         },
       ],
     },
+    {
+      id: "r2-brian-split",
+      round: 2,
+      type: "single",
+      prompt: "Confirm the 10/19 split: core first, cover sheet and change orders the week after?",
+      why: "P1 as scoped is more than a week of work. Work starts Wed 10/14; this split keeps Monday real.",
+      options: [
+        { id: "yes-split", label: "Yes: orders + SO# + Sales Order / Work Order / Packing Slip + production@ email by 10/19; cover sheet form + change orders the week after", hint: "Recommended" },
+        { id: "all-p1", label: "No: all of P1 by 10/19, including the cover sheet form and change orders" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "note", title: "Why we are asking", text: "Monday 10/19 is your date. Three weeks of work start Wednesday 10/14, so 10/19 is day four. The same week also carries the SpeX Studio catalog relaunch, which needs you and Mark to review." },
+        { kind: "list", title: "Ships by Mon 10/19", items: ["orders table + SO number from the accounting series, starting at 13000; TX quote number printed on the SO", "Create order from a desk quote", "Estimated ship date from lead time (4 wk · Nesting 6 wk · Quick Ship 10 business days); Mark moves it", "Sales Order / Work Order / Packing Slip PDFs (Packing Slip = the Work Order)", "Auto-email Cover Sheet + Work Order + Packing Slip to production@"] },
+        { kind: "list", title: "Follows the week of 10/21", items: ["Production Cover Sheet form (auto-fills TX SO#, Cust PO#, Dealer, Ship Date; Mark ticks the option grid)", "Change orders: re-open lines and pricing on an accepted order under a new revision"] },
+      ],
+    },
+    {
+      id: "r2-brian-production-mailbox",
+      round: 2,
+      type: "single",
+      prompt: "production@tablex.com and the INKY allow rule: where do they stand for Wed 10/14?",
+      why: "Every automatic email to production@ lands in quarantine until the rule exists.",
+      options: [
+        { id: "done", label: "Both done" },
+        { id: "mailbox-only", label: "Mailbox exists, allow rule still with the IT vendor" },
+        { id: "in-progress", label: "In progress, both by Wed 10/14" },
+        { id: "later", label: "Later than 10/14 (date in notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "What is needed", rows: [["Mailbox", "production@tablex.com, read by Mark (Work Order, Cover Sheet, Packing Slip arrive here on every accepted order)"], ["Allow rule", "INKY PhishFence: allow the envelope domain send.tablex.com (the domain tablex.com mail is sent from)"], ["Who", "Your IT vendor manages M365 + INKY; the forwardable request went to you 9/21"], ["Why", "Own-domain mail from an outside sender is quarantined one way; replies still land. Staff password resets on 9/21 hit the same wall."]] },
+      ],
+    },
+    {
+      id: "r2-brian-logins",
+      round: 2,
+      type: "multi",
+      prompt: "Which dashboard logins should we create now?",
+      why: "Only you and Mark can sign in to this dashboard today. Sam and Patty answered through you on 10/08.",
+      options: opts("Sam Sander", "Patty Wollenmann", "Jim Skillman", "Richie Hughes", "Nobody else for now"),
+      context: [
+        { kind: "note", title: "How logins get made", text: "Because INKY quarantines invitation emails, we create each login with a password and hand it over out of band (you or Danny tell them directly). Contributor role with access to this project; no admin rights." },
+        { kind: "facts", title: "Today", rows: [["Admin", "Brian, Mark"], ["No login", "Sam, Patty, Jim"], ["Why it matters", "Round-two questions for Sam and Patty are on their own tabs; they can answer directly instead of through you."]] },
+      ],
+    },
   ],
   mark: [
     {
@@ -1363,6 +1410,101 @@ export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
       prompt: "Should production@ also receive the packing slip?",
       options: opts("Yes", "No", "Only on request"),
     },
+    {
+      id: "r2-mark-reack-on-move",
+      round: 2,
+      type: "single",
+      prompt: "When the ship date moves, should the acknowledgment re-send by itself?",
+      why: "Every date move is logged either way. The question is who gets an email, and when.",
+      options: [
+        { id: "auto-all", label: "Automatically, to all six recipients, every time it moves" },
+        { id: "auto-customer", label: "Automatically, but only to the dealer / person ordering (not reps or production@)" },
+        { id: "manual", label: "Only when I click Re-send on the order" },
+        { id: "never", label: "Never by email; the desk calls or writes by hand" },
+      ],
+      context: [
+        { kind: "facts", title: "What you told us 10/08", rows: [["Ship date", "Set from lead time: 4 weeks, Nesting 6 weeks, Quick Ship 10 business days"], ["What moves it", "Vendor back orders (laminate, edgeband, powder), defects after production; can ship early if the customer agrees"], ["Recipients (Brian)", "Person ordering · dealer primary · sales-group principal · salesperson credited · extra recipient · production@"]] },
+        { kind: "note", title: "What the acknowledgment carries", text: "SO#, Cust PO#, estimated ship date, dealer net pricing, and signed links to the Sales Order PDF. A re-send would show the old and new date." },
+      ],
+    },
+    {
+      id: "r2-mark-change-orders",
+      round: 2,
+      type: "single",
+      prompt: "After the acknowledgment has gone out, who approves a change to the order?",
+      why: "Change orders are in the first phase. Approval and re-acknowledgment rules are not ruled yet.",
+      options: [
+        { id: "sam", label: "Sam (the desk) edits and re-acknowledges; no approval step" },
+        { id: "mark", label: "Sam edits, Mark approves before production sees it" },
+        { id: "brian", label: "Sam edits, Brian approves anything that changes price" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "note", title: "How a change order works in the app", text: "An accepted order is frozen. A change re-opens the lines and pricing under a new revision, keeps the trail (who, when, what), and re-sends the acknowledgment with the revision number. Nothing is edited silently." },
+        { kind: "list", title: "Typical changes", items: ["Quantity or size on a line", "Finish swap (laminate, powder)", "Ship-to change", "Added accessory or option", "Date pulled in or pushed out (see the previous question)"] },
+      ],
+    },
+    {
+      id: "r2-mark-vendor-po-entry",
+      round: 2,
+      type: "single",
+      prompt: "Vendor POs (Valley, Smith, others): who keys PO number, due date and arrived date into the production board?",
+      why: "The board you kept (16 columns) carries PO / Due / Arrived per vendor. Someone owns the entry.",
+      options: [
+        { id: "mark", label: "Mark, on the production board, when the PO is cut" },
+        { id: "sam", label: "Sam, at acceptance, from the purchasing worksheet" },
+        { id: "patty", label: "Patty, when the vendor acknowledgment arrives" },
+        { id: "other", label: "Other / split (notes)" },
+      ],
+      context: [
+        { kind: "table", title: "ORDER STATUS.xlsx today", headers: ["SO#", "Customer", "Ack. Ship", "Valley PO / due / arrived", "Smith PO / due / arrived", "Other"], rows: [["12000", "Fleming", "11/2", "8/19", "8/25", "Byrne 7/31 · Dekko 7/29"]] },
+        { kind: "note", title: "Cover sheet", text: "Your purchasing worksheet has vendor columns BASES / TOPS / OTHER with PO # and the cut-PO / drawings / acknowledged / proofed checklist. The board would replace the re-typing between the two sheets." },
+      ],
+    },
+    {
+      id: "r2-mark-surge-disc",
+      round: 2,
+      type: "text",
+      prompt: "Surge 2-column disc bases: where did you look when they seemed missing?",
+      why: "Your 10/09 email said they are missing from the Surge section. We find all five in the price book and in SpeX, so we want to fix the page you actually looked at.",
+      rows: 4,
+      context: [
+        { kind: "list", title: "The five models from your email", items: ["24 x 36 · 99TC2436QD2032.2", "24 x 48 · 99TC2448QD2032.2", "30 x 36 · 99TC3036QD2032.2", "30 x 48 · 99TC3048QD2032.2", "36 x 48 · 99TC3648QD2032.2"] },
+        { kind: "facts", title: "Where they are today", rows: [["Price book (Sept 2026)", "All five rows present with prices"], ["SpeX Studio", "Listed under the generic label \"Rectangular / Square Disc\" in the Surge base picker, with 3D models"], ["Series page /products/surge", "Not called out as a named option"], ["Likely fix", "Name them \"2-column disc base\" in the picker and on the Surge page, mark Surge-only"]] },
+      ],
+    },
+    {
+      id: "r2-mark-elite-trestle",
+      round: 2,
+      type: "single",
+      prompt: "Elite Trestle: is the ELITE TRESTLE tab in the October 2026 workbook current, so we price from it?",
+      why: "The tab exists in both the September and October workbooks. The site imported its 74 rows without a category, which is why they show as \"Models without a book category\".",
+      options: [
+        { id: "yes-october", label: "Yes, price from the October tab as it is" },
+        { id: "corrections", label: "Mostly; I will send corrections (notes)" },
+        { id: "check-brian", label: "Not sure, Brian confirms" },
+      ],
+      context: [
+        { kind: "facts", title: "What we found", rows: [["Workbooks", "ELITE TRESTLE tab present in Sept and Oct 2026 (Oct: sheet 8)"], ["Site today", "74 Elite 08…VTR models in the published book with no category, so the price sheet files them under \"Models without a book category\" with old-book prices"], ["Your screenshots", "Rectangular 20 models · Boat 6 · Racetrack 11; 96\" sizes starred: $300 net surcharge per order for oversized pallet"], ["Fix", "Importer maps the tab to its own Elite Trestle category; prices come from the October tab"]] },
+      ],
+    },
+    {
+      id: "r2-mark-bwe-powerbox",
+      round: 2,
+      type: "single",
+      prompt: "Bottom Wire Exit + Power Box together: confirm $346 list?",
+      why: "$140 + $105 is $245. Your email says $346 for both. The old book had the same pattern ($132 + $100, $329 together), so we assume the combined price is deliberate.",
+      options: [
+        { id: "346", label: "Yes, $346 list when both are specified" },
+        { id: "245", label: "No, it is the sum: $245" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "From your 10/09 email", rows: [["Bottom Wire Exit", "Primary + Surge disc bases; wires through the column from the mounting plate to the floor; $140 list"], ["Power Box", "Disc and X bases, squares and rounds, only with power in the center of the top; U-plate routes wires down the column; $105 list"], ["Both", "$346 list"]] },
+        { kind: "facts", title: "Old book (intro text)", rows: [["BWE Bottom Cord Exit", "$132"], ["PB Power Box", "$100"], ["PB + BWE", "$329"]] },
+        { kind: "note", text: "Neither is a SpeX Studio option today. Both will be added to the picker for the bases they apply to, priced from your answer." },
+      ],
+    },
   ],
   sam: [
     {
@@ -1433,6 +1575,39 @@ export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
         "Other (notes)",
       ),
     },
+    {
+      id: "r2-sam-no-quote-orders",
+      round: 2,
+      type: "single",
+      prompt: "Orders that arrive without a tablex.com quote (a PO by email or phone): how should they enter the app?",
+      why: "Decides whether the first phase needs a separate \"New order\" form or just the desk quote editor you already have.",
+      options: [
+        { id: "desk-quote-first", label: "I build a desk quote first, then convert it to the order (one path)", hint: "Simplest" },
+        { id: "new-order-form", label: "I need a New order form that takes lines directly, no quote" },
+        { id: "both", label: "Both happen; notes on how often each" },
+      ],
+      context: [
+        { kind: "note", title: "What you told us 10/08", text: "\"I type out the entire quote into an excel file. If ordered, I then retype into another excel file. Then I print the SO, WO, Packing Slip…\"" },
+        { kind: "facts", title: "What the app has", rows: [["Desk quote editor", "Line editing, instant pricing, revisions, accept on behalf, PO upload"], ["Create order", "From an accepted desk quote: SO# minted, documents generated, acknowledgment sent"], ["Missing", "A way in for an order that never had a quote"]] },
+      ],
+    },
+    {
+      id: "r2-sam-prepay",
+      round: 2,
+      type: "single",
+      prompt: "Prepay customers: who flags the order as prepay, and does production wait for the payment?",
+      why: "Patty said a select few prepay, which creates a pre-invoice before production starts.",
+      options: [
+        { id: "sam-flags-wait", label: "I flag it at acceptance; production waits until Patty marks the pre-invoice paid" },
+        { id: "sam-flags-no-wait", label: "I flag it; production starts anyway, Patty chases payment" },
+        { id: "patty-flags", label: "Patty flags it from the customer record; production waits" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "Proposed flow", rows: [["accepted", "Order acknowledged; prepay flag set"], ["awaiting payment", "Pre-invoice issued (Xero); nothing goes to production@ yet"], ["in production", "Patty marks paid; documents go to production@"], ["Net 30 orders", "Skip straight to in production"]] },
+        { kind: "note", title: "From Patty 10/08", text: "\"Majority are Net 30 but for a select few we make them prepay (this creates a pre-invoice before we start production).\"" },
+      ],
+    },
   ],
   patty: [
     {
@@ -1487,6 +1662,64 @@ export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
         "Other",
       ),
       context: [PACKAGING_FORM, PACKAGING_RATES],
+    },
+    {
+      id: "r2-patty-xero-ready",
+      round: 2,
+      type: "single",
+      prompt: "On Mon 10/19 the first order the app issues becomes the first Xero sales invoice. Are you set up to raise it from the SO?",
+      why: "Brian decided on 10/12 that Xero starts with the new system and Sage only runs out the orders already in it.",
+      options: [
+        { id: "ready", label: "Yes, I can raise a sales invoice in Xero now" },
+        { id: "needs-setup", label: "Need setup first: invoice template, tax, items (notes)" },
+        { id: "later", label: "Not until a later date (date in notes)" },
+      ],
+      context: [
+        { kind: "note", title: "Brian, 10/12", text: "\"Our plan was start Xero with the use of the new system. We did not plan to shift current orders over into Xero. Our plan was to just run out Sage and any new order would be handled through Xero … two systems for a short period.\"" },
+        { kind: "facts", title: "What the SO gives you", rows: [["Already on it", "Freight, Customer PO#, dealer, ship-to, lines with net pricing (the two things you re-type in Sage today are on the SO)"], ["In Xero", "You raise the invoice against the dealer contact; the app reads the invoice number, status and paid date back onto the SO"], ["Not in scope", "The app does not write to Xero"]] },
+      ],
+    },
+    {
+      id: "r2-patty-xero-contacts",
+      round: 2,
+      type: "single",
+      prompt: "Are the dealers in Xero current enough to invoice against from day one?",
+      why: "Every Xero invoice needs a contact. Our read-only sync sees 1,590 contacts in Xero.",
+      options: [
+        { id: "yes", label: "Yes, the active dealers are all there" },
+        { id: "mostly", label: "Mostly; I add the missing ones as orders come in" },
+        { id: "unsure", label: "Not sure; send me the list of dealers with open quotes" },
+      ],
+      context: [
+        { kind: "facts", title: "Xero today", rows: [["Contacts", "1,590 (customers and suppliers mixed; IsCustomer is set only once an invoice exists)"], ["Invoices", "3,803 paid through 3/31/2026; none after"], ["Site CRM", "~110 dealer orgs matched to Xero contacts; ~1,480 Xero contacts still unreviewed in the desk's Xero queue"]] },
+      ],
+    },
+    {
+      id: "r2-patty-gap-backfill",
+      round: 2,
+      type: "single",
+      prompt: "April 1 to the cutover: will you import the Sage invoices into Xero, and when?",
+      why: "Brian said TableX does this itself if at all. Until it happens, reporting by customer, series or rep stops at March 2026.",
+      options: [
+        { id: "csv-import", label: "Yes, Xero sales-invoice CSV import from the Sage register (date in notes)" },
+        { id: "no", label: "No, leave April onward as monthly journal totals" },
+        { id: "undecided", label: "Undecided; need to see the effort" },
+      ],
+      context: [
+        { kind: "facts", title: "The gap", rows: [["In Xero", "Full invoice history Oct 2020 to 3/31/2026, with customers and lines"], ["Missing", "Zero sales invoices dated after 3/31/2026; P&L shows ~$1.49M of sales Apr 1 onward as journal totals only"], ["Effect", "By-customer / by-series / by-rep reports stop at March 2026; year-over-year 2026 is monthly totals only"]] },
+        { kind: "list", title: "Option A, the one Brian prefers (do it yourselves)", items: ["Export the Sage invoice register for Apr 1 onward with line items", "Map columns to Xero's sales-invoice CSV template", "Import in Xero (Business → Invoices → Import); repeatable monthly until Sage is closed"] },
+      ],
+    },
+    {
+      id: "r2-patty-prepay-preinvoice",
+      round: 2,
+      type: "text",
+      prompt: "For prepay customers, how is the pre-invoice created today, and should the app produce it from the SO?",
+      rows: 4,
+      context: [
+        { kind: "note", title: "You said 10/08", text: "\"Majority are Net 30 but for a select few we make them prepay (this creates a pre-invoice before we start production).\"" },
+        { kind: "note", title: "Proposed", text: "A prepay order waits in \"awaiting payment\" with the pre-invoice raised in Xero against the SO; when you mark it paid, the order moves to production and the documents go to production@. Tell us if the pre-invoice is a Sage/Xero document or a separate sheet." },
+      ],
     },
   ],
 };

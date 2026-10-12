@@ -19,6 +19,7 @@ import {
   TodaySection,
 } from "./sections";
 import { AskedAnswered } from "./archive";
+import { BrianHomework, MarkHomework, PattyHomework, SamHomework } from "./homework";
 import { TimelineSection } from "./timeline";
 
 const TABS = [
@@ -30,6 +31,10 @@ const TABS = [
   { key: "challenges", label: "Challenges & Decisions", component: ChallengesSection },
   { key: "answers", label: "Answers & Rulings", component: AnswersSection },
   { key: "archive", label: "Asked & Answered", component: AskedAnswered },
+  { key: "hw-brian", label: "Brian", component: BrianHomework },
+  { key: "hw-mark", label: "Mark", component: MarkHomework },
+  { key: "hw-sam", label: "Sam", component: SamHomework },
+  { key: "hw-patty", label: "Patty", component: PattyHomework },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
