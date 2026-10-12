@@ -95,7 +95,7 @@ export default function OrderWorkflowPage() {
       </div>
 
       <div className="sticky top-0 z-10 -mx-1 border-b border-gray-200 bg-gray-50/95 px-1 backdrop-blur">
-        <nav className="flex gap-1 overflow-x-auto" aria-label="Workflow sections">
+        <nav className="flex flex-wrap gap-1" aria-label="Workflow sections">
           <div ref={menuRef} className="relative">
             <button
               type="button"
