@@ -892,6 +892,19 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
   },
 ];
 
+/** New questions for the 10/12 11:00 walkthrough (Brian · Mark · Sam). Pricing is NOT on this agenda. */
+export const TODAY_QUESTIONS: { for: Person | "all"; q: string; why: string }[] = [
+  { for: "brian", q: "Confirm the 10/19 split: orders + SO# + Sales Order / Work Order / Packing Slip + production@ email first; cover sheet form and change orders the week after?", why: "P1 as scoped is more than a week. The split keeps Monday real." },
+  { for: "all", q: "Day-one cutover: the first order the app issues is the first Xero invoice. Is Patty set up to raise a sales invoice in Xero from the SO on 10/19, and is the dealer list in Xero current enough?", why: "Brian 10/12: Xero starts with the new system. Our sync sees 1,590 Xero contacts; the invoice needs the right one." },
+  { for: "sam", q: "Orders that arrive without a tablex.com quote (phone, email PO against an old quote): does Sam build a desk quote first, or does \"New order\" need its own line entry?", why: "Decides whether P1 needs a quote-less order form or just the existing desk quote editor." },
+  { for: "sam", q: "Prepay orders: who flags an order as prepay at accept, and does production wait for the pre-invoice to be paid?", why: "Patty: a select few prepay. We proposed accepted → waits for payment → production." },
+  { for: "mark", q: "When the ship date moves, should the acknowledgment re-send to all six recipients automatically, or only on Mark's say-so?", why: "Every move is logged either way; the question is who the email goes to and when." },
+  { for: "mark", q: "Change orders after the acknowledgment: who approves (Sam, Mark, Brian), and does a changed order re-acknowledge with a new revision?", why: "Change orders are in P1 scope; approval and re-ack rules are not yet ruled." },
+  { for: "mark", q: "Vendor POs (Valley, Smith, other): entered on the production board by Mark, or does Sam key them at accept?", why: "P4 board carries PO / due / arrived per vendor; someone owns the entry." },
+  { for: "brian", q: "production@tablex.com + the INKY allow rule for send.tablex.com: on track for Wed 10/14?", why: "Without it every auto-email to production@ lands in quarantine." },
+  { for: "all", q: "Sam and Patty dashboard logins (contributor + proposal access, password set by hand): create them today?", why: "Only Brian and Mark can sign in; INKY quarantines invites, so logins are created with a password and shared out of band." },
+];
+
 export const SAM_TODAY =
   "I type out the entire quote into an excel file. If ordered, I then retype into another excel file. Then I print the SO, WO, Packing Slip, any email or notes that need to accompany the job, add the cover sheet and add the customer and job info to the cover sheet, then add to schedule (which is another spreadsheet), then acknowledge customer via email, then lay on Mark's desk.";
 

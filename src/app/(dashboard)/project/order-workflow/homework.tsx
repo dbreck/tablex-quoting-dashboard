@@ -30,7 +30,7 @@ function hasValue(v: AnswerValue | null | undefined): boolean {
   return v.trim().length > 0;
 }
 
-function isAnswered(a?: WorkflowAnswer): boolean {
+export function isAnswered(a?: WorkflowAnswer): boolean {
   if (!a) return false;
   return hasValue(a.answer.value) || !!a.answer.notes?.trim();
 }
@@ -45,7 +45,7 @@ function formatDate(iso: string): string {
   return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" });
 }
 
-function formatValue(q: HomeworkQuestion, v: AnswerValue): string[] {
+export function formatValue(q: HomeworkQuestion, v: AnswerValue): string[] {
   if (!hasValue(v)) return [];
   switch (q.type) {
     case "single":
@@ -70,7 +70,7 @@ function defaultValue(q: HomeworkQuestion): AnswerValue | null {
   return null;
 }
 
-function timeOf(iso: string): string {
+export function timeOf(iso: string): string {
   return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 }
 
