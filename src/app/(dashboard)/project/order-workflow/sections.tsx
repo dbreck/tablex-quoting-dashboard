@@ -79,11 +79,11 @@ function MatrixChip({ status }: { status: MatrixStatus }) {
 function ConfirmChip({ compact = false }: { compact?: boolean }) {
   return (
     <span
-      title="Confirm on call"
-      className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800"
+      title="Confirmed by TableX homework 10/08 + Brian 10/12"
+      className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-emerald-300 bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-800"
     >
-      <span aria-hidden>?</span> Confirm
-      <span className={compact ? "hidden 2xl:inline" : ""}> on call</span>
+      <span aria-hidden>✓</span> Confirmed
+      <span className={compact ? "hidden 2xl:inline" : ""}> 10/08</span>
     </span>
   );
 }
@@ -348,7 +348,7 @@ export function RoundTripSection() {
           </span>
         ))}
         <ConfirmChip />
-        <span>= stage where we need TableX to confirm how it works</span>
+        <span>= stage TableX confirmed in the 10/08 homework (Xero cutover: Brian 10/12)</span>
       </div>
 
       <Card className="overflow-x-auto p-0">
@@ -410,18 +410,26 @@ export function RoundTripSection() {
         ))}
       </div>
 
-      <Card className="border-amber-200">
+      <Card className="border-emerald-200">
         <div className="flex items-center justify-between gap-3">
-          <CardHeading>Confirm on the call</CardHeading>
-          <ConfirmChip />
+          <CardHeading>Asked 10/08, answered</CardHeading>
+          <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+            {ROUND_TRIP_QUESTIONS.filter((q) => !q.open).length}/{ROUND_TRIP_QUESTIONS.length} decided
+          </span>
         </div>
         <ol className="mt-4 space-y-3">
           {ROUND_TRIP_QUESTIONS.map((q, i) => (
             <li key={q.q} className="flex gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-800">{i + 1}</span>
+              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${q.open ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}>{i + 1}</span>
               <div>
                 <p className="text-sm font-semibold text-gray-900">{q.q}</p>
                 {q.context && <p className="mt-0.5 text-xs leading-relaxed text-gray-500">{q.context}</p>}
+                {q.a && (
+                  <p className={`mt-1 text-sm leading-relaxed ${q.open ? "text-amber-900" : "text-gray-800"}`}>
+                    <span className="font-semibold">{q.open ? "Still open: " : "Answer: "}</span>
+                    {q.a}
+                  </p>
+                )}
               </div>
             </li>
           ))}

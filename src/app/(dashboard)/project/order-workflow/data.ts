@@ -308,14 +308,14 @@ export const ROUND_TRIP: RoundStage[] = [
     cells: [
       { lane: "dealer", text: "Accepts with PO # + PO file", when: "today" },
       { lane: "desk", text: "Supporting-docs prompt", when: "future" },
-      { lane: "system", text: "SO # minted; acknowledgment to 5 parties with est. ship date", when: "future" },
+      { lane: "system", text: "SO # from 13000 minted; acknowledgment to six recipients with est. ship date (lead time: 4 wk · Nesting 6 · QS 10 bd)", when: "future" },
     ],
   },
   {
     n: 2,
     title: "Hand off",
     cells: [
-      { lane: "system", text: "Work Order + Cover Sheet PDFs → production@", when: "future" },
+      { lane: "system", text: "Cover Sheet + Work Order + Packing Slip PDFs → production@", when: "future" },
       { lane: "production", text: "Order enters the production schedule", when: "future" },
     ],
   },
@@ -350,7 +350,8 @@ export const ROUND_TRIP: RoundStage[] = [
     title: "Invoice",
     confirm: true,
     cells: [
-      { lane: "accounting", text: "Patty creates the invoice by hand from the SO; emails it", when: "today" },
+      { lane: "accounting", text: "Patty turns the Sage SO into an invoice, types freight, picks the Cust PO#, emails + prints", when: "today" },
+      { lane: "accounting", text: "Patty keys the Xero invoice from the SO (freight + Cust PO# already on it); Sage only for pre-cutover orders", when: "future" },
       { lane: "system", text: "Xero invoice # + status + paid date shown on the SO; margin per order", when: "future" },
     ],
   },
@@ -360,7 +361,7 @@ export const ROUND_TRIP: RoundStage[] = [
     confirm: true,
     cells: [
       { lane: "dealer", text: "Pays on terms (check / ACH)", when: "today" },
-      { lane: "accounting", text: "\"Receive Money\", matched to deposits", when: "today" },
+      { lane: "accounting", text: "ACH / check matched to the printed Sage invoice, marked paid in Sage", when: "today" },
       { lane: "system", text: "Paid status mirrors back; SO closed", when: "future" },
     ],
   },
@@ -368,34 +369,51 @@ export const ROUND_TRIP: RoundStage[] = [
 
 export const ROUND_TRIP_NOTES = [
   {
-    title: "Invoicing today (Patty, Feb 2026 interview)",
-    body: "Invoices are created by hand from the order and emailed. Payments arrive by check or ACH, are entered via \"Receive Money\" and matched to deposits.",
+    title: "Invoicing today (Patty, homework 10/08)",
+    body: "At ship, Sage turns the SO into an invoice. Patty types freight if needed, manually picks the Customer PO# for that SO, emails the customer from Sage and prints a copy. ACH or check payments are matched to the printed invoice and marked paid in Sage. Net 30 for most; a select few prepay, which creates a pre-invoice before production.",
   },
   {
-    title: "Invoicing in the future",
-    body: "The app reads the Xero invoice number, status and paid date onto the SO through the read-only Xero sync and webhooks. Packaging cost plus invoice total gives a margin per order for Patty's P/L.",
+    title: "Invoicing from the cutover (Brian 10/12)",
+    body: "Xero starts with the new system: every order the app issues is invoiced in Xero; orders already in Sage run out there. No Sage → Xero transfer, two systems for a short period. The SO already carries freight and the Cust PO#, so Patty keys the Xero invoice from it with nothing re-typed. The app reads the Xero invoice number, status and paid date back onto the SO through the read-only sync and webhooks; packaging cost plus invoice total gives a margin per order for the P/L.",
   },
 ];
 
-export const ROUND_TRIP_QUESTIONS = [
+export const ROUND_TRIP_QUESTIONS: { q: string; context: string; a?: string; open?: boolean }[] = [
   {
     q: "Which system holds Sales Orders and Invoices today: Sage or Xero?",
     context: "Feb interviews said Sage for SO, invoice and payments. Xero went live internally 9/14 after the ledger migration. On 9/25 Sam still keyed an SO into Sage (#12150). Our Xero sync sees 0 invoices Aug–Sep.",
+    a: "Sage for both today (Sam + Patty, 10/08). Brian 10/12: Xero starts with the new system; Sage runs out its existing orders; nothing is transferred.",
   },
-  { q: "Who creates the invoice, when (at ship? at order?), and from which document?", context: "" },
-  { q: "Payment terms: Net 30? Deposits or prepay for direct customers? Credit card?", context: "" },
+  {
+    q: "Who creates the invoice, when (at ship? at order?), and from which document?",
+    context: "",
+    a: "Patty, at ship, from the SO (Sage's SO → invoice button; she adds freight and picks the Cust PO#). Same flow in Xero from the cutover, with both fields already on the SO.",
+  },
+  {
+    q: "Payment terms: Net 30? Deposits or prepay for direct customers? Credit card?",
+    context: "",
+    a: "Net 30 for most. A select few prepay, which creates a pre-invoice before production. No credit card mentioned.",
+  },
   {
     q: "Should the app CREATE the Xero invoice, or only mirror it?",
     context: "Xero write access is ruled out today. Writing is a separate decision.",
+    a: "Brian: \"not sure, discuss.\" Mirror ships first; revisit create-in-Xero after the first month on two systems.",
+    open: true,
   },
   {
     q: "SO numbering: reuse the TX-2026-#### quote number, or a separate SO series that matches the accounting system?",
     context: "Mark's tracker uses the accounting SO series (11890–12160); the orders table should store that number alongside the TX quote number.",
+    a: "Both. SO# in the accounting series, starting at 13000 as the cutover marker; the TX quote number prints on the SO.",
   },
-  { q: "Where does the estimated ship date come from?", context: "Mark's tracker has an \"Ack. Ship Date\" column. Is that the promised date, and what moves it?" },
+  {
+    q: "Where does the estimated ship date come from?",
+    context: "Mark's tracker has an \"Ack. Ship Date\" column. Is that the promised date, and what moves it?",
+    a: "Lead time: 4 weeks, Nesting 6 weeks, Quick Ship 10 business days. Ship date = the day it leaves the dock; vendor back orders or defects push it, Mark moves it, early if the customer agrees.",
+  },
   {
     q: "Commission / salesperson credit: who is \"the salesperson\" on an order, and where is that recorded today?",
     context: "Today it lives on paper: the cover sheet footer carries rep, comm % and spiff.",
+    a: "A dropdown on the order filtered to the reps in the dealer's sales group. Dealers with locations in different territories become one org per location (IDNA Louisville vs Nashville).",
   },
 ];
 
@@ -465,6 +483,7 @@ export const PHASES: Phase[] = [
       "One PDF renderer with a document title + show-pricing flag → Quote / Sales Order / Work Order / Packing Slip (Packing Slip = the Work Order)",
       "Production Cover Sheet: header auto-fills TX SO#, Cust PO#, Dealer, Ship Date; the five desk checkboxes go away; option-code grid stays Mark's (BOM per SKU = a later phase)",
       "Auto-email Cover Sheet + Work Order + Packing Slip to production@ (Mark)",
+      "Target Mon 10/19 (Brian): orders + SO series + the three PDFs + production@ email first; cover sheet form and change orders the week after (proposed split, confirm today)",
     ],
   },
   {
@@ -539,7 +558,6 @@ export const PHASES: Phase[] = [
       "Mirror: the SO shows the Xero invoice number, status and paid date through the read-only sync; webhooks (web-xero-webhooks) make it live",
       "Create-in-Xero vs mirror: Brian said \"discuss\"; any Xero WRITE is a separate decision. Mirror ships first; Patty keys the invoice in Xero from the SO.",
     ],
-    track: "later",
   },
 ];
 
