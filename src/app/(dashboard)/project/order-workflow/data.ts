@@ -12,7 +12,7 @@ export const MEETING = {
   title: "Sales Order Workflow",
   date: "Monday, October 12, 2026 · 11:00 AM ET · workflow walkthrough (first call Thu 10/08)",
   attendees: "Brian Craig · Mark · Sam · Danny · Kayla · Arabella",
-  updated: "10/12 10:45 ET · Brian: Xero starts with the new system, no Sage backfill (email 10:29)",
+  updated: "10/12 · Mark's 10/09 SpeX catalog emails folded in",
 };
 
 /* ------------------------------------------------------------------ */
@@ -540,12 +540,15 @@ export const PHASES: Phase[] = [
   },
   {
     key: "spex-tracker",
-    label: "Parallel",
-    title: "SpeX Studio action tracker (Oct 2026)",
+    label: "Milestone ~10/19",
+    title: "SpeX Studio catalog update (back online ~10/19)",
     items: [
-      "158 change requests across 16 tabs: all pages 20 · Surge 16 · Primary 15 · VertiGO 13 · Foundation 12 · Stretch 11 · Puddle 11 · Elite 9 · Justice 8 · Solo 8 · Trig 8 · Element 7 · Exclaim 7 · Artisan 5 · App 4 · Ultra 4",
-      "Picker order, start modes (Full Table / Top / Base / Accessories), Power & Data section, price fixes, renames",
-      "Per-series options: edge mount, offset T, radius corners, ganging brackets, chrome lead time, disc-base casters",
+      "Isolated from P1–P5: no shared tables or screens, but catalog and price changes can force rework in the order documents and the October price import",
+      "Surge-only Rectangular with 2-column Disc Base (Mark 10/09): 24×36 · 24×48 · 30×36 · 30×48 · 36×48, Static, 99TC{size}QD2032.2. Already in the book and the SpeX Surge catalog; Mark sees it missing, so name it as its own base in the Surge section. Costs: SURGE tab of Brian's workbook",
+      "Bottom Wire Exit, Primary + Surge disc bases only: $140 list (Mark 10/09). New SpeX option; the book's intro text still says \"Bottom Cord Exit\" $132",
+      "Power Box mounting plate: disc + X-bases, squares and rounds, ONLY with center power: $105 list, $346 list with Bottom Wire Exit (one charge, not the $245 sum). New SpeX option tied to center power",
+      "Elite Trestle (V-base) price table: 37 models across Rectangular / Boat / Racetrack. The site book holds them with no category (\"Models without a book category\"), priced from the old book per Mark; fix in the October import from the ELITE TRESTLE tab",
+      "SpeX action tracker: 158 change requests across 16 tabs (all pages 20 · Surge 16 · Primary 15 · VertiGO 13 · Foundation 12 · Stretch 11 · Puddle 11 · Elite 9 · Justice 8 · Solo 8 · Trig 8 · Element 7 · Exclaim 7 · Artisan 5 · App 4 · Ultra 4): picker order, start modes, Power & Data section, price fixes, renames, per-series options",
     ],
     track: "parallel",
   },
@@ -645,6 +648,11 @@ export const CHALLENGES: Challenge[] = [
     title: "Who owns each step",
     kind: "decided",
     body: "Desk (Sam) accepts and picks the salesperson · Mark confirms the ship date, ticks the option grid, takes one photo per pallet · whoever is there (usually Patty, next day) enters carrier + PRO · Tony fills packaging quantities · Patty reads the P/L and invoices.",
+  },
+  {
+    title: "SpeX catalog milestone ~10/19 runs beside the order build",
+    kind: "risk",
+    body: "SpeX Studio comes back online around 10/19 with Mark's catalog changes (Surge 2-column disc, Bottom Wire Exit, Power Box, Elite Trestle pricing), on the same week as P1. It shares no screens with the order workflow, but new options and re-categorised price rows land on quotes and SO lines, so the October price import and the order PDFs may need rework.",
   },
   {
     title: "Multi-location dealers cross rep territories",
@@ -890,6 +898,69 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
       },
     ],
   },
+  {
+    title: "SpeX catalog (Mark, 10/09)",
+    sub: "Two emails to Danny cc Brian: Disk Bases (08:46) and Elite Trestle (09:13). Needed for SpeX Studio back online ~10/19.",
+    rulings: [
+      {
+        topic: "Surge 2-column disc base",
+        asked: "What is missing from the Surge section?",
+        by: "mark",
+        answer: "Rectangular with 2-column Disc Base, Surge only, five sizes, all Static: 24×36 (99TC2436QD2032.2) · 24×48 (99TC2448QD2032.2) · 30×36 (99TC3036QD2032.2) · 30×48 (99TC3048QD2032.2) · 36×48 (99TC3648QD2032.2).",
+        quote: "This is missing in the Surge section. These are ONLY available in the Surge series. These are the only sizes available.",
+        build: [
+          "Exists: all five models are in the September book under \"Rectangular with 2-column Disc Base\", in the SpeX model map, and in the SpeX Surge catalog with built GLBs (grouped under the generic \"Rectangular / Square Disc\" label).",
+          "New: show it as its own base in the Surge section with Mark's name and his five sizes only. Confirm with Mark which surface he found it missing on.",
+        ],
+        status: "decided",
+      },
+      {
+        topic: "Surge 2-column disc costs",
+        asked: "Where do the Surge 2-column disc prices come from?",
+        by: "mark",
+        answer: "From the pricing matrix Brian sent. Mark can supply the costs if needed.",
+        quote: "Cost of these tables should be in the pricing matrix that Brian has sent. Let me know if you need these costs.",
+        build: ["The SURGE tab of the OCTOBER 2026 workbook carries the model numbers. Confirm the five rows price in the October import; ask Mark only if a row is missing."],
+        status: "open",
+      },
+      {
+        topic: "Bottom Wire Exit",
+        asked: "Bottom Wire Exit: where and how much?",
+        by: "mark",
+        answer: "Primary and Surge disc bases only. Wires run through the column from the mounting plate to the floor (Ø2½″ hole through the weight and cover). $140 list.",
+        quote: "Available on the Primary and Surge disk bases. Wires are slipped through the column from the mounting plate to the floor. Upcharge is $140 list.",
+        build: [
+          "Exists: the book's introduction text only, as \"BWE · Bottom Cord Exit\", 44 or 99 disc bases, $132. No SpeX option, no structured charge.",
+          "New: a SpeX option on Primary (44) and Surge (99) disc bases at $140 list, carried onto quote and SO lines.",
+        ],
+        status: "decided",
+      },
+      {
+        topic: "Power Box mounting plate",
+        asked: "Power Box: where and how much?",
+        by: "mark",
+        answer: "Disc bases and X-bases, squares and rounds, only when power is centered in the top. U-shaped plate; wires run down inside the column and out a hole in the side and bottom. $105 list; $346 list together with a Bottom Wire Exit.",
+        quote: "IF used with a Bottom Wire Exit and a power box the list upcharge is $346.",
+        build: [
+          "Exists: SpeX center power (Villa units and their top supports) and the book text \"PB Powerbox Mounting Plate\" at $100 / $329 with BWE. No Power Box option in SpeX.",
+          "New: offer Power Box only when center power is chosen on a square or round disc or X-base; price $105, or one $346 charge with Bottom Wire Exit (not the $245 sum).",
+        ],
+        status: "decided",
+      },
+      {
+        topic: "Elite Trestle base pricing",
+        asked: "Why is Elite Trestle under \"Models without a book category\"?",
+        by: "mark",
+        answer: "It is the Elite Trestle V-base. The price shown comes from the old book; it should come from its own tab in the workbook. Mark's screenshots: 37 models, Rectangular 30–48 wide × 60–144 (20), Boat-shaped 30×42 to 36×48 × 84–144 (6), Racetrack 36–48 × 72–144 (11); 96″ sizes starred (oversized), 120″ and 144″ add a third base (T32-TJ). Six photos and renders attached.",
+        quote: "This is our Elite series Trestle base, pricing, listed here, is from the old price book. The pricing should have its own tab on the pricing excel tab previously sent.",
+        build: [
+          "Exists: an ELITE TRESTLE tab in both the September and October workbooks. The site book holds 74 08…VTR rows with NO category, so the Elite price list files them under \"Models without a book category\". SpeX already treats VTR as a verified Elite base.",
+          "New: in the October import, give the tab its three categories (Rectangular / Boat-shaped / Racetrack with Trestle V-bases) and check every price against the tab, not the January book. Note the October workbook renames OPTIONS and adds an ADD ONS tab; the extractor needs both handled.",
+        ],
+        status: "open",
+      },
+    ],
+  },
 ];
 
 /** New questions for the 10/12 11:00 walkthrough (Brian · Mark · Sam). Pricing is NOT on this agenda. */
@@ -914,6 +985,8 @@ export const NEXT_STEPS = [
   { t: "April → cutover Xero gap", d: "TableX's call whether to import the Sage register. Reporting by customer stays blind for those months otherwise." },
   { t: "TableX creates production@tablex.com", d: "Plus the INKY allow rule for send.tablex.com, or the auto-emails land in quarantine." },
   { t: "Scope + estimate to Richie", d: "Second project-sized effort, quoted separately." },
+  { t: "Elite Trestle prices from their own tab (Brian/Mark)", d: "Confirm the ELITE TRESTLE tab in the October workbook is current; the October import then replaces the old-book prices and files the 37 models under their three shapes." },
+  { t: "Confirm Surge 2-column disc costs", d: "Check the five 99TC…QD2032.2 rows price from the SURGE tab in the October import; ask Mark for costs only if any are missing." },
 ];
 
 /* ------------------------------------------------------------------ */

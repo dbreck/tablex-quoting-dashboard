@@ -19,12 +19,14 @@ import {
   TodaySection,
 } from "./sections";
 import { AskedAnswered } from "./archive";
+import { TimelineSection } from "./timeline";
 
 const TABS = [
   { key: "ask", label: "Brian's Ask", component: AskSection },
   { key: "today", label: "What Exists Today", component: TodaySection },
   { key: "round", label: "After Accept: the Round Trip", component: RoundTripSection },
   { key: "build", label: "The Build", component: BuildSection },
+  { key: "timeline", label: "Timeline", component: TimelineSection },
   { key: "challenges", label: "Challenges & Decisions", component: ChallengesSection },
   { key: "answers", label: "Answers & Rulings", component: AnswersSection },
   { key: "archive", label: "Asked & Answered", component: AskedAnswered },
