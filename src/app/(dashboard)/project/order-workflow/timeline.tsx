@@ -378,7 +378,7 @@ function StackedWeeks() {
 function Legend() {
   const items: { cls: string; label: string }[] = [
     { cls: BAR_TONE.core, label: "Build" },
-    { cls: BAR_TONE.carry, label: "Carried from P1 (10/19 split)" },
+    { cls: BAR_TONE.carry, label: "Rest of P1, after the core" },
     { cls: BAR_TONE.spex, label: "SpeX catalog (isolated)" },
     { cls: BAR_TONE.xero, label: "Xero" },
     { cls: BAR_TONE.owed, label: "TableX owes" },
@@ -409,16 +409,18 @@ export function TimelineSection() {
   const gates = MARKERS.filter((m) => m.kind === "gate");
   return (
     <div className="space-y-6">
-      <SectionIntro title="Three weeks, Wed 10/14 to Tue 11/03">
+      <SectionIntro title="Four weeks, Wed 10/14 to Fri 11/07">
         <p>
-          The order workflow builds in three weeks. The first phase goes live on Brian&rsquo;s date, Mon 10/19,
-          the same day Xero takes over invoicing and SpeX Studio is due back online. Hover a bar for its detail.
+          SpeX Studio goes first: the October price book and the action-tracker corrections land on staging by Sun 10/18
+          for TableX&rsquo;s test week, and SpeX returns to the public on Brian&rsquo;s date, Mon 10/26. The order workflow
+          follows: P1 core builds the week of 10/21 and the first sales order issues on Mon 10/26, the day Xero takes over
+          invoicing. Hover a bar for its detail.
         </p>
       </SectionIntro>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatTile value="3 weeks" label={fmtRange(TIMELINE.kickoff, TIMELINE.end)} sub="Work starts Wednesday; today is Mon 10/12" />
-        <StatTile value="Mon 10/19" label="First phase live" sub="P1 core + Xero cutover; SpeX back ~10/19" />
+        <StatTile value="4 weeks" label={fmtRange(TIMELINE.kickoff, TIMELINE.end)} sub="Redrawn Wed 10/14 after Brian's round-2 answer" />
+        <StatTile value="Mon 10/26" label="SpeX public + first SO" sub="SpeX corrections on staging Mon 10/19; Xero starts 10/26" />
         <StatTile value={`${gates.length} milestones`} label="Acceptance points" sub={gates.map((g) => `${g.label.split(" · ")[0]} ${markerWhen(g)}`).join(" · ")} />
       </div>
 
