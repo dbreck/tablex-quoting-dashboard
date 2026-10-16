@@ -1,11 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-
-/** Only same-origin absolute paths; never `//host` or a full URL. */
-export function safeNext(next: string | null): string | null {
-  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/login")) return null;
-  return next;
-}
+import { safeNext } from "@/lib/auth/safe-next";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
