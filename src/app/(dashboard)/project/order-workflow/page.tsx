@@ -8,7 +8,8 @@
  * ./sections.tsx, shared primitives from ../launch-status/components.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { MEETING } from "./data";
 import {
   AskSection,
@@ -53,9 +54,30 @@ const tabCls = (on: boolean) =>
     on ? "border-brand-green font-semibold text-gray-900" : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800"
   }`;
 
+const isTabKey = (k: string | null): k is TabKey => TABS.some((t) => t.key === k);
+
+/** `?tab=hw-mark` opens a tab directly (the links in the homework emails). */
 export default function OrderWorkflowPage() {
-  const [active, setActive] = useState<TabKey>("ask");
-  const [lastPlan, setLastPlan] = useState<PlanKey>("ask");
+  return (
+    <Suspense fallback={null}>
+      <OrderWorkflowInner />
+    </Suspense>
+  );
+}
+
+function OrderWorkflowInner() {
+  const params = useSearchParams();
+  const fromUrl = params.get("tab");
+  const [active, setActiveState] = useState<TabKey>(isTabKey(fromUrl) ? fromUrl : "ask");
+  const [lastPlan, setLastPlan] = useState<PlanKey>(isTabKey(fromUrl) && isPlanKey(fromUrl) ? fromUrl : "ask");
+  const setActive = (k: TabKey) => {
+    setActiveState(k);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", k);
+      window.history.replaceState(window.history.state, "", url);
+    }
+  };
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const ActiveSection = TABS.find((t) => t.key === active)!.component;

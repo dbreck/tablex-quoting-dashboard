@@ -1,6 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/** Only same-origin absolute paths; never `//host` or a full URL. */
+export function safeNext(next: string | null): string | null {
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/login")) return null;
+  return next;
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -43,14 +49,20 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/api")
   ) {
     const url = request.nextUrl.clone();
+    const next = request.nextUrl.pathname + request.nextUrl.search;
     url.pathname = "/login";
+    url.search = "";
+    // Keep the destination so a deep link (e.g. a homework tab) survives the sign-in.
+    if (next !== "/" && !next.startsWith("/login")) url.searchParams.set("next", next);
     return NextResponse.redirect(url);
   }
 
-  // Authenticated users at /login → redirect to /overview
+  // Authenticated users at /login → redirect to the requested page, else /overview
   if (user && request.nextUrl.pathname.startsWith("/login")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/overview";
+    const next = safeNext(request.nextUrl.searchParams.get("next"));
+    url.pathname = next ? next.split("?")[0] : "/overview";
+    url.search = next && next.includes("?") ? next.slice(next.indexOf("?")) : "";
     return NextResponse.redirect(url);
   }
 

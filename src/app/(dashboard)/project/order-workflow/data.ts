@@ -1071,7 +1071,7 @@ export interface HomeworkQuestion {
   unit?: string;
   rows?: number;
   context?: ContextBlock[];
-  /** 2 = asked after the 10/12 walkthrough (not reached on the call). */
+  /** 2 = asked after the 10/12 walkthrough (not reached on the call). 3 = the last open items before the 10/19 date, added 10/16, due the same day. */
   round?: number;
 }
 
@@ -1347,6 +1347,50 @@ export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
         { kind: "facts", title: "Today", rows: [["Admin", "Brian, Mark"], ["No login", "Sam, Patty, Jim"], ["Why it matters", "Round-two questions for Sam and Patty are on their own tabs; they can answer directly instead of through you."]] },
       ],
     },
+    {
+      id: "r3-brian-ack-pricing",
+      round: 3,
+      type: "single",
+      prompt: "Order acknowledgment email: keep the pricing breakdown, or show net rows only?",
+      why: "The acknowledgment goes to all six recipients, including reps and the sales-group principal. Today it shows the same rows as the quote-ready email.",
+      options: [
+        { id: "keep-breakdown", label: "Keep it: Subtotal (list), tier discount, Subtotal (net), freight, Total", hint: "What is built today" },
+        { id: "net-only", label: "Net rows only: net lines, freight, Total" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "What the acknowledgment carries now", rows: [["Recipients", "Person ordering, dealer primary, sales-group principal, salesperson, extra contact, production@"], ["Pricing rows", "Subtotal (list) · Tier 50/20 discount · Subtotal (net) · Freight · Total (net)"], ["Same as", "The quote-ready email the dealer already received"]] },
+        { kind: "note", title: "Why it matters by 10/19", text: "Sam's test orders on staging (SO 13000 to 13004) send this email. Whatever you pick ships with the first real order." },
+      ],
+    },
+    {
+      id: "r3-brian-surge-unpriced",
+      round: 3,
+      type: "text",
+      rows: 3,
+      prompt: "Two Surge rows in your October workbook have no price. What are Core / Select / Luxe for 99RD48SD26 and 99RD48QD26, or should they come out?",
+      why: "Both rows exist in the SURGE tab with every price cell blank, so SpeX shows them as quote-required.",
+      context: [
+        { kind: "table", title: "The two rows", headers: ["Workbook row", "Model", "Top", "Base"], rows: [["SURGE 169", "99RD48SD26", "48 in round", "SD26 disc"], ["SURGE 175", "99RD48QD26", "48 in round", "QD26 disc"]] },
+        { kind: "note", text: "Type the three prices per model (for example: SD26 1,500 / 1,540 / 1,570) or write 'drop them'." },
+      ],
+    },
+    {
+      id: "r3-brian-justice-labels",
+      round: 3,
+      type: "single",
+      prompt: "Justice butcher block: the six 24-inch-deep rows carry model codes that read 25. Is the top 24 or 25 inches?",
+      why: "The code is what prints on quotes, sales orders and the SIF file, so the code and the label have to agree.",
+      options: [
+        { id: "24", label: "24 inches: the label is right, the codes should read 24 (40TC2460…, 40TC2472…)" },
+        { id: "25", label: "25 inches: the code is right, change the size label to 25 x 60 and 25 x 72" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "table", title: "The six rows (JUSTICE tab)", headers: ["Label", "Model code", "Height"], rows: [["24 x 60", "40TC2560FR2258-BB", "29 in"], ["24 x 72", "40TC2572FR2270-BB", "29 in"], ["24 x 60", "40TC2560FR2258-BB-SH.36", "36 in"], ["24 x 72", "40TC2572FR2270-BB-SH.36", "36 in"], ["24 x 60", "40TC2560FR2258-BB-SH.42", "42 in"], ["24 x 72", "40TC2572FR2270-BB-SH.42", "42 in"]] },
+        { kind: "note", text: "Every other Justice butcher-block row matches (30 x 60 = 40TC3060…, 36 x 72 = 40TC3672…)." },
+      ],
+    },
   ],
   mark: [
     {
@@ -1547,6 +1591,55 @@ export const HOMEWORK: Record<Person, HomeworkQuestion[]> = {
         { kind: "facts", title: "From your 10/09 email", rows: [["Bottom Wire Exit", "Primary + Surge disc bases; wires through the column from the mounting plate to the floor; $140 list"], ["Power Box", "Disc and X bases, squares and rounds, only with power in the center of the top; U-plate routes wires down the column; $105 list"], ["Both", "$346 list"]] },
         { kind: "facts", title: "Old book (intro text)", rows: [["BWE Bottom Cord Exit", "$132"], ["PB Power Box", "$100"], ["PB + BWE", "$329"]] },
         { kind: "note", text: "Neither is a SpeX Studio option today. Both will be added to the picker for the bases they apply to, priced from your answer." },
+      ],
+    },
+    {
+      id: "r3-mark-flip-top-hardware",
+      round: 3,
+      type: "single",
+      prompt: "Surge flip top in SpeX Studio: we show the Element flip-top hinge and latch on the Surge X base, top resting at 29 inches. Is that the right hardware?",
+      why: "All 11 Surge X-FT flip tops are live on the test site with this hardware. Testers see it this week.",
+      options: [
+        { id: "yes", label: "Yes, Surge uses the same flip-top mechanism as Element on the X base" },
+        { id: "different", label: "No, Surge uses different hardware (describe it in the notes, a photo by email is fine)" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "Why we assumed one shared part", rows: [["October book", "X-FT is priced on Element, Elite, Foundation, Stretch and Surge on the same X22 / X26 / X30 / X34 base family"], ["Rest height", "29 in, top 1.25 in thick, column shortened to suit"], ["Footprint", "Per the code: X22, X26, X30, X34 (the 42 in tops take X34)"]] },
+        { kind: "list", title: "See it on the test site", items: ["https://staging.tablex.com/spex-studio/SURGE?shape=SQ&size=2424&base=X-FT&top=lam-D354-60&basefinish=pc-satin-silver", "https://staging.tablex.com/spex-studio/ELEMENT?shape=SQ&size=2424&base=X-FT"] },
+      ],
+    },
+    {
+      id: "r3-mark-df-flip-top",
+      round: 3,
+      type: "single",
+      prompt: "Two center power units (location DF) on a flip top: refused like the single center unit, or allowed?",
+      why: "You confirmed 10/16 that location F is refused on flip tops because of the hinge. We refused DF the same way on the assumption that two center units hit the same hinge.",
+      options: [
+        { id: "refuse", label: "Refuse DF on flip tops too (what is built today)" },
+        { id: "allow", label: "Allow DF on flip tops" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "Your placement matrix, as built", rows: [["Static / electric", "A, D, F, DF"], ["Hand crank", "A, D"], ["Nesting", "A, D"], ["Folding", "D only"], ["Flip top", "A, D (F refused per your 10/16 answer; DF refused by inference)"]] },
+        { kind: "note", text: "A = one unit at an end · D = two at the ends · F = one at center · DF = two at center." },
+      ],
+    },
+    {
+      id: "r3-mark-ref03",
+      round: 3,
+      type: "single",
+      prompt: "Bottom Cord Exit plus Power Box Mounting Plate on the same table: what is the list price when both are specified?",
+      why: "The book has Bottom Cord Exit $139 and the plate $105, which sum to $244. Your 10/12 note said $346, later relayed as $245.",
+      options: [
+        { id: "244", label: "$244, the sum of the two book rows" },
+        { id: "245", label: "$245 ($140 + $105)" },
+        { id: "346", label: "$346, a combined price that is not in the book" },
+        { id: "other", label: "Other (notes)" },
+      ],
+      context: [
+        { kind: "facts", title: "October ADD ONS tab", rows: [["Bottom Cord Exit", "$139 each"], ["Powerbox Mounting Plate", "$105 each"], ["Both together", "no row"]] },
+        { kind: "note", text: "SpeX prices them as two separate add-ons today ($244). If $346 is right, the book needs a combined row." },
       ],
     },
   ],

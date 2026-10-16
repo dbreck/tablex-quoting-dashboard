@@ -398,6 +398,11 @@ function QuestionCard({
               Round 2 · added 10/12
             </span>
           )}
+          {q.round === 3 && (
+            <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-rose-800">
+              Round 3 · added 10/16 · needed today for the 10/19 date
+            </span>
+          )}
         </div>
         <h3 className="mt-2 text-xl font-bold leading-snug text-gray-900 md:text-2xl">{q.prompt}</h3>
         {q.why && <p className="mt-2 text-sm text-gray-500">{q.why}</p>}
