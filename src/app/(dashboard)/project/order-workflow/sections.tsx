@@ -626,6 +626,7 @@ export function ChallengesSection() {
 
 const RULING_META: Record<RulingStatus, { label: string; chip: string; bar: string }> = {
   decided: { label: "Decided", chip: "bg-emerald-50 text-emerald-700 border-emerald-200", bar: "bg-emerald-500" },
+  interim: { label: "Interim · Brian confirms 10/26", chip: "bg-sky-50 text-sky-700 border-sky-200", bar: "bg-sky-500" },
   open: { label: "Still open", chip: "bg-amber-50 text-amber-700 border-amber-200", bar: "bg-amber-500" },
   flag: { label: "Needs Danny", chip: "bg-rose-50 text-rose-700 border-rose-200", bar: "bg-rose-500" },
 };
@@ -638,8 +639,9 @@ export function AnswersSection() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <SectionIntro title="Answers and rulings">
           <p>
-            Every homework question was answered on 10/08 (Brian keyed all four tabs). Each card shows what was asked, the
-            answer, and what it changes in the build.
+            Every 10/08 homework question was answered (Brian keyed all four tabs); round 2 landed 10/12–10/14. Round 3
+            (10/16) is below as interim defaults while Brian is out until 10/26. Each card shows what was asked, the answer,
+            and what it changes in the build.
           </p>
         </SectionIntro>
         <div className="rounded-xl bg-brand-navy px-5 py-3 text-white">
@@ -649,7 +651,7 @@ export function AnswersSection() {
           <p className="text-[11px] uppercase tracking-wide text-white/60">Answered</p>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {(Object.keys(RULING_META) as RulingStatus[]).map((k) => (
           <StatTile key={k} value={`${count(k)}`} label={RULING_META[k].label} accent={k === "decided"} />
         ))}

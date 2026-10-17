@@ -665,7 +665,7 @@ export const CHALLENGES: Challenge[] = [
 /* 6 · Answers and rulings (homework complete 10/08)                   */
 /* ------------------------------------------------------------------ */
 
-export type RulingStatus = "decided" | "open" | "flag";
+export type RulingStatus = "decided" | "interim" | "open" | "flag";
 
 export interface Ruling {
   topic: string;
@@ -939,6 +939,60 @@ export const RULING_GROUPS: { title: string; sub: string; rulings: Ruling[] }[] 
         answer: "Packaging material total, warehouse time, freight cost, commission, invoice total, other. Plus SPIFF, dealer discount tier (50/20 …), date accepted and date shipped, customer name, vendor charges, ship-to state, P/L total.",
         build: ["One P/L row per order from fields the SO already has (tier, dates, customer, ship-to, vendor POs) plus the packaging and commission entries; CSV export for Patty."],
         status: "decided",
+      },
+    ],
+  },
+  {
+    title: "Round 3 (asked 10/16): interim defaults",
+    sub: "Brian is out 10/16 → 10/26 (auto-reply), so Danny set the working answer 10/17. Each ships on staging for Sam's test week; Brian ratifies or changes it 10/26. Mark's three stay open until he answers his tab.",
+    rulings: [
+      {
+        topic: "Pricing rows on the acknowledgment",
+        asked: "Keep Subtotal (list) · tier discount · Subtotal (net) · freight · Total, or net rows only?",
+        by: "brian",
+        answer: "Interim: keep the full breakdown. It is what is built, it matches the quote-ready email the dealer already holds, and Brian ruled 10/08 that reps and principals see pricing.",
+        build: ["No change to the ack renderer or email. Brian's 10/26 answer on his homework tab (r3-brian-ack-pricing) can switch it to net-only; that is a template edit, not a data change."],
+        status: "interim",
+      },
+      {
+        topic: "Surge 99RD48SD26 / 99RD48QD26",
+        asked: "Core / Select / Luxe for the two unpriced Surge rows, or drop them?",
+        by: "brian",
+        answer: "Interim: both stay in SpeX as quote-required (the book has every price cell blank). Not priced, not dropped.",
+        build: ["Nothing changes on staging. When Brian prices them (r3-brian-surge-unpriced) they go in as a book revision + price-corrections note; if he says drop, remove from MODEL_AVAILABILITY."],
+        status: "interim",
+      },
+      {
+        topic: "Justice butcher block 24 vs 25",
+        asked: "Six 24-inch-deep rows carry 25 in their model codes. Which is right?",
+        by: "brian",
+        answer: "Interim: 24 inches. The runtime model map already keys these as 40TC2460FR2258 / 40TC2472FR2270 and every other Justice row's code matches its label; the 25 reads as a workbook typo.",
+        build: ["SpeX keeps 24 x 60 / 24 x 72 labels and the 24-coded models. If Brian says 25 (r3-brian-justice-labels), relabel and re-key the six rows in the book + map together."],
+        status: "interim",
+      },
+      {
+        topic: "Flip-top hardware",
+        asked: "Is the Surge X-FT flip top the Element hinge/latch on the Surge X base at a 29-inch rest height?",
+        by: "mark",
+        answer: "Open. Danny's interim ruling (10/16) is already what the 3D shows on staging: Element hardware on the Surge X donor, column shortened ~2.65 in, book footprint.",
+        build: ["r3-mark-flip-top-hardware. Any correction is a -v2 GLB set, never an edit of the shipped files."],
+        status: "open",
+      },
+      {
+        topic: "DF power on flip tops (ALL-19)",
+        asked: "Is D+F (two units, one centred) allowed on a flip top when centre (F) alone is refused?",
+        by: "mark",
+        answer: "Open. Staging currently refuses F and DF on flip tops (inference from Mark's 10/16 'centre power on flip tops = refuse').",
+        build: ["r3-mark-df-flip-top. If allowed, add DF back to the flip-top row of POWER_PLACEMENT_RULES and reopen the removed configs."],
+        status: "open",
+      },
+      {
+        topic: "REF-03",
+        asked: "The last SpeX tracker item that needs Mark.",
+        by: "mark",
+        answer: "Open.",
+        build: ["r3-mark-ref03. Close in the tracker report and regenerate the Staging Review checklist when answered."],
+        status: "open",
       },
     ],
   },
